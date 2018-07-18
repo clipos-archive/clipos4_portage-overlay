@@ -1,0 +1,26 @@
+Index: chromium-55.0.2883.75/components/content_settings/core/browser/content_settings_policy_provider.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/components/content_settings/core/browser/content_settings_policy_provider.cc
++++ chromium-55.0.2883.75/components/content_settings/core/browser/content_settings_policy_provider.cc
+@@ -48,8 +48,9 @@ const PrefsForManagedContentSettingsMapE
+          CONTENT_SETTINGS_TYPE_NOTIFICATIONS, CONTENT_SETTING_ALLOW},
+         {prefs::kManagedNotificationsBlockedForUrls,
+          CONTENT_SETTINGS_TYPE_NOTIFICATIONS, CONTENT_SETTING_BLOCK},
++	// clip modification to kManagedPluginsAllowedForUrls
+         {prefs::kManagedPluginsAllowedForUrls, CONTENT_SETTINGS_TYPE_PLUGINS,
+-         CONTENT_SETTING_ALLOW},
++         CONTENT_SETTING_ASK},
+         {prefs::kManagedPluginsBlockedForUrls, CONTENT_SETTINGS_TYPE_PLUGINS,
+          CONTENT_SETTING_BLOCK},
+         {prefs::kManagedPopupsAllowedForUrls, CONTENT_SETTINGS_TYPE_POPUPS,
+@@ -127,8 +128,9 @@ void PolicyProvider::RegisterProfilePref
+                                 CONTENT_SETTING_DEFAULT);
+   registry->RegisterIntegerPref(prefs::kManagedDefaultMediaStreamSetting,
+                                 CONTENT_SETTING_DEFAULT);
++  // clip modification for kManagedDefaultPluginsSetting				
+   registry->RegisterIntegerPref(prefs::kManagedDefaultPluginsSetting,
+-                                CONTENT_SETTING_DEFAULT);
++                                CONTENT_SETTING_ASK);
+   registry->RegisterIntegerPref(prefs::kManagedDefaultPopupsSetting,
+                                 CONTENT_SETTING_DEFAULT);
+   registry->RegisterIntegerPref(prefs::kManagedDefaultKeygenSetting,

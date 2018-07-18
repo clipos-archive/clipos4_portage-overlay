@@ -1,0 +1,29 @@
+# CLIP ChangeLog for net-libs/libssh
+
+*libssh-0.6.3 (15 Jan 2016)
+
+  15 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +libssh-0.6.5.ebuild, -libssh-0.6.3.ebuild:
+  Bump to latest.
+
+*libssh-0.6.3 (18 Mar 2014)
+
+  18 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libssh-0.6.3.ebuild, -libssh-0.5.3.ebuild,
+  -files/libssh-0.5.0-no-pdf-doc.patch:
+  Security bump, CVE-2014-0017.
+
+*libssh-0.5.3 (11 Dec 2012)
+
+  11 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libssh-0.5.3.ebuild, -libssh-0.4.1.ebuild,
+  +files/libssh-0.5.0-no-pdf-doc.patch,
+  +files/libssh-0.5.0-tests.patch,
+  -files/libssh-0.4.1-debug-build.patch:
+  Bump to latest.
+
+*libssh-0.4.1 (05 Jul 2010)
+
+  05 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  libssh-0.4.1.ebuild:
+  Initial import. clip-deps fixes.

@@ -1,0 +1,12 @@
+application/acid5-csa				csa
+application/acid5-ssa				ssa
+application/acid5-sca				sca
+application/acid5-ppr				ppr
+application/acid5-pvr				pvr
+application/acid7-csa				acidcsa
+application/acid7-ssa				acidssa
+application/acid7-sca				acidsca
+application/acid7-ppr				acidppr
+application/acid7-pvr				acidpvr
+application/acidaex				aex
+application/x-ganttproject			gan

@@ -1,0 +1,680 @@
+--- ./PAM.cpp.orig	2013-11-18 14:17:04.000000000 +0100
++++ ./PAM.cpp	2013-11-18 14:17:07.000000000 +0100
+@@ -74,7 +74,9 @@ namespace PAM {
+ 	void Authenticator::set_item(const Authenticator::ItemType item, const void* value){
+ 		switch((last_result=pam_set_item(pam_handle, item, value))){
+ 			default:
++#ifndef WITH_CLIP
+ 			_end();
++#endif
+ 				throw Exception(pam_handle, "pam_set_item()", last_result);
+ 
+ 			case PAM_SUCCESS:
+@@ -91,7 +93,9 @@ namespace PAM {
+ #ifdef __LIBPAM_VERSION
+ 			case PAM_BAD_ITEM:
+ #endif
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_get_item()", last_result);
+ 
+ 			case PAM_PERM_DENIED: /* The value of item was NULL */
+@@ -105,7 +109,9 @@ namespace PAM {
+ 	void Authenticator::fail_delay(const unsigned int micro_sec){
+ 		switch((last_result=pam_fail_delay(pam_handle, micro_sec))){
+ 			default:
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "fail_delay()", last_result);
+ 
+ 			case PAM_SUCCESS:
+@@ -120,7 +126,9 @@ namespace PAM {
+ 			default:
+ 			case PAM_ABORT:
+ 			case PAM_AUTHINFO_UNAVAIL:
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_authenticate()", last_result);
+ 
+ 			case PAM_USER_UNKNOWN:
+@@ -143,7 +151,9 @@ namespace PAM {
+ 			/* case PAM_NEW_AUTHTOKEN_REQD: */
+ 			case PAM_ACCT_EXPIRED:
+ 			case PAM_USER_UNKNOWN:
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_acct_mgmt()", last_result);
+ 
+ 			case PAM_AUTH_ERR:
+@@ -161,7 +171,9 @@ namespace PAM {
+ 			default:
+ 			case PAM_CRED_ERR:
+ 			case PAM_CRED_UNAVAIL:
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_setcred()", last_result);
+ 
+ 			case PAM_CRED_EXPIRED:
+@@ -181,7 +193,9 @@ namespace PAM {
+ 			default:
+ 			/* case PAM_SESSION_ERROR: */
+ 				pam_setcred(pam_handle, PAM_DELETE_CRED);
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_open_session()", last_result);
+ 
+ 			case PAM_SUCCESS:
+@@ -200,7 +214,9 @@ namespace PAM {
+ 			default:
+ 			/* case PAM_SESSION_ERROR: */
+ 				pam_setcred(pam_handle, PAM_DELETE_CRED);
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_close_session", last_result);
+ 
+ 			case PAM_SUCCESS:
+@@ -212,7 +228,9 @@ namespace PAM {
+ 			case PAM_CRED_UNAVAIL:
+ 			case PAM_CRED_EXPIRED:
+ 			case PAM_USER_UNKNOWN:
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_setcred()", last_result);
+ 
+ 			case PAM_SUCCESS:
+@@ -231,7 +249,9 @@ namespace PAM {
+ #ifdef __LIBPAM_VERSION
+ 			case PAM_BAD_ITEM:
+ #endif
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_putenv()", last_result);
+ 
+ 			case PAM_SUCCESS:
+@@ -249,7 +269,9 @@ namespace PAM {
+ #ifdef __LIBPAM_VERSION
+ 			case PAM_BAD_ITEM:
+ #endif
++#ifndef WITH_CLIP
+ 				_end();
++#endif
+ 				throw Exception(pam_handle, "pam_putenv()", last_result);
+ 
+ 			case PAM_SUCCESS:
+--- ./app.cpp.orig	2013-11-18 14:17:04.000000000 +0100
++++ ./app.cpp	2013-11-18 14:19:17.000000000 +0100
+@@ -32,6 +32,50 @@
+ 
+ using namespace std;
+ 
++#ifdef WITH_CLIP
++extern "C" {
++#include <linux/capability.h>
++// clip.h is not C++-safe
++extern int clip_daemonize(void);
++#include <clip/clip-vserver.h>
++#include <linux/vserver/context.h>
++#include <sys/mount.h>
++}
++
++#define puts(msg) fputs(msg"\n", stderr)
++#ifndef MS_REC
++#define MS_REC 0x4000
++#endif
++
++#ifndef _CAP
++#define _CAP(cap)	( 1UL << (cap) )
++#endif
++
++#define XORG_CTX_FLAGS ( \
++		VXF_INFO_ULIMIT   | \
++		VXF_INFO_NSPACE   | \
++		VXF_HIDE_MOUNT    | \
++		VXF_HIDE_VINFO    | \
++		VXF_INFO_HIDE    \
++	)
++
++#define XORG_CTX_CAPS ( \
++		_CAP(CAP_CHOWN)           | \
++		_CAP(CAP_DAC_OVERRIDE)    | \
++		_CAP(CAP_DAC_READ_SEARCH) | \
++		_CAP(CAP_FOWNER)          | \
++		_CAP(CAP_FSETID)          | \
++		_CAP(CAP_KILL)            | \
++		_CAP(CAP_SETGID)          | \
++		_CAP(CAP_SETUID)          | \
++		_CAP(CAP_SYS_BOOT)        | \
++		_CAP(CAP_SYS_TTY_CONFIG) \
++	)
++
++
++#endif /* WITH_CLIP */
++ 
++
+ #ifdef USE_PAM
+ #include <string>
+ 
+@@ -120,6 +164,9 @@ void CatchSignal(int sig) {
+ }
+ 
+ void User1Signal(int sig) {
++#ifdef WITH_CLIP
++	LoginApp->GotServerUsr = true;
++#endif
+ 	signal(sig, User1Signal);
+ }
+ 
+@@ -147,7 +194,7 @@ App::App(int argc, char** argv)
+ 
+ 	/* Parse command line
+ 	   Note: we force a option for nodaemon switch to handle "-nodaemon" */
+-	while((tmp = getopt(argc, argv, "vhsp:n:d?")) != EOF) {
++	while((tmp = getopt(argc, argv, "a:vhsp:n:d?")) != EOF) {
+ 		switch (tmp) {
+ 		case 'p':	/* Test theme */
+ 			testtheme = optarg;
+@@ -358,6 +405,12 @@ void App::Run() {
+ 
+ 	while(1) {
+ 		if(panelclosed) {
++#ifdef WITH_CLIP
++			string preStartCmd = cfg->getOption("serverprestart_cmd");
++			if (preStartCmd != "") {
++				system(preStartCmd.c_str());
++			}
++#endif
+ 			/* Init root */
+ 			setBackground(themedir);
+ 
+@@ -369,6 +422,12 @@ void App::Run() {
+ 
+ 			/* Show panel */
+ 			LoginPanel->OpenPanel();
++#ifdef WITH_CLIP
++			string startCmd = cfg->getOption("serverstart_cmd");
++			if (startCmd != "") {
++				system(startCmd.c_str());
++			}
++#endif
+ 		}
+ 
+ 		LoginPanel->Reset();
+@@ -420,6 +479,39 @@ void App::Run() {
+ 	}
+ }
+ 
++#ifdef WITH_CLIP
++void App::AuthError(int result) {
++	const char *msg;
++	switch (result) {
++		case PAM_USER_UNKNOWN:
++		case PAM_AUTHINFO_UNAVAIL:
++			msg = "Utilisateur inconnu";
++			break;
++		case PAM_AUTH_ERR:
++		case PAM_CRED_INSUFFICIENT:
++		case PAM_CRED_ERR:
++		case PAM_CRED_UNAVAIL:
++			msg = "Erreur dans le mot de passe";
++			break;
++		case PAM_MAXTRIES:
++			msg = "Nombre maximal de tentatives dépassé";
++			break;
++		case PAM_CRED_EXPIRED:
++			msg = "Utilisateur non actif";
++			break;
++		case PAM_PERM_DENIED:
++			msg = "Ouverture de session non permise";
++			break;
++		default:
++			msg = "Echec d'authentification: erreur interne";
++			break;
++	}
++	LoginPanel->Message(msg);
++	alarm(0);
++	sleep(3);
++}
++#endif
++
+ #ifdef USE_PAM
+ bool App::AuthenticateUser(bool focuspass){
+ 	/* Reset the username */
+@@ -429,6 +521,7 @@ bool App::AuthenticateUser(bool focuspas
+ 		pam.authenticate();
+ 	}
+ 	catch(PAM::Auth_Exception& e){
++#if 0
+ 		switch(LoginPanel->getAction()){
+ 			case Panel::Exit:
+ 			case Panel::Console:
+@@ -436,12 +529,21 @@ bool App::AuthenticateUser(bool focuspas
+ 			default:
+ 				break;
+ 		};
++#endif
++#ifdef WITH_CLIP
++		AuthError(e.errnum);
++#endif
+ 		logStream << APPNAME << ": " << e << endl;
+ 		return false;
+ 	}
+ 	catch(PAM::Exception& e){
+ 		logStream << APPNAME << ": " << e << endl;
++#ifdef WITH_CLIP
++		AuthError(e.errnum);
++		return false;
++#else
+ 		exit(ERR_EXIT);
++#endif
+ 	};
+ 	return true;
+ }
+@@ -464,6 +566,7 @@ bool App::AuthenticateUser(bool focuspas
+ 	struct passwd *pw;
+ 
+ 	switch(LoginPanel->getAction()){
++#ifndef WITH_CLIP
+ 		case Panel::Suspend:
+ 		case Panel::Halt:
+ 		case Panel::Reboot:
+@@ -471,9 +574,16 @@ bool App::AuthenticateUser(bool focuspas
+ 			break;
+ 		case Panel::Console:
+ 		case Panel::Exit:
++#endif
+ 		case Panel::Login:
+ 			pw = getpwnam(LoginPanel->GetName().c_str());
+ 			break;
++#ifdef WITH_CLIP
++		default:
++			logStream << APPNAME << ": unexpected action" << endl;
++			endpwent();
++			return false;
++#endif
+ 	}
+ 	endpwent();
+ 	if(pw == 0)
+@@ -517,6 +627,58 @@ void App::HideCursor() {
+ 	}
+ }
+ 
++#ifdef WITH_CLIP
++void App::ClipHalt(int status)
++{
++	char *argv[] = { NULL, NULL };
++	char *cmd = NULL;
++	const char *msg = NULL;
++
++	switch (status) {
++		case 100: 
++			cmd = "/sbin/reboot";
++			msg = "Redémarrage en cours";
++			break;
++		case 101:
++			cmd = "/sbin/halt";
++			msg = "Arrêt en cours";
++			break;
++		default:
++			logStream<<"ClipHalt(): unsupported status: "<<status<<endl;
++			return;
++	}
++
++	LoginPanel->Message(msg);
++
++	argv[0] = cmd;
++	int st;
++	pid_t pid, wret;
++	pid = fork();
++	switch (pid) {
++		case -1: 
++			goto err;
++		case 0:
++			if (clip_daemonize()) {
++				logStream<<"ClipHalt(): failed to daemonize"<<endl;
++				exit(EXIT_FAILURE);
++			}
++			exit(execvp(cmd, argv));
++		default:
++			wret = waitpid(pid, &st, 0);
++			if (wret < 0)
++				goto err;
++			if (!WIFEXITED(st) || WEXITSTATUS(st))
++				goto err;
++			sleep(10);
++			return;
++	}
++
++err:
++	LoginPanel->Message("Echec de la commande d'arrêt");
++	sleep(2);
++}
++#endif
++
+ void App::Login() {
+ 	struct passwd *pw;
+ 	pid_t pid;
+@@ -529,11 +691,19 @@ void App::Login() {
+ 	catch(PAM::Cred_Exception& e){
+ 		/* Credentials couldn't be established */
+ 		logStream << APPNAME << ": " << e << endl;
++#ifdef WITH_CLIP
++		AuthError(e.errnum);
++#endif
+ 		return;
+ 	}
+ 	catch(PAM::Exception& e){
+ 		logStream << APPNAME << ": " << e << endl;
++#ifdef WITH_CLIP
++		AuthError(e.errnum);
++		return;
++#else
+ 		exit(ERR_EXIT);
++#endif
+ 	};
+ #else
+ 	pw = getpwnam(LoginPanel->GetName().c_str());
+@@ -571,7 +741,12 @@ void App::Login() {
+ 	}
+ 	catch(PAM::Exception& e){
+ 		logStream << APPNAME << ": " << e << endl;
++#ifdef WITH_CLIP
++		AuthError(e.errnum);
++		return;
++#else
+ 		exit(ERR_EXIT);
++#endif
+ 	}
+ #endif
+ 
+@@ -591,6 +766,16 @@ void App::Login() {
+ 	/* Create new process */
+ 	pid = fork();
+ 	if(pid == 0) {
++#ifdef WITH_CLIP
++		signal(SIGQUIT, SIG_IGN);
++		signal(SIGINT, SIG_IGN);
++		signal(SIGHUP, SIG_IGN);
++		signal(SIGPIPE, SIG_IGN);
++		signal(SIGTERM, SIG_DFL);
++		signal(SIGKILL, SIG_DFL);
++		signal(SIGALRM, SIG_DFL);
++#endif
++
+ #ifdef USE_PAM
+ 		/* Get a copy of the environment and close the child's copy */
+ 		/* of the PAM-handle. */
+@@ -655,20 +840,36 @@ void App::Login() {
+ 	}
+ 
+ #ifndef XNEST_DEBUG
++#ifndef WITH_CLIP
+ 	CloseLog();
+ #endif
++#endif
+ 
+ 	/* Wait until user is logging out (login process terminates) */
+ 	pid_t wpid = -1;
+ 	int status;
++	int reboot = 0;
+ 	while (wpid != pid) {
+ 		wpid = wait(&status);
+ 		if (wpid == ServerPID)
+ 			xioerror(Dpy);	/* Server died, simulate IO error */
+ 	}
+ 	if (WIFEXITED(status) && WEXITSTATUS(status)) {
++#ifdef WITH_CLIP
++		if (WEXITSTATUS(status) == 100 || WEXITSTATUS(status) == 101) {
++			reboot = WEXITSTATUS(status);
++			 string sessStop = cfg->getOption("sessionstop_cmd");
++			 if (sessStop != "") {
++				replaceVariables(sessStop, USER_VAR, pw->pw_name);
++				system(sessStop.c_str());
++			 }
++		} else {
++#endif
+ 		LoginPanel->Message("Failed to execute login command");
+ 		sleep(3);
++#ifdef WITH_CLIP
++		}
++#endif
+ 	} else {
+ 		 string sessStop = cfg->getOption("sessionstop_cmd");
+ 		 if (sessStop != "") {
+@@ -710,6 +911,11 @@ void App::Login() {
+ 
+ 	HideCursor();
+ 
++#ifdef WITH_CLIP
++	if (reboot)
++		ClipHalt(reboot);
++#endif
++
+ #ifndef XNEST_DEBUG
+ 	/* Re-activate log file */
+ 	OpenLog();
+@@ -730,11 +936,13 @@ void App::Reboot() {
+ 
+ 	/* Write message */
+ 	LoginPanel->Message((char*)cfg->getOption("reboot_msg").c_str());
++#ifndef WITH_CLIP
+ 	sleep(3);
+ 
+ 	/* Stop server and reboot */
+ 	StopServer();
+ 	RemoveLock();
++#endif
+ 	system(cfg->getOption("reboot_cmd").c_str());
+ 	exit(OK_EXIT);
+ }
+@@ -752,11 +960,13 @@ void App::Halt() {
+ 
+ 	/* Write message */
+ 	LoginPanel->Message((char*)cfg->getOption("shutdown_msg").c_str());
++#ifndef WITH_CLIP
+ 	sleep(3);
+ 
+ 	/* Stop server and halt */
+ 	StopServer();
+ 	RemoveLock();
++#endif
+ 	system(cfg->getOption("halt_cmd").c_str());
+ 	exit(OK_EXIT);
+ }
+@@ -814,6 +1024,8 @@ int CatchErrors(Display *dpy, XErrorEven
+ }
+ 
+ void App::RestartServer() {
++	logStream << APPNAME << ": restart server (fake)" << endl;
++#ifndef WITH_CLIP
+ #ifdef USE_PAM
+ 	try{
+ 		pam.end();
+@@ -832,6 +1044,7 @@ void App::RestartServer() {
+ 		while (waitpid(-1, NULL, WNOHANG) > 0); /* Collects all dead childrens */
+ 		Run();
+ 	}
++#endif
+ }
+ 
+ void App::KillAllClients(Bool top) {
+@@ -916,6 +1129,9 @@ int App::WaitForServer() {
+ 
+ 
+ int App::StartServer() {
++#ifdef WITH_CLIP
++	GotServerUsr = false;
++#endif
+ 	ServerPID = fork();
+ 
+ 	static const int MAX_XSERVER_ARGS = 256;
+@@ -964,13 +1180,32 @@ int App::StartServer() {
+ 	}
+ 	server[argc] = NULL;
+ 
++#ifdef WITH_CLIP
++	const char *addr, *root;
++	int xid;
++#endif
+ 	switch(ServerPID) {
+ 	case 0:
++		setpgid(0,getpid());
++
++#ifdef WITH_CLIP
++	addr = cfg->getOption("server_addr").c_str();
++	root = cfg->getOption("server_root").c_str();
++	xid = Cfg::string2int(cfg->getOption("server_xid").c_str());
++	if (!xid || !root || !addr) {
++		logStream << APPNAME << ": missing parameters to jail server" << endl;
++		exit(ERR_EXIT);
++	}
++
++		if (clip_jailself(xid, XORG_CTX_CAPS, XORG_CTX_FLAGS, addr, root)) {
++		logStream << APPNAME << ": clip_jailself failed" << endl;
++		exit(ERR_EXIT);
++	}
++#endif
++ 
+ 		signal(SIGTTIN, SIG_IGN);
+ 		signal(SIGTTOU, SIG_IGN);
+ 		signal(SIGUSR1, SIG_IGN);
+-		setpgid(0,getpid());
+-
+ 		execvp(server[0], server);
+ 		logStream << APPNAME << ": X server could not be started" << endl;
+ 		exit(ERR_EXIT);
+@@ -986,6 +1221,12 @@ int App::StartServer() {
+ 			break;
+ 		}
+ 
++#ifdef WITH_CLIP
++		if (!GotServerUsr) {
++			sleep(1);
++		}
++#endif
++
+ 		/* Wait for server to start up */
+ 		if(WaitForServer() == 0) {
+ 			logStream << APPNAME << ": unable to connect to X server" << endl;
+--- ./cfg.cpp.orig	2013-11-18 14:17:04.000000000 +0100
++++ ./cfg.cpp	2013-11-18 14:17:07.000000000 +0100
+@@ -119,6 +119,16 @@ Cfg::Cfg()
+ 	options.insert(option("session_shadow_yoffset", "0"));
+ 	options.insert(option("session_shadow_color","#FFFFFF"));
+ 
++#ifdef WITH_CLIP
++	// Context stuff
++	options.insert(option("client_xid", "502"));
++	options.insert(option("server_root", "/x11"));
++	options.insert(option("server_xid", "400"));
++	options.insert(option("server_addr", "127.0.0.1"));
++	options.insert(option("serverstart_cmd", ""));
++	options.insert(option("serverprestart_cmd", ""));
++#endif
++
+ 	// slimlock-specific options
+ 	options.insert(option("dpms_standby_timeout", "60"));
+ 	options.insert(option("dpms_off_timeout", "600"));
+--- ./CMakeLists.txt.orig	2013-11-18 14:17:04.000000000 +0100
++++ ./CMakeLists.txt	2013-11-18 14:17:07.000000000 +0100
+@@ -23,7 +23,7 @@ set(SLIM_VERSION "${SLIM_VERSION_MAJOR}.
+ 
+ set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation Directory")
+ set(PKGDATADIR "${CMAKE_INSTALL_PREFIX}/share/slim")
+-set(SYSCONFDIR "/etc")
++set(SYSCONFDIR "${CMAKE_INSTALL_PREFIX}/etc")
+ set(LIBDIR "/lib")
+ set(MANDIR "${CMAKE_INSTALL_PREFIX}/share/man")
+ 
+@@ -107,6 +107,13 @@ if(FONTCONFIG_FOUND)
+ 	include_directories(${FONTCONFIG_INCLUDE_DIR})
+ endif(FONTCONFIG_FOUND)
+ 
++# CLIP
++if(WITH_CLIP)
++	message("\tCLIP Support Enabled")
++	set(SLIM_DEFINITIONS ${SLIM_DEFINITIONS} "-DWITH_CLIP -idirafter /usr/src/linux/include")
++	target_link_libraries(${PROJECT_NAME} -lclipvserver -lclip -lXmu)
++endif(WITH_CLIP)
++
+ # PAM
+ if(USE_PAM)
+ 	message("\tPAM Enabled")
+--- ./switchuser.cpp.orig	2013-11-18 14:17:04.000000000 +0100
++++ ./switchuser.cpp	2013-11-18 14:17:07.000000000 +0100
+@@ -15,6 +15,16 @@
+ 
+ using namespace std;
+ 
++#ifdef WITH_CLIP
++extern "C" {
++#include <linux/capability.h>
++#include <clip/clip-vserver.h>
++#include <linux/vserver/context.h>
++#include <errno.h>
++}
++
++#endif /* WITH_CLIP */
++
+ SwitchUser::SwitchUser(struct passwd *pw, Cfg *c, const string& display,
+ 					   char** _env)
+ 	: cfg(c),
+@@ -29,6 +39,17 @@ SwitchUser::~SwitchUser() {
+ }
+ 
+ void SwitchUser::Login(const char* cmd, const char* mcookie) {
++#ifdef WITH_CLIP
++	int xid = Cfg::string2int(cfg->getOption("client_xid").c_str());
++	if (!xid) {
++		logStream << APPNAME << ": missing parameters to jail login" << endl;
++	exit(ERR_EXIT);
++	}
++	if (clip_enter_context(xid)) {
++		logStream << APPNAME << ": clip_enter_context failed" << endl;
++	exit(ERR_EXIT);
++	}
++#endif
+ 	SetUserId();
+ 	SetClientAuth(mcookie);
+ 	Execute(cmd);
+--- ./app.h.orig	2013-11-18 14:17:04.000000000 +0100
++++ ./app.h	2013-11-18 14:17:26.000000000 +0100
+@@ -40,6 +40,9 @@ public:
+ 	int GetServerPID();
+ 	void RestartServer();
+ 	void StopServer();
++#ifdef WITH_CLIP
++	bool GotServerUsr;
++#endif
+ 
+ 	/* Lock functions */
+ 	void GetLock();
+@@ -51,6 +54,9 @@ private:
+ 	void Login();
+ 	void Reboot();
+ 	void Halt();
++#ifdef WITH_CLIP
++	void ClipHalt(int status);
++#endif
+ 	void Suspend();
+ 	void Console();
+ 	void Exit();
+@@ -82,6 +88,10 @@ private:
+ 	Panel *LoginPanel;
+ 	int ServerPID;
+ 	const char *DisplayName;
++#ifdef WITH_CLIP
++	const char *clientAddr;
++	void AuthError(int);
++#endif
+ 	bool serverStarted;
+ 
+ #ifdef USE_PAM

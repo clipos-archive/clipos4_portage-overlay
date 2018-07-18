@@ -1,0 +1,21 @@
+# CLIP ChangeLog for sys-libs/libcap-ng
+
+*libcap-ng-0.7.3-r3 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +libcap-ng-0.7.3-r3.ebuild, -libcap-ng-0.7.3-r2.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*libcap-ng-0.7.3-r2 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libcap-ng-0.7.3-r2.ebuild, -libcap-ng-0.7.3-r1.ebuild:
+  Update linux-headers dependency.
+
+*libcap-ng-0.7.3-r1 (28 Sep 2015)
+
+  28 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libcap-ng-0.7.3-r1.ebuild, -libcap-ng-0.7.3.ebuild:
+  Update dependency on linux-headers when compiling for clip-devstation.
+
+

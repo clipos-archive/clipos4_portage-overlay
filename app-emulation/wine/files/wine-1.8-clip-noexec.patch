@@ -1,0 +1,48 @@
+diff --git a/dlls/ntdll/virtual.c b/dlls/ntdll/virtual.c
+index d6319d8..48f26ba 100644
+--- a/dlls/ntdll/virtual.c
++++ b/dlls/ntdll/virtual.c
+@@ -602,7 +602,10 @@ static inline int mprotect_exec( void *base, size_t size, int unix_prot, unsigne
+         TRACE( "forcing exec permission on %p-%p\n", base, (char *)base + size - 1 );
+         if (!mprotect( base, size, unix_prot | PROT_EXEC )) return 0;
+         /* exec + write may legitimately fail, in that case fall back to write only */
+-        if (!(unix_prot & PROT_WRITE)) return -1;
++        /* CLIP: let's not fail here and see what happens 
++        if (!(unix_prot & PROT_WRITE)) return -1; */
++        if (!(unix_prot & PROT_WRITE)) 
++            ERR( "failed to set force-exec %08x protection on file map, noexec filesystem?\n", unix_prot | PROT_EXEC );
+     }
+ 
+     return mprotect( base, size, unix_prot );
+@@ -664,8 +667,10 @@ static BOOL VIRTUAL_SetProt( struct file_view *view, /* [in] Pointer to view */
+         return TRUE;
+     }
+ 
+-    if (mprotect_exec( base, size, unix_prot, view->protect )) /* FIXME: last error */
+-        return FALSE;
++    if (mprotect_exec( base, size, unix_prot, view->protect )) {
++        ERR( "failed to set %08x protection on file map\n", unix_prot);
++        return FALSE; /* FIXME: last error */
++    }
+ 
+     memset( p, vprot, size >> page_shift );
+     VIRTUAL_DEBUG_DUMP_VIEW( view );
+@@ -882,11 +887,16 @@ static NTSTATUS map_file_into_view( struct file_view *view, int fd, size_t start
+     /* only try mmap if media is not removable (or if we require write access) */
+     if (!removable || (flags & MAP_SHARED))
+     {
++	retry:
+         if (mmap( (char *)view->base + start, size, prot, flags, fd, offset ) != (void *)-1)
+             goto done;
+ 
+-        if ((errno == EPERM) && (prot & PROT_EXEC))
+-            ERR( "failed to set %08x protection on file map, noexec filesystem?\n", prot );
++        if ((errno == EPERM) && (prot & PROT_EXEC)) {
++	    /* CLIP: retry without PROT_EXEC... */
++            ERR( "failed to set %08x protection on file map of fd %d, noexec filesystem?\n", prot, fd );
++	    prot &= ~PROT_EXEC;
++	    goto retry;
++	}
+ 
+         /* mmap() failed; if this is because the file offset is not    */
+         /* page-aligned (EINVAL), or because the underlying filesystem */

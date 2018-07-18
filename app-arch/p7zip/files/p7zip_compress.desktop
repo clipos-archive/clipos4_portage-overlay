@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all;
+Actions=Compress7z
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=Compress
+X-KDE-Submenu[fr]=Compresser
+X-KDE-Icon=p7zip
+
+[Desktop Action Compress7z]
+Name=As 7z Archive
+Name[fr]=En tant qu'archive 7z
+Icon=p7zip
+Exec=p7zipForFilemanager ad -t7z %U
+

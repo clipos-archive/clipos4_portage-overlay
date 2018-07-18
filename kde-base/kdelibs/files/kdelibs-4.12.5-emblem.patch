@@ -1,0 +1,137 @@
+Index: kdelibs-4.12.5/kio/kio/kfileitem.cpp
+===================================================================
+--- kdelibs-4.12.5.orig/kio/kio/kfileitem.cpp
++++ kdelibs-4.12.5/kio/kio/kfileitem.cpp
+@@ -57,6 +57,29 @@
+ #endif
+ #include <kfilesystemtype_p.h>
+ 
++// CLIP emblems ----------------
++#include <kurl.h>
++#include <kdebug.h>
++
++#include <iostream>
++#include <string>
++#include <sstream>
++#include <fstream>
++
++#include <sys/xattr.h>
++#include <string>
++#include <vector>
++#include <cstdlib>
++
++#include <sys/types.h>
++#include <errno.h>
++#include <string.h>
++#include <emblem-configuration.h>
++
++using namespace emblemConfiguration;
++
++// CLIP emblems ----------------
++
+ class KFileItemPrivate : public QSharedData
+ {
+ public:
+@@ -949,6 +972,67 @@ static bool checkDesktopFile(const KFile
+     return mime->is("application/x-desktop");
+ }
+ 
++// CLIP emblems ----------------------------------------
++std::vector<std::string> getFileEmblems(KUrl file_url) {
++	std::vector<std::string> result;
++
++        if (!file_url.isLocalFile()) 
++		return result;
++
++        QString path 		= file_url.toLocalFile();
++        QByteArray bytearray 	= path.toLocal8Bit();
++        const char *__path 	= bytearray.constData();
++        ssize_t return_size 	= 0;
++        char *__list 		= new char[1000];
++        size_t __size 		= 1000;
++
++        return_size = listxattr (__path, __list, __size);
++       
++	if (return_size < 2) {
++		delete __list;
++		return result;
++	}
++
++        int index = 0;
++        bool is_at_word_start = true;
++
++        while (index < return_size) {
++            if (is_at_word_start) {
++	    	  char attr_name[1000];
++                  ssize_t return_size = 0;
++                  ssize_t __size_max = 99;
++                  char value[100];
++		  
++		  strncpy(attr_name, __list+index, 999);
++                  return_size = getxattr (__path, __list+index, (void*) value, __size_max);
++
++                  if ((return_size>1) && (return_size<100)) {
++                       char text_value[100];
++                       strncpy(text_value, value, 99);
++                       text_value[return_size]= 0;
++			std::string emblem_name = "";
++		       
++		 	emblem_name = EmblemConfiguration::getInstance()->getEmblemNameFromAttribute(attr_name, text_value);
++			if (emblem_name != "")
++				result.push_back(emblem_name);                       
++                   }
++               }
++
++               index++;
++
++               if (__list[index] == 0) {
++                  index++;
++                  is_at_word_start  = true; 
++               } else {
++                  is_at_word_start = false;
++               }
++        }
++
++        delete __list;
++	return result;
++}
++// CLIP emblems -------------------------
++
+ QStringList KFileItem::overlays() const
+ {
+     if (!d)
+@@ -1005,6 +1089,15 @@ QStringList KFileItem::overlays() const
+         names.append("application-zip");
+     }
+ 
++	// CLIP emblems ---------------
++	std::vector<std::string> file_emblems = getFileEmblems(d->m_url);
++	if (file_emblems.size() != 0) {
++		for (std::vector<std::string>::const_iterator it = file_emblems.begin(); it != file_emblems.end(); it ++) {
++			names.append((*it).c_str());
++		}
++	}
++	// CLIP emblems -----------------
++
+     return names;
+ }
+ 
+Index: kdelibs-4.12.5/kio/CMakeLists.txt
+===================================================================
+--- kdelibs-4.12.5.orig/kio/CMakeLists.txt
++++ kdelibs-4.12.5/kio/CMakeLists.txt
+@@ -331,7 +331,13 @@ if(NOT KIO_NO_NEPOMUK)
+   target_link_libraries(kfilemetadatareader ${KDE4_KIO_LIBS} ${KDE4_NEPOMUK_LIBRARY} nepomukutils)
+   target_link_libraries(kio ${KDE4_NEPOMUK_LIBRARY} nepomukquery nepomukutils)
+ endif(NOT KIO_NO_NEPOMUK)
+-target_link_libraries(kio ${KDE4_KDEUI_LIBS} ${ZLIB_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY} ${X11_LIBRARIES} ${KIO_EXTRA_LIBS})
++
++# CLIP emblem -------------
++target_link_libraries(kio ${KDE4_KDEUI_LIBS} ${ZLIB_LIBRARY}
++	${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTSVG_LIBRARY}
++	${X11_LIBRARIES} ${KIO_EXTRA_LIBS} EmblemConfiguration)
++# CLIP emblem ------------
++
+ target_link_libraries(kio LINK_INTERFACE_LIBRARIES kdeui kdecore ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTGUI_LIBRARY} )
+ 
+ if(ACL_FOUND)

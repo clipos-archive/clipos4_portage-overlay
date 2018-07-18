@@ -1,0 +1,8 @@
+# CLIP ChangeLog for media-libs/glu
+
+*glu-9.0.0 (23 Oct 2012)
+
+  23 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  glu-9.0.0.ebuild:
+  Initial import - make conflicting mesa versions <8.99 rather than
+  <9.0, since we had 8.99 has 9.0_pre.

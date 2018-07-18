@@ -1,0 +1,71 @@
+--- ./libbb/unicode.c.orig	2014-01-09 19:15:44.000000000 +0100
++++ ./libbb/unicode.c	2014-06-03 20:29:30.000000000 +0200
+@@ -996,7 +996,9 @@ size_t FAST_FUNC unicode_strlen(const ch
+ size_t FAST_FUNC unicode_strwidth(const char *string)
+ {
+ 	uni_stat_t uni_stat;
+-	printable_string(&uni_stat, string);
++	const char *str = printable_string(&uni_stat, string);
++	if (unicode_status != UNICODE_ON)
++		return strlen(str);
+ 	return uni_stat.unicode_width;
+ }
+ 
+@@ -1019,7 +1021,8 @@ static char* FAST_FUNC unicode_conv_to_p
+ 					while ((int)--width >= 0);
+ 					break;
+ 				}
+-				*d++ = (c >= ' ' && c < 0x7f) ? c : '?';
++				//*d++ = (c >= ' ' && c < 0x7f) ? c : '?';
++				*d++ = c;
+ 				src++;
+ 			}
+ 			*d = '\0';
+@@ -1027,8 +1030,8 @@ static char* FAST_FUNC unicode_conv_to_p
+ 			d = dst = xstrndup(src, width);
+ 			while (*d) {
+ 				unsigned char c = *d;
+-				if (c < ' ' || c >= 0x7f)
+-					*d = '?';
++				//if (c < ' ' || c >= 0x7f)
++					//*d = '?';
+ 				d++;
+ 			}
+ 		}
+--- ./coreutils/ls.c.orig	2014-01-09 19:15:44.000000000 +0100
++++ ./coreutils/ls.c	2014-06-03 20:29:30.000000000 +0200
+@@ -447,10 +447,10 @@ static unsigned calc_name_len(const char
+ 	name = printable_string(&uni_stat, name);
+ 
+ 	if (!(option_mask32 & OPT_Q)) {
+-		return uni_stat.unicode_width;
++		return strlen(name);
+ 	}
+ 
+-	len = 2 + uni_stat.unicode_width;
++	len = 2 + strlen(name);
+ 	while (*name) {
+ 		if (*name == '"' || *name == '\\') {
+ 			len++;
+@@ -477,10 +477,10 @@ static unsigned print_name(const char *n
+ 
+ 	if (!(option_mask32 & OPT_Q)) {
+ 		fputs(name, stdout);
+-		return uni_stat.unicode_width;
++		return strlen(name);
+ 	}
+ 
+-	len = 2 + uni_stat.unicode_width;
++	len = 2 + strlen(name);
+ 	putchar('"');
+ 	while (*name) {
+ 		if (*name == '"' || *name == '\\') {
+@@ -692,6 +692,8 @@ static void display_files(struct dnode *
+ 				i = (nc * nrows) + row;	/* display by column */
+ 			if (i < nfiles) {
+ 				if (column > 0) {
++					while (column > nexttab)
++						nexttab += column_width;
+ 					nexttab -= column;
+ 					printf("%*s ", nexttab, "");
+ 					column += nexttab + 1;

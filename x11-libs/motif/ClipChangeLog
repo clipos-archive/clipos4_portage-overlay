@@ -1,0 +1,13 @@
+# CLIP ChangeLog for x11-libs/motif
+
+*motif-2.3.4-r2 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +motif-2.3.4-r2.ebuild, -motif-2.3.4-r1.ebuild:
+  Force rebuild to fix wrong jpeg linking.
+
+*openmotif-2.3.4-r1 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +motif-2.3.4-r1.ebuild:
+  Initial import (replaces openmotif) - clip-deps + CPREFIX fixes.

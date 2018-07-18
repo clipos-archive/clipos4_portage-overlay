@@ -1,0 +1,36 @@
+Index: firefox-52.3.0esr/toolkit/mozapps/extensions/internal/XPIProvider.jsm
+===================================================================
+--- firefox-52.3.0esr.orig/toolkit/mozapps/extensions/internal/XPIProvider.jsm
++++ firefox-52.3.0esr/toolkit/mozapps/extensions/internal/XPIProvider.jsm
+@@ -1818,7 +1818,14 @@ let gCertDB = Cc["@mozilla.org/security/
+  *         cert: an nsIX509Cert
+  */
+ function verifyZipSignedState(aFile, aAddon) {
+-  if (!shouldVerifySignedState(aAddon))
++  // pour clip
++  if (aFile.path.startsWith("/usr/local/lib") && (!aFile.path.includes("..")))
++    return Promise.resolve({
++          signedState: AddonManager.SIGNEDSTATE_NOT_REQUIRED,
++	  cert: null
++	});
++
++if (!shouldVerifySignedState(aAddon))
+     return Promise.resolve({
+       signedState: AddonManager.SIGNEDSTATE_NOT_REQUIRED,
+       cert: null
+@@ -1860,7 +1867,14 @@ function verifyZipSignedState(aFile, aAd
+  *         cert: an nsIX509Cert
+  */
+ function verifyDirSignedState(aDir, aAddon) {
+-  if (!shouldVerifySignedState(aAddon))
++  // pour clip
++  if (aDir.path.startsWith("/usr/local/lib") && (!aDir.path.includes("..")))
++    return Promise.resolve({
++      signedState: AddonManager.SIGNEDSTATE_NOT_REQUIRED,
++      cert: null,
++    });
++
++if (!shouldVerifySignedState(aAddon))
+     return Promise.resolve({
+       signedState: AddonManager.SIGNEDSTATE_NOT_REQUIRED,
+       cert: null,

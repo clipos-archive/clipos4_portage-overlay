@@ -1,0 +1,23 @@
+--- a/sshfs.c
++++ b/sshfs.c
+@@ -120,6 +120,8 @@
+ 
+ #define SSHNODELAY_SO "sshnodelay.so"
+ 
++#define SSH_PATH "/usr/local/bin/ssh"
++
+ struct buffer {
+ 	uint8_t *p;
+ 	size_t len;
+@@ -997,9 +999,9 @@ static int start_ssh(void)
+ 			fprintf(stderr, "\n");
+ 		}
+ 
+-		execvp(sshfs.ssh_args.argv[0], sshfs.ssh_args.argv);
++		execv(SSH_PATH, sshfs.ssh_args.argv);
+ 		fprintf(stderr, "failed to execute '%s': %s\n",
+-			sshfs.ssh_args.argv[0], strerror(errno));
++			SSH_PATH, strerror(errno));
+ 		_exit(1);
+ 	}
+ 	waitpid(pid, NULL, 0);

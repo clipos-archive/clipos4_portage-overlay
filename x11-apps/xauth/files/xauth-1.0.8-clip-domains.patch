@@ -1,0 +1,34 @@
+--- process.c.bkp	2006-07-20 19:03:46.000000000 +0200
++++ process.c	2006-07-20 19:08:52.000000000 +0200
+@@ -151,6 +151,9 @@
+         "      timeout n    authorization expiration time in seconds\n"
+         "      trusted      clients using this entry are trusted\n"
+         "      untrusted    clients using this entry are untrusted\n"
++	/* CLIP */
++	"      domain n     clients using this entry belong to untrusted domain n (n>1)\n"
++	/* CLIP */
+         "      group n      clients using this entry belong to application group n\n"
+         "      data hexkey  auth protocol specific data needed to generate the entry\n"
+     }, 
+@@ -1841,6 +1844,21 @@
+ 	} else if (0 == strcmp(argv[i], "untrusted")) {
+ 	    attributes.trust_level = XSecurityClientUntrusted;
+ 	    attrmask |= XSecurityTrustLevel;
++	/* CLIP */
++	} else if (0 == strcmp(argv[i], "domain")) {
++	    if (++i == argc) {
++		prefix (inputfilename, lineno);
++		badcommandline (argv[i-1]);
++		return 1;
++	    }
++	    attributes.trust_level = atoi(argv[i]);
++	    if (attributes.trust_level < 2) {
++		prefix (inputfilename, lineno);
++		badcommandline (argv[i-1]);
++		return 1;
++	    }
++	    attrmask |= XSecurityTrustLevel;
++	/* CLIP */	    
+ 
+ 	} else if (0 == strcmp(argv[i], "group")) {
+ 	    if (++i == argc) {

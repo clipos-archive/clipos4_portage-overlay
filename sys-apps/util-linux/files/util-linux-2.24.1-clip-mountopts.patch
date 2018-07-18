@@ -1,0 +1,52 @@
+--- ./libmount/src/optmap.c.orig	2014-05-20 19:50:07.000000000 +0200
++++ ./libmount/src/optmap.c	2014-05-20 19:52:19.000000000 +0200
+@@ -60,6 +60,10 @@
+ #include "mountP.h"
+ #include "strutils.h"
+ 
++#define MS_NOSYMFOLLOW 256
++#define MS_NOLOCK      512
++#define MS_TRACE       (1<<26)
++
+ /*
+  * fs-independent mount flags (built-in MNT_LINUX_MAP)
+  */
+@@ -109,6 +113,12 @@ static const struct libmnt_optmap linux_
+    { "relatime", MS_RELATIME },               /* Update access times relative to mtime/ctime */
+    { "norelatime", MS_RELATIME, MNT_INVERT }, /* Update access time without regard to mtime/ctime */
+ #endif
++  { "nosymfollow", MS_NOSYMFOLLOW }, 
++  { "symfollow", MS_NOSYMFOLLOW, MNT_INVERT },
++  { "nolock", MS_NOLOCK },
++  { "lock", MS_NOLOCK, MNT_INVERT },
++  { "trace", MS_TRACE},
++  { "notrace", MS_TRACE, MNT_INVERT},
+ #ifdef MS_STRICTATIME
+    { "strictatime", MS_STRICTATIME },         /* Strict atime semantics */
+    { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
+--- ./mount-deprecated/mount.c.orig	2013-09-18 15:50:12.000000000 +0200
++++ ./mount-deprecated/mount.c	2014-05-20 19:49:03.000000000 +0200
+@@ -130,6 +130,10 @@ struct opt_map {
+ /* Options that we make owner-mounted devices have by default */
+ #define MS_OWNERSECURE	(MS_NOSUID|MS_NODEV)
+ 
++#define MS_NOSYMFOLLOW	256
++#define MS_NOLOCK	512
++#define MS_TRACE	(1<<26)
++
+ static const struct opt_map opt_map[] = {
+   { "defaults",	0, 0, 0		},	/* default options */
+   { "ro",	1, 0, MS_RDONLY	},	/* read-only */
+@@ -191,6 +195,12 @@ static const struct opt_map opt_map[] =
+   { "norelatime", 0, 1, MS_RELATIME }, /* Update access time without regard
+ 					  to mtime/ctime */
+ #endif
++  { "symfollow", 0, 1, MS_NOSYMFOLLOW},
++  { "nosymfollow", 0, 0, MS_NOSYMFOLLOW}, 
++  { "lock", 0, 1, MS_NOLOCK},
++  { "nolock", 0, 0, MS_NOLOCK},
++  { "trace", 0, 0, MS_TRACE},
++  { "notrace", 0, 1, MS_TRACE},
+ #ifdef MS_STRICTATIME
+   { "strictatime", 0, 0, MS_STRICTATIME }, /* Strict atime semantics */
+   { "nostrictatime", 0, 1, MS_STRICTATIME }, /* kernel default atime */

@@ -1,0 +1,15 @@
+# CLIP ChangeLog for sys-apps/attr
+
+*attr-2.4.47-r1 (20 Jun 2014)
+
+  20 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +attr-2.4.47-r1.ebuild, -attr-2.4.46-r1.ebuild,
+  -files/attr-2.4.44-gettext.patch,
+  -files/attr-2.4.46-config-shell.patch:
+  Bump to latest, make multilib-aware.
+
+*attr-2.4.46-r1 (07 Dec 2012)
+
+  07 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  attr-2.4.46-r1.ebuild:
+  Initial overlay import. CPREFIX fixes.

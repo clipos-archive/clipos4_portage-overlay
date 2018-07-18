@@ -1,0 +1,290 @@
+# CLIP ChangeLog for x11-wm/openbox
+
+*openbox-3.5.2-r5 (16 Feb 2016)
+
+  16 Feb 2016; Tony Cheneau <clipos@ssi.gouv.fr>
+  +openbox-3.5.2-r5.ebuild, -openbox-3.5.2-r4.ebuild:
+  Remove migration scripts: they do not work, and it's way too ugly.
+
+*openbox-3.5.2-r4 (18 May 2015)
+
+  18 May 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +openbox-3.5.2-r4.ebuild,
+  +files//hermes-conf-migrate.sh,
+  -openbox-3.5.2-r3.ebuild:
+  Add a default configuration for the clip-hermes variant: this replicate the
+  default behavior of the fresh installs. This modification is protected by the
+  newly reintroduced clip-hermes flag.
+
+*openbox-3.5.2-r3 (11 Jul 2014)
+
+  11 Jul 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +openbox-3.5.2-r3.ebuild, -openbox-3.5.2-r2.ebuild:
+  Theme configuration file (when using clip-hermes) is now always loaded from
+  /usr/local/share/themes/CLIP/openbox-3/themerc which is a symlink to a real
+  file located in /tmp/session/openbox. This file is either a copy of a static
+  themerc file or generated through a skeleton file (when configuration
+  elements are presents on the system).
+
+*openbox-3.5.2-r2 (10 Jul 2014)
+
+  10 Jul 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +openbox-3.5.2-r2.ebuild, -openbox-3.5.2-r1.ebuild,
+  +files/themerc.clip.skel:
+  Add skeleton file for the importing the color of the viewer borders through an
+  external configuration file.
+
+*openbox-3.5.2-r1 (13 Jan 2014)
+
+  13 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.5.2-r1.ebuild, -openbox-3.5.0_p20130215-r1.ebuild,
+  +files/openbox-3.5.2-gnome-session.patch,
+  -files/openbox-gnome-session-3.4.9.patch,
+  -files/openbox-gnomesession.patch,
+  -files/openbox.desktop:
+  Bump to latest.
+
+*openbox-3.5.0_p20130215-r1 (24 May 2013)
+
+  24 May 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.5.0_p20130215-r1.ebuild, -openbox-3.5.0_p20130215.ebuild,
+  files/rc.xml.clip, files/rc.xml.clip.fullscreen, files/rc.xml.clip.mix,
+  files/rc.xml.clip.mixborder:
+  Don't handle alt+drag but let it to clients (Vncviewer).
+  Set dragThreshold to 0 pixel.
+
+*openbox-3.5.0_p20130215 (19 Mar 2013)
+
+  19 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.5.0_p20130215.ebuild, -openbox-3.4.11.2-r8.ebuild,
+  -files/openbox-3.4.11.2-parallel-install.patch,
+  -files/openbox-3.4.7.2-clip-domains.patch,
+  -files/openbox-3.4.11.2-clip-maximize.patch,
+  +files/openbox-3.5.0-clip-maximize.patch,
+  +files/openbox-3.5.0-clip-domains.patch:
+  Bump to latest, with some minor changes :
+   - Maximize patch : negate the changes introduced in OB 3.5.0
+   regarding decorated/undecorated clients - let's keep things
+   somewhat uncomplicated
+   - Domains patch : add default (mandatory) icons for high/low
+   clients in Alt+Tab focus switch popup.
+
+*openbox-3.4.11.2-r8 (19 Feb 2013)
+
+  19 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r8.ebuild, -openbox-3.4.11.2-r7.ebuild,
+  files/openbox-3.4.7.2-clip-domains.patch:
+  Rename CLIP, RM_H, RM_B to Socle, Haut, Bas 
+  (if you'll excuse my French...).
+
+*openbox-3.4.11.2-r7 (13 Jul 2012)
+
+  13 Jul 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r7.ebuild, -openbox-3.4.11.2-r6.ebuild:
+  Update lock screen command.
+
+*openbox-3.4.11.2-r6 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r6.ebuild, -openbox-3.4.11.2-r5.ebuild:
+  Force rebuild
+
+  19 Jan 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/rc.xml.clip.mix:
+  Activate 'close' for mix configuration too.
+
+*openbox-3.4.11.2-r5 (27 Dec 2011)
+
+  27 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r5.ebuild, -openbox-3.4.11.2-r4.ebuild,
+  files/rc.xml.clip.mixborder:
+  Activate 'close' button on decorated windows in mixborder 
+  mode.
+
+*openbox-3.4.11.2-r4 (23 Nov 2011)
+
+  23 Nov 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r4.ebuild, -openbox-3.4.11.2-r3.ebuild:
+  Rbump.
+
+  14 Nov 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/rc.xml.clip.mix:
+  Use the taskbar features for Hestia too.
+
+*openbox-3.4.11.2-r3 (03 Nov 2011)
+
+  03 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r3.ebuild, -openbox-3.4.11.2-r2.ebuild,
+  +files/openbox-3.4.11.2-clip-maximize.patch,
+  +files/rc.xml.clip.mixborder, files/themerc.clip:
+  Support 'mixborder' mode : reduce window borders to 2pix, 
+  add a patch to still add border in maximized mode, add a dedicated
+  rc.xml (which retains the borders, and keeps the maximized viewer
+  windows available for taskbar switch).
+
+*openbox-3.4.11.2-r2 (30 Mar 2011)
+
+  30 Mar 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r2.ebuild, -openbox-3.4.11.2-r1.ebuild,
+  +files/rc.xml.clip.mix:
+  New config file for mix view mode.
+
+*openbox-3.4.11.2-r1 (04 Feb 2011)
+
+  04 Feb 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2-r1.ebuild, -openbox-3.4.11.2.ebuild,
+  files/rc.xml.clip, files/rc.xml.clip.fullscreen:
+  Switch xreset shortcut to C+S+Delete, lock screen on C+A+Delete.
+
+*openbox-3.4.11.2 (02 Feb 2011)
+
+  02 Feb 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.11.2.ebuild, -openbox-3.4.7.2-r7.ebuild,
+  +files/openbox-3.4.11.2-parallel-install.patch:
+  Bump to latest.
+
+  30 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  openbox-3.4.7.2-r7.ebuild, +files/rc.xml.clip.livecd:
+  Add use clip-livecd to install clip-installer configuration 
+  files.
+
+*openbox-3.4.7.2-r7 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r7.ebuild, -openbox-3.4.7.2-r6.ebuild:
+  Revbump to force rebuild against newest libxcb.
+
+*openbox-3.4.7.2-r6 (01 Feb 2010)
+
+  01 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r6.ebuild, -openbox-3.4.7.2-r5.ebuild,
+  -files/rc.xml.clip.admin, -files/rc.xml.clip.privuser,
+  +files/rc.xml.clip.fullscreen, files/rc.xml.clip:
+  Simplify rc files - keep only one for fullscreen and one
+  for non-fullscreen.
+
+  25 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/rc.xml.clip.privuser, files/rc.xml.clip.admin,
+  files/rc.xml.clip, openbox-3.4.7.2-r5.ebuild:
+  Add X11 reset command mapping in other rc files. Switch
+  to new "Execute <command>" syntax. Add "C-A-Tab" as 
+  SwitchWindow keyboard shortcut. Add missing dependency
+  on xscreensaver.
+
+*openbox-3.4.7.2-r5 (25 Jan 2010)
+
+  25 Jan 2010; Florent Chabaud <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r5.ebuild, -openbox-3.4.7.2-r4.ebuild,
+  files/rc.xml.clip.privuser:
+  Reallumage d'un ecran LCD. Ticket #95 du reseau de test
+
+*openbox-3.4.7.2-r4 (12 Jan 2010)
+
+  12 Jan 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r4.ebuild, -openbox-3.4.7.2-r3.ebuild:
+  Correct bogus XML parsing due to preprocessing.
+
+*openbox-3.4.7.2-r3 (11 Jan 2010)
+
+  11 Jan 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r3.ebuild, -openbox-3.4.7.2-r2.ebuild,
+  -files/rc.xml.hermes:
+  Add preprocessing for Hermes config file.
+
+*openbox-3.4.7.2-r2 (07 Jan 2010)
+
+  07 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r2.ebuild, -openbox-3.4.7.2-r1.ebuild,
+  -files/openbox-3.4.7.2-clip-profile.patch:
+  CPREFIX fix. Remove clip-profile patch that doesn't work 
+  anymore, and can be replaced with the new --config-file 
+  option.
+
+*openbox-3.4.7.2-r1 (05 Jan 2010)
+
+  05 Jan 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openbox-3.4.7.2-r1.ebuild, -openbox-3.4.2-r8.ebuild,
+  +files/openbox-gnomesession.patch,
+  +files/openbox-gnome-session-3.4.9.patch, 
+  +files/openbox-3.4.7.2-clip-profile.patch,
+  -files/openbox-3.4.2-clip-profile.patch,
+  +files/openbox-3.4.7.2-clip-domains.patch,
+  -files/openbox-3.4.2-clip-domains.patch,
+  -files/openbox-3.2-makefile.patch,
+  +files/rc.xml.hermes:
+  New release. Add Hermes config file.
+
+*openbox-3.4.2-r8 (16 Dec 2009)
+
+  16 Dec 2009; Florent Chabaud <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r8.ebuild, -openbox-3.4.2-r7.ebuild:
+  Action move sur bordure de fenetre. Ticket #115 du reseau de test
+
+*openbox-3.4.2-r7 (03 Sep 2009)
+
+  03 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r7.ebuild, -openbox-3.4.2-r6.ebuild,
+  files/rc.xml.clip, files/rc.xml.clip.admin, 
+  files/rc.xml.clip.privuser:
+  Switch to size 8 fonts in window titles, which look better
+  in xorg-1.5.
+
+*openbox-3.4.2-r6 (03 Jul 2009)
+
+  03 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r6.ebuild, -openbox-3.4.2-r5.ebuild,
+  files/rc.xml.clip:
+  Add window move support to default (user) rc file, make it the
+  rc file for privuser as well (i.e. remove resize, close).
+
+*openbox-3.4.2-r5 (22 Jun 2009)
+
+  22 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r5.ebuild, -openbox-3.4.2-r4.ebuild,
+  files/rc.xml.clip.admin:
+  Remove "maximize" button from admin theme. Install admin theme
+  as privuser theme.
+
+*openbox-3.4.2-r4 (08 Jun 2009)
+
+  08 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r4.ebuild, -openbox-3.4.2-r3.ebuild,
+  +files/openbox-3.4.2-clip-profile.patch,
+  +files/rc.xml.clip.admin:
+  Support multiple rc profiles, to enable relaxed rc for 
+  ADMIN/AUDIT sessions. Add CLIP rc for ADMIN / AUDIT, which 
+  is basically the same as the default USER profile, with 
+  window resizing / moving enabled.
+
+*openbox-3.4.2-r3 (16 Jan 2008)
+
+  16 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r3.ebuild, -openbox-3.4.2-r2.ebuild:
+  Add IUSE clip-deps to remove dependency on glib. GRRRR.
+
+*openbox-3.4.2-r2 (21 Nov 2007)
+
+  21 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r2.ebuild, -openbox-3.4.2-r1.ebuild,
+  files/rc.xml.clip,files/themerc.clip:
+  Move to a more spartan configuration, fit for use with maximized 
+  VNC viewers : larger borders, no window buttons, no window moving
+  by dragging from the border or titlebar.
+  
+*openbox-3.4.2-r1 (15 Nov 2007)
+
+  15 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openbox-3.4.2-r1.ebuild:
+  Add IUSE clip-deps to remove dependency on gettext.
+
+*openbox-3.4.2 (12 Nov 2007)
+
+  12 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  openbox-3.4.2.ebuild, +files/openbox-3.4.2-clip-domains.patch,
+  +files/rc.xml.clip, +files/themerc.clip:
+  Initial CLIP Import. Patch to support XSecurity domains visibility,
+  like SWM, and remove default keybindings. CLIP theme based on clearlooks,
+  with the proper definitions for security markings. CLIP-specific rc.xml,
+  to disable all key bindings, all menu actions and most window actions 
+  except for iconify and close.
+  Rhhaaaa, I finally got rid of SWM :)

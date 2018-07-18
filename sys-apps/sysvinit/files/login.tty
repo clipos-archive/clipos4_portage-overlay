@@ -1,0 +1,67 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+set -e
+
+is_root=false
+is_admin=false
+is_audit=false
+is_privuser=false
+
+
+if [[ "${USER}" = root ]] ; then
+	is_root=true
+fi
+
+
+for g in $(groups "${USER}") ; do
+	case "${g}" in
+	"core_admin")
+		is_admin=true
+		;;
+	"core_audit")
+		is_audit=true
+		;;
+	"priv_user")
+		is_privuser=true
+		;;
+	esac
+done
+
+
+if ${is_root} ; then
+	exec /bin/sh -l
+	exit 1
+fi
+
+if ${is_privuser} || ( ${is_admin} && ${is_audit} ) ; then
+	choice=0
+
+	echo ""
+	echo "Choisissez votre rôle:"
+	echo ""
+	echo "  1. admin"
+	echo "  2. audit"
+	echo ""
+	echo -n "Choix [1,2]: "
+	read -N 1 -r choice
+	echo ""
+
+	if [[ "${choice}" = 1 ]] ; then is_admin=true
+	elif [[ "${choice}" = 2 ]] ; then is_audit=true
+	else exit 3
+	fi
+fi
+
+if ${is_admin} ; then
+	/usr/local/bin/ssh -p 22 _admin@127.54.0.1
+	exit 1
+elif ${is_audit} ; then
+	/usr/local/bin/ssh -p 23 _audit@127.53.0.1
+	exit 1
+fi
+
+exit 2
+
+

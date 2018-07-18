@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ODS File...
+Name[fr]=Classeur OpenDocument...
+Comment=Enter ODS filename:
+Comment[fr]=Saisir le nom du fichier ODS :
+Type=Link
+URL=.source/ODSFile.ods
+Icon=application-vnd.oasis.opendocument.spreadsheet

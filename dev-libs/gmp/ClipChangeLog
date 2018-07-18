@@ -1,0 +1,9 @@
+# CLIP ChangeLog for dev-libs/gmp
+
+*gmp-5.0.4 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gmp-5.0.4.ebuild:
+  Initial overlay import - CPREFIX fix.
+
+

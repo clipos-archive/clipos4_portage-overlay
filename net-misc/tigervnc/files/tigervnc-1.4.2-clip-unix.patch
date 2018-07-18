@@ -1,0 +1,965 @@
+Replace TCP sockets by UNIX ones and disable TCP related features
+
+Distributed under the terms of the GNU General Public License v2
+
+diff --git a/common/network/CMakeLists.txt b/common/network/CMakeLists.txt
+index b624c8e..6c173f8 100644
+--- a/common/network/CMakeLists.txt
++++ b/common/network/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ include_directories(${CMAKE_SOURCE_DIR}/common)
+ 
+ add_library(network STATIC
+-  TcpSocket.cxx)
++  UnixSocket.cxx)
+ 
+ if(WIN32)
+ 	target_link_libraries(network ws2_32)
+diff --git a/common/network/UnixSocket.cxx b/common/network/UnixSocket.cxx
+new file mode 100644
+index 0000000..850523a
+--- /dev/null
++++ b/common/network/UnixSocket.cxx
+@@ -0,0 +1,272 @@
++/* Copyright (C) 2002-2005 RealVNC Ltd.  All Rights Reserved.
++ *
++ * This is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This software is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this software; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
++ * USA.
++ */
++
++#ifdef HAVE_COMMON_CONFIG_H
++#include <common-config.h>
++#endif
++
++#define errorNumber errno
++#define closesocket close
++#include <sys/types.h>
++#include <sys/socket.h>
++#define UNIX_PATH_MAX 108
++#include <sys/un.h>
++#include <netdb.h>
++#include <unistd.h>
++#include <errno.h>
++#include <string.h>
++#include <signal.h>
++#include <fcntl.h>
++
++#include <stdlib.h>
++#include <network/UnixSocket.h>
++#include <rfb/util.h>
++#include <rfb/LogWriter.h>
++
++using namespace network;
++using namespace rdr;
++
++static rfb::LogWriter vlog("UnixSocket");
++
++// -=- Socket initialisation
++static bool socketsInitialised = false;
++static void initSockets() {
++  if (socketsInitialised)
++    return;
++  signal(SIGPIPE, SIG_IGN);
++  socketsInitialised = true;
++}
++
++
++// -=- UnixSocket
++
++UnixSocket::UnixSocket(int sock, bool close)
++  : Socket(new FdInStream(sock), new FdOutStream(sock), true), closeFd(close)
++{
++}
++
++UnixSocket::UnixSocket(const char *path)
++  : closeFd(true)
++{
++  int sock, err, result;
++  size_t len;
++  struct sockaddr_un addr;
++
++  len = strlen(path);
++  if (len > UNIX_PATH_MAX)
++    throw SocketException("path name to long", 0);
++
++  // - Create a socket
++  initSockets();
++
++  memset(&addr, 0, sizeof(addr));
++  addr.sun_family = AF_UNIX;
++  strncpy(addr.sun_path, path, len);
++
++  sock = socket (PF_UNIX, SOCK_STREAM, 0);
++  if (sock == -1) {
++    err = errorNumber;
++    throw SocketException("unable to create socket", err);
++  }
++
++  /* Attempt to connect to the remote host */
++  while ((result = connect(sock, (struct sockaddr *)&addr, sizeof(addr))) == -1) {
++    err = errorNumber;
++    if (err == EINTR)
++      continue;
++    closesocket(sock);
++    break;
++  }
++
++  if (result == -1)
++    throw SocketException("unable connect to socket", err);
++
++  // - By default, close the socket on exec()
++  fcntl(sock, F_SETFD, FD_CLOEXEC);
++
++  // Create the input and output streams
++  instream = new FdInStream(sock);
++  outstream = new FdOutStream(sock);
++  ownStreams = true;
++}
++
++UnixSocket::~UnixSocket() {
++  if (closeFd)
++    closesocket(getFd());
++}
++
++char* UnixSocket::getMyAddress() {
++  struct sockaddr_un  info;
++  socklen_t info_size = sizeof(info);
++
++  getsockname(getFd(), (struct sockaddr *)&info, &info_size);
++  if (info.sun_family != AF_UNIX)
++    return rfb::strDup("unknown");
++  if (info.sun_path) {
++    info.sun_path[UNIX_PATH_MAX - 1] = '\0';
++    return rfb::strDup(info.sun_path);
++  } else {
++    return rfb::strDup("");
++  }
++}
++
++int UnixSocket::getMyPort() {
++  return 0;
++}
++
++char* UnixSocket::getMyEndpoint() {
++  return getMyAddress();
++}
++
++char* UnixSocket::getPeerAddress() {
++  struct sockaddr_un  info;
++  socklen_t info_size = sizeof(info);
++
++  getpeername(getFd(), (struct sockaddr *)&info, &info_size);
++
++  if (info.sun_family != AF_UNIX)
++    return rfb::strDup("unknown");
++  if (info.sun_path) {
++    info.sun_path[UNIX_PATH_MAX - 1] = '\0';
++    return rfb::strDup(info.sun_path);
++  } else {
++    return rfb::strDup("");
++  }
++}
++
++int UnixSocket::getPeerPort() {
++  return 0;
++}
++
++char* UnixSocket::getPeerEndpoint() {
++  return getPeerAddress();
++}
++
++bool UnixSocket::sameMachine() {
++  return true;
++}
++
++void UnixSocket::shutdown()
++{
++  Socket::shutdown();
++  ::shutdown(getFd(), 2);
++}
++
++bool UnixSocket::isSocket(int sock)
++{
++  struct sockaddr_un info;
++  socklen_t info_size = sizeof(info);
++  return getsockname(sock, (struct sockaddr *)&info, &info_size) >= 0;
++}
++
++bool UnixSocket::isConnected(int sock)
++{
++  struct sockaddr_un info;
++  socklen_t info_size = sizeof(info);
++  return getpeername(sock, (struct sockaddr *)&info, &info_size) >= 0;
++}
++
++UnixListener::UnixListener(const char *path, int sock, bool close_)
++  : closeFd(close_)
++{
++  size_t len = strlen(path);
++
++  if (len > UNIX_PATH_MAX)
++    throw SocketException("path is too long for UNIX socket", 0);
++
++  if (sock != -1) {
++    fd = sock;
++    return;
++  }
++
++  initSockets();
++  if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) < 0)
++    throw SocketException("unable to create listening socket", errorNumber);
++
++  // - By default, close the socket on exec()
++  fcntl(fd, F_SETFD, FD_CLOEXEC);
++
++  int one = 1;
++  if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
++		 (char *)&one, sizeof(one)) < 0) {
++    int e = errorNumber;
++    closesocket(fd);
++    throw SocketException("unable to create listening socket", e);
++  }
++
++  // - Bind it to the desired port
++  struct sockaddr_un addr;
++  memset(&addr, 0, sizeof(addr));
++  addr.sun_family = AF_UNIX;
++  strncpy(addr.sun_path, path, len);
++  (void)unlink(path);
++  if (bind(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
++    int e = errorNumber;
++    closesocket(fd);
++    throw SocketException("unable to bind listening socket", e);
++  }
++
++  // - Set it to be a listening socket
++  if (listen(fd, 1) < 0) {
++    int e = errorNumber;
++    closesocket(fd);
++    throw SocketException("unable to set socket to listening mode", e);
++  }
++}
++
++UnixListener::~UnixListener() {
++  if (closeFd) closesocket(fd);
++}
++
++void UnixListener::shutdown()
++{
++  ::shutdown(getFd(), 2);
++}
++
++Socket*
++UnixListener::accept() {
++  int new_sock = -1;
++
++  // Accept an incoming connection
++  if ((new_sock = ::accept(fd, 0, 0)) < 0)
++    throw SocketException("unable to accept new connection", errorNumber);
++
++  // - By default, close the socket on exec()
++  fcntl(new_sock, F_SETFD, FD_CLOEXEC);
++
++  // Create the socket object & check connection is allowed
++  UnixSocket* s = new UnixSocket(new_sock);
++  return s;
++}
++
++int
++UnixListener::getMyPort() {
++  return 0;
++}
++
++
++UnixFilter::UnixFilter(const char* spec) {
++}
++
++UnixFilter::~UnixFilter() {
++}
++
++bool
++UnixFilter::verifyConnection(Socket* s) {
++  return true;
++}
+diff --git a/common/network/UnixSocket.h b/common/network/UnixSocket.h
+new file mode 100644
+index 0000000..fcb367a
+--- /dev/null
++++ b/common/network/UnixSocket.h
+@@ -0,0 +1,79 @@
++/* Copyright (C) 2002-2005 RealVNC Ltd.  All Rights Reserved.
++ *
++ * This is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This software is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this software; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
++ * USA.
++ */
++
++// -=- UnixSocket.h - base-class for UNIX stream sockets.
++//     This header also defines the UnixListener class, used
++//     to listen for incoming socket connections over Unix socket
++
++#ifndef __NETWORK_UNIX_SOCKET_H__
++#define __NETWORK_UNIX_SOCKET_H__
++
++#include <network/Socket.h>
++
++#include <list>
++
++namespace network {
++
++  class UnixSocket : public Socket {
++  public:
++    UnixSocket(int sock, bool close=true);
++    UnixSocket(const char *path);
++    virtual ~UnixSocket();
++
++    virtual char* getMyAddress();
++    virtual int getMyPort();
++    virtual char* getMyEndpoint();
++
++    virtual char* getPeerAddress();
++    virtual int getPeerPort();
++    virtual char* getPeerEndpoint();
++    virtual bool sameMachine();
++
++    virtual void shutdown();
++
++    static bool isSocket(int sock);
++    static bool isConnected(int sock);
++  private:
++    bool closeFd;
++  };
++
++  class UnixListener : public SocketListener {
++  public:
++    UnixListener(const char *path, int sock=-1,
++                bool close=true);
++    virtual ~UnixListener();
++
++    virtual void shutdown();
++    virtual Socket* accept();
++    int getMyPort();
++
++  private:
++    bool closeFd;
++  };
++
++  class UnixFilter : public ConnectionFilter {
++  public:
++    UnixFilter(const char* filter);
++    virtual ~UnixFilter();
++
++    virtual bool verifyConnection(Socket* s);
++  };
++
++}
++
++#endif // __NETWORK_UNIX_SOCKET_H__
+diff --git a/common/rfb/VNCSConnectionST.cxx b/common/rfb/VNCSConnectionST.cxx
+index 618048a..07f9d2a 100644
+--- a/common/rfb/VNCSConnectionST.cxx
++++ b/common/rfb/VNCSConnectionST.cxx
+@@ -154,7 +154,9 @@ void VNCSConnectionST::processMessages()
+ 
+     // Get the underlying TCP layer to build large packets if we send
+     // multiple small responses.
++#if 0
+     network::TcpSocket::cork(sock->getFd(), true);
++#endif
+ 
+     while (getInStream()->checkNoWait(1)) {
+       if (pendingSyncFence) {
+@@ -171,7 +173,9 @@ void VNCSConnectionST::processMessages()
+     }
+ 
+     // Flush out everything in case we go idle after this.
++#if 0
+     network::TcpSocket::cork(sock->getFd(), false);
++#endif
+ 
+     inProcessMessages = false;
+ 
+@@ -929,7 +933,9 @@ void VNCSConnectionST::writeFramebufferUpdate()
+   // In continuous mode, we will be outputting at least three distinct
+   // messages. We need to aggregate these in order to not clog up TCP's
+   // congestion window.
++#if 0
+   network::TcpSocket::cork(sock->getFd(), true);
++#endif
+ 
+   // First take care of any updates that cannot contain framebuffer data
+   // changes.
+@@ -1040,7 +1046,11 @@ void VNCSConnectionST::writeFramebufferUpdate()
+   }
+ 
+ out:
++#if 1
++  return;
++#else
+   network::TcpSocket::cork(sock->getFd(), false);
++#endif
+ }
+ 
+ 
+diff --git a/unix/x0vncserver/x0vncserver.cxx b/unix/x0vncserver/x0vncserver.cxx
+index ee39fae..dcc3ec1 100644
+--- a/unix/x0vncserver/x0vncserver.cxx
++++ b/unix/x0vncserver/x0vncserver.cxx
+@@ -30,7 +30,11 @@
+ #include <rfb/VNCServerST.h>
+ #include <rfb/Configuration.h>
+ #include <rfb/Timer.h>
++#if 1
++#include <network/UnixSocket.h>
++#else
+ #include <network/TcpSocket.h>
++#endif
+ #include <tx/TXWindow.h>
+ 
+ #include <vncconfig/QueryConnectDialog.h>
+@@ -307,19 +311,32 @@ protected:
+ };
+ 
+ 
++#if 1
++class FileUnixFilter : public UnixFilter
++#else
+ class FileTcpFilter : public TcpFilter
++#endif
+ {
+ 
+ public:
+ 
++#if 1
++  FileUnixFilter(const char *fname)
++    : UnixFilter("-"), fileName(NULL), lastModTime(0)
++#else
+   FileTcpFilter(const char *fname)
+     : TcpFilter("-"), fileName(NULL), lastModTime(0)
++#endif
+   {
+     if (fname != NULL)
+       fileName = strdup((char *)fname);
+   }
+ 
++#if 1
++  virtual ~FileUnixFilter()
++#else
+   virtual ~FileTcpFilter()
++#endif
+   {
+     if (fileName != NULL)
+       free(fileName);
+@@ -327,6 +344,9 @@ public:
+ 
+   virtual bool verifyConnection(Socket* s)
+   {
++#if 1
++    return UnixFilter::verifyConnection(s);
++#else
+     if (!reloadRules()) {
+       vlog.error("Could not read IP filtering rules: rejecting all clients");
+       filter.clear();
+@@ -335,12 +355,16 @@ public:
+     }
+ 
+     return TcpFilter::verifyConnection(s);
++#endif
+   }
+ 
+ protected:
+ 
+   bool reloadRules()
+   {
++#if 1
++    return true;
++#else
+     if (fileName == NULL)
+       return true;
+ 
+@@ -369,6 +393,7 @@ protected:
+       lastModTime = st.st_mtime;
+     }
+     return true;
++#endif
+   }
+ 
+ protected:
+@@ -489,6 +514,17 @@ int main(int argc, char** argv)
+     QueryConnHandler qcHandler(dpy, &server);
+     server.setQueryConnectionHandler(&qcHandler);
+ 
++#if 1
++    char sockpath[64];
++    snprintf(sockpath, 64, "/var/run/x0vnc.%d", (int)rfbport);
++    UnixListener listener(sockpath);
++    vlog.info("Listening on socket %s\n", sockpath);
++
++    const char *hostsData = hostsFile.getData();
++    FileUnixFilter fileUnixFilter(hostsData);
++    if (strlen(hostsData) != 0)
++      listener.setFilter(&fileUnixFilter);
++#else
+     TcpListener listener(NULL, (int)rfbport);
+     vlog.info("Listening on port %d", (int)rfbport);
+ 
+@@ -497,6 +533,7 @@ int main(int argc, char** argv)
+     if (strlen(hostsData) != 0)
+       listener.setFilter(&fileTcpFilter);
+     delete[] hostsData;
++#endif
+ 
+     PollingScheduler sched((int)pollingCycle, (int)maxProcessorUsage);
+ 
+diff --git a/unix/xserver/hw/vnc/XserverDesktop.cc b/unix/xserver/hw/vnc/XserverDesktop.cc
+index 3ab1103..3d64e25 100644
+--- a/unix/xserver/hw/vnc/XserverDesktop.cc
++++ b/unix/xserver/hw/vnc/XserverDesktop.cc
+@@ -34,7 +34,11 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <sys/utsname.h>
++#if 1
++#include <network/UnixSocket.h>
++#else
+ #include <network/TcpSocket.h>
++#endif
+ #include <rfb/Exception.h>
+ #include <rfb/VNCServerST.h>
+ #include <rfb/HTTPServer.h>
+@@ -132,6 +136,16 @@ public:
+ };
+ 
+ 
++#if 1
++XserverDesktop::XserverDesktop(ScreenPtr pScreen_,
++                               network::UnixListener* listener_,
++                               const char* name, const rfb::PixelFormat &pf,
++                               void* fbptr, int stride)
++  : pScreen(pScreen_),
++    server(0),
++    listener(listener_), got_client(false),
++    deferredUpdateTimerSet(false),
++#else
+ XserverDesktop::XserverDesktop(ScreenPtr pScreen_,
+                                network::TcpListener* listener_,
+                                network::TcpListener* httpListener_,
+@@ -141,6 +155,7 @@ XserverDesktop::XserverDesktop(ScreenPtr pScreen_,
+     server(0), httpServer(0),
+     listener(listener_), httpListener(httpListener_),
+     deferredUpdateTimerSet(false),
++#endif
+     grabbing(false), ignoreHooks_(false), directFbptr(true),
+     queryConnectId(0)
+ {
+@@ -150,15 +165,19 @@ XserverDesktop::XserverDesktop(ScreenPtr pScreen_,
+   setFramebuffer(pScreen->width, pScreen->height, fbptr, stride);
+   server->setQueryConnectionHandler(this);
+ 
++#if 0
+   if (httpListener)
+     httpServer = new FileHTTPServer(this);
++#endif
+ }
+ 
+ XserverDesktop::~XserverDesktop()
+ {
+   if (!directFbptr)
+     delete [] data;
++#if 0
+   delete httpServer;
++#endif
+   delete server;
+ }
+ 
+@@ -525,8 +544,10 @@ void XserverDesktop::blockHandler(fd_set* fds, OSTimePtr timeout)
+     // any closed sockets.
+     if (listener)
+       FD_SET(listener->getFd(), fds);
++#if 0
+     if (httpListener)
+       FD_SET(httpListener->getFd(), fds);
++#endif
+ 
+     std::list<Socket*> sockets;
+     server->getSockets(&sockets);
+@@ -538,10 +559,14 @@ void XserverDesktop::blockHandler(fd_set* fds, OSTimePtr timeout)
+         server->removeSocket(*i);
+         vncClientGone(fd);
+         delete (*i);
++#if 1
++	exit(0);
++#endif
+       } else {
+         FD_SET(fd, fds);
+       }
+     }
++#if 0
+     if (httpServer) {
+       httpServer->getSockets(&sockets);
+       for (i = sockets.begin(); i != sockets.end(); i++) {
+@@ -555,6 +580,7 @@ void XserverDesktop::blockHandler(fd_set* fds, OSTimePtr timeout)
+         }
+       }
+     }
++#endif
+ 
+     // Then check when the next timer will expire.
+     // (this unfortunately also triggers any already expired timers)
+@@ -582,16 +608,24 @@ void XserverDesktop::wakeupHandler(fd_set* fds, int nfds)
+     // First check for file descriptors with something to do
+     if (nfds >= 1) {
+ 
++#if 1
++      if (listener && !got_client) {
++#else
+       if (listener) {
++#endif
+         if (FD_ISSET(listener->getFd(), fds)) {
+           FD_CLR(listener->getFd(), fds);
+           Socket* sock = listener->accept();
+           sock->outStream().setBlocking(false);
+           server->addSocket(sock);
++#if 1
++          got_client = true;
++#endif
+           vlog.debug("new client, sock %d",sock->getFd());
+         }
+       }
+ 
++#if 0
+       if (httpListener) {
+         if (FD_ISSET(httpListener->getFd(), fds)) {
+           FD_CLR(httpListener->getFd(), fds);
+@@ -601,6 +635,7 @@ void XserverDesktop::wakeupHandler(fd_set* fds, int nfds)
+           vlog.debug("new http client, sock %d",sock->getFd());
+         }
+       }
++#endif
+ 
+       std::list<Socket*> sockets;
+       server->getSockets(&sockets);
+@@ -613,6 +648,7 @@ void XserverDesktop::wakeupHandler(fd_set* fds, int nfds)
+         }
+       }
+ 
++#if 0
+       if (httpServer) {
+         httpServer->getSockets(&sockets);
+         for (i = sockets.begin(); i != sockets.end(); i++) {
+@@ -623,6 +659,7 @@ void XserverDesktop::wakeupHandler(fd_set* fds, int nfds)
+           }
+         }
+       }
++#endif
+ 
+       // We are responsible for propagating mouse movement between clients
+       if (!oldCursorPos.equals(vncInputDevice->getPointerPos())) {
+@@ -659,6 +696,7 @@ void XserverDesktop::writeBlockHandler(fd_set* fds)
+       }
+     }
+ 
++#if 0
+     if (httpServer) {
+       httpServer->getSockets(&sockets);
+       for (i = sockets.begin(); i != sockets.end(); i++) {
+@@ -673,6 +711,7 @@ void XserverDesktop::writeBlockHandler(fd_set* fds)
+         }
+       }
+     }
++#endif
+   } catch (rdr::Exception& e) {
+     vlog.error("XserverDesktop::writeBlockHandler: %s",e.str());
+   }
+@@ -696,6 +735,7 @@ void XserverDesktop::writeWakeupHandler(fd_set* fds, int nfds)
+       }
+     }
+ 
++#if 0
+     if (httpServer) {
+       httpServer->getSockets(&sockets);
+       for (i = sockets.begin(); i != sockets.end(); i++) {
+@@ -706,6 +746,7 @@ void XserverDesktop::writeWakeupHandler(fd_set* fds, int nfds)
+         }
+       }
+     }
++#endif
+   } catch (rdr::Exception& e) {
+     vlog.error("XserverDesktop::writeWakeupHandler: %s",e.str());
+   }
+diff --git a/unix/xserver/hw/vnc/XserverDesktop.h b/unix/xserver/hw/vnc/XserverDesktop.h
+index 5b4c230..2621e76 100644
+--- a/unix/xserver/hw/vnc/XserverDesktop.h
++++ b/unix/xserver/hw/vnc/XserverDesktop.h
+@@ -51,17 +51,27 @@ namespace rfb {
+   class VNCServerST;
+ }
+ 
++#if 1
++namespace network { class UnixListener; class Socket; }
++#else
+ namespace network { class TcpListener; class Socket; }
++#endif
+ 
+ class XserverDesktop : public rfb::SDesktop, public rfb::FullFramePixelBuffer,
+                        public rdr::Substitutor,
+                        public rfb::VNCServerST::QueryConnectionHandler {
+ public:
+ 
++#if 1
++  XserverDesktop(ScreenPtr pScreen, network::UnixListener* listener,
++                 const char* name, const rfb::PixelFormat &pf,
++                 void* fbptr, int stride);
++#else
+   XserverDesktop(ScreenPtr pScreen, network::TcpListener* listener,
+                  network::TcpListener* httpListener_,
+                  const char* name, const rfb::PixelFormat &pf,
+                  void* fbptr, int stride);
++#endif
+   virtual ~XserverDesktop();
+ 
+   // methods called from X server code
+@@ -126,14 +136,21 @@ private:
+ 
+   ScreenPtr pScreen;
+   rfb::VNCServerST* server;
++#if 1
++  network::UnixListener* listener;
++#else
+   rfb::HTTPServer* httpServer;
+   network::TcpListener* listener;
+   network::TcpListener* httpListener;
++#endif
+   bool deferredUpdateTimerSet;
+   bool grabbing;
+   bool ignoreHooks_;
+   bool directFbptr;
+ 
++#if 1
++  bool got_client;
++#endif
+   void* queryConnectId;
+   rfb::CharArray queryConnectAddress;
+   rfb::CharArray queryConnectUsername;
+diff --git a/unix/xserver/hw/vnc/vncExtInit.cc b/unix/xserver/hw/vnc/vncExtInit.cc
+index 1c018d2..30cb02c 100644
+--- a/unix/xserver/hw/vnc/vncExtInit.cc
++++ b/unix/xserver/hw/vnc/vncExtInit.cc
+@@ -54,7 +54,11 @@ extern "C" {
+ #include <rfb/LogWriter.h>
+ #undef max
+ #undef min
++#if 1
++#include <network/UnixSocket.h>
++#else
+ #include <network/TcpSocket.h>
++#endif
+ 
+ #include "XserverDesktop.h"
+ #include "vncHooks.h"
+@@ -223,6 +227,12 @@ void vncExtensionInit()
+     for (int scr = 0; scr < screenInfo.numScreens; scr++) {
+ 
+       if (!desktop[scr]) {
++#if 1
++        network::UnixListener* listener = 0;
++        const char *sockpath = "/var/run/vnc/vnc1";
++        listener = new network::UnixListener(sockpath);
++        vlog.info("Listening for VNC connections on socket %s", sockpath);
++#else
+         network::TcpListener* listener = 0;
+         network::TcpListener* httpListener = 0;
+         if (scr == 0 && vncInetdSock != -1) {
+@@ -248,24 +258,29 @@ void vncExtensionInit()
+ 		      listenaddr == NULL ? "all" : listenaddr, port);
+           }
+         }
++#endif
+ 
+         CharArray desktopNameStr(desktopName.getData());
+         PixelFormat pf = vncGetPixelFormat(screenInfo.screens[scr]);
+ 
+         desktop[scr] = new XserverDesktop(screenInfo.screens[scr],
+                                           listener,
++#if 0
+                                           httpListener,
++#endif
+                                           desktopNameStr.buf,
+                                           pf,
+                                           vncFbptr[scr],
+                                           vncFbstride[scr]);
+         vlog.info("created VNC server for screen %d", scr);
+ 
++#if 0
+         if (scr == 0 && vncInetdSock != -1 && !listener) {
+           network::Socket* sock = new network::TcpSocket(vncInetdSock);
+           desktop[scr]->addClient(sock, false);
+           vlog.info("added inetd sock");
+         }
++#endif
+       }
+ 
+       vncHooksInit(screenInfo.screens[scr], desktop[scr]);
+@@ -962,7 +977,11 @@ static int ProcVncExtConnect(ClientPtr client)
+       }
+ 
+       try {
++#if 1
++        network::Socket* sock = new network::UnixSocket(str.buf);
++#else
+         network::Socket* sock = new network::TcpSocket(str.buf, port);
++#endif
+         desktop[0]->addClient(sock, true);
+ 	rep.success = 1;
+       } catch (rdr::Exception& e) {
+diff --git a/unix/xserver/hw/vnc/xvnc.cc b/unix/xserver/hw/vnc/xvnc.cc
+index 8ed271e..73bb6cf 100644
+--- a/unix/xserver/hw/vnc/xvnc.cc
++++ b/unix/xserver/hw/vnc/xvnc.cc
+@@ -35,7 +35,11 @@ from the X Consortium.
+ #include <rfb/Configuration.h>
+ #include <rfb/Logger_stdio.h>
+ #include <rfb/LogWriter.h>
++#if 1
++#include <network/UnixSocket.h>
++#else
+ #include <network/TcpSocket.h>
++#endif
+ #include "vncExtInit.h"
+ #include "xorg-version.h"
+ 
+@@ -351,7 +355,13 @@ static
+ bool displayNumFree(int num)
+ {
+     try {
++#if 1
++	char sockpath[64];
++	snprintf(sockpath, 64, "/var/run/vnc%d", num);
++	network::UnixListener l(sockpath);
++#else
+ 	network::TcpListener l(NULL, 6000+num);
++#endif
+     } catch (rdr::Exception& e) {
+ 	return false;
+     }
+@@ -567,6 +577,7 @@ ddxProcessArgument(int argc, char *argv[], int i)
+ 	return 2;
+     }
+ 
++#if 0
+     if (strcmp(argv[i], "-inetd") == 0)
+     {
+ 	dup2(0,3);
+@@ -607,6 +618,7 @@ ddxProcessArgument(int argc, char *argv[], int i)
+ 
+ 	return 2;
+     }
++#endif
+ 
+     if (strcmp(argv[i], "-noclipboard") == 0) {
+ 	noclipboard = true;
+diff --git a/vncviewer/CConn.cxx b/vncviewer/CConn.cxx
+index 23f07b4..da3492b 100644
+--- a/vncviewer/CConn.cxx
++++ b/vncviewer/CConn.cxx
+@@ -38,7 +38,11 @@
+ #include <rfb/Timer.h>
+ #include <rdr/MemInStream.h>
+ #include <rdr/MemOutStream.h>
++#if 1
++#include <network/UnixSocket.h>
++#else
+ #include <network/TcpSocket.h>
++#endif
+ 
+ #include <FL/Fl.H>
+ #include <FL/fl_ask.H>
+@@ -105,10 +109,15 @@ CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
+ 
+   if(sock == NULL) {
+     try {
++#if 1
++      sock = new network::UnixSocket(vncServerName);
++      vlog.info("connected to socket %s", vncServerName);
++#else
+       getHostAndPort(vncServerName, &serverHost, &serverPort);
+ 
+       sock = new network::TcpSocket(serverHost, serverPort);
+       vlog.info(_("connected to host %s port %d"), serverHost, serverPort);
++#endif
+     } catch (rdr::Exception& e) {
+       vlog.error("%s", e.str());
+       fl_alert("%s", e.str());
+diff --git a/vncviewer/vncviewer.cxx b/vncviewer/vncviewer.cxx
+index cff74f4..cfb1a3d 100644
+--- a/vncviewer/vncviewer.cxx
++++ b/vncviewer/vncviewer.cxx
+@@ -50,7 +50,11 @@
+ #include <rfb/LogWriter.h>
+ #include <rfb/Timer.h>
+ #include <rfb/Exception.h>
++#if 1
++#include <network/UnixSocket.h>
++#else
+ #include <network/TcpSocket.h>
++#endif
+ #include <os/os.h>
+ 
+ #include <FL/Fl.H>
+@@ -343,6 +347,7 @@ createTunnel(const char *gatewayHost, const char *remoteHost,
+ 
+ static int mktunnel()
+ {
++#if 0
+   const char *gatewayHost;
+   char remoteHost[VNCSERVERNAMELEN];
+   int localPort = findFreeTcpPort();
+@@ -354,6 +359,9 @@ static int mktunnel()
+   createTunnel(gatewayHost, remoteHost, remotePort, localPort);
+ 
+   return 0;
++#else
++  return 1;
++#endif
+ }
+ #endif /* !WIN32 */
+ 
+@@ -472,6 +480,7 @@ int main(int argc, char** argv)
+   }
+ #endif
+ 
++#if 0
+   if (listenMode) {
+     try {
+       int port = 5500;
+@@ -501,6 +510,7 @@ int main(int argc, char** argv)
+       usage(argv[0]);
+ #endif
+   }
++#endif
+ 
+   CConn *cc = new CConn(vncServerName, sock);
+ 

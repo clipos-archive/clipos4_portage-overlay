@@ -1,0 +1,67 @@
+Set a fixed vncviewer window title
+
+Distributed under the terms of the GNU General Public License v2
+
+diff --git a/vncviewer/DesktopWindow.cxx b/vncviewer/DesktopWindow.cxx
+index 423d2df..d5ea2f9 100644
+--- a/vncviewer/DesktopWindow.cxx
++++ b/vncviewer/DesktopWindow.cxx
+@@ -201,10 +201,14 @@ const rfb::PixelFormat &DesktopWindow::getPreferredPF()
+ 
+ void DesktopWindow::setName(const char *name)
+ {
++#if 1
++  CharArray windowNameStr(viewerTitle.getData());;
++#else
+   CharArray windowNameStr;
+   windowNameStr.replaceBuf(new char[256]);
+ 
+   snprintf(windowNameStr.buf, 256, "%.240s - TigerVNC", name);
++#endif
+ 
+   copy_label(windowNameStr.buf);
+ }
+diff --git a/vncviewer/parameters.cxx b/vncviewer/parameters.cxx
+index 9a16481..be568b5 100644
+--- a/vncviewer/parameters.cxx
++++ b/vncviewer/parameters.cxx
+@@ -138,6 +138,9 @@ BoolParameter fullscreenSystemKeys("FullscreenSystemKeys",
+                                    "to the server when in full screen mode.",
+                                    true);
+ 
++StringParameter viewerTitle("ViewerTitle",
++                            "Title for the viewer window", "VNC Viewer");
++
+ #ifndef WIN32
+ StringParameter via("via", "Gateway to tunnel via", "");
+ #endif
+diff --git a/vncviewer/parameters.h b/vncviewer/parameters.h
+index 9827b14..a0e14e5 100644
+--- a/vncviewer/parameters.h
++++ b/vncviewer/parameters.h
+@@ -69,4 +69,5 @@ extern rfb::StringParameter via;
+ void saveViewerParameters(const char *filename, const char *servername=NULL);
+ char* loadViewerParameters(const char *filename);
+ 
++extern rfb::StringParameter viewerTitle;
+ #endif
+diff --git a/vncviewer/vncviewer.cxx b/vncviewer/vncviewer.cxx
+index cfb1a3d..91e60d2 100644
+--- a/vncviewer/vncviewer.cxx
++++ b/vncviewer/vncviewer.cxx
+@@ -413,12 +413,14 @@ int main(int argc, char** argv)
+   Configuration::enableViewerParams();
+ 
+   /* Load the default parameter settings */
+-  const char* defaultServerName;
++  const char* defaultServerName = "X";
++  /*
+   try {
+     defaultServerName = loadViewerParameters(NULL);
+   } catch (rfb::Exception& e) {
+     fl_alert("%s", e.str());
+   }
++  */
+   
+   int i = 1;
+   if (!Fl::args(argc, argv, i) || i < argc)

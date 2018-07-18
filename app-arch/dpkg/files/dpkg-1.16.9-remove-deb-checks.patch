@@ -1,0 +1,14 @@
+--- src/help.c.orig	2011-07-28 14:14:04.000000000 +0200
++++ src/help.c	2011-07-28 14:14:10.000000000 +0200
+@@ -89,11 +89,6 @@ void checkpath(void) {
+     RM,
+     TAR,
+     FIND,
+-    BACKEND,
+-    "ldconfig",
+-#if BUILD_START_STOP_DAEMON
+-    "start-stop-daemon",
+-#endif
+     NULL
+   };
+ 

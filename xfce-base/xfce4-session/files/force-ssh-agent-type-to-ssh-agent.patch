@@ -1,0 +1,14 @@
+diff --git a/settings/xfce4-session.xml b/settings/xfce4-session.xml
+index a200a37..3b29b7b 100644
+--- a/settings/xfce4-session.xml
++++ b/settings/xfce4-session.xml
+@@ -34,4 +34,9 @@
+   <property name="splash" type="empty">
+     <property name="Engine" type="string" value=""/>
+   </property>
++  <property name="startup" type="empty">
++    <property name="ssh-agent" type="empty">
++      <property name="type" type="string" value="ssh-agent"/>
++    </property>
++  </property>
+ </channel>

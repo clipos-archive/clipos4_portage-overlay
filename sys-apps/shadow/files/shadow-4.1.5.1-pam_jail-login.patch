@@ -1,0 +1,105 @@
+--- /tmp/shadow-4.1.5.1/src/login.c	2016-02-25 16:07:43.000000000 +0100
++++ /var/tmp/portage/sys-apps/shadow-4.1.5.1-r3/work/shadow-4.1.5.1/src/login.c	2016-02-26 10:33:59.650572661 +0100
+@@ -785,6 +785,7 @@
+ 			retcode = pam_authenticate (pamh, 0);
+ 
+ 			get_pam_user (&pam_user);
++			username = xstrdup (pam_user);
+ 			failent_user = get_failent_user (pam_user);
+ 
+ 			if (retcode == PAM_MAXTRIES) {
+@@ -862,6 +863,45 @@
+ 	}
+ 	PAM_FAIL_CHECK;
+ 
++	/* pam_jail */
++	/* Because of pam_jail, we need to change tty owner before entering
++	 * the jail that occurs at pam_open_session. We must also fork earlier
++	 * to be out of the jail for the pam_close_session */
++	pwd = xgetpwnam (username);
++	if (NULL == pwd) {
++		SYSLOG ((LOG_ERR, "cannot find user %s", failent_user));
++		fprintf (stderr,
++		         _("Cannot find user (%s)\n"),
++		         failent_user);
++		exit (1);
++	}
++	chown_tty (pwd);
++#ifdef USE_PAM
++	/*
++	 * We must fork before setuid() because we need to call
++	 * pam_close_session() as root.
++	 */
++	(void) signal (SIGINT, SIG_IGN);
++	child = fork ();
++	if (child < 0) {
++		/* error in fork() */
++		fprintf (stderr, _("%s: failure forking: %s"),
++		         Prog, strerror (errno));
++		PAM_END;
++		exit (0);
++	} else if (child != 0) {
++		/*
++		 * parent - wait for child to finish, then cleanup
++		 * session
++		 */
++		wait (NULL);
++		PAM_END;
++		exit (0);
++	}
++	/* child */
++#endif
++	/* pam_jail */
++
+ 	/* Open the PAM session */
+ 	get_pam_user (&pam_user);
+ 	retcode = pam_open_session (pamh, hushed (pam_user) ? PAM_SILENT : 0);
+@@ -880,15 +920,6 @@
+ 	username = xstrdup (pam_user);
+ 	failent_user = get_failent_user (username);
+ 
+-	pwd = xgetpwnam (username);
+-	if (NULL == pwd) {
+-		SYSLOG ((LOG_ERR, "cannot find user %s", failent_user));
+-		fprintf (stderr,
+-		         _("Cannot find user (%s)\n"),
+-		         username);
+-		exit (1);
+-	}
+-
+ 	/* This set up the process credential (group) and initialize the
+ 	 * supplementary group access list.
+ 	 * This has to be done before pam_setcred
+@@ -1176,32 +1207,6 @@
+ 	}
+ 	setup_limits (pwd);	/* nice, ulimit etc. */
+ #endif				/* ! USE_PAM */
+-	chown_tty (pwd);
+-
+-#ifdef USE_PAM
+-	/*
+-	 * We must fork before setuid() because we need to call
+-	 * pam_close_session() as root.
+-	 */
+-	(void) signal (SIGINT, SIG_IGN);
+-	child = fork ();
+-	if (child < 0) {
+-		/* error in fork() */
+-		fprintf (stderr, _("%s: failure forking: %s"),
+-		         Prog, strerror (errno));
+-		PAM_END;
+-		exit (0);
+-	} else if (child != 0) {
+-		/*
+-		 * parent - wait for child to finish, then cleanup
+-		 * session
+-		 */
+-		wait (NULL);
+-		PAM_END;
+-		exit (0);
+-	}
+-	/* child */
+-#endif
+ 
+ 	/* If we were init, we need to start a new session */
+ 	if (getppid() == 1) {

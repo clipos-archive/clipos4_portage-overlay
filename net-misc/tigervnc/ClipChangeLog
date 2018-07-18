@@ -1,0 +1,445 @@
+# CLIP ChangeLog for net-misc/tigervnc
+
+*tigervnc-1.4.2-r3 (31 May 2017)
+
+  31 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +tigervnc-1.4.2-r3.ebuild, -tigervnc-1.4.2-r2.ebuild,
+  files/tigervnc-1.2.0-clip-unix.patch:
+  Initialized got_client member (would prevent Xvnc from accepting clients).
+
+*tigervnc-1.4.2-r2 (26 Oct 2016)
+
+  26 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +tigervnc-1.4.2-r2.ebuild, -tigervnc-1.3.1-r4.ebuild,
+  +files/tigervnc-1.4.2-clip-disable-viewer-hotkeys.patch,
+  +files/tigervnc-1.4.2-clip-disable-vncserver-hotkeys.patch,
+  +files/tigervnc-1.4.2-clip-rm-modes.patch,
+  +files/tigervnc-1.4.2-clip-unix.patch,
+  +files/tigervnc-1.4.2-clip-window-title.patch,
+  -files/tigervnc-1.2.0-clip-rm-modes.patch,
+  -files/tigervnc-1.2.0-clip-unix.patch,
+  -files/tigervnc-1.3.0-clip-no-home.patch,
+  -files/tigervnc-1.3.1-CVE-2014-8241.patch,
+  -files/tigervnc-1.3.1-clip-unix.patch:
+  Update to 1.4.2-r2 and fix Ctrl and Alt+Gr handling issues.
+
+*tigervnc-1.3.1-r4 (08 Mar 2016)
+
+  08 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.1-r4.ebuild, -tigervnc-1.3.1-r3.ebuild,
+  -files/tigervnc-1.3.0-clip-unix.patch,
+  +files/1.3.1-CVE-2014-8240.patch,
+  +files/1005_server_xserver-1.17.patch,
+  +files/tigervnc-1.3.1-clip-unix.patch:
+  RBump to latest gentoo stable.
+  Update xorg-server depdendency to 1.17 for 4.4.3 and get porting patch from
+  tigervnc 1.4.2 distfile.
+  Adapt unix socket patch for xorg-server 1.17.
+
+*tigervnc-1.3.1-r3 (15 Jan 2016)
+
+  15 Jan 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.1-r3.ebuild, -tigervnc-1.3.1-r2.ebuild, 
+  +tigervnc-1.3.1-CVE-2014-8241.patch:
+  Add patch for CVE-2014-8241. Set explicit dependency on nettle
+
+*tigervnc-1.3.1-r2 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.1-r2.ebuild, -tigervnc-1.3.1-r1.ebuild:
+  Rbump, nettle revdep.
+
+  13 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  tigervnc-1.3.1-r1.ebuild:
+  Sync to gentoo latest, bump xorg-server dependency for 4.4.2.
+
+
+*tigervnc-1.3.1-r1 (21 May 2014)
+
+  21 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.1-r1.ebuild, -tigervnc-1.3.1.ebuild,
+  -files/exa-only-draw-valid-trapezoids.patch:
+  Bump xorg-server to 1.15.1.
+
+*tigervnc-1.3.1 (26 Mar 2014)
+
+  26 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.1.ebuild, -tigervnc-1.3.0-r6.ebuild:
+  Bump to latest, fix for CVE-2014-0011.
+
+*tigervnc-1.3.0-r6 (18 Dec 2013)
+
+  18 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0-r6.ebuild, -tigervnc-1.3.0-r5.ebuild,
+  -files/xorg-server-1.12-cve-2013-4396.patch,
+  +files/exa-only-draw-valid-trapezoids.patch:
+  Bump xorg-server to 1.14.5, add patch for CVE-2013-6424.
+
+*tigervnc-1.3.0-r5 (17 Oct 2013)
+
+  17 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0-r5.ebuild, -tigervnc-1.3.0-r4.ebuild,
+  +files/xorg-server-1.12-cve-2013-4396.patch:
+  Bump xorg-server to 1.14.3, add patch for CVE-2013-4396.
+
+*tigervnc-1.3.0-r4 (07 Oct 2013)
+
+  07 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0-r4.ebuild, -tigervnc-1.3.0-r3.ebuild,
+  files/XClip:
+  Activate DeferUpdate (with a 10ms delay), since this seems
+  to fix some libreoffice bugs.
+
+*tigervnc-1.3.0-r3 (26 Aug 2013)
+
+  26 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0-r3.ebuild, -tigervnc-1.3.0-r2.ebuild,
+  -files/tigervnc-1.3.0-clip-input.patch:
+  Remove input patch now that input issues seem to be solved 
+  in xorg.
+
+*tigervnc-1.3.0-r2 (23 Aug 2013)
+
+  23 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0-r2.ebuild, -tigervnc-1.3.0-r1.ebuild,
+  files/tigervnc-1.3.0-clip-input.patch:
+  Comment out fake level three press / release code which 
+  seems to be somewhat broken.
+
+*tigervnc-1.3.0-r1 (22 Aug 2013)
+
+  22 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0-r1.ebuild, -tigervnc-1.3.0.ebuild,
+  +files/tigervnc-1.3.0-clip-input.patch:
+  Add a quick & dirty patch to fix handling of Ctrl+key in Xvnc.
+
+*tigervnc-1.3.0 (20 Aug 2013)
+
+  20 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.3.0.ebuild, -tigervnc-1.2.0-r3.ebuild,
+  +files/tigervnc-1.3.0-clip-unix.patch,
+  +files/tigervnc-1.3.0-clip-no-home.patch,
+  -files/tigervnc-1.2.0-clip-unix.patch,
+  -files/tigervnc-1.2.0-fb.h-fix.patch,
+  -files/tigervnc-1.2.0-randr-r4930-r4940.patch,
+  files/set-screen-size.sh:
+  Bump to latest, based on gentoo's 1.2.80_p5065, with a rebased
+  patch distfile (all patches still apply, except 035_glx.patch).
+  Add patch to deactivate homedir lookup.
+  Note : set-screen-size.sh now returns immediately, since the viewer
+  basically sets the screen size automatically.
+
+*tigervnc-1.2.0-r3 (03 Apr 2013)
+
+  03 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.2.0-r3.ebuild, -tigervnc-1.2.0-r2.ebuild,
+  +files/tigervnc-1.2.0-randr-r4930-r4940.patch,
+  +files/tigervnc-1.2.0-clip-rm-modes.patch,
+  -files/tigervnc-1.0.1-clip-rm-modes.patch,
+  files/set-screen-size.sh:
+  Add a patch (basically revs 4930 to 4940 from upstream svn)
+  to make xvnc use Randr-1.2 properly, and define a 'valid'
+  gamma size so that xrandr keeps working.
+
+*tigervnc-1.2.0-r2 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.2.0-r2.ebuild, -tigervnc-1.2.0-r1.ebuild,
+  +files/tigervnc-1.2.0-fb.h-fix.patch,
+  -files/xorg111.patch, -files/xorg112.patch,
+  -files/xorg113.patch, -files/install_paths.patch,
+  -files/no-force-fltk.patch, -files/java7.patch,
+  -files/fontconfig_link.patch, -files/gnutls.patch,
+  -files/xserver113.patch, -files/1.2.0-gethomedir.patch:
+  Apply changes from official gentoo ebuild - move most 
+  patches to a distfile and update dependencies.
+
+*tigervnc-1.2.0-r1 (14 Sep 2012)
+
+  14 Sep 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +tigervnc-1.2.0-r1.ebuild, -tigervnc-1.2.0.ebuild:
+  files/fix-fl-move-button-press.patch added, ignore FL_MOVE for now, it
+  breaks CLIP vncviewer on touchscreens
+
+*tigervnc-1.2.0 (13 Sep 2012)
+
+  13 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.2.0.ebuild, -tigervnc-1.1.0-r7.ebuild,
+  +files/1.2.0-gethomedir.patch, +files/fontconfig_link.patch,
+  +files/gnutls.patch, +files/install_paths.patch,
+  +files/java7.patch, +files/no-force-fltk.patch,
+  +files/xorg111.patch, +files/xorg112.patch,
+  +files/xorg113.patch, +files/xserver113.patch,
+  +files/tigervnc-1.2.0-clip-unix.patch,
+  -files/1.1.0-export_missing_symbol.patch,
+  -files/1.1.0-gethomedir.patch,
+  -files/1.1.0-xorg-1.12_fix.patch,
+  -files/tigervnc-1.0.1-clip-unix.patch,
+  -files/tigervnc-1.0.1-horizontal-scroll.patch,
+  files/viewer.sh, files/tigervnc.initd:
+  Bump to latest, switch to cmake. Ebuild from bug.gentoo.org #410929.
+
+*tigervnc-1.1.0-r7 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.1.0-r7.ebuild, -tigervnc-1.0.2_pre20110618-r5.ebuild,
+  +files/1.1.0-gethomedir.patch, +files/1.1.0-export_missing_symbol.patch,
+  +files/1.1.0-xorg-1.12_fix.patch:
+  Bump to latest, bump xorg to 1.12.3.
+
+*tigervnc-1.0.2_pre20110618-r5 (09 Jul 2012)
+
+  09 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20110618-r5.ebuild, -tigervnc-1.0.2_pre20110618-r4.ebuild:
+  Bump xorg distfile to 1.10.6.
+
+*tigervnc-1.0.2_pre20110618-r4 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20110618-r4.ebuild, -tigervnc-1.0.2_pre20110618-r3.ebuild:
+  Force rebuild
+
+*tigervnc-1.0.2_pre20110618-r3 (04 Nov 2011)
+
+  04 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20110618-r3.ebuild, -tigervnc-1.0.2_pre20110618-r2.ebuild,
+  files/XClip: 
+  Support 'mixborder' visual layout.
+
+  19 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  tigervnc-1.0.2_pre20110618-r2.ebuild:
+  Bump xorg distfile to 1.10.4.
+
+*tigervnc-1.0.2_pre20110618-r2 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20110618-r2.ebuild, -tigervnc-1.0.2_pre20110618-r1.ebuild,
+  files/XClip, files/tigervnc-1.0.1-clip-unix.patch:
+  Move log/error files to user's HOME, to avoid possibly saturating /tmp.
+  Fix connection path name in UNIX socket logging.
+
+*tigervnc-1.0.2_pre20110618-r1 (05 Aug 2011)
+
+  05 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20110618-r1.ebuild, -tigervnc-1.0.2_pre20110618.ebuild,
+  files/XClip: 
+  Shorten fullscreen Xvnc by 3 pixels vertically, so it does'nt get clipped 
+  because of openbox adding a 3 pixels window decoration on top.
+
+*tigervnc-1.0.2_pre20110618 (11 Jul 2011)
+
+  11 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20110618.ebuild, -tigervnc-1.0.2_pre20100914-r4.ebuild,
+  files/tigervnc-1.0.1-clip-unix.patch,
+  +files/xorg-server-1.10.2-clip-cprefix.patch,
+  -files/tigervnc-1.0.1-disable-pam-gnutls.patch:
+  Bump to latest. Add patch to fix xserver dri lookup path, remove pam/gnutls
+  patch - use configure args instead.
+
+*tigervnc-1.0.2_pre20100914-r4 (11 Apr 2011)
+
+  11 Apr 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100914-r4.ebuild, -tigervnc-1.0.2_pre20100914-r3.ebuild,
+  +files/tigervnc-1.0.1-horizontal-scroll.patch:
+  Fix mouse scroll.
+
+*tigervnc-1.0.2_pre20100914-r3 (24 Mar 2011)
+
+  24 Mar 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100914-r3.ebuild, -tigervnc-1.0.2_pre20100914-r2.ebuild,
+  files/XClip, files/set-screen-size.sh:
+  Vertical bar for adeskbar.
+
+*tigervnc-1.0.2_pre20100914-r2 (05 Oct 2010)
+
+  05 Oct 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100914-r2.ebuild, -tigervnc-1.0.2_pre20100914-r1.ebuild,
+  files/XClip:
+  Kill all RM processes (except protected ones) at the end of the session.
+
+*tigervnc-1.0.2_pre20100914-r1 (21 Sep 2010)
+
+  21 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100914-r1.ebuild, -tigervnc-1.0.2_pre20100914.ebuild,
+  files/XClip:
+  Add Type1 and OTF dirs to font path.
+
+*tigervnc-1.0.2_p20100914 (17 Sep 2010)
+
+  17 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100914.ebuild, -tigervnc-1.0.2_pre20100306-r6.ebuild,
+  files/tigervnc-1.0.1-clip-unix.patch,
+  +files/tigervnc-1.0.1-disable-pam-gnutls.patch:
+  Bump to latest. Disable automatic pickup of PAM and GNUTLS dependencies.
+  Set default keymap to fr(oss) on clip, to work around setxkbmap issues
+  (setxkbmap fr oss would not do anything until after the first actual key stroke).
+  Enable composite extension, disable dpms.
+
+*tigervnc-1.0.2_pre20100306-r6 (13 Jul 2010)
+
+  13 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100306-r6.ebuild, -tigervnc-1.0.2_pre20100306-r5.ebuild,
+  -files/tigervnc-1.0.0-pointer-interval.patch, files/viewer.sh:
+  Remove pointer interval workaround, as it is no longer needed with the newest
+  xorg. Switch to xorg-1.8.2 source base.
+
+*tigervnc-1.0.2_pre20100306-r5 (08 Jun 2010)
+
+  08 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.2_pre20100306-r5.ebuild, -tigervnc-1.0.1_pre20100529-r2.ebuild,
+  files/tigervnc-1.0.1-clip-unix.patch, files/XClip:
+  Revert back to previous snapshot - I can't find a proper way to fix the keymap
+  on the latest one. The issue seems to be that the keymap remains empty until the
+  first key event, which means whatever setxkbmap call I run before that has no 
+  effect whatsoever. Problem is known upstream (cf. RedHat bugzilla), and should
+  be fixed for 1.1.0, so we'll wait till then.
+  XClip: deferUpdates=0.
+  Fix cleanup of unneeded binaries.
+  Bump version to 1.0.2 to allow update.
+
+*tigervnc-1.0.1_pre20100529-r2 (07 Jun 2010)
+
+  07 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.1_pre20100529-r2.ebuild, -tigervnc-1.0.1_pre20100529-r1.ebuild,
+  files/XClip:
+  Fix setxkbmap call.
+
+*tigervnc-1.0.1_pre20100529-r1 (03 Jun 2010)
+
+  03 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.1_pre20100529-r1.ebuild, -tigervnc-1.0.1_pre20100306-r4.ebuild,
+  files/tigervnc-1.0.1-clip-unix.patch:
+  Bump to latest snapshot.
+
+*tigervnc-1.0.1_pre20100306-r4 (28 May 2010)
+
+  28 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.1_pre20100306-r4.ebuild, -tigervnc-1.0.1_pre20100306-r3.ebuild,
+  +files/set-screen-size.sh, files/viewer.sh:
+  Do no set window size on client side to allow redimensionning from the server
+  side, including to a bigger size than the initial one.
+  Add a set-screen-size.sh script on the server side, to resize the VNC screen
+  through XRANDR (called by clip core when main display is resize).
+
+*tigervnc-1.0.1_pre20100306-r3 (31 Mar 2010)
+
+  31 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.1_pre20100306-r3.ebuild, -tigervnc-1.0.1_pre20100306-r2.ebuild,
+  +files/tigervnc-1.0.1-clip-rm-modes.patch:
+  New patch - generate default randr modes fit for RM jails. Smallish fixes
+  for viewer side.
+
+*tigervnc-1.0.1_pre20100306-r2 (30 Mar 2010)
+
+  30 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.1_pre20100306-r2.ebuild, -tigervnc-1.0.1_pre20100306-r1.ebuild,
+  files/XClip:
+  Deactivate dpms in XClip.
+
+*tigervnc-1.0.1_pre20100306-r1 (26 Mar 2010)
+
+  26 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.1_pre20100306-r1.ebuild, -tigervnc-1.0.0-r10.ebuild,
+  -files/tigervnc-0.0.91-clip-unix.patch,
+  -files/tigervnc-1.0.0-stuck-modifiers.patch,
+  +files/tigervnc-1.0.1-clip-unix.patch, files/XClip:
+  Bump to latest pre-release, build with xorg-server-1.7.5 and activate
+  glx support (mesa).
+
+*tigervnc-1.0.0-r10 (03 Mar 2010)
+
+  03 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r10.ebuild, -tigervnc-1.0.0-r9.ebuild:
+  Build without bundled zlib and jpeg, cf. gentoo bug #273107.
+
+*tigervnc-1.0.0-r9 (29 Jan 2010)
+
+  29 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r9.ebuild, -tigervnc-1.0.0-r8.ebuild,
+  -files/XClip.1, -files/XClip.2.pp, -files/XClip.3,
+  -files/viewer.sh.1, -files/viewer.sh.2.pp, -files/viewer.sh.3,
+  +files/XClip, +files/viewer.sh:
+  Merge together HERMES and CLIP-RM configs - XClip and viewer.sh
+  will adapt their geometry based on whether or not /var/run/fullscreen
+  is present.
+
+*tigervnc-1.0.0-r8 (19 Jan 2010)
+
+  19 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r8.ebuild, -tigervnc-1.0.0-r7.ebuild,
+  files/viewer.sh.3:
+  Revert change that breaks viewer startup.
+
+*tigervnc-1.0.0-r7 (14 Jan 2010)
+
+  14 Jan 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r7.ebuild, -tigervnc-1.0.0-r6.ebuild,
+  -files/viewer.sh, +files/viewer.sh.1,
+  +files/viewer.sh.2.pp, +files/viewer.sh.3,
+  -files/XClip, +files/XClip.1,
+  +files/XClip.2.pp, +files/XClip.3:
+  Add custom screen position.
+
+*tigervnc-1.0.0-r6 (16 Dec 2009)
+
+  16 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r6.ebuild, -tigervnc-1.0.0-r5.ebuild,
+  +files/tigervnc-1.0.0-stuck-modifiers, files/XClip:
+  Add a patch from tigervnc svn to resolve (at least some of)
+  the stuck modifier issues.
+  Switch dpi from 100 to 96, which is what most apps are used
+  to (and it does make a difference...).
+
+*tigervnc-1.0.0-r5 (02 Nov 2009)
+
+  02 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r5.ebuild, -tigervnc-1.0.0-r4.ebuild,
+  files/XClip:
+  Read geometry off /etc/core/current.geom, if present.
+
+*tigervnc-1.0.0-r4 (15 Oct 2009)
+
+  15 Oct 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r4.ebuild, -tigervnc-1.0.0-r3.ebuild,
+  files/viewer.sh:
+  Adjust options for viewer.sh.
+
+*tigervnc-1.0.0-r3 (28 Sep 2009)
+
+  28 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r3.ebuild, -tigervnc-1.0.0-r2.ebuild,
+  files/XClip: 
+  Switch to fr(oss) keyboard variant.
+
+*tigervnc-1.0.0-r2 (11 Sep 2009)
+
+  11 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r2.ebuild, -tigervnc-1.0.0-r1.ebuild,
+  files/XClip:
+  Enable XKB extension an run setxkbmap fr in XClip.
+
+*tigervnc-1.0.0-r1 (03 Sep 2009)
+
+  03 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0-r1.ebuild, -tigervnc-1.0.0.ebuild:
+  files/tigervnc-0.0.91-clip-unix.patch, files/XClip:
+  Unlink sockets before binding to them. Use 100dpi as default.
+
+*tigervnc-1.0.0 (27 Aug 2009)
+
+  27 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tigervnc-1.0.0.ebuild, -tigervnc-0.0.91.ebuild:
+  Bump to latest stable.
+
+  17 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/tigervnc-0.0.91-clip-unix.patch:
+  Remove viewer pop-up menu.
+
+*tigervnc-0.0.91 (05 Aug 2009)
+
+  05 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  tigervnc-0.0.91.ebuild, +files/tigervnc-0.0.91-clip-unix.patch,
+  +files/XClip, +files/viewer.sh:
+  Initial import - tigervnc, patched in the same way as tightvnc, 
+  to use UNIX sockets and exit with first client.
+

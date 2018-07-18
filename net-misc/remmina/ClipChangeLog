@@ -1,0 +1,71 @@
+# CLIP ChangeLog for net-misc/remmina
+
+*remmina-1.2.0_rc14 (24 Jun 2016)
+
+  24 Jun 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +remmina-1.2.0_rc14.ebuild, -remmina-1.2.0_rc3-r1.ebuild:
+  Bump to latest released version (no new version on gentoo).
+
+*remmina-1.2.0_rc3-r1 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-1.2.0_rc3-r1.ebuild, -remmina-1.2.0_rc3.ebuild:
+  clip-deps fix.
+
+*remmina-1.2.0_rc3 (01 Dec 2015)
+
+  01 Dec 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +remmina-1.2.0_rc3.ebuild,
+  +files/clip-rdp-default-shared-folder.patch,
+  -remmina-1.0.0.99_pre20130723.ebuild:
+
+  Bump to latest gentoo unstable release (there is no stable release for x86).
+  Add fix for nasty GTK/KDE bug on "shared folder" selection widget when using
+  RDP.
+
+*remmina-1.0.0.99_pre20130723 (28 Aug 2013)
+
+  28 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-1.0.0.99_pre20130723.ebuild, -remmina-1.0.0.99_pre20130609-r1.ebuild,
+  +files/remmina-external_tools.patch:
+  Bump to latest snapshot.
+
+*remmina-1.0.0.99_pre20130609 (26 Jun 2013)
+
+  26 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-1.0.0.99_pre20130609.ebuild, -remmina-1.0.0_p20121004-r1.ebuild,
+  -files/remmina-1.0.0_p20121004-avahi.patch:
+  Bump to use snapshot from latest git pull request, that works with 
+  latest freerdp snapshot. Seems to fix some segfaults encountered
+  when connecting over RDP with previous version.
+
+*remmina-1.0.0_p20121004-r1 (27 Dec 2012)
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-1.0.0_p20121004-r1.ebuild, -remmina-1.0.0_p20121004.ebuild:
+  Re-add DESCRIPTION_FR and CATEGORY_FR which got lost in the last update...
+
+*remmina-1.0.0_p20121004 (11 Dec 2012)
+
+  11 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-1.0.0_p20121004.ebuild, -remmina-0.9.3-r1.ebuild,
+  +files/remmina-1.0.0_p20121004-avahi.patch:
+  Bump to latest version.
+
+*remmina-0.9.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-0.9.3-r1.ebuild, -remmina-0.9.3.ebuild:
+  Force rebuild
+
+*remmina-0.9.3 (30 Dec 2011)
+
+  30 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +remmina-0.9.3.ebuild, -remmina-0.7.5.ebuild:
+  Bump to latest.
+
+*remmina-0.7.5 (21 Sep 2010)
+
+  21 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  remmina-0.7.5.ebuild:
+  Initial import, clip-deps fixes, verictl perms.

@@ -1,0 +1,22 @@
+# CLIP ChangeLog for dev-libs/libmng
+
+*libmng-1.0.10-r1 (01 Aug 2012)
+
+  01 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmng-1.0.10-r1.ebuild, -libmng-1.0.10.ebuild:
+  Bump to latest from gentoo - autotools fixes + switch to virtual/jpeg 
+  dependency.
+
+*libmng-1.0.10 (02 Apr 2010)
+
+  02 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmng-1.0.10.ebuild, -libmng-1.0.9-r2.ebuild,
+  -files/libmng-1.0.9-jpeg-compile.patch:
+  Bump to latest.
+
+*libmng-1.0.9-r2 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  libmng-1.0.9-r2.ebuild:
+  Initial overlay import from gentoo's 1.0.9-r1. Add IUSE clip-deps
+  to remove dependency on zlib.

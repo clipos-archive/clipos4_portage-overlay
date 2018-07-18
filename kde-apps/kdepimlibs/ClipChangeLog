@@ -1,0 +1,26 @@
+# CLIP ChangeLog for kde-base/kdepim
+
+*kdepimlibs-4.12.5-r1 (02 Jan 2015)
+
+  09 Fev 2016; Philippe Trebuchet <clipos@ssi.gouv.fr>
+  +kdepimlibs-4.14.3.ebuild, -kdepimlibs-4.12.5-r1.ebuild:
+  Bump to latest.
+
+*kdepimlibs-4.12.5-r1 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdepimlibs-4.12.5-r1.ebuild, -kdepimlibs-4.12.5.ebuild:
+  Force rebuild (boost revdep).
+
+*kdepimlibs-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdepimlibs-4.12.5.ebuild, -kdepimlibs-4.12.3.ebuild:
+  Bump to latest.
+
+*kdepim-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  kdepim-4.12.3.ebuild:
+  Initial overlay import - add conflict against older kdepim-runtime.
+

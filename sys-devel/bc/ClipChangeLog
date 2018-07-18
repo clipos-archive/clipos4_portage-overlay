@@ -1,0 +1,11 @@
+# CLIP ChangeLog for sys-devel/bc
+
+*bc-1.06-r7 (06 Aug 2010)
+
+  06 Aug 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +bc-1.06-r7.ebuild, -bc-1.06-r6.ebuild:
+  Add DESCRIPTION_FR.
+
+  12 Dec 2007; Olivier Levillain <clipos@ssi.gouv.fr>
+  bc-1.06-r6.ebuild:
+  Initial CLIP import.

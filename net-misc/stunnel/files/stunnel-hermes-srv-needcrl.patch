@@ -1,0 +1,48 @@
+diff -pruN stunnel-4.31.orig/src/verify.c stunnel-4.31/src/verify.c
+--- stunnel-4.31.orig/src/verify.c	2010-01-29 11:27:52.000000000 +0100
++++ stunnel-4.31/src/verify.c	2010-08-19 18:33:36.000000000 +0200
+@@ -230,6 +230,7 @@ static int crl_check(CLI *c, X509_STORE_
+     int i, n, rc;
+     char *cp;
+     ASN1_TIME *last_update=NULL, *next_update=NULL;
++    int good_crl=0;
+ 
+     /* determine certificate ingredients in advance */
+     cert=X509_STORE_CTX_get_current_cert(callback_ctx);
+@@ -249,8 +250,8 @@ static int crl_check(CLI *c, X509_STORE_
+         OPENSSL_free(cp);
+         last_update=X509_CRL_get_lastUpdate(crl);
+         next_update=X509_CRL_get_nextUpdate(crl);
+-        log_time(LOG_INFO, "CRL: last update", last_update);
+-        log_time(LOG_INFO, "CRL: next update", next_update);
++        log_time(LOG_NOTICE, "CRL: last update", last_update);
++        log_time(LOG_NOTICE, "CRL: next update", next_update);
+ 
+         /* verify the signature on this CRL */
+         pubkey=X509_get_pubkey(cert);
+@@ -282,6 +283,7 @@ static int crl_check(CLI *c, X509_STORE_
+             return 0; /* reject connection */
+         }
+         X509_OBJECT_free_contents(&obj);
++        good_crl=1;
+     }
+ 
+     /* try to retrieve a CRL corresponding to the _issuer_ of
+@@ -317,6 +319,17 @@ static int crl_check(CLI *c, X509_STORE_
+             }
+         }
+         X509_OBJECT_free_contents(&obj);
++        good_crl=1;
++    }
++    
++    if (good_crl==0) {
++    	if ((service_options.crl_dir != NULL) || (service_options.crl_file !=  NULL)) {
++    		s_log( LOG_ERR, "No CRL found to verify certificate %s.", subject_name);
++    		return 0;
++    	} else {
++    		s_log( LOG_WARNING, "No CRL found to verify certificate %s.", subject_name);
++    		return 1;
++    	}
+     }
+     s_log(LOG_NOTICE, "CRL: verification passed");
+     return 1; /* accept connection */

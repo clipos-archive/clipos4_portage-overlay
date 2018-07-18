@@ -1,0 +1,7 @@
+#%PAM-1.0
+auth       include	system-auth
+auth       [success=done default=die]	pam_exec_pwd.so
+account    include	system-auth
+password   include	system-auth
+session    include	system-auth
+session    required     pam_exec_pwd.so close_run_all

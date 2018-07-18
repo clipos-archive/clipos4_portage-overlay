@@ -1,0 +1,11 @@
+--- configure.ac.orig	2013-04-11 14:16:48.152965289 +0200
++++ configure.ac	2013-04-11 14:17:28.776297193 +0200
+@@ -94,7 +94,7 @@ REQ_DBUS_VERSION=0.78
+ REQ_LIBCANBERRA_GTK_VERSION=0.4
+ pkg_modules="
+ 	gtk+-2.0 >= $REQ_GTK_VERSION, \
+-	glib-2.0 >= $REQ_GLIB_VERSION, \
++	gmodule-2.0 >= $REQ_GLIB_VERSION, \
+ 	dbus-1 >= $REQ_DBUS_VERSION, \
+ 	dbus-glib-1 >= $REQ_DBUS_VERSION, \
+         libcanberra-gtk >= $REQ_LIBCANBERRA_GTK_VERSION, \

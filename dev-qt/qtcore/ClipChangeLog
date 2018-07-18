@@ -1,0 +1,74 @@
+# CLIP ChangeLog for dev-qt/qtcore
+
+*qtcore-4.8.5-r6 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +qtcore-4.8.5-r6.ebuild, -qtcore-4.8.5-r5.ebuild:
+  Rbump to link with icu 58.2.
+
+*qtcore-4.8.5-r5 (06 Oct 2016)
+
+  06 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +qtcore-4.8.5-r5.ebuild, -qtcore-4.8.5-r4.ebuild:
+  RBump to rebuild for GCC update.
+
+*qtcore-4.8.5-r4 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +qtcore-4.8.5-r4.ebuild, -qtcore-4.8.5-r3.ebuild:
+  Rbump to link with icu 55.1.
+
+*qtcore-4.8.5-r3 (13 May 2015)
+
+  13 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +qtcore-4.8.5-r3.ebuild, -qtcore-4.8.5-r2.ebuild,
+	+files/qtcore-4.8.5-honor-ExcludeSocketNotifiers-in-glib-event-loop.patch,
+	+files/qtcore-4.8.5-qeventdispatcher-recursive.patch,
+	+files/qtcore-4.8.5-moc-boost-lexical-cast.patch,
+  -files/moc-boost-lexical-cast.patch:
+  Bump to latest stable and rebuild against icu 54.1.
+
+*qtcore-4.8.5-r2 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qtcore-4.8.5-r2.ebuild, -qtcore-4.8.5-r1.ebuild:
+  Force rebuild (icu revdep).
+
+*qtcore-4.8.5-r1 (21 Feb 2014)
+
+  21 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qtcore-4.8.5-r1.ebuild, -qtcore-4.8.4-r8.ebuild,
+  +files/moc-boost-lexical-cast.patch,
+  -files/CVE-2013-0254.patch,
+  -files/blacklist-mis-issued-Turktrust-certs.patch,
+  -files/fix-call-to-QMetaObject-metaCall-from-updateProperty.patch,
+  -files/moc-workaround-for-BOOST_JOIN.patch,
+  -files/rename-qAbs-function-for-timeval.patch,
+  -files/set-pkg-config-locations-directly-to-install-dir.patch:
+  Bump to latest.
+
+*qtcore-4.8.4-r8 (07 Jan 2014)
+
+  07 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qtcore-4.8.4-r8.ebuild, -qtcore-4.8.4-r7.ebuild,
+  +files/CVE-2013-4549-01-disallow-deep-or-widely-nested-entity-refs.patch,
+  +files/CVE-2013-4549-02-fully-expand-entities.patch,
+  Add fix for CVE-2013-4549.
+
+*qtcore-4.8.4-r7 (15 Nov 2013)
+
+  15 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qtcore-4.8.4-r7.ebuild, -qtcore-4.8.4-r6.ebuild:
+  Force rebuild (icu revdep).
+
+*qtcore-4.8.4-r6 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qtcore-4.8.4-r6.ebuild, -qtcore-4.8.4-r5.ebuild:
+  Force rebuild.
+
+*qtcore-4.8.4-r5 (22 Jul 2013)
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  qtcore-4.8.4-r5.ebuild:
+  Initial import - same changeset as x11-libs/qt-core.

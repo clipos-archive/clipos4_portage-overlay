@@ -1,0 +1,54 @@
+# CLIP ChangeLog for x11-proto/xextproto
+
+*xextproto-7.3.0 (21 May 2014)
+
+  21 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xextproto-7.3.0.ebuild, -xextproto-7.2.0.ebuild,
+  -files/7.0.5-dont-pull-in-Xmd-h-in-Xge-h.patch,
+  -files/xextproto-7.2.0-clip-domains.patch,
+  +files/xextproto-7.3.0-clip-domains.patch:
+  Bump to latest.
+
+  07 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  xextproto-7.2.0.ebuild:
+  Add XORG_MULTILIB.
+
+*xextproto-7.2.0 (06 Jul 2011)
+
+  06 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xextproto-7.2.0.ebuild, -xextproto-7.1.1.ebuild,
+  +files/xextproto-7.2.0-clip-domains.patch,
+  -files/xextproto-7.1.1-clip-domains.patch:
+  Bump to latest.
+
+*xextproto-7.1.1 (16 Mar 2010)
+
+  16 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xextproto-7.1.1.ebuild, -xextproto-7.0.5.ebuild,
+  +files/xextproto-7.1.1-clip-domains.patch,
+  -files/xextproto-7.0.5-clip-domains.patch:
+  Bump to latest. Note: part of the patch is moved to x11-libs/libX11.
+
+*xextproto-7.0.5 (09 Mar 2010)
+
+  09 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xextproto-7.0.5.ebuild, -xextproto-7.0.4.ebuild,
+  -files/xextproto-7.0.2-clip-domains.patch,
+  +files/xextproto-7.0.4-clip-domains.patch,
+  +files/7.0.5-dont-pull-in-Xmd-h-in-Xge-h.patch:
+  Bump to gentoo latest.
+
+*xextproto-7.0.4 (02 Sep 2009)
+
+  02 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xextproto-7.0.4.ebuild, -xextproto-7.0.2.ebuild,
+  -files/xextproto-7.0.2-clip-domains.patch,
+  +files/xextproto-7.0.4-clip-domains.patch:
+  Bump to gentoo latest.
+
+* xextproto-7.0.2 (20 Jul 2006)
+
+  20 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  xextproto-7.0.2.ebuild,
+  +files/xextproto-7.0.2-clip-domains.patch:
+  Initial CLIP import, added clip-domains support.

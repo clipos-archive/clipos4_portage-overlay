@@ -1,0 +1,11 @@
+--- miscutils/crond.c.orig	2007-05-30 15:19:36.559577008 +0200
++++ miscutils/crond.c	2007-05-30 15:20:01.374804520 +0200
+@@ -36,7 +36,7 @@
+ #define arysize(ary)    (sizeof(ary)/sizeof((ary)[0]))
+ 
+ #ifndef CRONTABS
+-#define CRONTABS        "/var/spool/cron/crontabs"
++#define CRONTABS        "/etc/cron/crontab"
+ #endif
+ #ifndef TMPDIR
+ #define TMPDIR          "/var/spool/cron"

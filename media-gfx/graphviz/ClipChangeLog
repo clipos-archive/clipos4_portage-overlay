@@ -1,0 +1,28 @@
+# CLIP ChangeLog for media-gfx/graphviz
+
+*graphviz-28.0-r1 (23 Feb 2016)
+
+  23 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +graphviz-2.38.0-r1.ebuild, -graphviz-2.26.3-r5.ebuild,
+  +files/graphviz-2.34.0-Xaw-configure.patch,
+  +files/graphviz-2.34.0-dot-pangocairo-link.patch,
+  -files/CVE-2014-0978.patch,
+  -files/CVE-2014-1236.patch,
+  -files/graphviz-2.26.3-automake-1.11.2.patch,
+  -files/graphviz-2.26.3-libtool.patch:
+  Bump to latest stable.
+
+*graphviz-2.26.3-r5 (15 Jan 2014)
+
+  15 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +graphviz-2.26.3-r5.ebuild, -graphviz-2.26.3-r4.ebuild,
+  +files/CVE-2014-0978.patch, +files/CVE-2014-1236.patch:
+  Add two security fixes.
+
+*graphviz-2.26.3-r4 (09 Apr 2013)
+
+  09 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +graphviz-2.26.3-r4.ebuild:
+  Initial overlay import - clip-deps / CPREFIX fixes.
+  Add DESCRIPTION_FR/CATEGORY_FR.
+  Run dot -c in pkg_predeb.

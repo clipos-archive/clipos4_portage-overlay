@@ -1,0 +1,10 @@
+--- lingucomponent/source/spellcheck/spell/sspellimp.cxx.orig	2017-11-06 16:40:43.198738322 +0100
++++ lingucomponent/source/spellcheck/spell/sspellimp.cxx	2017-11-06 16:40:53.014484698 +0100
+@@ -29,7 +29,6 @@
+ 
+ #include <lingutil.hxx>
+ #include <hunspell.hxx>
+-#include <dictmgr.hxx>
+ #include <sspellimp.hxx>
+ 
+ #include <linguistic/lngprops.hxx>

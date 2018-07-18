@@ -1,0 +1,22 @@
+--- src/java-config-2.orig	2016-06-15 16:50:30.710948881 +0200
++++ src/java-config-2	2016-06-15 16:50:48.214470790 +0200
+@@ -317,7 +317,7 @@
+ if __name__ == '__main__':
+     global printer, manager
+     printer = OutputFormatter(True, True)
+-    manager = EnvironmentManager(os.getenv('ROOT', ''), os.getenv('EPREFIX', '@GENTOO_PORTAGE_EPREFIX@'))
++    manager = EnvironmentManager()
+ 
+     usage =  "java-config [options]\n\n"
+     usage += "Java Configuration Utility Version @PACKAGE_VERSION@\n"
+--- src/depend-java-query.orig	2016-07-11 10:34:28.330214910 +0200
++++ src/depend-java-query	2016-07-11 10:34:51.578214428 +0200
+@@ -64,7 +64,7 @@
+ if __name__ == '__main__':
+     global printer, manager, verman
+     printer = OutputFormatter(True, True)
+-    manager = EnvironmentManager(os.getenv('ROOT', ''), os.getenv('EPREFIX', '@GENTOO_PORTAGE_EPREFIX@'))
++    manager = EnvironmentManager()
+     verman = VersionManager(manager)
+ 
+     usage =  "depend-java-query [options]\n\n"

@@ -1,0 +1,38 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+[[ -f "${HOME}/.lxinput.conf" ]] || exit 0
+
+
+get_key() {
+	local key="${1}"
+
+	awk -F'=' -vkey="${key}" '$1 == key {print $2}' "${HOME}/.lxinput.conf" 2>/dev/null
+}
+
+ACC_FACTOR="$(get_key "AccFactor")"
+ACC_THRESHOLD="$(get_key "AccThreshold")"
+LEFT_HANDED="$(get_key "LeftHanded")"
+
+KBD_DELAY="$(get_key "Delay")"
+KBD_INTERVAL="$(get_key "Interval")"
+KBD_BEEP="$(get_key "Beep")"
+
+if [[ -n "${ACC_FACTOR}" ]]; then
+	xset m "${ACC_FACTOR}/10" "${ACC_THRESHOLD}"
+fi
+
+if [[ -n "${KBD_DELAY}" ]]; then
+	if [[ -n "${KBD_INTERVAL}" ]]; then
+		xset r rate "${KBD_DELAY}" $(( 1000 / ${KBD_INTERVAL} ))
+	else
+		xset r rate "${KBD_DELAY}"
+	fi
+fi
+
+if [[ ${KBD_BEEP} -eq 1 ]]; then
+	xset b on
+else
+	xset b off
+fi

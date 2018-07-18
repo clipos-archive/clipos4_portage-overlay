@@ -1,0 +1,20 @@
+# Clip ChangeLog for app-office/openproj
+
+  30 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  openproj-1.4-r1.ebuild:
+  Force use of sun-jdk - fails to build with icedtea6 or icedtea6-bin.
+
+*openproj-1.4-r1 (02 Dec 2010)
+
+  02 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openproj-1.4-r1.ebuild, -openproj-1.4.ebuild,
+  +files/openproj.xml, +files/_debian, +files/openproj.desktop,
+  +files/ms-project.png:
+  Add proper mime type support.
+
+*openproj-1.4 (01 Dec 2010)
+
+  01 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  openproj-1.4.ebuild, +files/openproj-1.4-clip.patch,
+  +files/run.conf:
+  Initial import, based on source ebuild in gentoo's #190636.

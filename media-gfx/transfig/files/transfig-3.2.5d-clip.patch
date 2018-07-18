@@ -1,0 +1,17 @@
+--- transfig/Imakefile	2003-03-25 21:52:38.000000000 +0100
++++ transfig/Imakefile	2011-07-07 15:15:18.000000000 +0200
+@@ -21,12 +21,12 @@
+ XCOMM Also, you may have to uncomment and redefine MKDIRHIER because "make" looks
+ XCOMM for it relative to the BINDIR variable.
+ XCOMM
+-XCOMM BINDIR = /usr/bin/X11
++BINDIR = /usr/local/bin/
+ XCOMM MKDIRHIER = /bin/sh /usr/bin/X11/mkdirhier
+ 
+ XCOMM MANDIR tells where the standard man pages should go (no need to change it
+ XCOMM if you want the man pages installed in the standard place on your system
+-XCOMM MANDIR = $(MANSOURCEPATH)$(MANSUFFIX)
++MANDIR = /usr/local/share/man/man$(MANSUFFIX)
+ 
+ XCOMM Uncomment the USELATEX2E flag to use the
+ XCOMM \\usepackage{} command for LaTeX2e. 

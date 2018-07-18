@@ -1,0 +1,24 @@
+# CLIP ChangeLog for x11-apps/mkfontscale
+
+  24 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  mkfontscale-1.0.9-r1.ebuild:
+  Re-add core-deps fix that had gotten lost in the previous
+  update.
+
+*mkfontscale-1.0.9-r1 (22 Oct 2012)
+
+  22 Oct 2012; Benjamin Morin <clipos@ssi.gouv.fr>
+  +mkfontscale-1.0.9-r1.ebuild, -mkfontscale-1.0.5.ebuild:
+  Bump to latest.
+
+*mkfontscale-1.0.5 (02 Sep 2009)
+
+  02 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mkfontscale-1.0.5.ebuild, -mkfontscale-1.0.1-r1.ebuild:
+  Bump to latest, same changeset.
+
+*mkfontscale-1.0.1-r1 (28 Mar 2008)
+
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  mkfontscale-1.0.1-r1.ebuild:
+  Add IUSE core-deps to remove dependency on freetype.

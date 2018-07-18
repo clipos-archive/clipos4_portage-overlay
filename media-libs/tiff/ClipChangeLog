@@ -1,0 +1,129 @@
+# CLIP ChangeLog for media-libs/tiff
+
+*tiff-4.0.3-r7 (25 Feb 2014)
+
+  25 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.3-r7.ebuild, -tiff-4.0.3-r6.ebuild,
+  files/tiff-4.0.3-CVE-2013-4244.patch:
+  Fix CVE-2013-4244.
+
+*tiff-4.0.3-r6 (15 Oct 2013)
+
+  15 Oct 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tiff-4.0.3-r6.ebuild, -tiff-4.0.3-r5.ebuild:
+  Remove xz-utils dependency for clip-deps.
+
+*tiff-4.0.3-r5 (28 Aug 2013)
+
+  28 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.3-r5.ebuild, -tiff-4.0.3-r2.ebuild,
+  +files/tiff-4.0.3-CVE-2013-4231.patch,
+  +files/tiff-4.0.3-CVE-2013-4232.patch:
+  Bump to gentoo's latest rev, two more security fixes.
+
+*tiff-4.0.3-r2 (13 Aug 2013)
+
+  13 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.3-r2.ebuild, -tiff-4.0.3.ebuild,
+  +files/tiff-4.0.3-CVE-2012-4447.patch,
+  +files/tiff-4.0.3-CVE-2012-4564.patch,
+  +files/tiff-4.0.3-CVE-2013-1960.patch,
+  +files/tiff-4.0.3-CVE-2013-1961.patch,
+  +files/tiff-4.0.3-libjpeg-turbo.patch,
+  +files/tiff-4.0.3-tiff2pdf-colors.patch:
+  Add multiple security patches.
+
+*tiff-4.0.3 (10 Oct 2012)
+
+  10 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.3.ebuild, -tiff-4.0.2-r1.ebuild,
+  -files/libtiff-4.0.2-tiff2pdf.patch:
+  Bump to latest.
+
+*tiff-4.0.2-r1 (16 Aug 2012)
+
+  16 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.2-r1.ebuild, -tiff-4.0.2.ebuild,
+  +files/libtiff-4.0.2-tiff2pdf.patch:
+  Add patch for CVE-2012-3401 - patch from redhat bug #837577.
+
+*tiff-4.0.2 (21 Jun 2012)
+
+  21 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.2.ebuild, -tiff-4.0.1-r1.ebuild,
+  -files/tiff-4.0.1-CVE-2012-1173.patch:
+  Security bump to latest.
+
+*tiff-4.0.1-r1 (17 Apr 2012)
+
+  17 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.1-r1.ebuild, -tiff-4.0.1.ebuild,
+  +files/tiff-4.0.1-CVE-2012-1173.patch:
+  Security bump - fix heap overflow.
+
+*tiff-4.0.1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-4.0.1.ebuild, -tiff-3.9.5.ebuild:
+  Bump to latest.
+
+*tiff-3.9.5 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.9.5.ebuild, -tiff-3.9.4-r1.ebuild,
+  -files/tiff-CVE-2011-0192.patch:
+  Security bump to latest.
+
+*tiff-3.9.4-r1 (04 Mar 2011)
+
+  04 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.9.4-r1.ebuild, -tiff-3.9.4.ebuild,
+  +files/tiff-CVE-2011-0192.patch:
+  Security fix.
+
+*tiff-3.9.4 (22 Jun 2010)
+
+  22 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.9.4.ebuild, -tiff-3.9.3.ebuild,
+  -files/tiff-3.8.2-CVE-2009-2285.patch,
+  -files/tiff-3.9.2-CVE-2009-2347.patch:
+  Bump to latest, again, for a complete fix of CVE-2010-1411.
+
+*tiff-3.9.3 (15 Jun 2010)
+
+  15 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.9.3.ebuild, -tiff-3.9.2.ebuild,
+  +files/tiff-3.9.2-CVE-2009-2347.patch:
+  Bump to latest, fix CVE-2010-1411, re-fix CVE-2009-2347.
+
+*tiff-3.9.2 (19 Feb 2010)
+
+  19 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.9.2.ebuild, -tiff-3.8.2-r8.ebuild,
+  -files/tiff-jbig.patch, -files/digest-tiff-3.8.2-r8,
+  -files/tiff-3.8.2-CVE-2008-2327.patch,
+  -files/tiff-3.8.2-CVE-2009-2347.patch,
+  -files/tiff-3.8.2-tiffsplit.patch:
+  Bump to latest.
+
+*tiff-3.8.2-r8 (23 Jul 2009)
+
+  23 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.8.2-r8.ebuild, -tiff-3.8.2-r4.ebuild,
+  -files/tiff-3.8.2-goo-sec.patch, +files/tiff-3.8.2-CVE-2009-2285.patch
+  +files/tiff-3.8.2-CVE-2009-2347.patch:
+  Bump to latest, fix CVE-2009-{2285,2347}.
+
+*tiff-3.8.2-r4 (03 Sep 2008)
+
+  03 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tiff-3.8.2-r4.ebuild, -tiff-3.8.2-r2.ebuild,
+  +files/tiff-3.8.2-goo-sec.patch, +files/tiff-3.8.2-CVE-2008-2327.patch:
+  Bump to latest gentoo, to fix CVE-2008-2327.
+
+*tiff-3.8.2-r2 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  tiff-3.8.2-r2.ebuild:
+  Initial overlay import from gentoo's -3.8.2-r1. Add IUSE clip-deps
+  to remove dependency on zlib.

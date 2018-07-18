@@ -1,0 +1,26 @@
+--- src/last.c.orig	2010-11-04 12:34:42.000000000 +0100
++++ src/last.c	2010-11-04 12:35:22.000000000 +0100
+@@ -647,10 +647,6 @@ int main(int argc, char **argv)
+ 		}
+ 		break;
+ 	case 'w':
+-		if (UT_NAMESIZE > name_len)
+-			name_len = UT_NAMESIZE;
+-		if (UT_HOSTSIZE > domain_len)
+-			domain_len = UT_HOSTSIZE;
+ 		break;
+ 	case '0': case '1': case '2': case '3': case '4':
+ 	case '5': case '6': case '7': case '8': case '9':
+@@ -660,6 +656,12 @@ int main(int argc, char **argv)
+ 		usage(progname);
+ 		break;
+     }
++  /* CLIP : use wide output by default */
++  if (UT_NAMESIZE > name_len)
++    name_len = UT_NAMESIZE;
++  if (UT_HOSTSIZE > domain_len)
++    domain_len = UT_HOSTSIZE;
++
+   if (optind < argc) show = argv + optind;
+ 
+   /*

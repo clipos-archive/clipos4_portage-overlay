@@ -1,0 +1,13 @@
+# CLIP ChangeLog for virtual/perl-libnet
+
+*perl-libnet-1.230.0 (23 Dec 2013)
+
+  23 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +perl-libnet-1.230.0.ebuild, -perl-libnet-1.22.ebuild:
+  Bump to latest.
+
+*perl-libnet-1.22 (31 May 2013)
+
+  31 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  perl-libnet-1.22.ebuild:
+  Initial overlay import - clip-deps fix.

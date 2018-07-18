@@ -1,0 +1,41 @@
+--- ./ping.c.orig	2013-11-04 13:17:33.000000000 +0100
++++ ./ping.c	2013-11-04 13:40:32.000000000 +0100
+@@ -125,17 +125,22 @@ main(int argc, char **argv)
+ 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
+ 
+ 	icmp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
+-	if (icmp_sock != -1)
++	if (icmp_sock < 0) {
++		perror("ping: icmp open socket");
++		exit(2);
++	} else {
+ 		using_ping_socket = 1;
+-	else
+-		icmp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
++	}
++
+ 	socket_errno = errno;
+ 
++	#if 0
+ 	uid = getuid();
+ 	if (setuid(uid)) {
+ 		perror("ping: setuid");
+ 		exit(-1);
+ 	}
++	#endif
+ 
+ 	source.sin_family = AF_INET;
+ 
+@@ -341,12 +346,6 @@ main(int argc, char **argv)
+ 	if (whereto.sin_addr.s_addr == 0)
+ 		whereto.sin_addr.s_addr = source.sin_addr.s_addr;
+ 
+-	if (icmp_sock < 0) {
+-		errno = socket_errno;
+-		perror("ping: icmp open socket");
+-		exit(2);
+-	}
+-
+ 	if (device) {
+ 		struct ifreq ifr;
+ 

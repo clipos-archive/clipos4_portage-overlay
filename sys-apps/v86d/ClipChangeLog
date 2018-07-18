@@ -1,0 +1,30 @@
+# Clip ChangeLog for <sys-apps/v86d>
+
+*v86d-0.1.10-r1 (19 Aug 2013)
+
+  19 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +v86d-0.1.10-r1.ebuild, -v86d-0.1.10.ebuild:
+  Force rebuild.
+
+*v86d-0.1.10 (01 Mar 2011)
+
+  01 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +v86d-0.1.10.ebuild, -v86d-0.1.9-r1.ebuild,
+  -files/v86d-0.1.9-prot_write.patch:
+  Bump to latest, fix netlink origin vulnerability.
+
+*v86d-0.1.9-r1 (02 Nov 2009)
+
+  02 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +v86d-0.1.9-r1.ebuild, -v86d-0.1.9.ebuild,
+  files/v86d-0.1.9-915resolution.patch:
+  Do not call 915resolution for 800x600.
+
+*v86d-0.1.9 (06 Aug 2009)
+
+  06 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  v86d-0.1.9.ebuild, +files/v86d-0.1.9-915resolution.patch:
+  Initial overlay import. Add a patch to invoque a static copy
+  of 915resolution when the kernel passes (through a patched
+  uvesafb) a mode that differs from the 'classic' vga ones, i.e.
+  1024x768 and 1280x1024.

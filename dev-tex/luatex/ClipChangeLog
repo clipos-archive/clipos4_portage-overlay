@@ -1,0 +1,100 @@
+# CLIP ChangeLog for dev-tex/luatex
+
+*luatex-0.70.1-r10 (30 Dec 2015)
+
+  30 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r10.ebuild, -luatex-0.70.1-r9.ebuild:
+  Force rebuild (poppler revdep).
+
+*luatex-0.70.1-r9 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r9.ebuild, -luatex-0.70.1-r8.ebuild,
+  +files/poppler026-backport.patch:
+  Force rebuild (poppler revdep).
+
+*luatex-0.70.1-r8 (06 Jan 2014)
+
+  06 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r8.ebuild, -luatex-0.70.1-r7.ebuild:
+  Force rebuild (poppler revdep).
+
+*luatex-0.70.1-r7 (29 Oct 2013)
+
+  29 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r7.ebuild, -luatex-0.70.1-r6.ebuild:
+  Force rebuild against newer poppler.
+
+*luatex-0.70.1-r6 (23 Jul 2013)
+
+  23 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r6.ebuild, -luatex-0.70.1-r5.ebuild,
+  +files/poppler022.patch, +files/kpathsea2012.patch,
+  +files/remove-zlib-version-check.patch:
+  Force rebuild against even newer libpoppler. Add patches from
+  upstream ebuild to fix build against poppler 0.22.
+
+*luatex-0.70.1-r5 (22 Oct 2012)
+
+  22 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r5.ebuild, -luatex-0.70.1-r4.ebuild:
+  Force rebuild against newer libpoppler.
+
+*luatex-0.70.1-r4 (05 Sep 2012)
+
+  05 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r4.ebuild, -luatex-0.70.1-r3.ebuild:
+  Force rebuild against newer libpoppler.
+
+*luatex-0.70.1-r3 (23 Jul 2012)
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r3.ebuild, -luatex-0.70.1-r2.ebuild,
+  +files/poppler020.patch:
+  Fix build with poppler 0.20 - from upstream gentoo.
+
+*luatex-0.70.1-r2 (21 Mar 2012)
+
+  21 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r2.ebuild, -luatex-0.70.1-r1.ebuild,
+  +files/poppler018.patch:
+  Fix build with latest poppler.
+
+*luatex-0.70.1-r1 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1-r1.ebuild, -luatex-0.70.1.ebuild:
+  Force rebuild.
+
+*luatex-0.70.1 (05 Sep 2011)
+
+  05 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.70.1.ebuild, -luatex-0.50.0-r5.ebuild:
+  Bump to latest.
+
+*luatex-0.50.0-r5 (24 Mar 2011)
+
+  24 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.50.0-r5.ebuild, -luatex-0.50.0-r4.ebuild:
+  Rbump to force rebuild against newer poppler.
+
+*luatex-0.50.0-r4 (21 Oct 2010)
+
+  21 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.50.0-r4.ebuild, -luatex-0.50.0-r3.ebuild:
+  Rbump to force rebuild against newer poppler.
+
+*luatex-0.50.0-r3 (10 Sep 2010)
+
+  10 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +luatex-0.50.0-r3.ebuild, -luatex-0.50.0-r2.ebuild:
+  Fix PATH in postinst.
+
+*luatex-0.50.0-r2 (28 Jul 2010)
+
+  28 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  luatex-0.50.0-r2.ebuild:
+  Initial overlay import - remove dependency on tex-base, 
+  add postinst to call fmutil-sys.
+
+

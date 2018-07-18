@@ -1,0 +1,31 @@
+
+Section "Monitor"
+
+    Identifier  "LCD"
+
+EndSection
+
+
+Section "Device"
+    Identifier  "radeon"
+    Driver      "radeon"
+EndSection
+
+
+Section "Screen"
+    Identifier  "Screen 1"
+    Device      "radeon"
+    Monitor     "LCD"
+    Option "DPMS" "true"
+EndSection
+
+
+Section "ServerLayout"
+
+    Identifier  "Simple Layout"
+
+    Screen "Screen 1"
+
+    InputDevice "Keyboard0" "CoreKeyboard"
+EndSection
+

@@ -1,0 +1,228 @@
+# CLIP ChangeLog for dev-libs/nspr
+
+*nspr-4.13.1 (28 Sep 2017)
+
+  28 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +nspr-4.13.1.ebuild, -nspr-4.12.ebuild:
+  Bump for firefox update in 52.3.0.
+
+*nspr-4.12 (30 Mar 2016)
+
+  30 Mar 2016; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +nspr-4.12.ebuild, -nspr-4.10.10.ebuild:
+  Bump to 4.12
+
+*nspr-4.10.10 (15 Dec 2015)
+
+  15 Dec 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +nspr-4.10.10.ebuild, -nspr-4.10.8.ebuild:
+  Bump nspr
+
+*nspr-4.10.8 (23 Jan 2015)
+
+  11 Aug 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +nspr-4.10.8.ebuild, -nspr-4.10.7-r1.ebuild:
+  Bump to latest.
+
+
+  03 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  nspr-4.10.7-r1.ebuild:
+  Revert CPREFIX handling for MULTILIB_CHOST_TOOLS, handled at the eclass level
+  now.
+
+*nspr-4.10.7-r1 (23 Dec 2014)
+
+  23 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.10.7-r1.ebuild, -nspr-4.10.6-r1.ebuild:
+  Bump to latest.
+
+*nspr-4.10.6-r1 (13 Jun 2014)
+
+  08 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +nspr-4.10.6-r1.ebuild, -nspr-4.10.6.ebuild:
+  RBump to latest - handle multilib.
+  
+*nspr-4.10.6 (16 Jun 2014)
+
+  16 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.10.6.ebuild, -nspr-4.10.4.ebuild,
+  +files/nspr-4.10.6-solaris.patch,
+  -files/nspr-4.6.1-lang.patch,
+  -files/nspr-4.7.4-solaris.patch:
+  Security bump to latest.
+
+*nspr-4.10.4 (25 Mar 2014)
+
+  25 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.10.4.ebuild, -nspr-4.10.2.ebuild:
+  Bump to latest.
+
+*nspr-4.10.2 (20 Nov 2013)
+
+  20 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.10.2.ebuild, -nspr-4.10.ebuild:
+  Bump to latest.
+
+*nspr-4.10 (10 Jul 2013)
+
+  10 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.10.ebuild, -nspr-4.9.6.ebuild:
+  Bump to latest.
+
+*nspr-4.9.6 (15 May 2013)
+
+  15 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.9.6.ebuild, -nspr-4.9.5.ebuild,
+  +files/nspr-4.9.5_nspr_config.patch,
+  -files/nspr-4.6.1-config-1.patch,
+  -files/nspr-4.8.3-aix-soname.patch,
+  -files/nspr-4.8-config.patch:
+  Bump to latest.
+
+*nspr-4.9.5 (25 Feb 2013)
+
+  25 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.9.5.ebuild, -nspr-4.9.4.ebuild:
+  Bump to latest.
+
+*nspr-4.9.4 (14 Jan 2013)
+
+  14 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.9.4.ebuild, -nspr-4.9.2.ebuild,
+  -files/nspr-4.9.1-x32_v0.2.patch:
+  Bump to latest.
+
+*nspr-4.9.2 (16 Oct 2012)
+
+  16 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.9.2.ebuild, -nspr-4.9.1.ebuild,
+  +files/nspr-4.9.1-x32_v0.2.patch:
+  Bump to latest.
+
+*nspr-4.9.1 (06 Jun 2012)
+
+  06 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.9.1.ebuild, -nspr-4.9.ebuild,
+  -files/nspr-4.9-pkgconfig-gentoo.patch:
+  Bump to latest.
+
+*nspr-4.9 (27 Mar 2012)
+
+  27 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.9.ebuild, -nspr-4.8.9.ebuild,
+  +files/nspr-4.8.9-link-flags.patch,
+  +files/nspr-4.9-pkgconfig-gentoo.patch,
+  -files/nspr-4.8-pkgconfig-gentoo-3.patch:
+  Bump to latest.
+
+*nspr-4.8.9 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.9.ebuild, -nspr-4.8.8.ebuild:
+  Bump to latest.
+
+*nspr-4.8.8 (10 Aug 2011)
+
+  10 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.8.ebuild, -nspr-4.8.7.ebuild:
+  Bump to latest.
+
+*nspr-4.8.7 (08 Mar 2011)
+
+  08 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.7.ebuild, -nspr-4.8.6.ebuild:
+  Bump to latest.
+
+*nspr-4.8.6 (26 Jul 2010)
+
+  26 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.6.ebuild, -nspr-4.8.4-r1.ebuild,
+  +files/nspr-4.7.1-solaris.patch, +files/nspr-4.8.4-darwin-install_name.patch,
+  +files/nspr-4.8.3-aix-gcc.patch, +files/nspr-4.7.4-solaris.patch,
+  +files/nspr-4.8.3-aix-soname.patch, -files/nspr.pc.in:
+  Bump to latest. Note: install moved from PREFIX/lib/nspr to simply
+  PREFIX/lib.
+
+*nspr-4.8.4-r1 (17 May 2010)
+
+  17 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.4-r1.ebuild, -nspr-4.8.3-r1.ebuild,
+  -nspr-4.7.4-r2.ebuild, +files/nspr-4.8-pkgconfig-gentoo-3.patch,
+  -files/nspr-4.8-pkgconfig-gentoo-1.patch:
+  Bump to latest.
+
+*nspr-4.8.3-r1 (10 Feb 2010)
+
+  10 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.3-r1.ebuild, -nspr-4.8.ebuild,
+  +files/nspr-4.8-pkgconfig-gentoo-1.patch,
+  +files/nspr-4.8-config.patch, -files/nspr-4.6.1-config.patch:
+  Bump to latest.
+
+*nspr-4.7.4-r2 (18 Sep 2009)
+
+  18 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.7.4-r2.ebuild, -nspr-4.7.4-r1.ebuild:
+  Add rdepend on nspr-4.8.
+
+*nspr-4.7.4-r1 (17 Sep 2009)
+
+  17 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.7.4-r1.ebuild, -nspr-4.7.4.ebuild, nspr-4.8.ebuild:
+  Make nspr-4.8 stable for firefox-3.5. Keep a nspr-4.7 which,
+  when built with use clip, will install only library files
+  that do not conflict with nspr-4.8 - so as to provide the 
+  old ABI until other users of nspr-4.7 are rebuilt (thunderbird,
+  openoffice...).
+
+*nspr-4.8 (06 Jul 2009)
+
+  06 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.8.ebuild:
+  Bump to latest unstable for firefox-3.5. Left ~x86 for now.
+
+*nspr-4.7.4 (23 Apr 2009)
+
+  23 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.7.4.ebuild, -nspr-4.7.3.ebuild:
+  Bump to latest, needed by firefox-3.0.9.
+
+*nspr-4.7.3 (14 Jan 2009)
+
+  14 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.7.3.ebuild, -nspr-4.7.ebuild:
+  Bump to latest stable to upgrade to firefox-3.
+
+*nspr-4.7 (09 Apr 2008)
+
+  09 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.7.ebuild, -nspr-4.6.7.ebuild:
+  Bump to latest gentoo stable.
+
+* nspr-4.6.7 (21 Dec 2007)
+
+  21 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nspr-4.6.7.ebuild, -nspr-4.6.5-r1.ebuild:
+  Bump to latest stable to enable firefox update.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 4.6.5-r1.
+
+* nspr-4.6.5-r1 (21 Mar 2007)
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  nspr-4.6.5-r1.ebuild:
+  Bump to current gentoo stable, along with the whole mozilla bump.
+  
+* nspr-4.6.3 (20 Sep 2006)
+
+  20 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  nspr-4.6.3.ebuild:
+  Bump to current gentoo's ~x86, for moz*-1.5.0.7 wrt to gentoo 
+  bug #147652. Same patch as previously + marking stable.
+
+* nspr-4.6.1-r2 (31 Jul 2006)
+
+  31 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  nspr-4.6.1-r2.ebuild:
+  Initial CLIP import. Make CPREFIX-aware.

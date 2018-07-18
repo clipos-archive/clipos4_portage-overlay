@@ -1,0 +1,50 @@
+#!/bin/sh
+
+arg1=""
+name=`basename $0`
+# Call ooffice without -<app> if a filename was passed on command line
+if test $# -eq 0; then
+	case "${name#??}" in
+		base)
+		      arg1="--base"
+		      ;;
+		calc)
+		      arg1="--calc"
+		      ;;
+		draw)
+		      arg1="--draw"
+		      ;;
+		fromtemplate)
+		      arg1="slot:5500"
+		      ;;
+		impress)
+		      arg1="--impress"
+		      ;;
+		math)
+		      arg1="--math"
+		      ;;
+		web)
+		      arg1="--web"
+		      ;;
+		writer)
+			arg1="--writer"
+			;;
+		*)
+			;;
+	esac
+fi
+		
+# GTK2 toolkit support seems quite broken at the moment
+#if [[ "${CLIP_DEFAULT_TOOLKIT}" == "gtk" ]]; then
+	#export SAL_USE_VCLPLUGIN="gtk"
+#else
+	export SAL_USE_VCLPLUGIN="kde4"
+#fi
+#export SAL_NOEXPANDFPICKER="TRUE"
+export SAL_NOOPENGL="false"
+export SAL_DISABLE_NATIVE_ALPHA="false"
+export SAL_DISABLE_SINCHRONOUS_PRINTER_DETECTION="false"
+export LD_LIBRARY_PATH="PREFIX/LIBDIR:PREFIX/LIBDIR/qt4"
+export MOZILLA_LIBRARY_PATH=PREFIX/LIBDIR/firefox
+
+exec PREFIX/LIBDIR/libreoffice/program/soffice $arg1 "$@"

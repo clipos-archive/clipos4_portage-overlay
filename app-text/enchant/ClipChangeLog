@@ -1,0 +1,19 @@
+# CLIP ChangeLog for app-text/enchant
+
+*enchant-1.6.0-r1 (28 Sep 2017)
+
+  28 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +enchant-1.6.0-r1.ebuild, -enchant-1.6.0.ebuild:
+  Rbump to link with hunspell 1.6.1.
+
+*enchant-1.6.0 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +enchant-1.6.0.ebuild, -enchant-1.4.2.ebuild:
+  Bump to latest.
+
+*enchant-1.4.2 (12 Nov 2009)
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  enchant-1.4.2.ebuild:
+  Initial overlay import.  clip-deps fixes.

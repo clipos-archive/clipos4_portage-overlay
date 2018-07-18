@@ -1,0 +1,13 @@
+Index: shadow-4.1.5.1/lib/getdef.h
+===================================================================
+--- shadow-4.1.5.1.orig/lib/getdef.h
++++ shadow-4.1.5.1/lib/getdef.h
+@@ -32,6 +32,8 @@
+ #ifndef _GETDEF_H
+ #define _GETDEF_H
+ 
++#include <stdbool.h>
++
+ /* getdef.c */
+ extern bool getdef_bool (const char *);
+ extern long getdef_long (const char *, long);

@@ -1,0 +1,107 @@
+# CLIP ChangeLog for dev-vcs/subversion
+
+*subversion-1.8.5-r1 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +subversion-1.8.5-r1.ebuild, -subversion-1.8.5.ebuild,
+  -subversion-1.7.9.ebuild:
+  Force rebuild (icu revdep).
+
+  13 Feb 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  subversion-1.8.5.ebuild:
+  Port Clip fixes from 1.7.9 .
+
+*subversion-1.8.5 (06 Feb 2014)
+
+  06 Feb 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +subversion-1.8.5.ebuild, +files/subversion-1.8.0-hpux-dso.patch,
+  +files/subversion-1.8.1-revert_bdb6check.patch,
+  +files/subversion-1.8.5-swig-python-no-gnome-keyring.patch:
+  Bump to latest.
+
+*subversion-1.7.9 (16 May 2013)
+
+  16 May 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +subversion-1.7.9.ebuild, -subversion-1.7.6-r1.ebuild,
+  -subversion-1.6.17-r7.ebuild,
+  -files/subversion-1.6.0-disable_linking_against_unneeded_libraries.patch,
+  -files/subversion-1.6.2-local_library_preloading.patch,
+  -files/subversion-1.6.3-kwallet_window.patch,
+  -files/subversion-1.7.6-kwallet.patch,
+  -files/subversion-1.7.6-revert-mod_dontdothat-move.patch,
+  +files/subversion-1.7.9-perl-prefix.patch:
+  Bump to latest. Add more CPREFIX.
+  Change from buggy fperms to chmod in src_prepare. Fix pkg_setup.
+  Fix Perl CPREFIX.
+
+*subversion-1.7.6-r1 (12 Sep 2012)
+
+  12 Sep 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +subversion-1.7.6-r1.ebuild, -subversion-1.7.6.ebuild:
+  Integrate CLIP-specific changes
+
+*subversion-1.6.17-r7 (02 Apr 2012)
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +subversion-1.6.17-r7.ebuild, -subversion-1.6.9-r1.ebuild:
+  Bump.
+
+  08 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  subversion-1.6.9-r1.ebuild:
+  Add missing IUSE.
+
+*subversion-1.6.9-r1 (25 Jun 2010)
+
+  25 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +subversion-1.6.9-r1.ebuild, -subversion-1.6.9.ebuild:
+  Trivial bump for icu's revdep-rebuild.
+
+*subversion-1.6.9 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +subversion-1.6.9.ebuild, -subversion-1.6.4.ebuild,
+  -files/subversion-1.6.3-apache-2.4.patch:
+  Bump to latest and fix depend on libintl.
+
+  20 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  subversion-1.6.4.ebuild:
+  Added DESCRIPTION_FR.
+
+*subversion-1.6.4 (17 Aug 2009)
+
+  17 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +subversion-1.6.4.ebuild, -subversion-1.4.5-r3.ebuild,
+  -files/subversion-1.1.1-perl-vendor.patch,
+  -files/subversion-1.3.1-neon-config.patch,
+  -files/subversion-1.4-db4.patch,
+  -files/subversion-1.4.3-debug-config.patch,
+  -files/subversion-apr_cppflags.patch,
+  -files/subversion-hotbackup-config.patch,
+  +files/subversion-1.6.0-disable_linking_against_unneeded_libraries.patch,
+  +files/subversion-1.6.2-local_library_preloading.patch,
+  +files/subversion-1.6.3-apache-2.4.patch,
+  +files/subversion-1.6.3-kwallet_window.patch:
+  Bump to latest version. Fixes CVE-2009-2411 and 2412.
+
+*subversion-1.4.5-r3 (28 May 2009)
+
+  28 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +subversion-1.4.5-r3.ebuild, -subversion-1.4.5-r2.ebuild:
+  Bump to force rebuild without gdbm...
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  subversion-1.4.5-r2.ebuild: 
+  Switch to verictl2.eclass.
+
+*subversion-1.4.5-r2 (20 Jan 2009)
+
+  03 Feb 2009; Olivier Levillain <clipos@ssi.gouv.fr>
+  +subversion-1.4.5-r2.ebuild -subversion-1.4.5-r1.ebuild:
+  Add verictl entry to allow svn to create client sockets.
+
+*subversion-1.4.5-r1 (20 Jan 2009)
+
+  20 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  subversion-1.4.5-r1.ebuild:
+  Initial overlay import. Dependency fixes for clip-deps. Added
+  e2fsprogs dependency, since svn is linked to libuuid.

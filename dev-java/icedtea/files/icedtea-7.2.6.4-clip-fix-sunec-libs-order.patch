@@ -1,0 +1,12 @@
+libfreebl uses symbols from nss/nspr so put it *before* in the link line
+.--- ./icedtea-2.6.4/acinclude.m4.orig	2016-02-03 14:36:54.068420939 +0100
++++ ./icedtea-2.6.4/acinclude.m4	2016-02-03 14:37:21.587679149 +0100
+@@ -2711,7 +2711,7 @@
+     PKG_CHECK_MODULES(NSS_JAVA, nss-java, [NSS_JAVA_FOUND=yes], [NSS_JAVA_FOUND=no])
+     if test "x${NSS_SOFTOKN_FOUND}" = "xyes"; then
+       SUNEC_CFLAGS=$NSS_SOFTOKN_CFLAGS;
+-      SUNEC_LIBS="$NSS_LIBS -lfreebl";
++      SUNEC_LIBS="-lfreebl $NSS_LIBS";
+     elif test "x${NSS_JAVA_FOUND}" = "xyes"; then
+       SUNEC_CFLAGS="$NSS_JAVA_CFLAGS -DLEGACY_NSS";
+       SUNEC_LIBS=$NSS_JAVA_LIBS;

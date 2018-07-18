@@ -1,0 +1,151 @@
+# CLIP ChangeLog for media-gfx/inkscape
+
+*inkscape-0.91-r1 (30 Dec 2015)
+
+  30 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.91-r1.ebuild, -inkscape-0.91.ebuild:
+  Force rebuild with newer libpoppler.
+
+  15 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +inkscape-0.91.ebuild, -inkscape-0.48.5-r1.ebuild,
+  -inkscape-0.48.0-spell.patch,
+  -inkscape-0.48.3.1-desktop.patch,
+  +inkscape-0.91_pre3-desktop.patch,
+  -inkscape-0.48.4-automake-1.13.patch,
+  -inkscape-0.48.4-fix-member-decl.patch,
+  -inkscape-0.48.4-gc74-configure.patch,
+  -inkscape-0.48.4-python2.patch,
+  +inkscape-0.91_pre3-automagic.patch,
+  +inkscape-0.91_pre3-cppflags.patch,
+  +inkscape-0.91_pre3-exif.patch,
+  +inkscape-0.91_pre3-sk-man.patch:
+  Bump to latest.
+
+*inkscape-0.91 (01 Feb 2015)
+
+*inkscape-0.48.5-r1 (05 Jan 2015)
+
+  05 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.5-r1.ebuild, -inkscape-0.48.5.ebuild:
+  Grr, force rebuild (wrong libwpg/libwpd slot).
+
+*inkscape-0.48.5 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.5.ebuild, -inkscape-0.48.4-r4.ebuild,
+  files/inkscape-0.48.4-gc74.patch:
+  Bump to latest.
+
+*inkscape-0.48.4-r4 (17 Apr 2014)
+
+  17 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.4-r4.ebuild, -inkscape-0.48.4-r3.ebuild:
+  Force rebuild. Imagemagick revdep this time...
+
+*inkscape-0.48.4-r3 (18 Feb 2014)
+
+  18 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.4-r3.ebuild, -inkscape-0.48.4-r2.ebuild,
+  +files/inkscape-0.48.4-gc74-configure.patch,
+  +files/inkscape-0.48.4-gc74.patch:
+  Force rebuild with newer libpoppler, add patches from upstream.
+
+*inkscape-0.48.4-r2 (13 Nov 2013)
+
+  13 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.4-r2.ebuild, -inkscape-0.48.4-r1.ebuild:
+  Force rebuild - libpng/poppler revdep.
+
+*inkscape-0.48.4-r1 (23 Jul 2013)
+
+  23 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.4-r1.ebuild, -inkscape-0.48.3.1-r3.ebuild,
+  +files/inkscape-0.48.4-python2.patch,
+  +files/inkscape-0.48.4-automake-1.13.patch,
+  +files/inkscape-0.48.4-epython.patch,
+  +files/inkscape-0.48.3.1-desktop.patch,
+  +files/inkscape-0.48.4-fix-member-decl.patch,
+  -files/inkscape-0.48.1-libpng15.patch:
+  Bump to latest, force rebuild against newer poppler.
+
+*inkscape-0.48.3.1-r3 (22 Oct 2012)
+
+  22 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.3.1-r3.ebuild, -inkscape-0.48.3.1-r2.ebuild:
+  Force rebuild against newer libpoppler.
+
+*inkscape-0.48.3.1-r2 (05 Sep 2012)
+
+  05 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.3.1-r2.ebuild, -inkscape-0.48.3.1-r1.ebuild:
+  Force rebuild against newer libpoppler.
+
+*inkscape-0.48.3.1-r1 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.3.1-r1.ebuild, -inkscape-0.48.3.1.ebuild:
+  Add patch from upstream to fix build with poppler-0.20.
+
+*inkscape-0.48.3.1 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.3.1.ebuild, -inkscape-0.48.2.ebuild,
+  -files/inkscape-0.48.1-lcms.patch:
+  Bump to latest.
+
+*inkscape-0.48.2 (11 Aug 2011)
+
+  11 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.2.ebuild, -inkscape-0.48.1.ebuild,
+  +files/inkscape-0.48.2-libwpg.patch:
+  Bump to latest.
+
+  09 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  inkscape-0.48.1.ebuild:
+  Do not require uniconvertor on clip-devstation.
+
+*inkscape-0.48.1 (25 Mar 2011)
+
+  25 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.1.ebuild, -inkscape-0.48.0-r1.ebuild,
+  +files/inkscape-0.48.1-libpng15.patch,
+  +files/inkscape-0.48.0-spell.patch,
+  +files/inkscape-0.48.1-lcms.patch:
+  Bump to latest - rebuild against newer poppler.
+
+*inkscape-0.48.0-r1 (10 Jan 2011)
+
+  10 Jan 2011; Olivier Levillain <clipos@ssi.gouv.fr>
+  +inkscape-0.48.0-r1.ebuild, -inkscape-0.48.0.ebuild:
+  Rbump to rebuild.
+
+*inkscape-0.48.0 (21 Oct 2010)
+
+  21 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.48.0.ebuild, -inkscape-0.47.ebuild,
+  +files/inkscape-0.47-poppler.patch:
+  Bump to latest - needs to be rebuilt anyway against newer poppler.
+
+*inkscape-0.47 (03 Mar 2010)
+
+  03 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.47.ebuild, -inkscape-0.46-r6.ebuild,
+  -files/gtk-clist.patch, -files/inkscape-0.46-bug-174720-0.patch,
+  -files/inkscape-0.46-bug-174720-1.patch,
+  -files/inkscape-0.46-bug-214171.patch, -files/inkscape-0.46-gcc43.patch,
+  -files/inkscape-0.46-gcc44.patch, -files/inkscape-0.46-gcc44_p2.patch,
+  -files/inkscape-0.46-glibc2.10.patch, -files/inkscape-0.46-poppler-0.8.3.patch,
+  +files/inkscape-0.47-poppler.patch:
+  Bump to latest.
+
+*inkscape-0.46-r6 (01 Mar 2010)
+
+  01 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +inkscape-0.46-r6.ebuild, -inkscape-0.46-r5.ebuild:
+  Depend on newest poppler, not poppler-glib.
+
+*inkscape-0.46-r5 (14 Dec 2009)
+
+  14 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  inkscape-0.46-r5.ebuild:
+  Initial clip-deps import. clip-deps fixes + DESCRIPTION_FR.

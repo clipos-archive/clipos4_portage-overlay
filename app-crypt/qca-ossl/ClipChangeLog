@@ -1,0 +1,24 @@
+# CLIP ChangeLog for app-crypt/qca-ossl
+
+  23 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/qca-ossl-openssl-1.0.0.patch:
+  Fix patch - epatch is now extremely prejudiced about '..' in paths.
+
+*qca-ossl-2.0.0_beta3-r3 (22 Mar 2011)
+
+  22 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-ossl-2.0.0_beta3-r3.ebuild, -qca-ossl-2.0.0_beta3-r2.ebuild,
+  +files/qca-ossl-openssl-1.0.0.patch, -files/qca-ossl-openssl-0.9.8i.patch:
+  Fix build with openssl-1.
+
+*qca-ossl-2.0.0_beta3-r2 (12 Jan 2010)
+
+  12 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-ossl-2.0.0_beta3-r2.ebuild, -qca-ossl-2.0.0_beta3-r1.ebuild:
+  Silent bump to force rebuild with proper LDFLAGS.
+
+*qca-ossl-2.0.0_beta3-r1 (21 Dec 2009)
+
+  21 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-ossl-2.0.0_beta3-r1.ebuild:
+  Initial import. CPREFIX fixes.

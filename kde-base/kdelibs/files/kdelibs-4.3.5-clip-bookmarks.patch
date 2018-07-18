@@ -1,0 +1,17 @@
+--- kfile/kfileplacesmodel.cpp.orig	2010-05-17 13:12:37.000000000 +0200
++++ kfile/kfileplacesmodel.cpp	2010-05-17 13:47:33.000000000 +0200
+@@ -127,6 +127,14 @@ KFilePlacesModel::KFilePlacesModel(QObje
+                                               "Trash", I18N_NOOP2("KFile System Bookmarks", "Trash"),
+                                               KUrl("trash:/"), "user-trash");
+ 
++        KFilePlacesItem::createSystemBookmark(d->bookmarkManager,
++                                              "USB", "USB", 
++                                              KUrl("/mnt/usb"), "drive-removable-media-usb-pendrive");
++
++        KFilePlacesItem::createSystemBookmark(d->bookmarkManager,
++                                              "CD-ROM", "CD-ROM", 
++                                              KUrl("/mnt/cdrom"), "media-optical");
++
+         // Force bookmarks to be saved. If on open/save dialog and the bookmarks are not saved, QFile::exists
+         // will always return false, which opening/closing all the time the open/save dialog would case the
+         // bookmarks to be added once each time, having lots of times each bookmark. This forces the defaults

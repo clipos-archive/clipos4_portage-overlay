@@ -1,0 +1,13 @@
+# CLIP ChangeLog for app-editors/nano
+
+*nano-2.1.2-r2 (19 Mar 2009)
+
+  19 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nano-2.1.2-r2.ebuild, -nano-2.1.2-r1.ebuild,
+  +files/nano-2.1.2-gcc4-O_CREAT.patch:
+
+*nano-2.1.2-r1 (06 Aug 2008)
+
+  06 Aug 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nano-2.1.2-r1.ebuild:
+  Initial import. Path and dependency fixes for CLIP.

@@ -1,0 +1,19 @@
+# CLIP Changelog for sys-devel/libperl
+
+*libperl-5.10.1 (16 May 2011)
+
+  16 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libperl-5.10.1.ebuild, -libperl-5.8.8-r1.ebuild,
+  -files/libperl-create-libperl-soname.patch, -files/libperl-5.8.8-lib64.patch,
+  -files/libperl-5.8.8-makedepend-syntax.patch, -files/libperl-5.8.8-gcc42-command-line.patch,
+  -files/libperl-5.8.8-fbsdhints.patch, -files/libperl-noksh.patch,
+  -files/libperl-5.8.8-dragonfly-clean.patch, -files/libperl-5.8.8-reorder-INC.patch,
+  -files/perl-hppa-pa7200-configure.patch, -files/libperl-5.8.8-cplusplus.patch:
+  Bump to latest.
+
+*libperl-5.8.8-r1 (18 Aug 2008)
+
+  18 Aug 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  libperl-5.8.8-r1.ebuild:
+  Initial CLIP import.
+  Simplified libperl.so symlink creation for USE clip.

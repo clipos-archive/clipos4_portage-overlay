@@ -1,0 +1,24 @@
+#!/bin/sh
+
+source "/sbin/splash-functions.sh"
+
+case "${1}" in
+	silent)
+		splash_comm_send "set effects fadein fadeout"
+		splash_silent
+		;;
+	verbose)
+		splash_verbose
+		;;
+	log)
+		shift
+		splash_comm_send "log $*"
+		;;
+	exit)
+		splash_exit
+		;;
+	*)
+		echo "Unsupported splash command: ${1}" >&2
+		;;
+esac
+

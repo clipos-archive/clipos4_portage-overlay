@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Thunderbird
+GenericName=E-mail client
+GenericName[fr]=Client e-mail
+Exec=/usr/local/bin/thunderbird
+Icon=thunderbird-icon
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Network;
+MimeType=message/rfc822;text/x-mail;application/x-mimearchive;x-scheme-handler/mailto;

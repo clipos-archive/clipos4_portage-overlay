@@ -1,0 +1,13 @@
+#!/bin/bash
+# Copyright 2015 SGDSN/ANSSI
+# Author: Mickaël Salaün <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+source /lib/clip/jails.sub
+
+JAIL="$(basename -- "$(readlink -f -- "$0")")"
+JAIL="${JAIL%.*}"
+
+ebegin "Stopping ${JAIL} jail"
+jail_terminate "${JAIL}"
+eend $?

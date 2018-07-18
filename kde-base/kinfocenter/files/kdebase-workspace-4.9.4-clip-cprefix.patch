@@ -1,0 +1,11 @@
+--- ./kinfocenter/Modules/usbview/usbdb.cpp.orig	2012-12-24 17:44:20.000000000 +0100
++++ ./kinfocenter/Modules/usbview/usbdb.cpp	2012-12-24 17:44:30.000000000 +0100
+@@ -20,7 +20,7 @@
+ #include <kstandarddirs.h>
+ 
+ USBDB::USBDB() {
+-	QString db = "/usr/share/hwdata/usb.ids"; /* on Fedora */
++	QString db = "/usr/local/share/hwdata/usb.ids"; /* on Fedora */
+ 	if (!QFile::exists(db))
+ 		db = KStandardDirs::locate("data", "kcmusb/usb.ids");
+ 	if (db.isEmpty())

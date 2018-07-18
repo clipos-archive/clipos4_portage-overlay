@@ -1,0 +1,21 @@
+# CLIP ChangeLog for sys-apps/man-pages-posix
+
+*man-pages-posix-2003a-r2 (23 Dec 2013)
+
+  23 Dec 2013; Hugo Chargois <clipos@ssi.gouv.fr>
+  +man-pages-posix-2003a-r2.ebuild, -man-pages-posix-2003a-r1.ebuild:
+  Depend on sys-apps/man instead of virtual/man since virtual/man
+  is not provided by sys-apps/man anymore.
+
+*man-pages-posix-2003a-r1 (13 Dec 2013)
+
+  13 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +man-pages-posix-2003a-r1.ebuild, -man-pages-posix-2003a.ebuild:
+  Don't depend on virtual/man in CLIP, to avoid a circular 
+  dependency.
+
+*man-pages-posix-2003a (11 Dec 2013)
+
+  11 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  man-pages-posix-2003a.ebuild:
+  Initial import - CPREFIX fix.

@@ -1,0 +1,184 @@
+# CLIP ChangeLog for x11-libs/cairo
+
+  23 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +cairo-1.14.2.ebuild, -cairo-1.12.18-r1.ebuild,
+  -files/cairo-1.12.14-qt-surface.patch:
+  Bump to latest stable.
+  
+  09 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +cairo-1.12.18-r1.ebuild, -cairo-1.12.18-r1.ebuild,
+  -files/cairo-1.8.8-interix.patch,
+  -files/cairo-1.12.16-all-clipped-1.patch,
+  -files/cairo-1.12.16-all-clipped-2.patch,
+  -files/cairo-1.12.16-all-clipped-3.patch,
+  -files/cairo-1.12.16-lto-optional.patch,
+  +files/cairo-1.12.18-disable-test-suite.patch:
+  Bump to latest stable.
+
+*cairo-1.12.18-r1 (21 Feb 2015)
+
+*cairo-1.12.16-r3 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.16-r3.ebuild, -cairo-1.12.16.ebuild,
+  +files/cairo-1.12.16-all-clipped-1.patch,
+  +files/cairo-1.12.16-all-clipped-2.patch,
+  +files/cairo-1.12.16-all-clipped-3.patch,
+  +files/cairo-1.12.16-lto-optional.patch:
+  Bump to latest upstream rev, make multilib-aware.
+
+*cairo-1.12.16 (29 Oct 2013)
+
+  29 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.16.ebuild, -cairo-1.12.14-r4.ebuild,
+  -files/cairo-1.12.12-disable-test-suite.patch,
+  -files/cairo-1.12.14-libpng16.patch:
+  Bump to latest.
+
+*cairo-1.12.14-r4 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.14-r4.ebuild, -cairo-1.12.14.ebuild,
+  +files/cairo-1.12.14-libpng16.patch,
+  -files/cairo-1.10.0-buggy_gradients.patch:
+  Sync with upstream.
+
+  08 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  cairo-1.12.14.ebuild:
+  dev-qt/qtgui -> x11-libs/qt-gui - we're not quite ready 
+  to do that change yet...
+
+*cairo-1.12.14 (19 Mar 2013)
+
+  19 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.14.ebuild, -cairo-1.12.12.ebuild:
+  Bump to latest.
+
+*cairo-1.12.12 (08 Mar 2013)
+
+  08 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.12.ebuild, -cairo-1.12.2-r4.ebuild,
+  -files/cairo-1.12.2-fdr-nodl.patch,
+  -files/cairo-1.12.2-surfaceless-extension.patch,
+  -files/cairo-1.10.2-interix.patch,
+  -files/cairo-1.12.2-sphinx-nodl.patch,
+  +files/cairo-1.12.12-disable-test-suite.patch:
+  Bump to latest.
+
+*cairo-1.12.2-r4 (17 Dec 2012)
+
+  17 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.2-r4.ebuild, -cairo-1.12.2-r3.ebuild,
+  +files/cairo-1.12.2-fdr-nodl.patch,
+  +files/cairo-1.12.2-sphinx-nodl.patch,
+  +files/cairo-1.12.2-surfaceless-extension.patch,
+  -files/cairo-1.10.2-export-symbols.patch,
+  -files/cairo-1.10.2-ubuntu.patch,
+  -cairo-1.10.2-r4.ebuild:
+  Rbump and stabilize 1.12.2, now that the EXA issue has been
+  fixed in X. Remove old.
+  Note : not bumping to 1.12.8 just yet, since this seems to cause
+  breakage in mozilla apps (segfaults on exit, at least).
+
+*cairo-1.12.2-r3 (07 Aug 2012)
+  07 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.10.2-r4.ebuild, cairo-1.12.2-r3.ebuild,
+  +files/cairo-1.10.2-interix.patch,
+  +files/cairo-1.10.2-ubuntu.patch,
+  +files/cairo-1.10.2-export-symbols.patch:
+  Re-import cairo-1.10.2 (updated to latest patch rev from gentoo),
+  mask cairo-1.12.2 which creates a lot of breakage
+  (see e.g. bugs #47266 at freedesktop.org, #666565 at debian.org).
+
+*cairo-1.12.2-r3 (07 Aug 2012)
+
+  07 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.2-r3.ebuild, -cairo-1.12.2-r1.ebuild,
+  +files/cairo-1.10.0-buggy_gradients.patch:
+  Bump to latest from gentoo.
+
+*cairo-1.12.2-r1 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.2-r1.ebuild, -cairo-1.12.2.ebuild,
+  +files/cairo-1.10.2-qt-surface.patch,
+  +files/cairo-respect-fontconfig.patch:
+  Add / re-add two patches from upstream.
+
+*cairo-1.12.2 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.12.2.ebuild, -cairo-1.10.2-r4.ebuild,
+  -files/cairo-1.10.2-qt-surface.patch,
+  -files/cairo-1.10.0-buggy_gradients.patch,
+  -files/cairo-1.10.2-interix.patch:
+  Bump to latest.
+
+*cairo-1.10.2-r4 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.10.2-r4.ebuild, -cairo-1.10.2-r3.ebuild:
+  Force rebuild against libpng-15.
+
+*cairo-1.10.2-r3 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.10.2-r3.ebuild, -cairo-1.10.2-r2.ebuild,
+  +files/cairo-1.10.2-qt-surface.patch:
+  Rbump to latest, force rebuild.
+
+*cairo-1.10.2-r2 (18 Aug 2011)
+
+  18 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.10.2-r2.ebuild, -cairo-1.10.2-r1.ebuild,
+  +files/cairo-1.10.2-interix.patch:
+  Bump to force rebuild without the qt4 backend. Merge in
+  minor changes from gentoo.
+
+*cairo-1.10.2-r1 (22 Mar 2011)
+
+  22 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.10.2-r1.ebuild, -cairo-1.8.10.ebuild,
+  +files/cairo-1.10.0-buggy_gradients.patch,
+  -files/cairo-1.2.4-lcd-cleartype-like.diff,
+  -files/cairo-1.8.10-libpng14.patch:
+  Bump to latest.
+
+*cairo-1.8.10 (09 Dec 2010)
+
+  09 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.8.10.ebuild, -cairo-1.8.8-r1.ebuild,
+  +files/cairo-1.8.10-libpng14.patch,
+  -files/cairo-1.8.8-libpng14.patch:
+  Bump to latest.
+
+*cairo-1.8.8-r1 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.8.8-r1.ebuild, -cairo-1.8.8.ebuild,
+  +files/cairo-1.8.8-libpng14.patch, +files/cairo-1.8.8-interix.patch:
+  Merge gentoo latest, add lcd_filter patch from Ubuntu.
+
+  06 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  cairo-1.8.8.ebuild, -files/cairo-1.6.4-libpng-api-change.patch,
+  -cairo-1.6.4-r1.ebuild:
+  Stabilise cairo-1.8.8.
+
+*cairo-1.8.8 (06 Jul 2009)
+
+  06 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.8.8.ebuild, +files/cairo-1.2.4-lcd-cleartype-like.diff:
+  Add latest ~x86 to enable move to firefox-3.5.
+
+*cairo-1.6.4-r1 (14 Jan 2009)
+
+  14 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.6.4-r1.ebuild, -cairo-1.4.12-r1.ebuild,
+  +files/cairo-1.6.4-libpng-api-change.patch:
+  Bump to latest stable for firefox-3 upgrade.
+
+*cairo-1.4.12-r1 (28 Mar 2008)
+
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cairo-1.4.12-r1.ebuild:
+  Based on gentoo's 1.4.12. Add IUSE core-deps to remove dependency on freetype and png.

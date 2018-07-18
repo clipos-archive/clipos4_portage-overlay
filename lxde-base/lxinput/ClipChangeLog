@@ -1,0 +1,24 @@
+# CLIP ChangeLog for lxde-base/lxinput
+
+*lxinput-0.3.1-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +lxinput-0.3.1-r1.ebuild, -lxinput-0.3.1.ebuild:
+  Force rebuild
+
+*lxinput-0.3.1 (03 Aug 2011)
+
+  03 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +lxinput-0.3.1.ebuild, -lxinput-0.3.0.ebuild,
+  +files/lxinput-0.3.1-clip-config.patch,
+  -files/lxinput-0.3.0-clip-config.patch:
+  Bump. Add fixes for GtkRange sliders - actually set a range
+  other than (0,0).
+
+*lxinput-0.3.0 (27 Sep 2010)
+
+  27 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +lxinput-0.3.0.ebuild, +files/lxinput-0.3.0-clip-config.patch,
+  +files/lxinput-restore:
+  Initial import - bump from gentoo version, patch config file path
+  for CLIP and install a script to restore settings.

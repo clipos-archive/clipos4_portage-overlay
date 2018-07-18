@@ -1,0 +1,14 @@
+# CLIP ChangeLog for sys-process/dcron
+
+*dcron-4.5-r1 (30 Dec 2013)
+
+  30 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dcron-4.5-r1.ebuild, -dcron-4.5.ebuild:
+  Force rebuild to add openrc dependency.
+
+*dcron-4.5 (06 Jun 2012)
+
+  06 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  dcron-4.5.ebuild, +files/dcron.init.clip:
+  Initial overlay import. Add CLIP-specific init script, add
+  verictl entry.

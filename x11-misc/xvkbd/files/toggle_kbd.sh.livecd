@@ -1,0 +1,20 @@
+#!/bin/sh
+
+EXE="xvkbd"
+ARGS="-xdm"
+
+[[ -z "${DISPLAY}" ]] && export DISPLAY=:0
+xrdb -nocpp -merge /usr/share/X11/app-defaults/XVkbd-french
+xrdb -nocpp -merge /etc/XVkbd.resources
+
+case $1 in
+	1|on|enable|start)
+		pgrep ${EXE} >/dev/null || ${EXE} ${ARGS} &
+		;;
+	0|off|disable|stop)
+		pkill ${EXE}
+		;;
+	*)
+		pkill ${EXE} || ${EXE} ${ARGS} &
+		;;
+esac

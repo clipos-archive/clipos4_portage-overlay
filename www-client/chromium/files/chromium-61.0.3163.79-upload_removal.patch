@@ -1,0 +1,293 @@
+Index: chromium-61.0.3163.79/chrome/browser/media/webrtc/webrtc_log_uploader.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/chrome/browser/media/webrtc/webrtc_log_uploader.cc
++++ chromium-61.0.3163.79/chrome/browser/media/webrtc/webrtc_log_uploader.cc
+@@ -178,6 +178,7 @@ void WebRtcLogUploader::PrepareMultipart
+ 
+ void WebRtcLogUploader::UploadStoredLog(
+     const WebRtcLogUploadDoneData& upload_data) {
++#if 0
+   DCHECK(background_task_runner_->RunsTasksInCurrentSequence());
+   DCHECK(!upload_data.local_log_id.empty());
+   DCHECK(!upload_data.log_path.empty());
+@@ -224,6 +225,7 @@ void WebRtcLogUploader::UploadStoredLog(
+ 
+   PrepareMultipartPostData(compressed_log, std::move(meta_data),
+                            upload_data_with_rtp);
++#endif
+ }
+ 
+ void WebRtcLogUploader::LoggingStoppedDoStore(
+@@ -437,6 +439,7 @@ void WebRtcLogUploader::ResizeForNextOut
+ void WebRtcLogUploader::UploadCompressedLog(
+     const WebRtcLogUploadDoneData& upload_done_data,
+     std::unique_ptr<std::string> post_data) {
++#if 0
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+ 
+   DecreaseLogCount();
+@@ -484,6 +487,7 @@ void WebRtcLogUploader::UploadCompressed
+                      base::Unretained(this),
+                      base::Unretained(url_fetcher.release()),
+                      upload_done_data));
++#endif
+ }
+ 
+ void WebRtcLogUploader::SetRequestContextOnUIThread(
+@@ -499,9 +503,11 @@ void WebRtcLogUploader::SetRequestContex
+ 
+ void WebRtcLogUploader::StartAndTrackRequestContext(
+     net::URLFetcher* url_fetcher, const WebRtcLogUploadDoneData& data) {
++#if 0
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+   url_fetcher->Start();
+   upload_done_data_[url_fetcher] = data;
++#endif
+ }
+ 
+ void WebRtcLogUploader::DecreaseLogCount() {
+Index: chromium-61.0.3163.79/components/crash/content/app/breakpad_linux.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/components/crash/content/app/breakpad_linux.cc
++++ chromium-61.0.3163.79/components/crash/content/app/breakpad_linux.cc
+@@ -1234,7 +1234,8 @@ void ExecUploadProcessOrTerminate(const
+                                   const char* exe_buf,
+                                   int upload_status_fd,
+                                   google_breakpad::PageAllocator* allocator) {
+-#if defined(OS_CHROMEOS)
++#if 0
++// #if defined(OS_CHROMEOS)
+   // CrOS uses crash_reporter instead of wget to report crashes,
+   // it needs to know where the crash dump lives and the pid and uid of the
+   // crashing process.
+@@ -1276,7 +1277,7 @@ void ExecUploadProcessOrTerminate(const
+   static const char msg[] = "Cannot upload crash dump: cannot exec "
+                             "/sbin/crash_reporter\n";
+ 
+-#else  // defined(OS_CHROMEOS)
++// #else  // defined(OS_CHROMEOS)
+ 
+   // Compress |dumpfile| with gzip.
+   const pid_t gzip_child = sys_fork();
+@@ -1366,11 +1367,12 @@ void ExecUploadProcessOrTerminate(const
+   };
+   static const char msg[] = "Cannot upload crash dump: cannot exec "
+                             "/usr/bin/wget\n";
+-#endif  // defined(OS_CHROMEOS)
++// #endif  // defined(OS_CHROMEOS)
+ 
+   execve(args[0], const_cast<char**>(args), environ);
+   WriteLog(msg, sizeof(msg) - 1);
+   sys__exit(1);
++#endif
+ }
+ 
+ // Runs in the helper process to wait for the upload process running
+@@ -1937,11 +1939,15 @@ void InitCrashReporter(const std::string
+ #else
+ void InitCrashReporter(const std::string& process_type) {
+ #endif  // defined(OS_ANDROID)
++
++#if 0
+   // The maximum lengths specified by breakpad include the trailing NULL, so the
+   // actual length of the chunk is one less.
+   static_assert(crash_keys::kChunkMaxLength == 63, "kChunkMaxLength mismatch");
+   static_assert(crash_keys::kSmallSize <= crash_keys::kChunkMaxLength,
+                 "crash key chunk size too small");
++#endif
++
+ #if defined(OS_ANDROID)
+   // This will guarantee that the BuildInfo has been initialized and subsequent
+   // calls will not require memory allocation.
+@@ -1952,6 +1958,8 @@ void InitCrashReporter(const std::string
+   // precedence (i.e. its handler is run first) over the microdump handler.
+   InitMicrodumpCrashHandlerIfNecessary(process_type, sanitization_info);
+ #endif
++
++#if 0
+   // Determine the process type and take appropriate action.
+   const base::CommandLine& parsed_command_line =
+       *base::CommandLine::ForCurrentProcess();
+@@ -1959,10 +1967,15 @@ void InitCrashReporter(const std::string
+     return;
+ 
+   bool is_browser_process =
++
++#endif
++
+ #if defined(OS_ANDROID)
+       process_type == kWebViewSingleProcessType ||
+       process_type == kBrowserProcessType ||
+ #endif
++
++#if 0
+       process_type.empty();
+ 
+   if (is_browser_process) {
+@@ -1980,18 +1993,32 @@ void InitCrashReporter(const std::string
+     }
+ 
+     InitCrashKeys();
++#endif
++
+ #if defined(OS_ANDROID)
+     EnableCrashDumping(GetCrashReporterClient()->IsRunningUnattended(),
+                        sanitization_info);
+ #else
++
++#if 0
+     EnableCrashDumping(GetCrashReporterClient()->IsRunningUnattended());
++#endif
++
+ #endif  // defined(OS_ANDROID)
++
++#if 0
++
+   } else if (GetCrashReporterClient()->EnableBreakpadForProcess(process_type)) {
++
++#endif
++
+ #if defined(OS_ANDROID)
+     NOTREACHED() << "Breakpad initialized with InitCrashReporter() instead of "
+       "InitNonBrowserCrashReporter in " << process_type << " process.";
+     return;
+ #else
++
++#if 0
+     // We might be chrooted in a zygote or renderer process so we cannot call
+     // GetCollectStatsConsent because that needs access the the user's home
+     // dir. Instead, we set a command line flag for these processes.
+@@ -2005,10 +2032,15 @@ void InitCrashReporter(const std::string
+     SetClientIdFromCommandLine(parsed_command_line);
+     EnableNonBrowserCrashDumping();
+     VLOG(1) << "Non Browser crash dumping enabled for: " << process_type;
++#endif
++
+ #endif  // #if defined(OS_ANDROID)
++
++#if 0
+   }
+ 
+   PostEnableBreakpadInitialization();
++#endif
+ }
+ 
+ #if defined(OS_ANDROID)
+Index: chromium-61.0.3163.79/components/metrics/metrics_service.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/components/metrics/metrics_service.cc
++++ chromium-61.0.3163.79/components/metrics/metrics_service.cc
+@@ -264,9 +264,11 @@ void MetricsService::InitializeMetricsRe
+ }
+ 
+ void MetricsService::Start() {
++#if 0
+   HandleIdleSinceLastTransmission(false);
+   EnableRecording();
+   EnableReporting();
++#endif
+ }
+ 
+ void MetricsService::StartRecordingForTests() {
+@@ -282,10 +284,12 @@ void MetricsService::Stop() {
+ }
+ 
+ void MetricsService::EnableReporting() {
++#if 0
+   if (reporting_service_.reporting_active())
+     return;
+   reporting_service_.EnableReporting();
+   StartSchedulerIfNecessary();
++#endif
+ }
+ 
+ void MetricsService::DisableReporting() {
+@@ -309,6 +313,7 @@ bool MetricsService::WasLastShutdownClea
+ }
+ 
+ void MetricsService::EnableRecording() {
++#if 0
+   DCHECK(thread_checker_.CalledOnValidThread());
+ 
+   if (recording_state_ == ACTIVE)
+@@ -327,6 +332,7 @@ void MetricsService::EnableRecording() {
+   action_callback_ = base::Bind(&MetricsService::OnUserAction,
+                                 base::Unretained(this));
+   base::AddActionCallback(action_callback_);
++#endif
+ }
+ 
+ void MetricsService::DisableRecording() {
+@@ -703,6 +709,7 @@ void MetricsService::StartSchedulerIfNec
+ }
+ 
+ void MetricsService::StartScheduledUpload() {
++#if 0
+   DVLOG(1) << "StartScheduledUpload";
+   DCHECK(state_ >= INIT_TASK_DONE);
+   // If we're getting no notifications, then the log won't have much in it, and
+@@ -732,6 +739,7 @@ void MetricsService::StartScheduledUploa
+         base::Bind(&MetricsService::OnFinalLogInfoCollectionDone,
+                    self_ptr_factory_.GetWeakPtr()));
+   }
++#endif
+ }
+ 
+ void MetricsService::OnFinalLogInfoCollectionDone() {
+@@ -867,13 +875,16 @@ std::unique_ptr<MetricsLog> MetricsServi
+ }
+ 
+ void MetricsService::RecordCurrentEnvironment(MetricsLog* log) {
++#if 0
+   DCHECK(client_);
+   std::string serialized_environment = log->RecordEnvironment(
+       metrics_providers_, GetInstallDate(), GetMetricsReportingEnabledDate());
+   client_->OnEnvironmentUpdate(&serialized_environment);
++#endif
+ }
+ 
+ void MetricsService::RecordCurrentHistograms() {
++#if 0
+   DCHECK(log_manager_.current_log());
+   SCOPED_UMA_HISTOGRAM_TIMER("UMA.MetricsService.RecordCurrentHistograms.Time");
+ 
+@@ -884,9 +895,11 @@ void MetricsService::RecordCurrentHistog
+       base::Histogram::kNoFlags, base::Histogram::kUmaTargetedHistogramFlag);
+   for (auto& provider : metrics_providers_)
+     provider->RecordHistogramSnapshots(&histogram_snapshot_manager_);
++#endif
+ }
+ 
+ void MetricsService::RecordCurrentStabilityHistograms() {
++#if 0
+   DCHECK(log_manager_.current_log());
+   // "true" indicates that StatisticsRecorder should include histograms in
+   // persistent storage.
+@@ -895,6 +908,7 @@ void MetricsService::RecordCurrentStabil
+       base::Histogram::kNoFlags, base::Histogram::kUmaStabilityHistogramFlag);
+   for (auto& provider : metrics_providers_)
+     provider->RecordInitialHistogramSnapshots(&histogram_snapshot_manager_);
++#endif
+ }
+ 
+ bool MetricsService::PrepareProviderMetricsLog() {
+Index: chromium-61.0.3163.79/components/feedback/feedback_uploader_chrome.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/components/feedback/feedback_uploader_chrome.cc
++++ chromium-61.0.3163.79/components/feedback/feedback_uploader_chrome.cc
+@@ -35,6 +35,7 @@ FeedbackUploaderChrome::FeedbackUploader
+ 
+ void FeedbackUploaderChrome::DispatchReport(
+     scoped_refptr<FeedbackReport> report) {
++#if 0
+   net::NetworkTrafficAnnotationTag traffic_annotation =
+       net::DefineNetworkTrafficAnnotation("chrome_feedback_report_app", R"(
+         semantics {
+@@ -95,5 +96,7 @@ void FeedbackUploaderChrome::DispatchRep
+   fetcher->SetLoadFlags(net::LOAD_DO_NOT_SAVE_COOKIES |
+                         net::LOAD_DO_NOT_SEND_COOKIES);
+   fetcher->Start();
++#endif
++
+ }
+ }  // namespace feedback

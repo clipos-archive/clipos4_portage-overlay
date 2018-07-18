@@ -1,0 +1,49 @@
+# CLIP ChangeLog for www-plugins/chrome-binary-plugins
+
+* chrome-binary-plugins-48.0.2564.116_p1.ebuild (17 May 2017)
+
+  17 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +chrome-binary-plugins-48.0.2564.116_p1.ebuild,
+  -chrome-binary-plugins-47.0.2526.106_p1-r2.ebuild:
+  Update chrome binary plugins to what will be the last 32 bit build ever of
+  Google Chrome.
+
+*chrome-binary-plugins-47.0.2526.106_p1-r2 (25 May 2016)
+
+  25 May 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +chrome-binary-plugins-47.0.2526.106_p1-r2.ebuild, -chrome-binary-plugins-47.0.2526.106_p1-r1.ebuild:
+  Revert previous change as the fix is now available in portage.
+
+*chrome-binary-plugins-47.0.2526.106_p1-r1 (18 May 2016)
+
+  18 May 2016; Thomas Letan <clipos@ssi.gouv.fr>
+  +chrome-binary-plugins-47.0.2526.106_p1-r1.ebuild, -chrome-binary-plugins-47.0.2526.106_p1.ebuild:
+  Remove mirror from RESTRICT var definition
+
+*chrome-binary-plugins-47.0.2526.106_p1  (12 Jan 2016)
+
+  12 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +chrome-binary-plugins-47.0.2526.106_p1.ebuild,
+  -chrome-binary-plugins-37.0.2062.120_p1.ebuild:
+  Bump to latest stable.
+
+*chrome-binary-plugins-37.0.2062.120_p1  (02 Jun 2014)
+
+  06 Oct 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +chrome-binary-plugins-37.0.2062.120_p1.ebuild, -chrome-binary-plugins-35.0.1916.114_p1.ebuild:
+  Bump to latest (port clip specific changes to the new ebuild file).
+
+*chrome-binary-plugins-35.0.1916.114_p1 (02 Jun 2014)
+
+  02 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +chrome-binary-plugins-35.0.1916.114_p1.ebuild, -chrome-binary-plugins-34.0.1847.137_p1.ebuild:
+  Bump to latest.
+
+*chrome-binary-plugins-34.0.1847.137_p1 (15 May 2014)
+
+  15 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  chrome-binary-plugins-34.0.1847.137_p1.ebuild:
+  Initial import. CPREFIX/ROOT fixes, add CATEGORY_/DESCRIPTION_FR,
+  add a 'chromium-unsafe' wrapper script to launch chromium
+  without setuid sandbox (which is the only way the flash plugin
+  will work, for now).

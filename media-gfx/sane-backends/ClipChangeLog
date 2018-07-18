@@ -1,0 +1,108 @@
+# CLIP ChangeLog for media-gfx/sane-backends
+
+*sane-backends-1.0.27-r2 (22 May 2018)
+
+  22 May 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.27-r2.ebuild, -sane-backends-1.0.27-r1.ebuild:
+  Use libusb0 backend again.
+
+*sane-backends-1.0.27-r1 (30 Apr 2018)
+
+  20 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.27-r1.ebuild, -sane-backends-1.0.24-r7.ebuild,
+  +files/sane-backends-1.0.27-canon-lide-100.patch,
+  +files/sane-backends-1.0.27-disable-usb-tests.patch,
+  +files/sane-backends-1.0.27-network.patch,
+  -ChangeLog,
+  -ChangeLog-2015,
+  -files/niash_array_index.patch,
+  -files/sane-backends-1.0.24-automagic_systemd.patch,
+  -files/sane-backends-1.0.24-cross-compile.patch,
+  -files/sane-backends-1.0.24-kodakaio_avahi.patch,
+  -files/sane-backends-1.0.24-systemd_pkgconfig.patch,
+  -files/sane-backends-1.0.24-unused-cups.patch:
+  Bump to latest stable.
+
+*sane-backends-1.0.24-r7 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r7.ebuild, -sane-backends-1.0.24-r6.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*sane-backends-1.0.24-r6 (20 Jun 2016)
+
+  20 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r6.ebuild, -sane-backends-1.0.24-r5.ebuild:
+  Remove version in virtual/jpeg dependency, provided by libjpeg-turbo, since
+  versioned provides are not supported by our dpkg version.
+
+*sane-backends-1.0.24-r5 (24 Feb 2016)
+
+  24 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r5.ebuild, -sane-backends-1.0.24-r4.ebuild,
+  +files/sane-backends-1.0.24-cross-compile.patch,
+  +files/sane-backends-1.0.24-kodakaio_avahi.patch,
+  +files/sane-backends-1.0.24-systemd_pkgconfig.patch,
+  files/sane-backends-1.0.24-automagic_systemd.patch,
+  files/sane-backends-1.0.25-disable-usb-tests.patch,
+  files/saned.initd:
+  RBump to latest - switch to multilib.
+
+*sane-backends-1.0.24-r4 (03 Nov 2015)
+
+  03 Nov 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r4.ebuild, -sane-backends-1.0.24-r3.ebuild:
+  Switch back to libusb1.
+
+*sane-backends-1.0.24-r3 (13 Oct 2015)
+
+  13 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r3.ebuild, -sane-backends-1.0.24-r2.ebuild:
+  Update dependency on linux headers.
+
+*sane-backends-1.0.24-r2 (29 Jan 2014)
+
+  29 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r2.ebuild, -sane-backends-1.0.24-r1.ebuild:
+  Use libusb0 backend on CLIP.
+
+*sane-backends-1.0.24-r1 (24 Jan 2014)
+
+  24 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.24-r1.ebuild, -sane-backends-1.0.22-r2.ebuild,
+  -files/1.0.20-unbreak-udev.diff,
+  -files/sane-backends-1.0.22-freebsd.patch,
+  -files/sane-backends-1.0.22-libv4l-0.8.3.patch,
+  -files/sane-backends-1.0.22-xerox_mfp-usb.patch,
+  +files/sane-backends-1.0.24-automagic_systemd.patch,
+  +files/sane-backends-1.0.24-saned_pidfile_location.patch,
+  +files/sane-backends-1.0.24-unused-cups.patch,
+  +files/saned, +files/saned.confd, +files/saned.initd:
+  Bump to latest.
+
+*sane-backends-1.0.22-r2 (29 Mar 2012)
+
+  29 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sane-backends-1.0.22-r2.ebuild, -sane-backends-1.0.21-r1.ebuild:
+  +files/sane-backends-1.0.22-freebsd.patch,
+  +files/niash_array_index.patch,
+  +files/sane-backends-1.0.22-libv4l-0.8.3.patch,
+  -files/broken_coolscan.patch,
+  -files/genesys_io.patch,
+  -files/parallel-install-1.0.19.patch,
+  -files/sane-backends-1.0.22-xerox_mfp-usb.patch,
+  -files/epson2fixes-1.0.19.patch,
+  -files/udev-rule-4.patch,
+  -files/xerox-grey.patch,
+  -files/udev-rule-5.patch,
+  -files/udev-rule-6.patch,
+  -files/fujitsu_DBG_LEVEL.patch:
+  Bump to latest, tiff-4 revdep rebuild.
+
+*sane-backends-1.0.21-r1 (04 Jul 2011)
+
+  30 Jun 2011; ANSSI <clipos@ssi.gouv.fr>
+  sane-backends-1.0.21-r1.ebuild:
+    Initial overlay import, from gentoo's package. Add patch 
+    to move some files from /usr to /usr/local.
+

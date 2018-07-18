@@ -1,0 +1,11 @@
+--- src/wcmValidateDevice.c.orig	2013-09-20 01:12:33.000000000 +0200
++++ src/wcmValidateDevice.c	2014-05-21 18:22:51.432934949 +0200
+@@ -609,7 +609,7 @@ int wcmNeedAutoHotplug(InputInfoPtr pInf
+ 	if (!source) /* xorg.conf device, don't auto-pick type */
+ 		goto out;
+ 
+-	if (source && strcmp(source, "server/hal") && strcmp(source, "server/udev"))
++	if (source && strcmp(source, "server/hal") && strcmp(source, "server/udev") && strcmp(source, "server/clip"))
+ 		goto out;
+ 
+ 	/* no type specified, so we need to pick the first one applicable

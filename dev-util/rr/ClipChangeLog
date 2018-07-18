@@ -1,0 +1,5 @@
+*rr-5.0.0 (15 Sep 2017)
+
+  15 Spe 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +rr-5.0.0.ebuild,-rr-4.5.0.ebuild:
+  Bump to version 5.0.0 (in the vain hope it fixes things)

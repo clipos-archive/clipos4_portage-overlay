@@ -1,0 +1,74 @@
+--- ./Makefile.orig	2014-01-06 20:03:03.073751715 +0100
++++ ./Makefile	2014-01-06 20:06:00.900745465 +0100
+@@ -19,7 +19,7 @@ VERSION=0.0
+ # Installation prefix...
+ PREFIX=/usr/local
+ PREFIX=/usr
+-PREFIX=$(DESTDIR)/usr
++PREFIX=$(DESTDIR)
+ 
+ # Pathnames for this package...
+ BIN=$(PREFIX)/bin
+@@ -38,11 +38,11 @@ INSTALL=install
+ ROOT=root
+ 
+ # Pathnames for referenced packages...
+-FOODB=$(DESTDIR)/usr/share/foomatic/db/source
++FOODB=$(DESTDIR)/share/foomatic/db/source
+ 
+ # User ID's
+ LPuid=-oroot
+-LPgid=-glp
++LPgid=-groot
+ ifeq ($(UNAME),Darwin)
+     LPuid=-oroot
+     LPgid=-gwheel
+@@ -376,7 +376,7 @@ JBGOPTS=-m 16 -d 0 -p 92	# Equivalent op
+ #
+ # The usual build rules
+ #
+-all:	all-test $(PROGS) $(BINPROGS) $(SHELLS) getweb \
++all:	$(PROGS) $(BINPROGS) $(SHELLS) getweb \
+ 	all-icc2ps all-osx-hotplug man doc \
+ 	all-done
+ 
+@@ -599,10 +599,8 @@ command2foo2lava-pjl.o: command2foo2lava
+ #
+ # Installation rules
+ #
+-install: all install-test install-prog install-icc2ps install-osx-hotplug \
+-	    install-extra install-crd install-foo install-ppd \
+-	    install-gui install-desktop install-filter \
+-	    install-man install-doc
++install: all install-prog install-icc2ps install-osx-hotplug \
++	    install-extra install-crd install-foo install-ppd
+ 	#
+ 	# If you use CUPS, then restart the spooler:
+ 	#	make cups
+@@ -833,10 +831,10 @@ install-extra:
+ 	    fi; \
+ 	done
+ 
+-MODEL=$(DESTDIR)/usr/share/cups/model
+-LOCALMODEL=$(DESTDIR)/usr/local/share/cups/model
++MODEL=$(DESTDIR)/share/cups/model
++LOCALMODEL=$(DESTDIR)/share/cups/model
+ MACMODEL=/Library/Printers/PPDs/Contents/Resources
+-PPD=$(DESTDIR)/usr/share/ppd
++PPD=$(DESTDIR)/share/ppd
+ VARPPD=/var/lp/ppd
+ install-ppd:
+ 	#
+@@ -894,9 +892,9 @@ install-ppd:
+ 	    done; \
+ 	fi
+ 
+-APPL=$(DESTDIR)/usr/share/applications
+-OLDAPPL=$(DESTDIR)/usr/share/gnome/apps/System
+-PIXMAPS=$(DESTDIR)/usr/share/pixmaps
++APPL=$(DESTDIR)/share/applications
++OLDAPPL=$(DESTDIR)/share/gnome/apps/System
++PIXMAPS=$(DESTDIR)/share/pixmaps
+ 
+ install-desktop:
+ 	#

@@ -1,0 +1,13 @@
+# CLIP ChangeLog for dev-lang/tcl
+
+*tcl-8.5.10-r1 (06 Feb 2013)
+
+  06 Feb 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +tcl-8.5.10-r1, -tcl-8.5.9.ebuild:
+  Bump to latest.
+  
+*tcl-8.5.9 (13 Sep 2012)
+
+  13 Sep 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  tcl-8.5.9.ebuild:
+  Initial CLIP import. Fix CPREFIX.

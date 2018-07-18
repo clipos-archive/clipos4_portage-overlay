@@ -1,0 +1,28 @@
+# CLIP ChangeLog for kde-base/krdc
+
+*krdc-4.14.3-r1 (05 Jul 2016)
+
+  05 Jul 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +krdc-4.14.3-r1.ebuild, -krdc-4.14.3.ebuild:
+  Force rebuild against newer libfreerdp.
+
+*krdc-4.12.5-r2 (02 Dec 2015)
+
+  02 Dec 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +krdc-4.12.5-r2.ebuild, -krdc-4.12.5-r1.ebuild:
+  Force rebuild against newer libfreerdp.
+
+*krdc-4.12.5-r1 (03 Jun 2014)
+
+  03 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +krdc-4.12.5-r1.ebuild, -krdc-4.12.5.ebuild,
+  +files/krdc-4.13.1-freerdp.patch:
+  Add patch (backported from gentoo's 4.13.1-r1) to improve 
+  compatibility with up-to-date freerdp.
+
+*krdc-4.12.5 (12 May 2014)
+
+  12 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  krdc-4.12.5.ebuild:
+  Initial import - add DESCRIPTION_FR + verictl entry, fix
+  dependency on freerdp.

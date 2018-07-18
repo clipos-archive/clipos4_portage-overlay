@@ -1,0 +1,37 @@
+# CLIP ChangeLog for gnome-base/gnome-menus
+
+*gnome-menus-2.30.5-r4 (25 Jul 2013)
+
+  25 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnome-menus-2.30.5-r4.ebuild, -gnome-menus-2.30.5-r3.ebuild:
+  Force rebuild.
+
+*gnome-menus-2.30.5-r3 (02 Apr 2012)
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnome-menus-2.30.5-r3.ebuild, -gnome-menus-2.30.5-r2.ebuild:
+  Force rebuild
+
+*gnome-menus-2.30.5-r2 (08 Dec 2011)
+
+  08 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnome-menus-2.30.5-r2.ebuild, -gnome-menus-2.30.5-r1.ebuild,
+  +files/gnome-menus-2.30-clip-filter-desktop-entries.patch:
+  Add a patch that gives more flexibility (while somewhat breaking
+  the convention) to 'OnlyShowIn' definitions in desktop entries :
+  strings from 'OnlyShowIn' (and 'NotShowIn') are compared against
+  those extracted from the 'SHOW_DESKTOP_ENTRIES' env variable. This
+  enables us to run the desktop with SHOW_DESKTOP_ENTRIES={RMH,RMB,RMH RMB}
+  depending on what jails we have.
+
+*gnome-menus-2.30.5-r1 (18 Nov 2011)
+
+  18 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnome-menus-2.30.5-r1.ebuild, -gnome-menus-2.30.5.ebuild:
+  clip-deps fix.
+
+*gnome-menus-2.30.5 (26 Jan 2011)
+
+  26 Jan 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  gnome-menus-2.30.5.ebuild:
+  Initial import, fix CPREFIX.

@@ -1,0 +1,9 @@
+# CLIP ChangeLog for app-text/enscript
+
+*enscript-1.6.4-r3 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  enscript-1.6.4-r3.ebuild:
+  Initial overlay import, from gentoo's enscript-1.6.4-r2. Add 
+  IUSE clip-deps to remove dependency on libintl.
+

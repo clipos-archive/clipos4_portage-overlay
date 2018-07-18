@@ -1,0 +1,13 @@
+# CLIP Changelog for kdebase-runtime-meta
+
+*kdebase-runtime-meta-4.14.3-r2 (06 Jan 2017)
+
+  06 Jan 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +kdebase-runtime-meta-4.14.3-r2.ebuild, -kdebase-runtime-meta-4.14.3-r1.ebuild:
+  Add kde-base/kdebase-runtime conflict for 4.4.3 update.
+
+*kdebase-runtime-meta-4.14.3-r1 (23 May 2016)
+
+  23 May 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +kdebase-runtime-meta-4.14.3-r1.ebuild, -kdebase-runtime-meta-4.14.3.ebuild:
+  Disable kdesu on CLIP.

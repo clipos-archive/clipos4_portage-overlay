@@ -1,0 +1,8 @@
+# CLIP ChangeLog for dev-lang/lua
+
+*lua-5.1.4-r4 (19 Fev 2010)
+
+  19 Fev 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  lua-5.1.4-r4.ebuild:
+  Initial import - CPREFIX fixes + remove bin/lua* if USE clip.
+

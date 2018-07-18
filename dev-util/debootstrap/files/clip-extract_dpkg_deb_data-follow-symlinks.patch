@@ -1,0 +1,11 @@
+--- functions.orig	2015-12-02 17:17:18.557264774 +0100
++++ functions	2015-12-02 17:17:33.124868868 +0100
+@@ -798,7 +798,7 @@
+ extract_dpkg_deb_data () {
+ 	local pkg="$1"
+ 
+-	dpkg-deb --fsys-tarfile "$pkg" | tar -xf -
++	dpkg-deb --fsys-tarfile "$pkg" | tar -hxf -
+ }
+ 
+ # Raw .deb extractors

@@ -1,0 +1,7 @@
+# CLIP ChangeLog for app-dicts/myspell-es
+
+*myspell-es-0.6 (15 May 2015)
+
+  15 May 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +myspell-es-0.6.ebuild:
+  Initial import - add DESCRIPTION_FR.

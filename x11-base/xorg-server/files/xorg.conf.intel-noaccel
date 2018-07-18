@@ -1,0 +1,32 @@
+
+Section "Monitor"
+
+    Identifier  "LCD"
+
+EndSection
+
+
+Section "Device"
+    Identifier  "intel"
+    Driver      "intel"
+	Option		"NoAccel"	"true"
+EndSection
+
+
+Section "Screen"
+    Identifier  "Screen 1"
+    Device      "intel"
+    Monitor     "LCD"
+    Option "DPMS" "true"
+EndSection
+
+
+Section "ServerLayout"
+
+    Identifier  "Simple Layout"
+
+    Screen "Screen 1"
+
+    InputDevice "Keyboard0" "CoreKeyboard"
+EndSection
+

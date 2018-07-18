@@ -1,0 +1,16 @@
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+Cf. https://github.com/AndroidHardening/chromium_patches/blob/oreo-m2-release/COPPERHEAD_LICENSE
+
+Index: chromium-61.0.3163.79/components/autofill/core/browser/autofill_manager.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/components/autofill/core/browser/autofill_manager.cc
++++ chromium-61.0.3163.79/components/autofill/core/browser/autofill_manager.cc
+@@ -278,7 +278,7 @@ void AutofillManager::RegisterProfilePre
+       prefs::kAutofillCreditCardSigninPromoImpressionCount, 0);
+   registry->RegisterBooleanPref(
+       prefs::kAutofillEnabled,
+-      true,
++      false,
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+   registry->RegisterBooleanPref(
+       prefs::kAutofillProfileUseDatesFixed, false,

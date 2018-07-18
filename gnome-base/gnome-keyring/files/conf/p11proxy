@@ -1,0 +1,2 @@
+P11MODULE="/usr/lib/opensc-pkcs11.so"
+P11CLIENTSOCK="core"

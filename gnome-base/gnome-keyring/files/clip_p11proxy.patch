@@ -1,0 +1,551 @@
+diff -Naur gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-daemon-standalone.c gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-daemon-standalone.c
+--- gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-daemon-standalone.c	2009-11-10 03:45:14.000000000 +0100
++++ gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-daemon-standalone.c	2011-02-04 17:32:23.000000000 +0100
+@@ -38,6 +38,39 @@
+ 
+ #define SOCKET_PATH "/tmp/gck-rpc-daemon.sock"
+ 
++/* CLIP : logging macros */
++#include <syslog.h>
++
++#define _LOG(slev, fmt, args...) do {					\
++		syslog(LOG_DAEMON|slev,					\
++		       "%s(%s:%d): "fmt"\n", __FUNCTION__,		\
++		       __FILE__, __LINE__, ##args);			\
++} while (0)
++
++#define LOG(fmt, args...) _LOG(LOG_NOTICE, fmt, ##args);
++#define DEBUG(fmt, args...) _LOG(LOG_DEBUG, fmt, ##args);
++#define ERROR(fmt, args...) _LOG(LOG_ERR, fmt, ##args);
++/* /logging macros */
++
++/* CLIP : vserver stuff */
++#include <limits.h>
++#include <signal.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++#include <fcntl.h>
++#include <clip/clip.h>
++#include <linux/capability.h>
++#include <clip/clip-vserver.h>
++
++static unsigned long g_xid = 505;
++static char *g_socket_path = SOCKET_PATH;
++static char *p11_module_path = NULL;
++
++#define OPTS	"m:s:X:v"
++
++/* /CLIP : vserver stuff */
++
+ /* Sample configuration for loading NSS remotely */
+ static CK_C_INITIALIZE_ARGS p11_init_args = {
+ 	NULL,
+@@ -45,18 +78,132 @@
+         NULL,
+         NULL,
+         CKF_OS_LOCKING_OK,
+-        "init-string = configdir='/tmp' certPrefix='' keyPrefix='' secmod='/tmp/secmod.db' flags="
++	// CLIP : native pkcs11 modules do not fancy this
++	//        "init-string = configdir='/tmp' certPrefix='' keyPrefix='' secmod='/tmp/secmod.db' flags="
++        NULL
+ };
+ 
++sigset_t orig_sigmask;
++
+ static int is_running = 1;
+ 
++static void
++print_help(const char *exe)
++{
++	printf("%s -m <pkcs11 module path> -s <socket path> -X <xid>\n", exe);
++}
++
++static int
++get_options(int argc, char *argv[])
++{
++	int c;
++	unsigned long tmp;
++	char *end;
++
++	while ((c = getopt(argc, argv, OPTS)) != -1) {
++		switch (c) {
++			case 'X':
++				errno = 0;
++				tmp = strtoul(optarg, &end, 0);
++				if (tmp == ULONG_MAX && errno == ERANGE) {
++					fprintf(stderr, "xid out of bounds: %s", optarg);
++					return -1;
++				}
++				if (*end) {
++					fprintf(stderr, "trailing chars after xid: %s\n", optarg);
++					return -1;
++				}
++				g_xid = tmp;
++				break;
++			case 's':
++				g_socket_path = optarg;
++				break;
++			case 'm':
++				p11_module_path = optarg;
++				break;
++			case 'h':
++				print_help((argc > 0) ? basename(argv[0])
++						: "p11proxy");
++				exit(0);
++				break;
++				/*
++			case 'F':
++				g_foreground = 1;
++				break;
++			case 'v':
++				g_verbose++;
++				break;
++				*/
++			default:
++				fprintf(stderr, "Unsupported option %c", c);
++				return -1;
++				break;
++		}
++	}
++
++	if (!p11_module_path) {
++		fprintf(stderr, "Missing parameters : \n");
++		print_help(basename(argv[0]));
++		return -1;
++	}
++
++	return 0;
++}
++
++static void
++interrupt_handler(int sig)
++{
++	is_running = 0;	
++}
++
+ static int 
+-usage (void)
++install_sighandlers(void)
+ {
+-	fprintf (stderr, "usage: gck-rpc-daemon pkcs11-module\n");
+-	exit (2);
++	sigset_t sigmask;
++
++	struct sigaction act = {
++		.sa_handler = interrupt_handler,
++		.sa_flags = SA_RESETHAND,
++		.sa_restorer = NULL
++	};
++
++	if (sigemptyset(&sigmask)) {
++		perror("sigemptyset failed");
++		return -1;
++	}
++	if (sigaddset(&sigmask, SIGTERM)) {
++		perror("sigaddset failed");
++		return -1;
++	}
++	if (sigprocmask(SIG_BLOCK, &sigmask, &orig_sigmask)) {
++		perror("sigprocmask failed");
++		return -1;
++	}
++	//	memcpy(&act.sa_mask, &sigmask, sizeof(sigmask));
++
++	if (sigaction(SIGTERM, &act, NULL)) {
++		perror("failed to install signal handler");
++		return -1;
++	}
++
++	return 0;
+ }
+ 
++static int
++drop_privs(void) {
++	if (g_xid) {
++		if(clip_enter_context(g_xid)) {
++			ERROR("Failed to enter context %lu\n", g_xid);
++			goto err;
++		}
++	}
++
++	return 0;
++err:
++	return -1;
++}
++
++
+ int
+ main (int argc, char *argv[])
+ {
+@@ -64,31 +211,66 @@
+ 	CK_FUNCTION_LIST_PTR funcs;
+ 	void *module;
+ 	fd_set read_fds;
+-	int sock, ret;
++	int sock, ret, ready;
+ 	CK_RV rv;
+-	
+-	/* The module to load is the argument */
+-	if (argc != 2)
+-		usage();
++	pid_t child;
++	int status;
++
++	if (get_options(argc, argv))
++		return EXIT_FAILURE;
++
++	if (clip_daemonize()) {
++		fprintf(stderr, "Failed to daemonize\n");
++		return EXIT_FAILURE;
++	}
++
++	openlog("p11proxy", LOG_CONS|LOG_PID|LOG_NDELAY, LOG_DAEMON);
++
++	/* Respawn proxy in case it dies */
++	do {
++		child = fork();
++		switch(child) {
++		case -1:
++			_exit(-1);
++			break;
++		case 0:
++			goto startdaemon;
++			break;
++		default:
++			wait(&status);
++			if (WIFEXITED(status))
++				exit(0);
++			break;
++		}
++
++                ERROR("Child proxy with PID %d died. Respawning cryptoki deamon.", child);
++
++        } while(1);
++
++ startdaemon:
++	LOG("starting cryptoki daemon proxy...");
++
++	if (install_sighandlers())
++		return EXIT_FAILURE;
+ 
+ 	/* Load the library */
+-	module = dlopen(argv[1], RTLD_NOW);
++	module = dlopen(p11_module_path, RTLD_NOW);
+ 	if(!module) {
+-		fprintf (stderr, "couldn't open library: %s: %s\n", argv[1], dlerror());
++		ERROR("couldn't open library: %s: %s\n",p11_module_path, dlerror());
+ 		exit (1);
+ 	}
+ 
+ 	/* Lookup the appropriate function in library */
+ 	func_get_list = (CK_C_GetFunctionList)dlsym (module, "C_GetFunctionList");
+ 	if (!func_get_list) {
+-		fprintf (stderr, "couldn't find C_GetFunctionList in library: %s: %s\n", argv[1], dlerror());
++		ERROR("couldn't find C_GetFunctionList in library: %s: %s\n", argv[1], dlerror());
+ 		exit (1);
+ 	}
+ 	
+ 	/* Get the function list */
+ 	rv = (func_get_list) (&funcs);
+ 	if (rv != CKR_OK || !funcs) {
+-		fprintf (stderr, "couldn't get function list from C_GetFunctionList in libary: %s: 0x%08x\n", 
++		ERROR("couldn't get function list from C_GetFunctionList in libary: %s: 0x%08x\n", 
+ 		         argv[1], (int)rv);
+ 		exit (1);
+ 	}
+@@ -96,37 +278,66 @@
+ 	/* RPC layer expects initialized module */
+ 	rv = (funcs->C_Initialize) (&p11_init_args);
+ 	if (rv != CKR_OK) {
+-		fprintf (stderr, "couldn't initialize module: %s: 0x%08x\n", argv[1], (int)rv);
++		ERROR("couldn't initialize module: %s: 0x%08x\n", argv[1], (int)rv);
+ 		exit (1);
+ 	}
+ 	
+ 	gck_rpc_layer_initialize (funcs);
+-	sock = gck_rpc_layer_startup (SOCKET_PATH);
++	sock = gck_rpc_layer_startup (g_socket_path);
+ 	if (sock == -1)
+ 		exit (1);
++
++	/* Jail proxy into a vserver.
++	   Note : it would be better to jail sooner (e.g., before calling
++	   PKCS11 module functions), but the socket needs to be opened before
++	   we jail, and it seems like RPC layer expects initialized module.
++	 */
++	if(drop_privs()) {
++		ERROR("couldn't jail process\n");
++		dlclose(module);
++		exit(1);
++	}
++
++	// indicate to the outside world that the proxy is ready to accept connexions
+ 	
++	if((ready = creat("/proxyready",S_IRUSR|S_IWUSR))<0) {
++		ERROR("could not create file\n");
++		dlclose(module);
++		exit(1);
++	}
++	close(ready);
++
++	/* end of jail proxy */
++
++	LOG("cryptoki daemon proxy started.");
++
+ 	is_running = 1;
+ 	while (is_running) {
+ 		FD_ZERO (&read_fds);
+ 		FD_SET (sock, &read_fds);
+-		ret = select (sock + 1, &read_fds, NULL, NULL, NULL);
+-		if (ret < 0) {
+-			if (errno == EINTR)
+-				continue;
+-			fprintf (stderr, "error watching socket: %s\n", strerror (errno));
++
++		ret = pselect (sock + 1, &read_fds, NULL, NULL, NULL, &orig_sigmask);
++		if (ret < 0 && errno != EINTR) {
++			ERROR("error watching socket: %s\n", strerror (errno));
+ 			exit (1);
+ 		}
++		else if(!is_running) {
++			break;
++		}
+ 		
+ 		if (FD_ISSET (sock, &read_fds))
+ 			gck_rpc_layer_accept ();
+ 	}
+-	
++
+ 	gck_rpc_layer_shutdown ();
++
++	unlink("/proxyready");
++
+ 	gck_rpc_layer_uninitialize ();
+-	
++
+ 	rv = (funcs->C_Finalize) (NULL);
+ 	if (rv != CKR_OK)
+-		fprintf (stderr, "couldn't finalize module: %s: 0x%08x\n", argv[1], (int)rv);
++		ERROR("couldn't finalize module: %s: 0x%08x\n", argv[1], (int)rv);
+ 	
+ 	dlclose(module);
+ 
+diff -Naur gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-dispatch.c gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-dispatch.c
+--- gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-dispatch.c	2009-11-10 03:45:14.000000000 +0100
++++ gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-dispatch.c	2011-02-04 17:32:23.000000000 +0100
+@@ -32,6 +32,7 @@
+ 
+ #include "egg/egg-unix-credentials.h"
+ 
++#include <sys/stat.h>
+ #include <sys/types.h>
+ #include <sys/param.h>
+ #include <sys/socket.h>
+@@ -799,7 +800,8 @@
+ 	 * we call C_CloseAllSessions for each slot for this client application.
+ 	 */
+ 
+-	if (cs->application.applicationId) {
++	//	applicationId is not initialized
++	//	if (cs->application.applicationId) {
+ 		ret = (pkcs11_module->C_GetSlotList) (TRUE, NULL, &n_slots);
+ 		if (ret == CKR_OK) {
+ 			slots = calloc (n_slots, sizeof (CK_SLOT_ID));
+@@ -808,11 +810,12 @@
+ 			} else {
+ 				ret = (pkcs11_module->C_GetSlotList) (TRUE, slots, &n_slots);
+ 				for (i = 0; ret == CKR_OK && i < n_slots; ++i)
+-					ret = (pkcs11_module->C_CloseAllSessions) (slots[i] | cs->application.applicationId);
++					ret = (pkcs11_module->C_CloseAllSessions) (slots[i]);
++				//					ret = (pkcs11_module->C_CloseAllSessions) (slots[i] | cs->application.applicationId);
+ 				free (slots);
+ 			}
+ 		}
+-	}
++		//	}
+ 
+ 	debug (("ret: %d", ret));
+ 	return ret;
+@@ -953,8 +956,10 @@
+ 	BEGIN_CALL (C_OpenSession);
+ 		IN_ULONG (slot_id);
+ 		IN_ULONG (flags);
+-		flags |= CKF_G_APPLICATION_SESSION;
+-	PROCESS_CALL ((slot_id, flags, &cs->application, NULL, &session));
++		// CLIP : thunderbirds does not like that much... (?)
++		//		flags |= CKF_G_APPLICATION_SESSION;
++		//	PROCESS_CALL ((slot_id, flags, &cs->application, NULL, &session));
++	PROCESS_CALL ((slot_id, flags, NULL, NULL, &session));
+ 		OUT_ULONG (session);
+ 	END_CALL;
+ }
+@@ -2220,6 +2225,11 @@
+ 	}
+ 	
+ 	ds->socket = new_fd;
++
++	// CLIP : seems necessary to start threading system in some cases
++	if(!g_thread_get_initialized()) {
++		g_thread_init(NULL);
++	}
+ 	
+ 	ds->thread = g_thread_create (run_dispatch_thread, &(ds->socket), TRUE, &error);
+ 	if (!ds->thread) {
+@@ -2272,8 +2282,8 @@
+ 		g_thread_join (ds->thread);
+ 
+ 		/* This is always closed by dispatch thread */
+-		assert (ds->socket == -1);
+-		free (ds);
++		if (ds->socket == -1)
++			free (ds);
+ 	}
+ 
+ 	pkcs11_module = NULL;
+@@ -2313,13 +2323,16 @@
+ 		                  pkcs11_socket_path, strerror (errno));
+ 		return -1;
+ 	}
+-
+ 	if (listen (sock, 128) < 0) {
+ 		gck_rpc_warn ("couldn't listen on pkcs11 socket: %s: %s", 
+ 		                  pkcs11_socket_path, strerror (errno));
+ 		return -1;
+ 	}
+ 
++	// CLIP : allow processes from RM Jails to use the proxy
++	if(chmod(pkcs11_socket_path,S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH))
++		gck_rpc_warn ("couldn't change rights on pkcs11 socket: %s: %s", pkcs11_socket_path, strerror (errno));
++
+ 	pkcs11_socket = sock;
+ 	pkcs11_dispatchers = NULL;
+ 
+diff -Naur gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-module.c gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-module.c
+--- gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-module.c	2009-11-10 03:45:14.000000000 +0100
++++ gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-module.c	2011-02-04 17:32:23.000000000 +0100
+@@ -1151,11 +1151,14 @@
+ 			 * When the CKF_OS_LOCKING_OK flag isn't set return an error.  
+ 			 * We must be able to use our pthread functionality.
+ 			 */
+-			if (!(args->flags & CKF_OS_LOCKING_OK)) {
+-				warning (("can't do without os locking"));
+-				ret = CKR_CANT_LOCK;
+-				goto done;
+-			}
++
++			// CLIP : some applications do not set this flag but still work...
++			//			if (!(args->flags & CKF_OS_LOCKING_OK)) {
++			//				warning (("can't do without os locking"));
++			//				ret = CKR_CANT_LOCK;
++			//				goto done;
++			//			}
++
+ 			
+ 			/* 
+ 			 * We support setting the socket path and other arguments from from the 
+@@ -1180,10 +1183,11 @@
+ 		if (pkcs11_socket_path[0] == 0) {
+ 			pkcs11_socket_path[0] = 0;
+ 			path = getenv ("GNOME_KEYRING_SOCKET");
+-			if (path && path[0]) {
+-				snprintf (pkcs11_socket_path, sizeof (pkcs11_socket_path), "%s.pkcs11", path);
+-				pkcs11_socket_path[sizeof (pkcs11_socket_path) - 1] = 0;
+-			}
++			if (!(path && path[0]))
++				path="/var/run/p11proxy/socket";
++
++			snprintf (pkcs11_socket_path, sizeof (pkcs11_socket_path), "%s.pkcs11", path);
++			pkcs11_socket_path[sizeof (pkcs11_socket_path) - 1] = 0;
+ 		}
+ 
+ 		/* Call through and initialize the daemon */
+@@ -1351,6 +1355,10 @@
+ {
+ 	return_val_if_fail (slot, CKR_ARGUMENTS_BAD);
+ 
++	// Use NSS WaitForSlotEvent emulation instead of native module 
++	// to prevent a thunderbird thread from blocking on a C_WaitForSlotEvent call 
++	return(CKR_FUNCTION_NOT_SUPPORTED);
++
+ 	BEGIN_CALL (C_WaitForSlotEvent);
+ 		IN_ULONG (flags);
+ 	PROCESS_CALL;
+@@ -1438,7 +1446,7 @@
+ 	BEGIN_CALL (C_SetPIN);
+ 		IN_ULONG (session);
+ 		IN_BYTE_ARRAY (old_pin, old_pin_len);
+-		IN_BYTE_ARRAY (new_pin, old_pin_len);
++		IN_BYTE_ARRAY (new_pin, new_pin_len);
+ 	PROCESS_CALL;
+ 	END_CALL;
+ }
+diff -Naur gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-util.c gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-util.c
+--- gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/gck-rpc-util.c	2009-11-10 03:45:14.000000000 +0100
++++ gnome-keyring-2.28.2/pkcs11/rpc-layer/gck-rpc-util.c	2011-02-04 17:32:23.000000000 +0100
+@@ -79,7 +79,7 @@
+ 	assert (mechs);
+ 	assert (n_mechs);
+ 	
+-	for (i = 0; i < (int)(*mechs); ++i) {
++	for (i = 0; i < (int)(*n_mechs); ++i) {
+ 		if (!gck_rpc_mechanism_has_no_parameters (mechs[i]) &&
+ 		    !gck_rpc_mechanism_has_sane_parameters (mechs[i])) {
+ 			
+@@ -204,4 +204,4 @@
+ 	default:
+ 		return 0;
+ 	};
+-}
+\ Pas de fin de ligne à la fin du fichier.
++}
+diff -Naur gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/Makefile.am gnome-keyring-2.28.2/pkcs11/rpc-layer/Makefile.am
+--- gnome-keyring-2.28.2-orig/pkcs11/rpc-layer/Makefile.am	2009-11-10 03:45:14.000000000 +0100
++++ gnome-keyring-2.28.2/pkcs11/rpc-layer/Makefile.am	2011-02-04 17:32:23.000000000 +0100
+@@ -1,14 +1,14 @@
++bin_PROGRAMS = \
++	gck-rpc-daemon-standalone
+ 
+ noinst_LTLIBRARIES = \
+ 	libgck-rpc-layer.la
+ 
+-noinst_PROGRAMS = \
+-	gck-rpc-daemon-standalone
+-	
+ INCLUDES = -I. \
+ 	-I$(top_srcdir) \
+-	-I$(top_builddir)
+-	
++	-I$(top_builddir) \
++	-I/usr/src/linux/
++
+ # ------------------------------------------------------------------------------
+ # The dispatch code
+ 
+@@ -23,12 +23,12 @@
+ 	$(top_builddir)/egg/libegg-buffer.la \
+ 	$(top_builddir)/egg/libegg-creds.la \
+ 	$(GOBJECT_LIBS) \
+-    	$(GTHREAD_LIBS) \
++	$(GTHREAD_LIBS) \
+ 	$(GLIB_LIBS) 
+ 
+ libgck_rpc_layer_la_CFLAGS = \
+ 	$(GOBJECT_CFLAGS) \
+-    	$(GTHREAD_CFLAGS) \
++	$(GTHREAD_CFLAGS) \
+ 	$(GLIB_CFLAGS) 
+ 
+ # ------------------------------------------------------------------------------
+@@ -58,7 +58,9 @@
+ 
+ gck_rpc_daemon_standalone_SOURCES = \
+ 	gck-rpc-daemon-standalone.c
+-	
++
+ gck_rpc_daemon_standalone_LDADD = \
+ 	$(DL_LIBS) libgck-rpc-layer.la
+-	
++
++gck_rpc_daemon_standalone_LDFLAGS = \
++	-lclipvserver -lclip

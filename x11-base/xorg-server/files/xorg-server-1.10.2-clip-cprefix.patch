@@ -1,0 +1,13 @@
+--- configure.ac.orig	2011-07-07 15:02:08.469994294 +0200
++++ configure.ac	2011-07-07 15:04:29.432997429 +0200
+@@ -1262,7 +1262,9 @@
+ AC_DEFINE_DIR(PCI_TXT_IDS_PATH, PCI_TXT_IDS_DIR, [Default PCI text file ID path])
+ AC_DEFINE_DIR(SERVER_MISC_CONFIG_PATH, SERVERCONFIG, [Server miscellaneous config path])
+ AC_DEFINE_DIR(BASE_FONT_PATH, FONTROOTDIR, [Default base font path])
+-dridriverdir=`$PKG_CONFIG --variable=dridriverdir dri`
++AC_ARG_WITH(dri-driver-dir, AS_HELP_STRING([--with-dri-driver-dir=PATH],
++	     [Path to DRI driver dir]),
++	     [dridriverdir=$withval], [dridriverdir=`$PKG_CONFIG --variable=dridriverdir dri`])
+ AC_DEFINE_DIR(DRI_DRIVER_PATH, dridriverdir, [Default DRI driver path])
+ AC_DEFINE_UNQUOTED(XVENDORNAME, ["$VENDOR_NAME"], [Vendor name])
+ AC_DEFINE_UNQUOTED(XVENDORNAMESHORT, ["$VENDOR_NAME_SHORT"], [Short vendor name])

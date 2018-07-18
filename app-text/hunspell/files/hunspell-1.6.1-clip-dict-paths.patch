@@ -1,0 +1,38 @@
+Index: hunspell-1.6.1/src/tools/hunspell.cxx
+===================================================================
+--- hunspell-1.6.1.orig/src/tools/hunspell.cxx
++++ hunspell-1.6.1/src/tools/hunspell.cxx
+@@ -116,28 +116,12 @@
+ #include "odfparser.hxx"
+ 
+ #define LIBDIR                \
+-  "/usr/share/hunspell:"      \
+-  "/usr/share/myspell:"       \
+-  "/usr/share/myspell/dicts:" \
+-  "/Library/Spelling"
++  "/usr/local/lib:"      \
++  "/usr/local/share/myspell:"
+ #define USEROOODIR {                  \
+-  ".openoffice.org/3/user/wordbook", \
+-  ".openoffice.org2/user/wordbook",  \
+-  ".openoffice.org2.0/user/wordbook",\
+-  "Library/Spelling" }
+-#define OOODIR                                       \
+-  "/opt/openoffice.org/basis3.0/share/dict/ooo:"     \
+-  "/usr/lib/openoffice.org/basis3.0/share/dict/ooo:" \
+-  "/opt/openoffice.org2.4/share/dict/ooo:"           \
+-  "/usr/lib/openoffice.org2.4/share/dict/ooo:"       \
+-  "/opt/openoffice.org2.3/share/dict/ooo:"           \
+-  "/usr/lib/openoffice.org2.3/share/dict/ooo:"       \
+-  "/opt/openoffice.org2.2/share/dict/ooo:"           \
+-  "/usr/lib/openoffice.org2.2/share/dict/ooo:"       \
+-  "/opt/openoffice.org2.1/share/dict/ooo:"           \
+-  "/usr/lib/openoffice.org2.1/share/dict/ooo:"       \
+-  "/opt/openoffice.org2.0/share/dict/ooo:"           \
+-  "/usr/lib/openoffice.org2.0/share/dict/ooo"
++  ".config/libreoffice/4/user/wordbook:",\
++  }
++#define OOODIR ""
+ #define HOME getenv("HOME")
+ #define DICBASENAME ".hunspell_"
+ #define LOGFILE "/tmp/hunspell.log"

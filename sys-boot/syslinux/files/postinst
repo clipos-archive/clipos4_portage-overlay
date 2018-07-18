@@ -1,0 +1,218 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+if [[ -f "/boot/syslinux/extlinux_5.conf" ]]; then mv "/boot/syslinux/extlinux_5.conf" "/boot/"; fi
+if [[ -f "/boot/syslinux/extlinux_10.conf" ]]; then mv "/boot/syslinux/extlinux_10.conf" "/boot/"; fi
+
+error() {
+	echo " ! ${1} !" >&2
+	exit 1
+}
+
+
+for f in /boot/extlinux_5.conf /boot/extlinux_10.conf; do
+	/bin/sed -i -e "s/ROOT_DEV/${ROOT_DEVICE_NOCRYPT}/g" "${f}"
+done
+
+ROOTDISK="$(awk '$2 == "/" {print $1}' /etc/fstab)"
+if [[ -z "${ROOTDISK}" ]]; then
+        echo " ! Could not read root disk !" >&2
+        exit 1
+fi
+ROOTDISK="${ROOTDISK%%[0-9]*}"
+ROOTDISK="${ROOTDISK/mapper\//}"
+
+vidmode=""
+if [[ -f "/etc/shared/video" ]]; then
+	vidmode="$(cat "/etc/shared/video")"
+fi
+
+# video='WxH-D' is actually harmful in KMS case
+if [[ "${vidmode}" != "vesa" ]]; then
+	if grep -q 'video=' "/etc/bootargs" ; then
+		sed -i -e 's/video=[^ ]*//' "/etc/bootargs"
+	fi
+fi
+
+bootargs=""
+if test -f /etc/bootargs; then
+	bootargs="$(/bin/head -n 1 /etc/bootargs)"
+fi
+
+for f in /boot/extlinux_5.conf /boot/extlinux_10.conf; do
+	if [[ "${vidmode}" == "vesa" ]]; then
+		if grep -q 1024 /etc/bootargs; then
+			/bin/sed -i -e 's/^#800//;' "${f}"
+		else 
+			/bin/sed -i -e 's/^#800//; s/^#1024//' "${f}"
+		fi
+		/bin/sed -i -e "s/RESOLUTION/${bootargs}/g" "${f}"
+	else
+		# Force-off SVIDEO output on KMS configs, since it creates
+		# issues with LVDS either staying blank or activating with
+		# the wrong resolution on various configs.
+		/bin/sed -i -e '/^#800/d; /^#1024/d;' \
+			-e "s/RESOLUTION/video=SVIDEO-1:d ${bootargs}/" \
+			"${f}"
+	fi
+
+	if grep -q crypt /etc/bootargs; then
+		/bin/sed -i -e 's/^#chpw//;' "${f}"
+	fi
+	if grep -q crypt1 /etc/bootargs; then
+		/bin/sed -i 's/chpw0/chpw1/;' "${f}"
+		/bin/sed -i 's/Changer/Creer/;' "${f}"
+	fi
+
+  # fix bug #3621: moving from crypt1 to cryptO
+  # check that we are already using crypt0
+	if grep -q "crypt0" /proc/cmdline; then
+		  /bin/sed -i 's/crypt1/crypt0/g;' "${f}"
+	fi
+done
+
+restore_saved_version() {
+	local num="${1}"
+
+	if [[ -e "/tmp/extlinux.vernew.${num}" ]]; then
+		local vernew="$(cat "/tmp/extlinux.vernew.${num}")"
+		echo " * Setting new version to '${vernew}' on /boot/extlinux_${num}.conf"
+		sed -i -e "s:CLIP, version courante.*:${vernew}:" \
+			"/boot/extlinux_${num}.conf" || echo " ! Failed to update version on /boot/extlinux_${num}.conf !"
+		rm -f "/tmp/extlinux.vernew.${num}"
+	fi
+
+	if [[ -e "/tmp/extlinux.verold.${num}" ]]; then
+		local verold="$(cat "/tmp/extlinux.verold.${num}")"
+		echo " * Setting new version to '${verold}' on /boot/extlinux_${num}.conf"
+		sed -i -e "s:CLIP, version precedente.*:${verold}:" \
+			"/boot/extlinux_${num}.conf" || echo " ! Failed to update version on /boot/extlinux_${num}.conf !" >&2
+		rm -f "/tmp/extlinux.verold.${num}"
+	fi
+}
+
+make_temporary_dev() {
+	mount -t tmpfs -o rw,nosuid,noexec syslinux /dev || error "Failed to mount temporary /dev"
+
+	local maj=""
+	local mmin=""
+	local mname="${ROOTDISK}"
+	case ${ROOTDISK} in 
+		/dev/sda)
+			maj="8"
+			mmin="0"
+
+			;;
+		/dev/sdb)
+			maj="8"
+			mmin="16"
+			;;
+		/dev/sdc)
+			maj="8"
+			mmin="32"
+			;;
+		/dev/sdd)
+			maj="8"
+			mmin="48"
+			;;
+		/dev/hda)
+			maj="3"
+			mmin="0"
+			;;
+		/dev/md)
+			maj="9"
+			mmin="0"
+			mname="/dev/md0"
+			;;
+		*)
+			error "Unsupported root device : ${ROOTDISK}"
+			;;
+	esac
+
+	mknod "${mname}" b ${maj} ${mmin} || error "mknod ${mname} failed"
+	for i in $(seq 1 15); do
+		mknod "${ROOTDISK}${i}" b ${maj} $(( ${mmin} + ${i} )) || error "mknod ${ROOTDISK}${i} failed"
+	done
+}
+
+update_or_set_bios_bootloader() {
+	local mounted=""
+	if [[ -n "${ROOTDISK}" ]]; then
+		if [[ ! -e "${ROOTDISK}1" ]]; then
+			# /dev is empty, mount a temporary tmpfs instead
+			make_temporary_dev || exit 1
+			mounted="y"
+		fi
+	fi
+
+	mv /boot/syslinux/bios/* /boot
+
+	if ! extlinux -i /boot; then
+		# Note that we're probably screwed by this point - system won't be bootable next time
+		error "Failed to update extlinux" >&2
+	fi
+
+	if [[ -n "${mounted}" ]]; then
+		umount /dev || error "Failed to umount /dev"
+	fi
+}
+
+write_mbr () {
+	case ${ROOTDISK} in
+		/dev/md)
+			local disks=$(mdadm -D /dev/md1 | egrep '([0-9]+ +){4}[a-z ]+/dev' | sed -e 's/\( *[0-9]* *\)*[a-z ]*//')
+			for disk in ${disks}
+			do
+				cat /boot/syslinux/bios/mbr.bin > "${disk}" ||
+					error "Failed to write MBR on ${disk}"
+			done
+			;;
+		*)
+			cat /boot/syslinux/bios/mbr.bin > "${ROOT_DEVICE_NOCRYPT}" ||
+				error "Failed to write MBR on ${ROOT_DEVICE_NOCRYPT}"
+			;;
+	esac
+
+	rm /boot/syslinux/bios/mbr.bin # don't need it anymore
+}
+
+
+for i in 5 10; do
+	restore_saved_version ${i}
+done
+
+if [[ ! -f /boot/extlinux.conf ]]; then
+	echo "include extlinux_5.conf" >> /boot/extlinux.conf
+fi
+
+FW=""
+
+# targeted firmware? in /etc/fw.conf
+if [[ ! -f /etc/fw.conf ]]; then
+	# install bios by default
+	FW="bios"
+else
+	FW=$(cat "/etc/fw.conf")
+fi
+
+case ${FW} in
+bios)
+	write_mbr
+	if [[ -f /boot/extlinux.sys ]]; then
+		chattr -i /boot/extlinux.sys
+		rm -f /boot/extlinux.sys
+	fi
+	update_or_set_bios_bootloader
+	;;
+efi32)
+	mkdir -p /boot/EFI/boot
+	mv /boot/syslinux/efi32/* /boot/EFI/boot
+	;;
+efi64)
+	mkdir -p /boot/EFI/boot
+	mv /boot/syslinux/efi64/* /boot/EFI/boot
+	;;
+esac
+
+rm -r /boot/syslinux

@@ -1,0 +1,71 @@
+--- ./src/Makefile.am.orig	2014-02-14 14:45:45.000000000 +0100
++++ ./src/Makefile.am	2014-06-20 10:48:20.000000000 +0200
+@@ -1071,12 +1071,6 @@ libavahi_wrap_la_LIBADD = $(AM_LIBADD) $
+ #        Plug-in libraries        #
+ ###################################
+ 
+-if HAVE_DBUS
+-# Serveral module (e.g. libalsa-util.la)
+-modlibexec_LTLIBRARIES += \
+-		module-console-kit.la
+-endif
+-
+ modlibexec_LTLIBRARIES += \
+ 		module-cli.la \
+ 		module-cli-protocol-tcp.la \
+--- ./src/pulsecore/core-util.c.orig	2014-03-03 14:52:41.000000000 +0100
++++ ./src/pulsecore/core-util.c	2014-06-20 10:49:26.000000000 +0200
+@@ -737,6 +737,10 @@ static int set_scheduler(int rtprio) {
+ #endif  /* HAVE_SCHED_H */
+ 
+ #ifdef HAVE_DBUS
++#if 1
++    pa_log_debug("Not even trying to connect to dbus system bus.");
++    return 0;
++#else
+     /* Try to talk to RealtimeKit */
+ 
+     if (!(bus = dbus_bus_get_private(DBUS_BUS_SYSTEM, &error))) {
+@@ -780,7 +784,7 @@ static int set_scheduler(int rtprio) {
+         dbus_connection_unref(bus);
+         errno = -rttime;
+     }
+-
++#endif
+ #else
+     errno = 0;
+ #endif
+@@ -874,6 +878,10 @@ static int set_nice(int nice_level) {
+ #endif
+ 
+ #ifdef HAVE_DBUS
++#if 1
++    pa_log_debug("Not even trying to connect to dbus system bus.");
++    return 0;
++#else
+     /* Try to talk to RealtimeKit */
+ 
+     if (!(bus = dbus_bus_get(DBUS_BUS_SYSTEM, &error))) {
+@@ -898,6 +906,7 @@ static int set_nice(int nice_level) {
+ 
+     errno = -r;
+ #endif
++#endif
+ 
+     return -1;
+ }
+--- ./src/daemon/default.pa.in.orig	2014-01-23 19:57:55.000000000 +0100
++++ ./src/daemon/default.pa.in	2014-06-20 10:48:20.000000000 +0200
+@@ -150,12 +150,6 @@ load-module module-suspend-on-idle
+ 
+ ### If autoexit on idle is enabled we want to make sure we only quit
+ ### when no local session needs us anymore.
+-.ifexists module-console-kit@PA_SOEXT@
+-load-module module-console-kit
+-.endif
+-.ifexists module-systemd-login@PA_SOEXT@
+-load-module module-systemd-login
+-.endif
+ 
+ ### Enable positioned event sounds
+ load-module module-position-event-sounds

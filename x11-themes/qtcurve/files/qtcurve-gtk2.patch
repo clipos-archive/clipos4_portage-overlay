@@ -1,0 +1,12 @@
+diff -aur qtcurve-1.8.18/gtk2/style/qtcurve.c qtcurve-1.8.18.patched/gtk2/style/qtcurve.c
+--- qtcurve-1.8.18/gtk2/style/qtcurve.c	2014-01-25 21:13:54.000000000 +0100
++++ qtcurve-1.8.18.patched/gtk2/style/qtcurve.c	2015-02-02 18:05:22.348872008 +0100
+@@ -372,7 +372,7 @@
+     } else if (!(qtSettings.app == GTK_APP_JAVA && widget &&
+                  GTK_IS_LABEL(widget))) {
+         if (state != GTK_STATE_PRELIGHT || opts.crHighlight ||
+-            strcmp(detail, "checkbutton") != 0) {
++            ( detail != NULL && strcmp(detail, "checkbutton") != 0 )) {
+             parent_class->draw_flat_box(style, window, state, shadow, area,
+                                         widget, detail, x, y, width, height);
+         }

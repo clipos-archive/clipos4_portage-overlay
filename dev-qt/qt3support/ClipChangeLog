@@ -1,0 +1,26 @@
+# CLIP ChangeLog for dev-qt/qt3support
+
+*qt3support-4.8.5-r1 (06 Oct 2016)
+
+  06 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +qt3support-4.8.5-r1.ebuild, -qt3support-4.8.5.ebuild:
+  Rbump to rebuild for GCC update.
+
+*qt3support-4.8.5 (21 Feb 2014)
+
+  21 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qt3support-4.8.5.ebuild, -qt3support-4.8.4-r2.ebuild:
+  Bump to latest.
+
+*qt3support-4.8.4-r2 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qt3support-4.8.4-r2.ebuild, -qt3support-4.8.4-r1.ebuild:
+  Force rebuild.
+
+*qt3support-4.8.4-r1 (23 Jul 2013)
+
+  23 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  qt3support-4.8.4-r1.ebuild, files/Trolltech.conf:
+  Initial overlay import - add IUSE clip-core to remove dependency
+  on qt-sql.

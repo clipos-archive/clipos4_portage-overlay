@@ -1,0 +1,13 @@
+# CLIP ChangeLog for x11-libs/libfontenc
+
+*libfontenc-1.1.2 (10 Jan 2014)
+
+  10 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libfontenc-1.1.2.ebuild, -libfontenc-1.0.5-r1.ebuild:
+  Bump to latest.
+
+*libfontenc-1.0.5-r1 (08 Apr 2010)
+
+  08 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  libfontenc-1.0.5-r1.ebuild:
+  Initial import - clip-deps / CPREFIX fixes.

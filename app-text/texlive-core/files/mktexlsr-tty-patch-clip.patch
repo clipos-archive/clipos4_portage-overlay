@@ -1,0 +1,13 @@
+diff --git a/texk/kpathsea/mktexlsr b/texk/kpathsea/mktexlsr
+index 77aa99e..0fd4dd3 100755
+--- a/texk/kpathsea/mktexlsr
++++ b/texk/kpathsea/mktexlsr
+@@ -62,7 +62,7 @@ case $dirname in
+       export PATH ;;
+ esac
+ 
+-if tty -s; then verbose=true; else verbose=false; fi
++verbose=false
+ dry_run=false
+ trees=
+ 

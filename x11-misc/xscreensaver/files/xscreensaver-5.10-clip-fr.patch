@@ -1,0 +1,68 @@
+--- driver/lock.c.orig	2008-08-15 12:20:54.000000000 +0200
++++ driver/lock.c	2010-01-19 19:11:37.000000000 +0100
+@@ -1669,7 +1669,7 @@ finished_typing_passwd (saver_info *si, 
+ {
+   if (si->unlock_state == ul_read)
+     {
+-      update_passwd_window (si, "Checking...", pw->ratio);
++      update_passwd_window (si, "Authentification...", pw->ratio);
+       XSync (si->dpy, False);
+ 
+       si->unlock_state = ul_finished;
+@@ -1804,8 +1804,8 @@ passwd_event_loop (saver_info *si)
+   switch (si->unlock_state)
+     {
+     case ul_cancel: msg = ""; break;
+-    case ul_time: msg = "Timed out!"; break;
+-    case ul_finished: msg = "Checking..."; break;
++    case ul_time: msg = "Délai dépassé!"; break;
++    case ul_finished: msg = "Vérification..."; break;
+     default: msg = 0; break;
+     }
+ 
+@@ -1934,7 +1934,10 @@ gui_auth_conv(int num_msg,
+ 	 )
+ 	{
+ 	  info_msg = auth_msgs[i].msg;
+-	  prompt = auth_msgs[++i].msg;
++/* CLIP : ugly :) */
++	  prompt = "Mot de passe:";
++	  /* prompt = auth_msgs[++i].msg; */
++/* /CLIP */
+ 	}
+       else
+         {
+@@ -1942,7 +1945,10 @@ gui_auth_conv(int num_msg,
+ 	      || auth_msgs[i].type == AUTH_MSGTYPE_ERROR)
+ 	    info_msg = auth_msgs[i].msg;
+ 	  else
+-	    prompt = auth_msgs[i].msg;
++/* CLIP : ugly :) */
++	    prompt = "Mot de passe:";
++	    /* prompt = auth_msgs[i].msg; */
++/* /CLIP */
+ 	}
+ 
+       {
+@@ -2021,17 +2027,17 @@ auth_finished_cb (saver_info *si)
+ 
+   if (si->unlock_state == ul_fail &&		/* failed with caps lock on */
+       si->pw_data && si->pw_data->caps_p)
+-    s = "Authentication failed (Caps Lock?)";
++    s = "Echec d'authentification (N.B. majuscules verrouillées ?)";
+   else if (si->unlock_state == ul_fail)		/* failed without caps lock */
+-    s = "Authentication failed!";
++    s = "Echec d'authentification";
+   else if (si->unlock_state == ul_success &&	/* good, but report failures */
+            si->unlock_failures > 0)
+     {
+       if (si->unlock_failures == 1)
+-        s = "There has been\n1 failed login attempt.";
++	s = "Il y a eu\nun essai infructueux.";
+       else
+         {
+-          sprintf (buf, "There have been\n%d failed login attempts.",
++          sprintf (buf, "Il y a eu\n%d essais infructueux.",
+                    si->unlock_failures);
+           s = buf;
+         }

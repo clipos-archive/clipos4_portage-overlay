@@ -1,0 +1,9 @@
+#!/bin/sh
+
+INSTALLER="/usr/local/bin/install-catalog"
+${INSTALLER} --add \
+		/usr/local/etc/sgml/sgml-ent.cat \
+		/usr/local/share/sgml/sgml-iso-entities-8879.1986/catalog &>/dev/null
+${INSTALLER} --add \
+		/usr/local/etc/sgml/sgml-docbook.cat \
+		/usr/local/etc/sgml/sgml-ent.cat &>/dev/null

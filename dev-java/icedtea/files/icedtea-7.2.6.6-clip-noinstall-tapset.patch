@@ -1,0 +1,31 @@
+Don't try to install tapset/*.stp files in case systemtap is not present, since
+they won't exist anyway.
+--- Makefile.in.orig	2016-02-02 16:08:49.134443064 +0100
++++ Makefile.in	2016-02-02 16:09:16.929684786 +0100
+@@ -3328,9 +3328,9 @@
+ 	for files in $(BUILD_SDK_DIR)/jre/lib/ext/*.jar; do \
+ 	  $(call install_file,$${files},$(DESTDIR)${prefix}/jre/lib/ext,$(INSTALL_DATA));\
+ 	done
+-	for files in $(BUILD_SDK_DIR)/tapset/*.stp; do \
+-	  $(call install_file,$${files},$(DESTDIR)${prefix}/tapset,$(INSTALL_DATA));\
+-	done
++@ENABLE_SYSTEMTAP_TRUE@	for files in $(BUILD_SDK_DIR)/tapset/*.stp; do \
++@ENABLE_SYSTEMTAP_TRUE@	  $(call install_file,$${files},$(DESTDIR)${prefix}/tapset,$(INSTALL_DATA));\
++@ENABLE_SYSTEMTAP_TRUE@	done
+ 	$(abs_top_builddir)/pax-mark-vm $(DESTDIR)${prefix}
+ 
+ install-data-local:
+--- Makefile.am.orig	2016-02-03 15:07:19.887249233 +0100
++++ Makefile.am	2016-02-03 15:07:57.554232250 +0100
+@@ -3050,9 +3050,11 @@
+ 	for files in $(BUILD_SDK_DIR)/jre/lib/ext/*.jar; do \
+ 	  $(call install_file,$${files},$(DESTDIR)${prefix}/jre/lib/ext,$(INSTALL_DATA));\
+ 	done
++if ENABLE_SYSTEMTAP
+ 	for files in $(BUILD_SDK_DIR)/tapset/*.stp; do \
+ 	  $(call install_file,$${files},$(DESTDIR)${prefix}/tapset,$(INSTALL_DATA));\
+ 	done
++endif
+ 	$(abs_top_builddir)/pax-mark-vm $(DESTDIR)${prefix}
+ 
+ install-data-local:

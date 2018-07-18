@@ -1,0 +1,18 @@
+Add configure argument to specify dri-driver-dir
+
+Distributed under the terms of the GNU General Public License v2
+
+diff --git a/unix/xserver/configure.ac b/unix/xserver/configure.ac
+--- a/unix/xserver/configure.ac
++++ b/unix/xserver/configure.ac
+@@ -1509,7 +1509,9 @@
+ AC_DEFINE_DIR(COMPILEDDEFAULTFONTPATH, FONTPATH, [Default font path])
+ AC_DEFINE_DIR(SERVER_MISC_CONFIG_PATH, SERVERCONFIG, [Server miscellaneous config path])
+ AC_DEFINE_DIR(BASE_FONT_PATH, FONTROOTDIR, [Default base font path])
+-dridriverdir=`$PKG_CONFIG --variable=dridriverdir dri`
++AC_ARG_WITH(dri-driver-dir, AS_HELP_STRING([--with-dri-driver-dir=PATH],
++	     [Path to DRI driver dir]),
++	     [dridriverdir=$withval], [dridriverdir=`$PKG_CONFIG --variable=dridriverdir dri`])
+ AC_DEFINE_DIR(DRI_DRIVER_PATH, dridriverdir, [Default DRI driver path])
+ AC_DEFINE_UNQUOTED(XVENDORNAME, ["$VENDOR_NAME"], [Vendor name])
+ AC_DEFINE_UNQUOTED(XVENDORNAMESHORT, ["$VENDOR_NAME_SHORT"], [Short vendor name])

@@ -1,0 +1,78 @@
+diff --git a/ports/sysdeps/arm/stackinfo.h b/ports/sysdeps/arm/stackinfo.h
+index dc08a17..b00128f 100644
+--- a/ports/sysdeps/arm/stackinfo.h
++++ b/ports/sysdeps/arm/stackinfo.h
+@@ -28,6 +28,9 @@
+ 
+ /* Default to an executable stack.  PF_X can be overridden if PT_GNU_STACK is
+  * present, but it is presumed absent.  */
+-#define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++/* CLIP: we don't like executable stacks.
++ * #define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++ */
++#define DEFAULT_STACK_PERMS (PF_R|PF_W)
+ 
+ #endif	/* stackinfo.h */
+diff --git a/sysdeps/i386/stackinfo.h b/sysdeps/i386/stackinfo.h
+index f6eccf9..c033e79 100644
+--- a/sysdeps/i386/stackinfo.h
++++ b/sysdeps/i386/stackinfo.h
+@@ -28,7 +28,10 @@
+ 
+ /* Default to an executable stack.  PF_X can be overridden if PT_GNU_STACK is
+  * present, but it is presumed absent.  */
+-#define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++/* CLIP: we don't like executable stacks.
++ * #define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++ */
++#define DEFAULT_STACK_PERMS (PF_R|PF_W)
+ 
+ /* Access to the stack pointer.  The macros are used in alloca_account
+    for which they need to act as barriers as well, hence the additional
+diff --git a/sysdeps/powerpc/stackinfo.h b/sysdeps/powerpc/stackinfo.h
+index cfb759f..3ebdae6 100644
+--- a/sysdeps/powerpc/stackinfo.h
++++ b/sysdeps/powerpc/stackinfo.h
+@@ -32,7 +32,10 @@
+ # define DEFAULT_STACK_PERMS (PF_R|PF_W)
+ #else
+ /* PF_X can be overridden if PT_GNU_STACK is present but is presumed absent.  */
+-# define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++/* CLIP: we don't like executable stacks.
++ * #define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++ */
++#define DEFAULT_STACK_PERMS (PF_R|PF_W)
+ #endif
+ 
+ #endif	/* stackinfo.h */
+diff --git a/sysdeps/sparc/stackinfo.h b/sysdeps/sparc/stackinfo.h
+index ff6cd8a..400d43a 100644
+--- a/sysdeps/sparc/stackinfo.h
++++ b/sysdeps/sparc/stackinfo.h
+@@ -28,6 +28,9 @@
+ 
+ /* Default to an executable stack.  PF_X can be overridden if PT_GNU_STACK is
+  * present, but it is presumed absent.  */
+-#define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++/* CLIP: we don't like executable stacks.
++ * #define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++ */
++#define DEFAULT_STACK_PERMS (PF_R|PF_W)
+ 
+ #endif	/* stackinfo.h */
+diff --git a/sysdeps/x86_64/stackinfo.h b/sysdeps/x86_64/stackinfo.h
+index ea1e489..f1a5d11 100644
+--- a/sysdeps/x86_64/stackinfo.h
++++ b/sysdeps/x86_64/stackinfo.h
+@@ -28,7 +28,10 @@
+ 
+ /* Default to an executable stack.  PF_X can be overridden if PT_GNU_STACK is
+  * present, but it is presumed absent.  */
+-#define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++/* CLIP: we don't like executable stacks.
++ * #define DEFAULT_STACK_PERMS (PF_R|PF_W|PF_X)
++ */
++#define DEFAULT_STACK_PERMS (PF_R|PF_W)
+ 
+ /* Access to the stack pointer.  The macros are used in alloca_account
+    for which they need to act as barriers as well, hence the additional

@@ -1,0 +1,26 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+error() {
+	/bin/logger -p local0.warning "clip_ntpdate error: $1"
+	exit 1
+}
+
+FQDN_FILTER="([0-9a-zA-Z]+\.)*[0-9a-zA-Z]+"
+IMPORT_FILE="/etc/admin/conf.d/ntp"
+
+. /lib/clip/import.sub  || error "failed to load import.sub"
+
+import_conf "${IMPORT_FILE}" "yes|no" "USE_NTP"
+[[ -z "${USE_NTP}" ]] && error "could not import USE_NTP"
+
+[[ "${USE_NTP}" == "no" ]] && exit 0
+
+import_conf "${IMPORT_FILE}" "${FQDN_FILTER}" "NTP_SERVER"
+
+[[ -z "${NTP_SERVER}" ]] && error "could not import NTP_SERVER"
+
+LOG=`/usr/sbin/ntpdate "${NTP_SERVER}"`
+[[ $? -ne 0 ]] && error "failed to run ntpdate"
+[[ -n "${LOG}" ]] && /bin/logger -p local0.notice "${LOG}"

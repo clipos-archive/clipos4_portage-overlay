@@ -1,0 +1,10 @@
+[Desktop Entry]
+Comment[fr]=Permet des analyses antivirales plus rapides
+Comment=Enables quicker antivirus checks
+Exec=/usr/local/sbin/clamd
+Hidden=true
+Name[fr]=Antivirus ClamAV
+Name=ClamAV antivirus
+Terminal=false
+Type=Application
+Version=1.0

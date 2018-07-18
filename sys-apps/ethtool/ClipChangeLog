@@ -1,0 +1,13 @@
+# CLIP ChangeLog for sys-apps/ethtool
+
+*ethtool-3.8 (11 Jun 2013)
+
+  11 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ethtool-3.8.ebuild, -ethtool-3.0.ebuild:
+  Bump to latest.
+
+*ethtool-3.0 (06 Apr 2012)
+
+  06 Apr 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  ethtool-3.0.ebuild:
+  Initial import, add verictl perms.

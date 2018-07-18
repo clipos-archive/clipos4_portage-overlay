@@ -1,0 +1,19 @@
+# CLIP ChangeLog for media-fonts/encodings
+
+  10 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +encodings-1.0.4.ebuild, -encodings-1.0.3.ebuild:
+  Bump to latest, use XORG_CONFIGURE_OPTIONS for CPREFIX handling.
+
+*encodings-1.0.4 (17 Nov 2010)
+
+*encodings-1.0.3 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +encodings-1.0.3.ebuild, -encodings-1.0.0.ebuild:
+  Bump to latest.
+
+*encodings-1.0.0 (28 Jul 2006) 
+
+  28 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  encodings-1.0.0.ebuild:
+  Initial import. Made CPREFIX-aware (through XDIR).

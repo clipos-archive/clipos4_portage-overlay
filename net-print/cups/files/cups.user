@@ -1,0 +1,40 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+export DBUS_SESSION_BUS_ADDRESS=unix
+
+delKPrinter () {
+	local conf="${HOME}"/.cupsd/cups/printers.conf
+
+	cups-cleanup-clip "${conf}" "${conf}.new" || return 1
+	mv "${conf}.new" "${conf}" || return 1
+	rm -f "${HOME}/.cupsd/cups/ppd/ImpressionAvancee.ppd"
+}
+
+mkdir -p /tmp/var/spool/cups/tmp
+mkdir -p /tmp/var/run/cups/certs
+mkdir -p /tmp/var/log/cups
+mkdir -p /tmp/var/cache/cups/rss
+mkdir -p /tmp/var/tmp
+
+if [[ ! -d "${HOME}"/.cupsd ]];
+then
+	mkdir "${HOME}"/.cupsd;
+	cp -r /usr/local/etc/cups "${HOME}"/.cupsd;
+else
+	cp /usr/local/etc/cups/cupsd.conf "${HOME}"/.cupsd/cups/cupsd.conf
+fi
+
+rm -rf "${HOME}"/.cupsd/tmp
+mkdir "${HOME}"/.cupsd/tmp
+mkdir "${HOME}"/.cupsd/tmp/spool
+mkdir "${HOME}"/.cupsd/tmp/tmp
+
+EXISTSCUPS="$(ps ax | grep cupsd | grep -v grep)"
+if [[ -z "${EXISTSCUPS}" ]]; then
+	grep "kprinter:/" "${HOME}"/.cupsd/cups/printers.conf && delKPrinter
+	/usr/local/sbin/cupsd -c "${HOME}"/.cupsd/cups/cupsd.conf
+fi
+
+

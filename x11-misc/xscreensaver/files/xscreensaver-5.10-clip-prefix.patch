@@ -1,0 +1,18 @@
+--- configure.in.orig	2010-10-28 21:20:46.326822201 +0200
++++ configure.in	2010-10-28 21:21:54.792720446 +0200
+@@ -2498,6 +2498,7 @@
+   if test "$have_gtk" = yes; then
+     GTK_DATADIR=`$pkg_config --variable=prefix gtk+-2.0`
+     GTK_DATADIR="$GTK_DATADIR/share"
++    GTK_DATADIR=`echo $GTK_DATADIR | sed -e 's:/usr:/usr/local:'`
+   fi
+ 
+   if test "$have_gtk" = yes; then
+@@ -3668,6 +3669,7 @@
+ elif test "$have_gtk" = yes; then
+   PO_DATADIR=`$pkg_config --variable=prefix gtk+-2.0`
+   PO_DATADIR="$PO_DATADIR/share"
++  PO_DATADIR=`echo $PO_DATADIR | sed -e 's:/usr:/usr/local:'`
+ fi
+ 
+ if test -z "$PO_DATADIR" ; then

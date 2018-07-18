@@ -1,0 +1,58 @@
+# CLIP ChangeLog for app-arch/libarchive
+
+*libarchive-3.1.2-r3 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +libarchive-3.1.2-r3.ebuild, -libarchive-3.1.2-r2.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*libarchive-3.1.2-r2 (29 Sep 2015)
+
+  29 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libarchive-3.1.2-r2.ebuild, -libarchive-3.1.2-r1.ebuild:
+  Update dependency on linux-headers when compiling for clip-devstation.
+
+*libarchive-3.1.2-r1 (02 Jun 2014)
+
+  02 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libarchive-3.1.2-r1.ebuild, -libarchive-3.0.3-r2.ebuild,
+  -files/libarchive-3.0.3-nozlib.patch,
+  +files/libarchive-3.1.2-CVE-2013-0211.patch:
+  Security bump.
+
+*libarchive-3.0.3-r2 (30 Sep 2013)
+
+  30 Sep 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +libarchive-3.0.3-r2.ebuild, -libarchive-3.0.3-r1.ebuild:
+  Remove xz-utils dependency for clip-deps.
+
+*libarchive-3.0.3-r1 (06 Apr 2012)
+
+  06 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libarchive-3.0.3-r1.ebuild, -libarchive-3.0.3.ebuild:
+  Force rebuild against up-to-date liblzma.so.
+
+*libarchive-3.0.3 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libarchive-3.0.3.ebuild, -libarchive-2.8.4-r1.ebuild,
+  +files/libarchive-3.0.3-nozlib.patch,
+  -files/libarchive-disable-lzma-size-test.patch:
+  Bump to latest
+
+*libarchive-2.8.4-r1 (19 Jul 2011)
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libarchive-2.8.4-r1.ebuild, -libarchive-2.7.1-r1.ebuild,
+  +files/libarchive-disable-lzma-size-test.patch,
+  -files/libarchive-2.6.1-headers.patch,
+  -files/libarchive-2.7.0-fortified-sources.patch,
+  -files/libarchive-2.7.0-pipe.patch,
+  -files/libarchive-2.6.0-nolibs.patch:
+  Bump to latest.
+
+*libarchive-2.7.1-r1 (13 Nov 2009)
+
+  13 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libarchive-2.7.1-r1.ebuild:
+  Initial CLIP import. Add clip-deps / CPREFIX fixes.

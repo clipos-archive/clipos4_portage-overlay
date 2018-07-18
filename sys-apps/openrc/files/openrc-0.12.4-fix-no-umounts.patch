@@ -1,0 +1,24 @@
+--- ./init.d/localmount.in.orig	2013-10-30 21:00:40.000000000 +0100
++++ ./init.d/localmount.in	2014-01-08 19:14:08.000000000 +0100
+@@ -41,6 +41,8 @@ stop()
+ 
+ 	# Bug 381783
+ 	local rc_svcdir=$(printf '%s\n' "$RC_SVCDIR" | sed 's:/lib\(32\|64\)\?/:/lib(32|64)?/:g')
++	# Bug 381783 + symlink
++	local rc_svcdir="$(readlink -f -- "${RC_SVCDIR}" | sed 's:/lib\(32\|64\)\?/:/lib(32|64)?/:g')"
+ 
+ 	local x= no_umounts_r="/|/dev|/dev/.*|${rc_svcdir}"
+ 	no_umounts_r="${no_umounts_r}|/bin|/sbin|/lib(32|64)?|/libexec"
+--- ./init.d/mount-ro.in.orig	2013-10-30 21:00:40.000000000 +0100
++++ ./init.d/mount-ro.in	2014-01-08 19:13:09.000000000 +0100
+@@ -22,8 +22,8 @@ start()
+ 	. "$RC_LIBEXECDIR"/sh/rc-mount.sh
+ 	eindent
+ 
+-	# Bug 381783
+-	local rc_svcdir=$(echo $RC_SVCDIR | sed 's:/lib\(32\|64\)\?/:/lib(32|64)?/:g')
++	# Bug 381783 + symlink
++	local rc_svcdir="$(readlink -f -- "${RC_SVCDIR}" | sed 's:/lib\(32\|64\)\?/:/lib(32|64)?/:g')"
+ 
+ 	local m="/dev|/dev/.*|/proc|/proc.*|/sys|/sys/.*|/run|${rc_svcdir}" x= fs=
+ 	m="$m|/bin|/sbin|/lib(32|64)?|/libexec"

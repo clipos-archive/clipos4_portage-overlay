@@ -1,0 +1,65 @@
+# CLIP ChangeLog for x11-misc/xdialog
+
+  02 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  xdialog-2.3.1-r6.ebuild,
+  +files/xdialog-2.3.1-install.patch,
+  +files/xdialog-2.3.1-no-strip.patch,
+  Add patches from gentoo to fix detection of gtk+.
+
+  26 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  xdialog-2.3.1-r6.ebuild:
+  Use slotted dependency for gtk+.
+
+*xdialog-2.3.1-r6 (09 Mar 2012)
+
+  09 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xdialog-2.3.1-r6.ebuild, -xdialog-2.3.1-r5.ebuild,
+  files/xdialog.sh:
+  Add a setsid call, needed when USER is in a dedicated 
+  PID namespace.
+
+  03 Feb 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  xdialog-2.3.1-r5.ebuild:
+  Include status icons for livecd and devstation too.
+
+*xdialog-2.3.1-r5 (16 Jan 2012)
+
+  16 Jan 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +xdialog-2.3.1-r5.ebuild, -xdialog-2.3.1-r4.ebuild,
+  +files/dialog-information.png, +files/dialog-warning.png,
+  +files/dialog-error.png, +xdialog-2.3.1-clip-noprint.patch:
+  Add status icons.
+  Remove print feature.
+
+*xdialog-2.3.1-r4 (15 Jan 2010)
+
+  15 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xdialog-2.3.1-r4.ebuild, -xdialog-2.3.1-r3.ebuild,
+  +files/xdialog-2.3.1-clip-spinbutton.patch:
+  New patch to make the timebox spinbuttons wider.
+
+*xdialog-2.3.1-r3 (09 Jun 2009)
+
+  09 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xdialog-2.3.1-r3.ebuild, -xdialog-2.3.1-r2.ebuild:
+  Add CLSM_PRIV_NETCLIENT to Xdialog in ADMIN / AUDIT.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  -xdialog-2.3.1-r1.ebuild:
+  Remove stale ebuild.
+
+*xdialog-2.3.1-r2 (31 Oct 2007)
+
+  31 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xdialog-2.3.1-r2.ebuild,files/xdialog.sh,
+  +files/xdialog-2.3.1-clip-hidepasswd.patch:
+  Patched to not allow the user to 'unhide' a password input
+  field. xdialog.sh exports LANG=fr_FR. Needs fr_FR support
+  in glibc, though.
+  
+*xdialog-2.3.1-r1 (09 Oct 2007)
+
+  09 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xdialog-2.3.1-r1.ebuild,+files/xdialog.sh:
+  Add a bootstrapper script to the install when USE clip is set, 
+  to help with launching this through vsctl.

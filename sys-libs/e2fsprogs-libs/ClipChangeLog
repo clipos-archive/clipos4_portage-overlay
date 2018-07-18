@@ -1,0 +1,38 @@
+# CLIP ChangeLog for sys-libs/e2fsprogs-libs
+
+*e2fsprogs-libs-1.42.13 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +e2fsprogs-libs-1.42.13.ebuild, -e2fsprogs-libs-1.42.10.ebuild,
+  -files/e2fsprogs-libs-1.42.10-fix-build-cflags.patch,
+  +files/e2fsprogs-libs-1.42.13-fix-build-cflags.patch:
+  Bump to latest (CVE-2015-1572).
+
+*e2fsprogs-libs-1.42.10 (30 Dec 2014)
+
+  30 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +e2fsprogs-libs-1.42.10.ebuild, -e2fsprogs-libs-1.42.7.ebuild,
+  +files/e2fsprogs-libs-1.42.9-no-quota.patch,
+  +files/e2fsprogs-libs-1.42.10-fix-build-cflags.patch:
+  Bump to latest.
+
+*e2fsprogs-libs-1.42.7 (19 Aug 2013)
+
+  19 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +e2fsprogs-libs-1.42.7.ebuild, -e2fsprogs-libs-1.41.11-r2.ebuild:
+  Bump to latest.
+
+*e2fsprogs-libs-1.41.11-r2 (27 Jul 2012)
+
+  27 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +e2fsprogs-libs-1.41.11-r2.ebuild, -e2fsprogs-libs-1.41.11-r1.ebuild:
+  Do not genetare libuuid/libblkid in clip-rm, switch to those from util-linux.
+
+*e2fsprogs-libs-1.41.11-r1 (28 Jul 2010)
+
+  28 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +e2fsprogs-libs-1.41.11-r1.ebuild, -e2fsprogs-libs-1.41.11.ebuild:
+  Remove conflict against e2fsprogs in clip-core, as that creates a
+  Conflicts/Pre-Depends loop that apt cannot handle.
+  Enable libuuid/liblkid generation in clip-rm.
+

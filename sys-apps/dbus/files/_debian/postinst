@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/local/bin/dbus-uuidgen --ensure="/var/shared/lib/dbus/machine-id"

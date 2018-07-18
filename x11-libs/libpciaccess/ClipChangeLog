@@ -1,0 +1,19 @@
+# CLIP ChangeLog for x11-libs/libpciaccess
+
+*libpciaccess-0.13.2 (18 Dec 2013)
+
+  18 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpciaccess-0.13.2.ebuild, -libpciaccess-0.13.1.ebuild:
+  Bump to latest.
+
+*libpciaccess-0.13.1 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpciaccess-0.13.1.ebuild, -libpciaccess-0.11.0.ebuild:
+  Bump to latest.
+
+*libpciaccess-0.11.0 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  libpciaccess-0.11.0.ebuild:
+  Initial overlay import. CPREFIX / clip-deps fixes. 

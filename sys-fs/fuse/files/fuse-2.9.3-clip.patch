@@ -1,0 +1,428 @@
+--- a/lib/mount.c
++++ b/lib/mount.c
+@@ -314,9 +314,10 @@ void fuse_kern_unmount(const char *mount
+ 			return;
+ 	}
+ 
+-	if (geteuid() == 0) {
++	/* if (geteuid() == 0) { */
+ 		fuse_mnt_umount("fuse", mountpoint, mountpoint,  1);
+ 		return;
++#if 0
+ 	}
+ 
+ 	res = umount2(mountpoint, 2);
+@@ -335,6 +336,7 @@ void fuse_kern_unmount(const char *mount
+ 		_exit(1);
+ 	}
+ 	waitpid(pid, NULL, 0);
++#endif
+ }
+ 
+ void fuse_unmount_compat22(const char *mountpoint)
+@@ -474,6 +476,10 @@ static int fuse_mount_sys(const char *mn
+ 	if (res == -1)
+ 		goto out_close;
+ 
++	res = fuse_opt_add_opt(&mo->mtab_opts, tmp);
++	if (res == -1)
++		goto out_close;
++
+ 	source = malloc((mo->fsname ? strlen(mo->fsname) : 0) +
+ 			(mo->subtype ? strlen(mo->subtype) : 0) +
+ 			strlen(devname) + 32);
+@@ -528,7 +534,7 @@ static int fuse_mount_sys(const char *mn
+ 
+ #ifndef __NetBSD__
+ #ifndef IGNORE_MTAB
+-	if (geteuid() == 0) {
++	/* if (geteuid() == 0) { */
+ 		char *newmnt = fuse_mnt_resolve_path("fuse", mnt);
+ 		res = -1;
+ 		if (!newmnt)
+@@ -539,7 +545,7 @@ static int fuse_mount_sys(const char *mn
+ 		free(newmnt);
+ 		if (res == -1)
+ 			goto out_umount;
+-	}
++	/* } */
+ #endif /* IGNORE_MTAB */
+ #endif /* __NetBSD__ */
+ 	free(type);
+--- a/lib/fuse.c
++++ b/lib/fuse.c
+@@ -4636,6 +4636,15 @@ struct fuse *fuse_new_common(struct fuse
+ 			   fuse_lib_opt_proc) == -1)
+ 		goto out_free_fs;
+ 
++	/* CLIP - make sure we always set the caller's uid (and gid) on non-root mounts.
++	 * Otherwise, unmounting will not be possible. */
++	if (!f->conf.set_uid && getuid() != 0) {
++		f->conf.set_uid = 1;
++		f->conf.uid = getuid();
++		f->conf.set_gid = 1;
++		f->conf.gid = getgid();
++	}
++
+ 	if (f->conf.modules) {
+ 		char *module;
+ 		char *next;
+--- a/lib/mount_util.c
++++ b/lib/mount_util.c
+@@ -6,6 +6,7 @@
+   See the file COPYING.LIB.
+ */
+ 
++#define _GNU_SOURCE
+ #include "mount_util.h"
+ #include <stdio.h>
+ #include <unistd.h>
+@@ -29,6 +30,22 @@
+ 
+ FILE *fuse_clip_mtab_file;
+ 
++/* CLIP */
++#include <sys/fsuid.h>
++#include <sys/types.h>
++#include <pwd.h>
++
++static const char *get_user_name(const char *progname)
++{
++	struct passwd *pw = getpwuid(getuid());
++	if (pw != NULL && pw->pw_name != NULL)
++		return pw->pw_name;
++	else {
++		fprintf(stderr, "%s: could not determine username\n", progname);
++		return NULL;
++	}
++}
++
+ #ifdef __NetBSD__
+ #define umount2(mnt, flags) unmount(mnt, (flags == 2) ? MNT_FORCE : 0)
+ #define mtab_needs_update(mnt) 0
+@@ -46,13 +63,14 @@ static int mtab_needs_update(const char
+ 	/*
+ 	 * Skip mtab update if /etc/mtab:
+ 	 *
+-	 *  - doesn't exist,
+ 	 *  - is a symlink,
+ 	 *  - is on a read-only filesystem.
+ 	 */
+ 	res = lstat(_PATH_MOUNTED, &stbuf);
+ 	if (res == -1) {
+ 		if (errno == ENOENT)
++			return 1;
++		else
+ 			return 0;
+ 	} else {
+ 		uid_t ruid;
+@@ -100,9 +118,86 @@ static void clip_close_mtab(FILE *mtab)
+ 	}
+ }
+ 
++/* Switch fsgid (mtab) */
++static int clip_mtab_write(int enable_write, const char *progname)
++{
++	gid_t rgid, egid, sgid;
++	int res;
++
++	if (getresgid(&rgid, &egid, &sgid)) {
++		fprintf(stderr, "%s: could not get GID: %s\n", progname, strerror(errno));
++		return -1;
++	}
++
++	if (enable_write) {
++		res = setfsgid(sgid);
++	} else {
++		res = setfsgid(rgid);
++	}
++	return 0;
++}
++
+ static int add_mount(const char *progname, const char *fsname,
+ 		       const char *mnt, const char *type, const char *opts)
+ {
++	int res = 0;
++	struct mntent ent = {
++		.mnt_fsname = fsname,
++		.mnt_dir = mnt,
++		.mnt_type = type,
++		.mnt_opts = NULL,
++		.mnt_freq = 0,
++		.mnt_passno = 0,
++	};
++	struct mntent *mt;
++	FILE *mtab = NULL;
++	const char *user = get_user_name(progname);
++
++	if (!user)
++		return -1;
++
++	if (asprintf(&ent.mnt_opts, "%s,user=%s", opts, user) == -1) {
++		fprintf(stderr, "%s: could not print options for %s\n",
++				progname, mnt);
++		goto out;
++	}
++
++	if (clip_mtab_write(1, progname)) {
++		goto out;
++	}
++	mtab = clip_get_mtab("a+");
++	if (clip_mtab_write(0, progname)) {
++		goto out;
++	}
++
++	if (!mtab) {
++		fprintf(stderr, "%s: could not open %s : %s\n",
++				progname, _PATH_MOUNTED, strerror(errno));
++		goto out;
++	}
++	mt = getmntent(mtab);
++	while (mt) {
++		if (!strcmp(mnt, mt->mnt_dir)) {
++			fprintf(stderr, "%s: %s is already mounted on %s\n",
++				progname, mt->mnt_fsname, mt->mnt_dir);
++			res = -1;
++			goto out;
++		}
++		mt = getmntent(mtab);
++	}
++
++	if (addmntent(mtab, &ent)) {
++		fprintf(stderr, "%s: could not add %s => %s mount to %s\n",
++				progname, fsname, mnt, _PATH_MOUNTED);
++		res = -1;
++	}
++out:
++	if (ent.mnt_opts)
++		free(ent.mnt_opts);
++	if (mtab)
++		clip_close_mtab(mtab);
++	return res;
++#if 0
+ 	int res;
+ 	int status;
+ 	sigset_t blockmask;
+@@ -141,6 +236,7 @@ static int add_mount(const char *prognam
+ 	sigprocmask(SIG_SETMASK, &oldmask, NULL);
+ 
+ 	return res;
++#endif
+ }
+ 
+ int fuse_mnt_add_mount(const char *progname, const char *fsname,
+@@ -198,8 +294,85 @@ static int exec_umount(const char *progn
+ int fuse_mnt_umount(const char *progname, const char *abs_mnt,
+ 		    const char *rel_mnt, int lazy)
+ {
++	/* Note : really needs to be called under lock ... */
+ 	int res;
++	struct mntent *mnt;
++	FILE *mtab_old = NULL, *mtab_new = NULL;
++	char read_buf[32];
++	int read_size;
++	char tmp_file[] = _PATH_MOUNTED ".new.XXXXXX";
++	int tmp_fd = -1;
+ 
++	res = umount2(rel_mnt, lazy ? 2 : 0);
++	if (res == -1) {
++		fprintf(stderr, "%s: failed to unmount %s: %s\n",
++			progname, abs_mnt, strerror(errno));
++		return res;
++	}
++
++	if (!mtab_needs_update(abs_mnt))
++		return 0;
++
++	mtab_old = setmntent(_PATH_MOUNTED, "r");
++
++	tmp_fd = mkstemp(tmp_file);
++	if (tmp_fd == -1) {
++		fprintf(stderr, "%s: failed to create temporary file: %s\n",
++			progname, strerror(errno));
++		goto out;
++	}
++	/* TODO: Fix race condition */
++	mtab_new = fdopen(tmp_fd, "w");
++
++	if (!mtab_old || !mtab_new) {
++		fprintf(stderr, "%s: failed to open mtab: %s\n",
++			progname, strerror(errno));
++		goto out;
++	}
++
++	mnt = getmntent(mtab_old);
++	while (mnt) {
++		if (strcmp(mnt->mnt_dir, abs_mnt))
++			addmntent(mtab_new, mnt);
++		mnt = getmntent(mtab_old);
++	}
++	endmntent(mtab_old);
++
++	if (clip_mtab_write(1, progname)) {
++		goto out;
++	}
++	mtab_old = clip_get_mtab("w");
++	if (clip_mtab_write(0, progname)) {
++		goto out;
++	}
++
++	if (!mtab_old) {
++		goto out;
++	}
++	rewind(mtab_new);
++	while ((read_size = fread(read_buf, 1, sizeof(read_buf), mtab_new)) > 0) {
++		fwrite(read_buf, 1, read_size, mtab_old);
++	}
++	clip_close_mtab(mtab_old);
++	endmntent(mtab_new);
++
++	(void)unlink(tmp_file);
++	return res;
++
++out:
++	/* Clean close */
++	if (mtab_new) {
++		endmntent(mtab_new);
++	}
++	if (mtab_old) {
++		clip_close_mtab(mtab_old);
++	}
++	if (tmp_fd != -1) {
++		(void)unlink(tmp_file);
++	}
++	return -1;
++
++#if 0
+ 	if (!mtab_needs_update(abs_mnt)) {
+ 		res = umount2(rel_mnt, lazy ? 2 : 0);
+ 		if (res == -1)
+@@ -209,6 +382,7 @@ int fuse_mnt_umount(const char *progname
+ 	}
+ 
+ 	return exec_umount(progname, rel_mnt, lazy);
++#endif
+ }
+ 
+ static int remove_mount(const char *progname, const char *mnt)
+@@ -257,6 +431,9 @@ int fuse_mnt_remove_mount(const char *pr
+ 	if (!mtab_needs_update(mnt))
+ 		return 0;
+ 
++	/* CLIP - remove_mount will not work anyway (exec /bin/umount) */
++	return 1;
++
+ 	return remove_mount(progname, mnt);
+ }
+ 
+--- a/util/fusermount.c
++++ b/util/fusermount.c
+@@ -56,6 +56,8 @@
+ #define UMOUNT_UNUSED	0x80000000	/* Flag guaranteed to be unused */
+ #endif
+ 
++#include "fuse_misc.h"
++
+ static const char *progname;
+ 
+ static int user_allow_other = 0;
+@@ -79,9 +81,18 @@ static gid_t oldfsgid;
+ 
+ static void drop_privs(void)
+ {
++	gid_t rgid, egid, sgid;
++
+ 	if (getuid() != 0) {
++		if (getresgid(&rgid, &egid, &sgid)) {
++			perror("getresgid");
++			/* TODO: Handle error */
++		}
+ 		oldfsuid = setfsuid(getuid());
+-		oldfsgid = setfsgid(getgid());
++
++		/* Use the (mtab) saved-GID for previously dropped effective-GID */
++		(void)setfsgid(rgid);
++		oldfsgid = sgid;
+ 	}
+ }
+ 
+@@ -170,11 +181,7 @@ static int may_unmount(const char *mnt,
+ 
+ 	found = 0;
+ 	while ((entp = getmntent(fp)) != NULL) {
+-		if (!found && strcmp(entp->mnt_dir, mnt) == 0 &&
+-		    (strcmp(entp->mnt_type, "fuse") == 0 ||
+-		     strcmp(entp->mnt_type, "fuseblk") == 0 ||
+-		     strncmp(entp->mnt_type, "fuse.", 5) == 0 ||
+-		     strncmp(entp->mnt_type, "fuseblk.", 8) == 0)) {
++		if (!found && strcmp(entp->mnt_dir, mnt) == 0) {
+ 			char *p = strstr(entp->mnt_opts, "user=");
+ 			if (p &&
+ 			    (p == entp->mnt_opts || *(p-1) == ',') &&
+@@ -319,6 +326,9 @@ static pid_t clone_newns(void *a)
+ 
+ static int check_is_mount(const char *last, const char *mnt)
+ {
++#if 1
++	return 0;
++#else
+ 	pid_t pid, p;
+ 	int status;
+ 	const char *a[2] = { last, mnt };
+@@ -344,6 +354,7 @@ static int check_is_mount(const char *la
+ 		return -1;
+ 
+ 	return 0;
++#endif
+ }
+ 
+ static int chdir_to_parent(char *copy, const char **lastp)
+@@ -462,7 +473,7 @@ static int unmount_fuse(const char *mnt,
+ 	int res;
+ 	int mtablock = lock_umount();
+ 
+-	res = unmount_fuse_locked(mnt, quiet, lazy);
++	res = fuse_mnt_umount(progname, mnt, mnt, lazy);
+ 	unlock_umount(mtablock);
+ 
+ 	return res;
+@@ -473,7 +484,8 @@ static int count_fuse_fs(void)
+ 	struct mntent *entp;
+ 	int count = 0;
+ 	const char *mtab = _PATH_MOUNTED;
+-	FILE *fp = setmntent(mtab, "r");
++	/* CLIP - we need a+ here to create the file if needed. */
++	FILE *fp = setmntent(mtab, "a+");
+ 	if (fp == NULL) {
+ 		fprintf(stderr, "%s: failed to open %s: %s\n", progname, mtab,
+ 			strerror(errno));
+@@ -1200,6 +1212,12 @@ int main(int argc, char *argv[])
+ 		{"version", no_argument, NULL, 'V'},
+ 		{0, 0, 0, 0}};
+ 
++	/* Use the real-GID */
++	if (setegid(getgid())) {
++		perror("setegid");
++		return 1;
++	}
++
+ 	progname = strdup(argv[0]);
+ 	if (progname == NULL) {
+ 		fprintf(stderr, "%s: failed to allocate memory\n", argv[0]);
+@@ -1322,6 +1340,8 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ do_unmount:
++	res = unmount_fuse(mnt, quiet, lazy);
++	/*
+ 	if (geteuid() == 0)
+ 		res = unmount_fuse(mnt, quiet, lazy);
+ 	else {
+@@ -1331,6 +1351,7 @@ do_unmount:
+ 				"%s: failed to unmount %s: %s\n",
+ 				progname, mnt, strerror(errno));
+ 	}
++	*/
+ 	if (res == -1)
+ 		exit(1);
+ 	return 0;

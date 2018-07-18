@@ -1,0 +1,49 @@
+#!/sbin/runscript
+# Copyright 2010 SGDSN/ANSSI
+# Author: Benjamin Morin <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+description="Start the pcscd daemon"
+
+depend() {
+	need clock hostname veriexec jail_init
+}
+
+smartcards_supported() {
+	grep -q '^SMARTCARD_SUPPORT=yes' "/etc/admin/conf.d/smartcards" \
+		|| return 1
+	return 0
+}
+
+start() {
+	smartcards_supported || return 0
+
+	source /lib/clip/jails.sub
+
+	ebegin "Setting up pcsc service"
+	local ret=0
+
+	rm -f /var/run/pcscd/pcscd.*
+
+	if ! jail_setup_wait "pcsc"; then
+		eend 1 "Failed to set up pcsc jail"
+		return 1
+	fi
+
+	local ctx=$(cat /etc/jails/pcsc/context)
+	if ! /usr/sbin/pcscd -X "${ctx}"; then
+		eend 1 "Failed to run pcscd"
+		return 1
+	fi
+	eend 0
+}
+
+stop() {
+	[[ -e "/var/run/pcsc.cookie" ]] || return 0
+
+	vebegin "Stopping pcsc daemon"
+
+	/sbin/vsctl "pcsc" stop
+	veend $?
+}
+

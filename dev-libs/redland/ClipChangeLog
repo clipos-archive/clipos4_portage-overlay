@@ -1,0 +1,56 @@
+# CLIP ChangeLog for dev-libs/redland
+
+*redland-1.0.16-r2 (23 Mar 2016)
+
+  23 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +redland-1.0.16-r2.ebuild, -redland-1.0.16-r1.ebuild:
+
+*redland-1.0.16-r1 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +redland-1.0.16-r1.ebuild, -redland-1.0.16.ebuild:
+  Force rebuild (icu revdep).
+
+*redland-1.0.16 (18 Jul 2013)
+
+  18 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +redland-1.0.16.ebuild, -redland-1.0.15.ebuild:
+  Bump to latest.
+
+*redland-1.0.15 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +redland-1.0.15.ebuild, -redland-1.0.14.ebuild:
+  Bump to latest. 
+
+*redland-1.0.14 (10 Aug 2011)
+
+  10 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +redland-1.0.14.ebuild, -redland-1.0.10-r3.ebuild,
+  -files/redland-1.0.10-librdf_storage_register_factory.patch:
+  Bump to latest.
+
+*redland-1.0.10-r3 (19 Jul 2011)
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +redland-1.0.10-r3.ebuild, -redland-1.0.10-r2.ebuild:
+  Rbump to force rebuild against newer icu + as-needed.
+
+*redland-1.0.10-r2 (15 Jun 2010)
+
+  15 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +redland-1.0.10-r2.ebuild, -redland-1.0.9-r2.ebuild,
+  +files/redland-1.0.10-librdf_storage_register_factory.patch,
+  -files/redland-1.0.9-ldflags.patch,
+  -files/redland-1.0.9-librdf_storage_register_factory.patch,
+  -files/redland-1.0.9-sqlite.patch:
+  Bump to latest.
+
+*redland-1.0.9-r2 (09 Feb 2010)
+
+  09 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  redland-1.0.9-r2.ebuild:
+  Silent revbump to force rebuild with berkdb flag set for nepomuk, 
+  + add dependency on mpfr.
+
+

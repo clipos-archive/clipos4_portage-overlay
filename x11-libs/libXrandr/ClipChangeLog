@@ -1,0 +1,57 @@
+# CLIP ChangeLog for x11-libs/libXrandr
+
+*libXrandr-1.5.1 (11 Oct 2017)
+
+  11 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +libXrandr-1.5.1.ebuild, -libXrandr-1.4.2.ebuild:
+  Bump to latest stable. x11-proto/* dependencies removed from RDEPEND and moved
+  to DEPEND.
+
+*libXrandr-1.4.2 (27 Aug 2014)
+
+  27 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +libXrandr-1.4.2.ebuild, -libXrandr-1.4.1.ebuild:
+  Bump to latest.
+
+*libXrandr-1.4.1 (05 Jun 2013)
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrandr-1.4.1.ebuild, -libXrandr-1.4.0.ebuild:
+  Bump to latest.
+
+*libXrandr-1.4.0 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrandr-1.4.0.ebuild, -libXrandr-1.3.2.ebuild:
+  Bump to latest.
+
+*libXrandr-1.3.2 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrandr-1.3.2.ebuild, -libXrandr-1.3.1.ebuild:
+  Bump to latest.
+
+*libXrandr-1.3.1 (07 Jul 2011)
+
+  07 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrandr-1.3.1.ebuild, -libXrandr-1.3.0.ebuild:
+  Bump.
+
+*libXrandr-1.3.0 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrandr-1.3.0.ebuild, -libXrandr-1.2.3.ebuild:
+  Bump.
+
+*libXrandr-1.2.3 (02 Sep 2009)
+
+  02 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrandr-1.2.3.ebuild, -libXrandr-1.2.1.ebuild:
+  Bump to latest gentoo stable.
+
+*libXrandr-1.2.1 (24 Jan 2008)
+
+  24 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  libXrandr-1.2.1.ebuild:
+  Initial overlay import. Remove version constraint in RDEPEND 
+  on randrproto.

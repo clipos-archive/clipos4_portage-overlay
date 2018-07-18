@@ -1,0 +1,13 @@
+*** ../perl.c	2015-11-20 11:39:56.095046202 +0100
+--- perl.c	2015-11-20 11:40:08.783046429 +0100
+***************
+*** 4275,4280 ****
+--- 4275,4282 ----
+  
+      /* for configuration where /usr is mounted ro (CPAN::Config, Net::Config) */
+      S_incpush_use_sep(aTHX_ STR_WITH_LEN("/etc/perl"), 0x0);
++     S_incpush_use_sep(aTHX_ STR_WITH_LEN("/usr/local/lib/perl5"), INCPUSH_ADD_SUB_DIRS);
++     S_incpush_use_sep(aTHX_ STR_WITH_LEN("/usr/local/lib/perl5/vendor_perl"), INCPUSH_ADD_SUB_DIRS);
+  
+  #ifdef SITEARCH_EXP
+      /* sitearch is always relative to sitelib on Windows for

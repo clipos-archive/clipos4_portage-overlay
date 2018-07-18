@@ -1,0 +1,11 @@
+# CLIP ChangeLog for media-libs/x264
+
+  08 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  x264-0.0.20081006.ebuild:
+  Restore proper EAPI.
+
+*x264-0.0.20081006 (18 May 2009)
+
+  18 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  x264-0.0.20081006.ebuild:
+  Initial import. CPREFIX fixes.

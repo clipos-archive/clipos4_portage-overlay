@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/sbin/rc-update del timer_entropyd default

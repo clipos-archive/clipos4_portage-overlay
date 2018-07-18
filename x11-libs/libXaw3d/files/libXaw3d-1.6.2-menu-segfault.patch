@@ -1,0 +1,33 @@
+--- ./src/SmeThreeD.c.orig	2013-09-04 19:55:34.000000000 +0200
++++ ./src/SmeThreeD.c	2013-09-04 19:56:03.000000000 +0200
+@@ -540,7 +540,7 @@ _XawSme3dDrawShadows(Widget gw)
+     SimpleMenuWidget smw = (SimpleMenuWidget) XtParent(gw);
+     ThreeDWidget tdw = (ThreeDWidget) smw->simple_menu.threeD;
+     Dimension s = tdo->sme_threeD.shadow_width;
+-    Dimension ps = tdw->threeD.shadow_width;
++    Dimension ps = tdw ? tdw->threeD.shadow_width : 0;
+     XPoint pt[6];
+ 
+     /*
+--- ./src/SmeBSB.c.orig	2013-09-04 19:56:29.000000000 +0200
++++ ./src/SmeBSB.c	2013-09-04 19:56:38.000000000 +0200
+@@ -843,7 +843,7 @@ FlipColors(Widget w)
+     SmeBSBObjectClass oclass = (SmeBSBObjectClass) XtClass (w);
+     SimpleMenuWidget smw = (SimpleMenuWidget) XtParent (w);
+     ThreeDWidget tdw = (ThreeDWidget) smw->simple_menu.threeD;
+-    Dimension s = tdw->threeD.shadow_width;
++    Dimension s = tdw ? tdw->threeD.shadow_width : 0;
+ 
+     if (entry->sme_bsb.set_values_area_cleared) {
+ 	entry->sme_threeD.shadowed = False;
+--- ./src/SmeLine.c.orig	2013-09-04 19:21:14.000000000 +0200
++++ ./src/SmeLine.c	2013-09-04 19:21:41.000000000 +0200
+@@ -212,7 +212,7 @@ Redisplay(Widget w, XEvent *event, Regio
+     SmeLineObject entry = (SmeLineObject) w;
+     SimpleMenuWidget smw = (SimpleMenuWidget) XtParent (w);
+     ThreeDWidget tdw = (ThreeDWidget) smw->simple_menu.threeD;
+-    Dimension s = tdw->threeD.shadow_width;
++    Dimension s = tdw ? tdw->threeD.shadow_width : 0;
+     int y = entry->rectangle.y +
+ 	    (int)(entry->rectangle.height - entry->sme_line.line_width) / 2;
+ 

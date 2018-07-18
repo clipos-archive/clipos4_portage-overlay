@@ -1,0 +1,51 @@
+Set a default directory when opening the shared directory dialog on RDP. This prevent nasty segfault when using Remmina on KDE.
+
+Index: Remmina-1.2.0-rcgit.14/remmina/src/remmina_file_editor.c
+===================================================================
+--- Remmina-1.2.0-rcgit.14.orig/remmina/src/remmina_file_editor.c
++++ Remmina-1.2.0-rcgit.14/remmina/src/remmina_file_editor.c
+@@ -718,14 +718,19 @@
+ 			g_hash_table_insert(priv->setting_widgets, (gchar*) settings->name, widget);
+ 			break;
+ 
+-		case REMMINA_PROTOCOL_SETTING_TYPE_FOLDER:
++		case REMMINA_PROTOCOL_SETTING_TYPE_FOLDER: {
++			gchar * default_path = remmina_file_get_string (priv->remmina_file, settings->name);
++			if ((!default_path || strlen(default_path) == 0) && settings->opt1) {
++				default_path = (const gchar *) settings->opt1;
++				printf("setting shared folder to default path: %s\n", default_path);
++			}
+ 			widget = remmina_file_editor_create_chooser (gfe, grid, grid_row, 0,
+ 			         g_dgettext (priv->plugin->domain, settings->label),
+-			         remmina_file_get_string (priv->remmina_file, settings->name),
++			         default_path,
+ 			         GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+ 			g_hash_table_insert(priv->setting_widgets, (gchar*) settings->name, widget);
+ 			break;
+-
++		}
+ 		default:
+ 			break;
+ 		}
+Index: Remmina-1.2.0-rcgit.14/remmina-plugins/rdp/rdp_plugin.c
+===================================================================
+--- Remmina-1.2.0-rcgit.14.orig/remmina-plugins/rdp/rdp_plugin.c
++++ Remmina-1.2.0-rcgit.14/remmina-plugins/rdp/rdp_plugin.c
+@@ -58,6 +58,8 @@
+ #define REMMINA_RDP_FEATURE_UNFOCUS              3
+ #define REMMINA_RDP_FEATURE_TOOL_SENDCTRLALTDEL  4
+ 
++#define REMMINA_RDP_DEFAULT_SHARED_FOLDER "Undefined"
++
+ /* Some string settings of freerdp are preallocated buffers of N bytes */
+ #define FREERDP_CLIENTHOSTNAME_LEN	32
+ 
+@@ -1339,7 +1341,7 @@
+ 	{ REMMINA_PROTOCOL_SETTING_TYPE_TEXT, "gateway_server", N_("RD Gateway server"), FALSE, NULL, NULL },
+ 	{ REMMINA_PROTOCOL_SETTING_TYPE_RESOLUTION, NULL, NULL, FALSE, NULL, NULL },
+ 	{ REMMINA_PROTOCOL_SETTING_TYPE_SELECT, "colordepth", N_("Color depth"), FALSE, colordepth_list, NULL },
+-	{ REMMINA_PROTOCOL_SETTING_TYPE_FOLDER, "sharefolder", N_("Share folder"), FALSE, NULL, NULL },
++	{ REMMINA_PROTOCOL_SETTING_TYPE_FOLDER, "sharefolder", N_("Share folder"), FALSE, REMMINA_RDP_DEFAULT_SHARED_FOLDER, NULL },
+ 	{ REMMINA_PROTOCOL_SETTING_TYPE_END, NULL, NULL, FALSE, NULL, NULL }
+ };
+ 

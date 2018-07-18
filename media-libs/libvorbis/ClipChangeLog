@@ -1,0 +1,7 @@
+# CLIP ChangeLog for media-libs/libvorbis
+
+*libvorbis-1.3.6-r1 (12 April 2018):
+
+  12 April 2018; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libvorbis-1.3.6-r1.ebuild, -libvorbis-1.3.4.ebuild:
+  Fixes CVE-2018-5146 of the pwn2own competition and two less severe vulns.

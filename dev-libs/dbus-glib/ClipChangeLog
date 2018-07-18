@@ -1,0 +1,62 @@
+# CLIP ChangeLog for dev-libs/dbus-glib
+
+*dbus-glib-0.100.2-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.100.2-r1.ebuild, -dbus-glib-0.100.2.ebuild:
+  Force rebuild, convert to multilib.
+
+*dbus-glib-0.100.2 (28 Feb 2013)
+
+  28 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.100.2.ebuild, -dbus-glib-0.100-r1.ebuild,
+  +files/dbus-glib-0.100-fix-tests.patch:
+  Security bump to latest, CVE-2013-0292.
+
+*dbus-glib-0.100-r1 (14 Dec 2012)
+
+  14 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.100-r1.ebuild, -dbus-glib-0.100.ebuild,
+  +files/dbus-glib-0.100-dbus-glib-sections.txt:
+  Bump to latest from gentoo.
+
+*dbus-glib-0.100 (04 Oct 2012)
+
+  04 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.100.ebuild, -dbus-glib-0.98.ebuild:
+  Bump to latest.
+
+*dbus-glib-0.98 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.98.ebuild, -dbus-glib-0.94-r1.ebuild,
+  -files/dbus-glib-0.94-marshall_objs.patch:
+  Bump to latest.
+
+*dbus-glib-0.94-r1 (10 Oct 2011)
+
+  10 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.94-r1.ebuild, -dbus-glib-0.92.ebuild,
+  -files/dbus-glib-0.92-userpriv-fix.patch,
+  +files/dbus-glib-0.94-marshall_objs.patch:
+  Bump to latest.
+
+*dbus-glib-0.92 (12 Apr 2011)
+
+  12 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.92.ebuild, -dbus-glib-0.88.ebuild,
+  +files/dbus-glib-0.92-userpriv-fix.patch:
+  Bump to latest.
+
+*dbus-glib-0.88 (22 Dec 2010)
+
+  22 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.88.ebuild, -dbus-glib-0.82.ebuild,
+  -files/dbus-glib-introspection.patch:
+  Bump to latest - security fix.
+
+*dbus-glib-0.82 (10 Dec 2009)
+
+  05 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-glib-0.82.ebuild:
+  Initial import. CPREFIX / clip-deps fixes.

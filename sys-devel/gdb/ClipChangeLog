@@ -1,0 +1,7 @@
+# CLIP ChangeLog for sys-devel/gdb
+
+*gdb-7.12.1 (14 Sep 2017)
+
+  14 Sep 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  gdb-7.12.1.ebuild:
+  Update with upstream. Plus add some modification to handle PaX and provide the PTRACE capability to gdb.

@@ -1,0 +1,10 @@
+--- ./loader/wine.inf.in.orig	2013-09-10 16:06:00.000000000 +0200
++++ ./loader/wine.inf.in	2013-09-10 16:06:35.000000000 +0200
+@@ -3010,7 +3010,6 @@
+ ;; HKLM,%CurrentVersionNT%\SvcHost,"netsvcs",0x00010008,"lanmanserver"
+ 
+ [Services]
+-HKLM,%CurrentVersion%\RunServices,"winemenubuilder",2,"%11%\winemenubuilder.exe -a -r"
+ HKLM,"System\CurrentControlSet\Services\Eventlog\Application",,16
+ HKLM,"System\CurrentControlSet\Services\Tcpip\Parameters",,16
+ HKLM,"System\CurrentControlSet\Services\VxD\MSTCP",,16

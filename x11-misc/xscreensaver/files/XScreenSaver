@@ -1,0 +1,138 @@
+!
+!                              XScreenSaver
+!
+!            a screen saver and locker for the X window system
+!                            by Jamie Zawinski
+!
+!                              version 5.03
+!                              17-Jul-2007
+!
+
+*mode:			blank
+*timeout:		 0 : 05 : 00
+*cycle:			 0 : 10 : 00
+*lockTimeout:		 0 : 00 : 10
+*passwdTimeout:		 0 : 00 : 30
+*dpmsEnabled:		False
+*dpmsStandby:		 0 : 10 : 00
+*dpmsSuspend:	 	 0 : 10 : 00
+*dpmsOff:		 0 : 15 : 00
+*grabDesktopImages:	False
+*grabVideoFrames:	False
+*chooseRandomImages:	False
+*imageDirectory:	
+*nice:			10
+*memoryLimit:		0
+*lock:			True
+*verbose:		False
+*timestamp:		True
+*fade:			True
+*unfade:		True
+*fadeSeconds:		0:00:05
+*fadeTicks:		20
+*splash:		False
+*splashDuration:	0:00:05
+*visualID:		default
+*captureStderr: 	False
+*ignoreUninstalledPrograms: False
+
+*textMode:		literal
+*textLiteral:		CLIP
+*textFile:		/etc/shared/clip-release
+*textProgram:		
+*textURL:		
+
+*overlayTextForeground:	#FFFF00
+*overlayTextBackground:	#000000
+*overlayStderr:		False
+*font:			*-medium-r-*-140-*-m-*
+
+! The default is to use these extensions if available (as noted.)
+*sgiSaverExtension:	False
+*xidleExtension:	True
+*procInterrupts:	False
+
+
+! The format used for printing the date and time in the password dialog box
+! (see the strftime(3) manual page for details.)
+! Preferred time representation for the current locale
+*dateFormat:    %d/%m/%Y - %H:%M
+
+
+! Set this to True if you are experiencing longstanding XFree86 bug #421
+! (xscreensaver not covering the whole screen)
+GetViewPortIsFullOfLies: False
+
+! This is what the "Demo" button on the splash screen runs (/bin/sh syntax.)
+*demoCommand: /bin/false
+
+! This is what the "Prefs" button on the splash screen runs (/bin/sh syntax.)
+*prefsCommand: /bin/false
+
+! This is the URL loaded by the "Help" button on the splash screen,
+! and by the "Documentation" menu item in xscreensaver-demo.
+*helpURL: 
+
+*loadURL: 
+*manualCommand: 
+
+! Turning on "installColormap" on 8-bit systems interacts erratically with
+! certain jurassic window managers.  If your screen turns some color other
+! than black, the window manager is buggy, and you need to set this resource
+! to false.  Or switch WMs.  Or join the 21st century and get a 24-bit
+! graphics card.
+!
+*installColormap:	True
+
+
+! This is the list of installed screen saver modes.  See "man xscreensaver"
+! for the syntax used here.
+!
+*programs:								      
+
+XScreenSaver.pointerPollTime:		0:00:05
+XScreenSaver.pointerHysteresis:		10
+XScreenSaver.initialDelay:		0:00:00
+XScreenSaver.windowCreationTimeout:	0:00:30
+XScreenSaver.bourneShell:		/bin/sh
+
+
+! Resources for the password and splash-screen dialog boxes of
+! the "xscreensaver" daemon.
+!
+xscreensaver.Dialog.headingFont:			-*-dina-bold-r-*-*-*-180-*-*-*-iso8859-1
+xscreensaver.Dialog.bodyFont:			-*-dina-medium-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.labelFont:			-*-dina-medium-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.unameFont:			-*-dina-medium-r-*-*-*-120-*-*-*-iso8859-1
+xscreensaver.Dialog.buttonFont:			-*-dina-bold-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.dateFont:			-*-dina-medium-r-*-*-*-120-*-*-*-iso8859-1
+xscreensaver.Dialog.passwdFont:			-*-dina-bold-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.foreground:			#ffffff
+xscreensaver.Dialog.background:			#111111
+xscreensaver.Dialog.topShadowColor:			#111111
+xscreensaver.Dialog.bottomShadowColor:			#111111
+xscreensaver.Dialog.Button.foreground:			#666666
+xscreensaver.Dialog.Button.background:			#ffffff
+xscreensaver.Dialog.text.foreground:			#666666
+xscreensaver.Dialog.text.background:			#ffffff
+xscreensaver.Dialog.internalBorderWidth:		24
+xscreensaver.Dialog.borderWidth:		0
+xscreensaver.Dialog.shadowThickness:		2
+xscreensaver.passwd.thermometer.foreground:		#ff0000
+xscreensaver.passwd.thermometer.background:		#000000
+
+*passwd.heading.label:		Ecran verrouillé
+*passwd.body.label:		Cette session est verrouillée
+*passwd.unlock.label:		OK
+*passwd.login.label:		New Login
+*passwd.user.label:		Utilisateur:
+*passwd.thermometer.width:	8
+*passwd.asterisks:              True
+*passwd.uname:                  True
+
+*splash.heading.label:		XScreenSaver %s
+*splash.body.label:		Copyright © 1991-2006 by
+*splash.body2.label:		Jamie Zawinski <jwz@jwz.org>
+*splash.demo.label:		Settings
+*splash.help.label:		Help
+

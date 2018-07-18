@@ -1,0 +1,3969 @@
+diff --git a/.gitignore b/.gitignore
+index d976b4f..c1f402d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -25,9 +25,12 @@ mkinstalldirs
+ stamp-h*
+ obj
+ test-driver
++*.la
++.dirstamp
+ 
+ # Object files
+ *.o
++*.lo
+ 
+ # Libraries
+ *.lib
+@@ -38,3 +41,19 @@ test-driver
+ *.so
+ *.so.*
+ *.dylib
++
++# Misc files created on build
++.deps
++.libs
++softhsm2.conf*
++src/lib/test/tokens/dummy
++
++# Binaries
++src/bin/dump/softhsm2-dump-db
++src/bin/dump/softhsm2-dump-file
++src/bin/keyconv/softhsm2-keyconv
++src/bin/util/softhsm2-util
++
++# Distfiles
++distfiles
++
+diff --git a/m4/acx_crypto_backend.m4 b/m4/acx_crypto_backend.m4
+index 6722f4c..b32e970 100644
+--- a/m4/acx_crypto_backend.m4
++++ b/m4/acx_crypto_backend.m4
+@@ -68,7 +68,7 @@ AC_DEFUN([ACX_CRYPTO_BACKEND],[
+ 
+ 	AC_ARG_WITH(crypto-backend,
+ 		AC_HELP_STRING([--with-crypto-backend],
+-			[Select crypto backend (openssl|botan)]
++			[Select crypto backend (openssl|botan|anssipki)]
+ 		),
+ 		[crypto_backend="${withval}"],
+ 		[crypto_backend="openssl"]
+@@ -142,15 +142,40 @@ AC_DEFUN([ACX_CRYPTO_BACKEND],[
+ 			[],
+ 			[Compile with Botan support]
+ 		)
++       elif test "x${crypto_backend}" = "xanssipki"; then
++               AC_MSG_RESULT(ANSSIPKI)
+ 
++               ACX_OPENSSL(1,0,0)
++               ACX_ANSSIPKI(1,0,0)
++
++               CRYPTO_INCLUDES=$ANSSIPKI_INCLUDES
++               CRYPTO_LIBS=$ANSSIPKI_LIBS
++
++		if test "x${enable_fips}" = "xyes"; then
++			ACX_OPENSSL_FIPS
++		else
++			ACX_OPENSSL_EVPAESWRAP
++		fi
++
++               AC_DEFINE_UNQUOTED(
++                       [WITH_OPENSSL],
++                       [],
++                       [Compile with OpenSSL support]
++               )
++
++               AC_DEFINE_UNQUOTED(
++                       [WITH_ANSSIPKI],
++                       [],
++                       [Compile with ANSSIPKI support]
++               )
+ 	else
+ 		AC_MSG_RESULT(Unknown)
+-		AC_MSG_ERROR([Crypto backend ${crypto_backend} not supported. Use openssl or botan.])
++		AC_MSG_ERROR([Crypto backend ${crypto_backend} not supported. Use openssl, botan or anssipki.])
+ 	fi
+ 
+ 	AC_SUBST(CRYPTO_INCLUDES)
+ 	AC_SUBST(CRYPTO_LIBS)
+-	AM_CONDITIONAL([WITH_OPENSSL], [test "x${crypto_backend}" = "xopenssl"])
++	AM_CONDITIONAL([WITH_OPENSSL], [test "x${crypto_backend}" = "xopenssl" -o "x${crypto_backend}" = "xanssipki"])
+ 	AM_CONDITIONAL([WITH_BOTAN], [test "x${crypto_backend}" = "xbotan"])
+-
++        AM_CONDITIONAL([WITH_ANSSIPKI], [test "x${crypto_backend}" = "xanssipki"])
+ ])
+diff --git a/m4/acx_anssipki.m4 b/m4/acx_anssipki.m4
+new file mode 100644
+index 0000000..a3a0f16
+--- /dev/null
++++ b/m4/acx_anssipki.m4
+@@ -0,0 +1,37 @@
++# $Id$
++
++AC_DEFUN([ACX_ANSSIPKI],[
++	AC_ARG_WITH(anssipki,
++       	AC_HELP_STRING([--with-anssipki=PATH],[Specify prefix of path of libanssipki-crypto]),
++		[
++			ANSSIPKI_PATH="$withval"
++		],
++		[
++			ANSSIPKI_PATH="/usr/local"
++		])
++
++	AC_MSG_CHECKING(what are the anssipki includes)
++	ANSSIPKI_INCLUDES="-I$ANSSIPKI_PATH/include -I/usr/local"
++	AC_MSG_RESULT($ANSSIPKI_INCLUDES)
++
++	AC_MSG_CHECKING(what are the anssipki libs)
++	ANSSIPKI_LIBS="-L$ANSSIPKI_PATH/lib -lanssipki-crypto -lcrypto"
++	AC_MSG_RESULT($ANSSIPKI_LIBS)
++
++	tmp_CPPFLAGS=$CPPFLAGS
++	tmp_LIBS=$LIBS
++
++	CPPFLAGS="$CPPFLAGS $ANSSIPKI_INCLUDES"
++	LIBS="$LIBS $ANSSIPKI_LIBS"
++
++	#AC_CHECK_HEADERS([openssl/ssl.h],,[AC_MSG_ERROR([Can't find OpenSSL headers])])
++	#AC_CHECK_LIB(crypto, BN_init,,[AC_MSG_ERROR([Can't find OpenSSL library])])
++
++	CPPFLAGS=$tmp_CPPFLAGS
++	LIBS=$tmp_LIBS
++
++	CPPFLAGS="$CPPFLAGS -fstack-protector-all"
++
++	AC_SUBST(OPENSSL_INCLUDES)
++	AC_SUBST(OPENSSL_LIBS)
++])
+\ No newline at end of file
+diff --git a/m4/acx_sqlite3.m4 b/m4/acx_sqlite3.m4
+index cf829b7..b362c65 100644
+--- a/m4/acx_sqlite3.m4
++++ b/m4/acx_sqlite3.m4
+@@ -10,6 +10,19 @@ AC_DEFUN([ACX_SQLITE3],[
+ 			AC_PATH_PROGS(SQLITE3, sqlite3, sqlite3, $PATH)
+ 		])
+ 
++	AC_ARG_WITH(sqlcipher,
++		AC_HELP_STRING([--with-sqlcipher=PATH],[Use SQLCipher instead of native SQLite3]),
++		[
++			SQLCIPHER='y'
++			if test "$withval" == "yes"; then
++                       	SQLITE3_PATH="/usr/local"
++			else
++				SQLITE_PATH="$withval"
++			fi
++			AC_DEFINE([SQLITE_HAS_CODEC], [1], [Define to enable extended SQLite3 API for SQLCipher])
++                        AC_PATH_PROGS(SQLITE3, sqlcipher, sqlcipher, $PATH)                        
++                ],[
++                ])
+ 	
+ 	if ! test -x "$SQLITE3"; then
+ 		AC_MSG_ERROR([sqlite3 command not found])
+@@ -20,7 +33,11 @@ AC_DEFUN([ACX_SQLITE3],[
+ 	AC_MSG_RESULT($SQLITE3_INCLUDES)
+ 
+ 	AC_MSG_CHECKING(what are the SQLite3 libs)
+-	SQLITE3_LIBS="-L$SQLITE3_PATH/lib -lsqlite3"
++	if test -z "$SQLCIPHER"; then 
++		SQLITE3_LIBS="-L$SQLITE3_PATH/lib -lsqlite3"
++	else
++		SQLITE3_LIBS="-L$SQLITE3_PATH/lib -lsqlcipher"
++	fi
+ 	AC_MSG_RESULT($SQLITE3_LIBS)
+ 
+ 	tmp_CPPFLAGS=$CPPFLAGS
+@@ -30,7 +47,11 @@ AC_DEFUN([ACX_SQLITE3],[
+ 	LIBS="$LIBS $SQLITE3_LIBS"
+ 
+ 	AC_CHECK_HEADERS(sqlite3.h,,[AC_MSG_ERROR([Can't find SQLite3 headers])])
+-	AC_CHECK_LIB(sqlite3, sqlite3_prepare_v2, [], [AC_MSG_ERROR([Missing SQLite3 library v3.4.2 or greater])])
++	if test -z "$SQLCIPHER"; then
++		AC_CHECK_LIB(sqlite3, sqlite3_prepare_v2, [], [AC_MSG_ERROR([Missing SQLite3 library v3.4.2 or greater])])
++	else
++		AC_CHECK_LIB(sqlcipher, sqlite3_prepare_v2, [], [AC_MSG_ERROR([Missing SQLCipher library v3.4.2 or greater])])
++	fi
+ 
+ 	CPPFLAGS=$tmp_CPPFLAGS
+ 	LIBS=$tmp_LIBS
+diff --git a/make-distfiles.sh b/make-distfiles.sh
+new file mode 100755
+index 0000000..452bc42
+--- /dev/null
++++ b/make-distfiles.sh
+@@ -0,0 +1,18 @@
++#!/bin/bash
++set -e
++
++VERSION='2.0.0rc1'
++GENTOO_VERSION=$(echo "$VERSION" | sed 's/rc/_rc/')
++
++if [ ! -f 'src/lib/SoftHSM.cpp' ]
++then
++    echo "ERROR: please run this script from the root directory of SoftHSM" > /dev/stderr
++    exit 1
++fi
++
++
++rm -rf distfiles
++mkdir distfiles
++
++git archive --format=tar --prefix=softhsm-${GENTOO_VERSION}/ ${VERSION} | xz -9 > distfiles/softhsm-${GENTOO_VERSION}.tar.xz
++git diff ${VERSION}..clip/master > distfiles/softhsm-${GENTOO_VERSION}.patch
+diff --git a/src/bin/dump/softhsm2-dump-db.cpp b/src/bin/dump/softhsm2-dump-db.cpp
+index bd2d148..21f16de 100644
+--- a/src/bin/dump/softhsm2-dump-db.cpp
++++ b/src/bin/dump/softhsm2-dump-db.cpp
+@@ -922,7 +922,7 @@ int main(int argc, char* argv[])
+ 	if (argc != 2)
+ 	{
+ 		usage();
+-		exit(0);
++		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	rv = sqlite3_open_v2(argv[1], &db, SQLITE_OPEN_READONLY, NULL);
+@@ -943,9 +943,21 @@ int main(int argc, char* argv[])
+ 				sqlite3_errmsg(db));
+ 		}
+ 		sqlite3_close(db);
+-		exit(0);
++		exit(EXIT_FAILURE);
+ 	}
+ 
++#ifdef SQLITE_HAS_CODEC
++	char* key = getenv("SOFTHSM2_KEY");
++       	if (key != NULL) {
++		rv = sqlite3_key(db, key, strlen(key));
++		if (rv != SQLITE_OK) {
++			fprintf(stderr, "ERROR: can't decrypt the database\n");
++			sqlite3_close(db);
++                	exit(EXIT_FAILURE);
++		}
++       }
++#endif
++
+ 	// No user version to check
+ 
+ 	check_table_exist(db, "object");
+@@ -957,5 +969,5 @@ int main(int argc, char* argv[])
+ 	printf("Dump of object file \"%s\"\n", argv[1]);
+ 	dump(db);
+ 	sqlite3_close(db);
+-	exit(1);
++	exit(EXIT_SUCCESS);
+ }
+diff --git a/src/bin/migrate/softhsm2-migrate.cpp b/src/bin/migrate/softhsm2-migrate.cpp
+index 60df9ec..7a3dbd1 100644
+--- a/src/bin/migrate/softhsm2-migrate.cpp
++++ b/src/bin/migrate/softhsm2-migrate.cpp
+@@ -300,6 +300,19 @@ sqlite3* openDB(char* dbPath)
+ 		return NULL;
+ 	}
+ 
++#ifdef SQLITE_HAS_CODEC
++	// Decrypt the database if needed
++        char* key = getenv("SOFTHSM2_KEY");
++        if (key != NULL) {
++                rv = sqlite3_key(db, key, strlen(key));
++                if (rv != SQLITE_OK) {
++			fprintf(stderr, "ERROR: Could not prepare a SQL statement\n");
++			sqlite3_close(db);
++			return NULL;
++                }
++        }
++#endif
++
+ 	// Check the schema version
+ 	if (sqlite3_prepare_v2(db, "PRAGMA user_version;", -1, &pragStatem, NULL))
+ 	{
+diff --git a/src/lib/SoftHSM.cpp b/src/lib/SoftHSM.cpp
+index 95fda61..5b415ef 100644
+--- a/src/lib/SoftHSM.cpp
++++ b/src/lib/SoftHSM.cpp
+@@ -5227,16 +5227,15 @@ CK_RV SoftHSM::WrapKeySym
+ 	Token* token,
+ 	OSObject* wrapKey,
+ 	ByteString& keydata,
+-	ByteString& wrapped
++	ByteString& wrapped,
++	const ByteString& iv
+ )
+ {
+ 	// Get the symmetric algorithm matching the mechanism
+ 	SymAlgo::Type algo = SymAlgo::Unknown;
+ 	SymWrap::Type mode = SymWrap::Unknown;
+ 	size_t bb = 8;
+-#ifdef HAVE_AES_KEY_WRAP
+ 	CK_ULONG wrappedlen = keydata.size();
+-#endif
+ 	switch(pMechanism->mechanism) {
+ #ifdef HAVE_AES_KEY_WRAP
+ 		case CKM_AES_KEY_WRAP:
+@@ -5252,6 +5251,62 @@ CK_RV SoftHSM::WrapKeySym
+ 			mode = SymWrap::AES_KEYWRAP_PAD;
+ 			break;
+ #endif
++		// AES
++               case CKM_AES_ECB:
++			if ((wrappedlen < 16) || ((wrappedlen % 16) != 0))
++				return CKR_KEY_SIZE_RANGE;
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_ECB;
++			break;
++               case CKM_AES_CBC:
++			if ((wrappedlen < 16) || ((wrappedlen % 16) != 0))
++				return CKR_KEY_SIZE_RANGE;
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_CBC;
++			break;
++               case CKM_AES_CTR:
++			if ((wrappedlen < 16) || ((wrappedlen % 16) != 0))
++				return CKR_KEY_SIZE_RANGE;
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_CTR;
++			break;
++               case CKM_AES_CBC_PAD:
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_CBC_PAD;
++			break;
++		// DES
++               case CKM_DES_ECB:
++			if ((wrappedlen < 8) || ((wrappedlen % 8) != 0)){
++				return CKR_KEY_SIZE_RANGE;
++			}
++			algo = SymAlgo::DES;
++			mode = SymWrap::DES_ECB;
++               case CKM_DES_CBC:
++			if ((wrappedlen < 8) || ((wrappedlen % 8) != 0))
++				return CKR_KEY_SIZE_RANGE;
++			algo = SymAlgo::DES;
++			mode = SymWrap::DES_CBC;
++			break;
++               case CKM_DES_CBC_PAD:
++			algo = SymAlgo::DES;
++			mode = SymWrap::DES_CBC_PAD;
++			break;
++		// DES3
++               case CKM_DES3_ECB:
++			if ((wrappedlen < 8) || ((wrappedlen % 8) != 0))
++				return CKR_KEY_SIZE_RANGE;
++			algo = SymAlgo::DES3;
++			mode = SymWrap::DES3_ECB;
++               case CKM_DES3_CBC:
++			if ((wrappedlen < 8) || ((wrappedlen % 8) != 0))
++				return CKR_KEY_SIZE_RANGE;
++			algo = SymAlgo::DES3;
++			mode = SymWrap::DES3_CBC;
++			break;
++               case CKM_DES3_CBC_PAD:
++			algo = SymAlgo::DES3;
++			mode = SymWrap::DES3_CBC_PAD;
++			break;
+ 		default:
+ 			return CKR_MECHANISM_INVALID;
+ 	}
+@@ -5276,13 +5331,12 @@ CK_RV SoftHSM::WrapKeySym
+ 	wrappingkey->setBitLen(wrappingkey->getKeyBits().size() * bb);
+ 
+ 	// Wrap the key
+-	if (!cipher->wrapKey(wrappingkey, mode, keydata, wrapped))
++	if (!cipher->wrapKey(wrappingkey, mode, keydata, wrapped, iv))
+ 	{
+ 		cipher->recycleKey(wrappingkey);
+ 		CryptoFactory::i()->recycleSymmetricAlgorithm(cipher);
+ 		return CKR_GENERAL_ERROR;
+ 	}
+-
+ 	cipher->recycleKey(wrappingkey);
+ 	CryptoFactory::i()->recycleSymmetricAlgorithm(cipher);
+ 	return CKR_OK;
+@@ -5376,7 +5430,6 @@ CK_RV SoftHSM::WrapKeyAsym
+ 	return CKR_OK;
+ }
+ 
+-
+ // Wrap the specified key using the specified wrapping key and mechanism
+ CK_RV SoftHSM::C_WrapKey
+ (
+@@ -5397,8 +5450,25 @@ CK_RV SoftHSM::C_WrapKey
+ 	Session* session = (Session*)handleManager->getSession(hSession);
+ 	if (session == NULL) return CKR_SESSION_HANDLE_INVALID;
+ 
++        // ----- Check key handles
++        // Check the wrapping key handle.
++        OSObject *wrapKey = (OSObject *)handleManager->getObject(hWrappingKey);
++        if (wrapKey == NULL_PTR || !wrapKey->isValid()) return CKR_WRAPPING_KEY_HANDLE_INVALID;
++ 
++       	CK_BBOOL isWrapKeyOnToken = wrapKey->getBooleanValue(CKA_TOKEN, false);
++	CK_BBOOL isWrapKeyPrivate = wrapKey->getBooleanValue(CKA_PRIVATE, true);
++ 
++	// Check the to be wrapped key handle.
++        OSObject *key = (OSObject *)handleManager->getObject(hKey);
++        if (key == NULL_PTR || !key->isValid()) return CKR_KEY_HANDLE_INVALID;
++ 
++        CK_BBOOL isKeyOnToken = key->getBooleanValue(CKA_TOKEN, false);;
++        CK_BBOOL isKeyPrivate = key->getBooleanValue(CKA_PRIVATE, true);
++ 
++        // ----- Check the mechanism
+ 	CK_RV rv;
+-	// Check the mechanism, only accept advanced AES key wrapping and RSA
++	// FIX: Adding an IV for mechanisms that need it
++	ByteString iv;
+ 	switch(pMechanism->mechanism)
+ 	{
+ #ifdef HAVE_AES_KEY_WRAP
+@@ -5407,6 +5477,73 @@ CK_RV SoftHSM::C_WrapKey
+ #ifdef HAVE_AES_KEY_WRAP_PAD
+ 		case CKM_AES_KEY_WRAP_PAD:
+ #endif
++                case CKM_AES_ECB:
++                case CKM_AES_CBC:
++                case CKM_AES_CTR:
++                case CKM_AES_CBC_PAD:
++                        if (wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKO_VENDOR_DEFINED) != CKK_AES)
++                                return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++                        // Check IV length
++                        if(pMechanism->mechanism == CKM_AES_ECB){
++				if(pMechanism->ulParameterLen != 0){
++                        		return CKR_ARGUMENTS_BAD;
++				}
++                        }
++			else{
++                                if(pMechanism->pParameter == NULL_PTR || pMechanism->ulParameterLen != 16){
++       	                                return CKR_ARGUMENTS_BAD;
++               	                }
++				// Get the IV for futur use
++                       	        unsigned int i;
++       	                for(i=0; i < pMechanism->ulParameterLen; i++){
++       	        	        	iv += ((unsigned char*)pMechanism->pParameter)[i];
++                               	}
++			}
++                        break;
++                case CKM_DES_ECB:
++                case CKM_DES_CBC:
++                case CKM_DES_CBC_PAD:
++                        if (wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKO_VENDOR_DEFINED) != CKK_DES)
++                                return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++                        // Check IV length
++                        if(pMechanism->mechanism == CKM_DES_ECB){
++				if(pMechanism->ulParameterLen != 0){
++	                        	return CKR_ARGUMENTS_BAD;
++				}
++                        }
++			else{
++                                if(pMechanism->pParameter == NULL_PTR || pMechanism->ulParameterLen != 8){
++       	                                return CKR_ARGUMENTS_BAD;
++               	                }
++				// Get the IV for futur use
++                       	        unsigned int i;
++       	                for(i=0; i < pMechanism->ulParameterLen; i++){
++       	        	        	iv += ((unsigned char*)pMechanism->pParameter)[i];
++                               	}
++			}
++                        break;
++                case CKM_DES3_ECB:
++                case CKM_DES3_CBC:
++                case CKM_DES3_CBC_PAD:
++                        if (wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKO_VENDOR_DEFINED) != CKK_DES3)
++                                return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++                        // Check IV length
++                        if(pMechanism->mechanism == CKM_DES3_ECB){
++				if(pMechanism->ulParameterLen != 0){
++                        		return CKR_ARGUMENTS_BAD;
++				}
++                        }
++			else{
++                                if(pMechanism->pParameter == NULL_PTR || pMechanism->ulParameterLen != 8){
++       	                                return CKR_ARGUMENTS_BAD;
++               	                }
++				// Get the IV for futur use
++                       	        unsigned int i;
++       	                for(i=0; i < pMechanism->ulParameterLen; i++){
++       	        	        	iv += ((unsigned char*)pMechanism->pParameter)[i];
++                               	}
++			}
++                        break;
+ 		case CKM_RSA_PKCS:
+ 			// Does not handle optional init vector
+ 			if (pMechanism->pParameter != NULL_PTR ||
+@@ -5427,13 +5564,7 @@ CK_RV SoftHSM::C_WrapKey
+ 	Token* token = session->getToken();
+ 	if (token == NULL) return CKR_GENERAL_ERROR;
+ 
+-	// Check the wrapping key handle.
+-	OSObject *wrapKey = (OSObject *)handleManager->getObject(hWrappingKey);
+-	if (wrapKey == NULL_PTR || !wrapKey->isValid()) return CKR_WRAPPING_KEY_HANDLE_INVALID;
+-
+-	CK_BBOOL isWrapKeyOnToken = wrapKey->getBooleanValue(CKA_TOKEN, false);
+-	CK_BBOOL isWrapKeyPrivate = wrapKey->getBooleanValue(CKA_PRIVATE, true);
+-
++        // ----- Check user credentials
+ 	// Check user credentials for the wrapping key
+ 	rv = haveRead(session->getState(), isWrapKeyOnToken, isWrapKeyPrivate);
+ 	if (rv != CKR_OK)
+@@ -5445,28 +5576,50 @@ CK_RV SoftHSM::C_WrapKey
+ 	}
+ 
+ 	// Check wrapping key class and type
+-	if ((pMechanism->mechanism == CKM_AES_KEY_WRAP || pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD) && wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_SECRET_KEY)
++	if ((pMechanism->mechanism == CKM_AES_KEY_WRAP || pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD || pMechanism->mechanism == CKM_AES_ECB || pMechanism->mechanism == CKM_AES_CBC || pMechanism->mechanism == CKM_AES_CTR || pMechanism->mechanism == CKM_AES_CBC_PAD  || pMechanism->mechanism == CKM_DES_ECB || pMechanism->mechanism == CKM_DES_CBC || pMechanism->mechanism == CKM_DES_CBC_PAD || pMechanism->mechanism == CKM_DES3_ECB || pMechanism->mechanism == CKM_DES3_CBC || pMechanism->mechanism == CKM_DES3_CBC_PAD) && wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_SECRET_KEY)
+ 		return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
+ 	if ((pMechanism->mechanism == CKM_RSA_PKCS || pMechanism->mechanism == CKM_RSA_PKCS_OAEP) && wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_PUBLIC_KEY)
+ 		return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
+-	if (pMechanism->mechanism == CKM_AES_KEY_WRAP && wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_AES)
++	if ((pMechanism->mechanism == CKM_AES_KEY_WRAP || pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD || pMechanism->mechanism == CKM_AES_ECB || pMechanism->mechanism == CKM_AES_CBC || pMechanism->mechanism == CKM_AES_CTR || pMechanism->mechanism == CKM_AES_CBC_PAD) && wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_AES)
++		return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++	if ((pMechanism->mechanism == CKM_DES_ECB || pMechanism->mechanism == CKM_DES_CBC || pMechanism->mechanism == CKM_DES_CBC_PAD) && wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_DES)
+ 		return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
+-	if (pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD && wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_AES)
++	if ((pMechanism->mechanism == CKM_DES3_ECB || pMechanism->mechanism == CKM_DES3_CBC || pMechanism->mechanism == CKM_DES3_CBC_PAD) && wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_DES3)
+ 		return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++
+ 	if ((pMechanism->mechanism == CKM_RSA_PKCS || pMechanism->mechanism == CKM_RSA_PKCS_OAEP) && wrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_RSA)
+ 		return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
+ 
++
++        // ----- Check if we can wrap the key
++        // Check if the wrapping key can be used for wrapping
++        if (!wrapKey->attributeExists(CKA_WRAP) || wrapKey->getBooleanValue(CKA_WRAP, false) == false)
++                return CKR_KEY_FUNCTION_NOT_PERMITTED;
++ 
++        // We can only:
++        //      - Wrap a secret key with with a public key
++        //      - wrap a secret key with a secret key
++        //      - Wrap a private key with a secret key
++        if(key->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) == CKO_SECRET_KEY){
++                if((wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_SECRET_KEY) &&
++                   (wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_PUBLIC_KEY)){
++                        return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++                }
++        }
++        else if(key->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) == CKO_PRIVATE_KEY){
++                if(wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_SECRET_KEY){
++                        return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++                }
++        }
++        else{
++                return CKR_KEY_NOT_WRAPPABLE;
++        }
++ 
++
+ 	// Check if the wrapping key can be used for wrapping
+ 	if (wrapKey->getBooleanValue(CKA_WRAP, false) == false)
+ 		return CKR_KEY_FUNCTION_NOT_PERMITTED;
+ 
+-	// Check the to be wrapped key handle.
+-	OSObject *key = (OSObject *)handleManager->getObject(hKey);
+-	if (key == NULL_PTR || !key->isValid()) return CKR_KEY_HANDLE_INVALID;
+-
+-	CK_BBOOL isKeyOnToken = key->getBooleanValue(CKA_TOKEN, false);
+-	CK_BBOOL isKeyPrivate = key->getBooleanValue(CKA_PRIVATE, true);
+-
+ 	// Check user credentials for the to be wrapped key
+ 	rv = haveRead(session->getState(), isKeyOnToken, isKeyPrivate);
+ 	if (rv != CKR_OK)
+@@ -5532,6 +5685,30 @@ CK_RV SoftHSM::C_WrapKey
+ 		{
+ 			keydata = key->getByteStringValue(CKA_VALUE);
+ 		}
++                // If we have a secret key to wrap and the length of the key is not
++                // a multiple of the block size, return an error if we use a mechanism
++                // *without padding*
++                switch(pMechanism->mechanism)
++                {
++			case CKM_AES_ECB:
++			case CKM_AES_CBC:
++			case CKM_AES_CTR:
++#ifdef HAVE_AES_KEY_WRAP
++			case CKM_AES_KEY_WRAP:
++#endif
++                        	if(keydata.size() % 16 != 0){
++                               	return CKR_KEY_SIZE_RANGE;
++	                        }
++       	                break;
++			case CKM_DES_ECB:
++			case CKM_DES_CBC:
++			case CKM_DES3_ECB:
++			case CKM_DES3_CBC:
++                        	if(keydata.size() % 8 != 0){
++                                	return CKR_KEY_SIZE_RANGE;
++                        	}
++	                        break;
++                }
+ 	}
+ 	else
+ 	{
+@@ -5599,7 +5776,7 @@ CK_RV SoftHSM::C_WrapKey
+ 	keyClass = wrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED);
+ 	ByteString wrapped;
+ 	if (keyClass == CKO_SECRET_KEY)
+-		rv = SoftHSM::WrapKeySym(pMechanism, token, wrapKey, keydata, wrapped);
++		rv = SoftHSM::WrapKeySym(pMechanism, token, wrapKey, keydata, wrapped, iv);
+ 	else
+ 		rv = SoftHSM::WrapKeyAsym(pMechanism, token, wrapKey, keydata, wrapped);
+ 	if (rv != CKR_OK)
+@@ -5623,7 +5800,8 @@ CK_RV SoftHSM::UnwrapKeySym
+ 	ByteString& wrapped,
+ 	Token* token,
+ 	OSObject* unwrapKey,
+-	ByteString& keydata
++	ByteString& keydata,
++	const ByteString& iv
+ )
+ {
+ 	// Get the symmetric algorithm matching the mechanism
+@@ -5643,6 +5821,47 @@ CK_RV SoftHSM::UnwrapKeySym
+ 			mode = SymWrap::AES_KEYWRAP_PAD;
+ 			break;
+ #endif
++		// AES
++               case CKM_AES_ECB:
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_ECB;
++			break;
++               case CKM_AES_CBC:
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_CBC;
++			break;
++               case CKM_AES_CTR:
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_CTR;
++			break;
++               case CKM_AES_CBC_PAD:
++			algo = SymAlgo::AES;
++			mode = SymWrap::AES_CBC_PAD;
++			break;
++		// DES
++               case CKM_DES_ECB:
++			algo = SymAlgo::DES;
++			mode = SymWrap::DES_ECB;
++               case CKM_DES_CBC:
++			algo = SymAlgo::DES;
++			mode = SymWrap::DES_CBC;
++			break;
++               case CKM_DES_CBC_PAD:
++			algo = SymAlgo::DES;
++			mode = SymWrap::DES_CBC_PAD;
++			break;
++		// DES3
++               case CKM_DES3_ECB:
++			algo = SymAlgo::DES3;
++			mode = SymWrap::DES3_ECB;
++               case CKM_DES3_CBC:
++			algo = SymAlgo::DES3;
++			mode = SymWrap::DES3_CBC;
++			break;
++               case CKM_DES3_CBC_PAD:
++			algo = SymAlgo::DES3;
++			mode = SymWrap::DES3_CBC_PAD;
++			break;
+ 		default:
+ 			return CKR_MECHANISM_INVALID;
+ 	}
+@@ -5668,7 +5887,7 @@ CK_RV SoftHSM::UnwrapKeySym
+ 
+ 	// Unwrap the key
+ 	CK_RV rv = CKR_OK;
+-	if (!cipher->unwrapKey(unwrappingkey, mode, wrapped, keydata))
++	if (!cipher->unwrapKey(unwrappingkey, mode, wrapped, keydata, iv))
+ 		rv = CKR_GENERAL_ERROR;
+ 	cipher->recycleKey(unwrappingkey);
+ 	CryptoFactory::i()->recycleSymmetricAlgorithm(cipher);
+@@ -5760,30 +5979,105 @@ CK_RV SoftHSM::C_UnwrapKey
+ 	Session* session = (Session*)handleManager->getSession(hSession);
+ 	if (session == NULL) return CKR_SESSION_HANDLE_INVALID;
+ 
+-	CK_RV rv;
++	// ----- Check key handles
++	// Check the unwrapping key handle.
++	OSObject *unwrapKey = (OSObject *)handleManager->getObject(hUnwrappingKey);
++	if (unwrapKey == NULL_PTR || !unwrapKey->isValid()) return CKR_UNWRAPPING_KEY_HANDLE_INVALID;
++
++	CK_BBOOL isUnwrapKeyOnToken = unwrapKey->getBooleanValue(CKA_TOKEN, false);
++	CK_BBOOL isUnwrapKeyPrivate = unwrapKey->getBooleanValue(CKA_PRIVATE, true);
++
+ 	// Check the mechanism
++	CK_RV rv;
++	ByteString iv;
+ 	switch(pMechanism->mechanism)
+-	{
++ 	{
+ #ifdef HAVE_AES_KEY_WRAP
+-		case CKM_AES_KEY_WRAP:
+-			if ((ulWrappedKeyLen < 24) || ((ulWrappedKeyLen % 8) != 0))
+-				return CKR_WRAPPED_KEY_LEN_RANGE;
+-			// Does not handle optional init vector
+-			if (pMechanism->pParameter != NULL_PTR ||
+-                            pMechanism->ulParameterLen != 0)
+-				return CKR_ARGUMENTS_BAD;
+-			break;
++                case CKM_AES_KEY_WRAP:
+ #endif
+ #ifdef HAVE_AES_KEY_WRAP_PAD
+-		case CKM_AES_KEY_WRAP_PAD:
+-			if ((ulWrappedKeyLen < 16) || ((ulWrappedKeyLen % 8) != 0))
+-				return CKR_WRAPPED_KEY_LEN_RANGE;
+-			// Does not handle optional init vector
+-			if (pMechanism->pParameter != NULL_PTR ||
+-                            pMechanism->ulParameterLen != 0)
+-				return CKR_ARGUMENTS_BAD;
+-			break;
++                case CKM_AES_KEY_WRAP_PAD:
+ #endif
++                case CKM_AES_ECB:
++                case CKM_AES_CBC:
++                case CKM_AES_CTR:
++                case CKM_AES_CBC_PAD:
++			if((pMechanism->mechanism == CKM_AES_KEY_WRAP) || (pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD)){
++				if ((ulWrappedKeyLen < 24) || ((ulWrappedKeyLen % 8) != 0)){
++					return CKR_WRAPPED_KEY_LEN_RANGE;
++				}
++				else{
++					if ((ulWrappedKeyLen % 16) != 0)
++						return CKR_WRAPPED_KEY_LEN_RANGE;
++				}
++			}
++                        if (unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKO_VENDOR_DEFINED) != CKK_AES)
++                        	return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++                        // Check IV length
++                        if(pMechanism->mechanism == CKM_AES_ECB){
++				if(pMechanism->ulParameterLen != 0){
++                       		return CKR_ARGUMENTS_BAD;
++				}
++                        }
++			else{
++                                if(pMechanism->pParameter == NULL_PTR || pMechanism->ulParameterLen != 16){
++       	                                return CKR_ARGUMENTS_BAD;
++               	                }
++				// Get the IV for futur use
++                       	        unsigned int i;
++       	                for(i=0; i < pMechanism->ulParameterLen; i++){
++       	        	        	iv += ((unsigned char*)pMechanism->pParameter)[i];
++                               	}
++			}
++                        break;
++                case CKM_DES_ECB:
++                case CKM_DES_CBC:
++                case CKM_DES_CBC_PAD:
++			if ((ulWrappedKeyLen % 8) != 0)
++				return CKR_WRAPPED_KEY_LEN_RANGE;
++                        if (unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKO_VENDOR_DEFINED) != CKK_DES)
++       	                return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++                        // Check IV length
++                        if(pMechanism->mechanism == CKM_DES_ECB){
++				if(pMechanism->ulParameterLen != 0){
++                        		return CKR_ARGUMENTS_BAD;
++				}
++                        }
++			else{
++                                if(pMechanism->pParameter == NULL_PTR || pMechanism->ulParameterLen != 8){
++       	                                return CKR_ARGUMENTS_BAD;
++               	                }
++				// Get the IV for futur use
++                       	        unsigned int i;
++       	                for(i=0; i < pMechanism->ulParameterLen; i++){
++       	        	        	iv += ((unsigned char*)pMechanism->pParameter)[i];
++                               	}
++			}
++                        break;
++                case CKM_DES3_ECB:
++                case CKM_DES3_CBC:
++                case CKM_DES3_CBC_PAD:
++			if ((ulWrappedKeyLen % 8) != 0)
++				return CKR_WRAPPED_KEY_LEN_RANGE;
++                        if (unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKO_VENDOR_DEFINED) != CKK_DES3)
++                                return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++                        // Check IV length
++                        if(pMechanism->mechanism == CKM_DES3_ECB){
++				if(pMechanism->ulParameterLen != 0){
++                        		return CKR_ARGUMENTS_BAD;
++				}
++                        }
++			else{
++                                if(pMechanism->pParameter == NULL_PTR || pMechanism->ulParameterLen != 8){
++       	                                return CKR_ARGUMENTS_BAD;
++               	                }
++				// Get the IV for futur use
++                       	        unsigned int i;
++       	                for(i=0; i < pMechanism->ulParameterLen; i++){
++       	        	        	iv += ((unsigned char*)pMechanism->pParameter)[i];
++                               	}
++			}
++                        break;
+ 		case CKM_RSA_PKCS:
+ 			// Input length checks needs to be done later when unwrapping key is known
+ 			break;
+@@ -5792,22 +6086,15 @@ CK_RV SoftHSM::C_UnwrapKey
+ 			if (rv != CKR_OK)
+ 				return rv;
+ 			break;
+-
+-		default:
+-			return CKR_MECHANISM_INVALID;
++                default:
++                        return CKR_MECHANISM_INVALID;
+ 	}
+ 
+ 	// Get the token
+ 	Token* token = session->getToken();
+ 	if (token == NULL) return CKR_GENERAL_ERROR;
+ 
+-	// Check the unwrapping key handle.
+-	OSObject *unwrapKey = (OSObject *)handleManager->getObject(hUnwrappingKey);
+-	if (unwrapKey == NULL_PTR || !unwrapKey->isValid()) return CKR_UNWRAPPING_KEY_HANDLE_INVALID;
+-
+-	CK_BBOOL isUnwrapKeyOnToken = unwrapKey->getBooleanValue(CKA_TOKEN, false);
+-	CK_BBOOL isUnwrapKeyPrivate = unwrapKey->getBooleanValue(CKA_PRIVATE, true);
+-
++	// ----- Check user credentials
+ 	// Check user credentials
+ 	rv = haveRead(session->getState(), isUnwrapKeyOnToken, isUnwrapKeyPrivate);
+ 	if (rv != CKR_OK)
+@@ -5819,16 +6106,19 @@ CK_RV SoftHSM::C_UnwrapKey
+ 	}
+ 
+ 	// Check unwrapping key class and type
+-	if ((pMechanism->mechanism == CKM_AES_KEY_WRAP || pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD) && unwrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_SECRET_KEY)
+-		return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
+-	if (pMechanism->mechanism == CKM_AES_KEY_WRAP && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_AES)
+-		return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
+-	if (pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_AES)
+-		return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
+-	if ((pMechanism->mechanism == CKM_RSA_PKCS || pMechanism->mechanism == CKM_RSA_PKCS_OAEP) && unwrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_PRIVATE_KEY)
+-		return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
+-	if ((pMechanism->mechanism == CKM_RSA_PKCS || pMechanism->mechanism == CKM_RSA_PKCS_OAEP) && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_RSA)
+-		return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++        if ((pMechanism->mechanism == CKM_AES_KEY_WRAP || pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD || pMechanism->mechanism == CKM_AES_ECB || pMechanism->mechanism == CKM_AES_CBC || pMechanism->mechanism == CKM_AES_CTR || pMechanism->mechanism == CKM_AES_CBC_PAD  || pMechanism->mechanism == CKM_DES_ECB || pMechanism->mechanism == CKM_DES_CBC || pMechanism->mechanism == CKM_DES_CBC_PAD || pMechanism->mechanism == CKM_DES3_ECB || pMechanism->mechanism == CKM_DES3_CBC || pMechanism->mechanism == CKM_DES3_CBC_PAD) && unwrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_SECRET_KEY)
++                return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++        if ((pMechanism->mechanism == CKM_RSA_PKCS || pMechanism->mechanism == CKM_RSA_PKCS_OAEP) && unwrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) != CKO_PUBLIC_KEY)
++                return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++        if ((pMechanism->mechanism == CKM_AES_KEY_WRAP || pMechanism->mechanism == CKM_AES_KEY_WRAP_PAD || pMechanism->mechanism == CKM_AES_ECB || pMechanism->mechanism == CKM_AES_CBC || pMechanism->mechanism == CKM_AES_CTR || pMechanism->mechanism == CKM_AES_CBC_PAD) && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_AES)
++                return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++        if ((pMechanism->mechanism == CKM_DES_ECB || pMechanism->mechanism == CKM_DES_CBC || pMechanism->mechanism == CKM_DES_CBC_PAD) && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_DES)
++                return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++        if ((pMechanism->mechanism == CKM_DES3_ECB || pMechanism->mechanism == CKM_DES3_CBC || pMechanism->mechanism == CKM_DES3_CBC_PAD) && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_DES3)
++                return CKR_WRAPPING_KEY_TYPE_INCONSISTENT;
++
++        if ((pMechanism->mechanism == CKM_RSA_PKCS || pMechanism->mechanism == CKM_RSA_PKCS_OAEP) && unwrapKey->getUnsignedLongValue(CKA_KEY_TYPE, CKK_VENDOR_DEFINED) != CKK_RSA)
++                return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
+ 
+ 	// Check if the unwrapping key can be used for unwrapping
+ 	if (unwrapKey->getBooleanValue(CKA_UNWRAP, false) == false)
+@@ -5853,6 +6143,27 @@ CK_RV SoftHSM::C_UnwrapKey
+ 		return CKR_TEMPLATE_INCONSISTENT;
+ 	// Key type will be handled at object creation
+ 
++
++	// ----- Check if we can unwrap the key
++	// We can only:
++	//      - Unwrap a secret key with with a public key
++	//      - Unwrap a secret key with a secret key
++	//      - UnWrap a private key with a secret key
++	if(objClass == CKO_SECRET_KEY){
++       	if((unwrapKey->getUnsignedLongValue(CKA_CLASS, CKK_VENDOR_DEFINED) != CKO_SECRET_KEY) &&
++			(unwrapKey->getUnsignedLongValue(CKA_CLASS, CKK_VENDOR_DEFINED) != CKO_PUBLIC_KEY)){
++			return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++		}
++	}
++	else if(objClass == CKO_PRIVATE_KEY){
++		if(unwrapKey->getUnsignedLongValue(CKA_CLASS, CKK_VENDOR_DEFINED) != CKO_SECRET_KEY){
++			return CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT;
++		}
++	}
++	else{
++		return CKR_WRAPPED_KEY_INVALID;
++	}
++
+ 	// Check authorization
+ 	rv = haveWrite(session->getState(), isOnToken, isPrivate);
+ 	if (rv != CKR_OK)
+@@ -5936,12 +6247,11 @@ CK_RV SoftHSM::C_UnwrapKey
+ 	}
+ 
+ 	*hKey = CK_INVALID_HANDLE;
+-
+ 	// Unwrap the key
+ 	ByteString wrapped(pWrappedKey, ulWrappedKeyLen);
+ 	ByteString keydata;
+ 	if (unwrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) == CKO_SECRET_KEY)
+-		rv = UnwrapKeySym(pMechanism, wrapped, token, unwrapKey, keydata);
++		rv = UnwrapKeySym(pMechanism, wrapped, token, unwrapKey, keydata, iv);
+ 	else if (unwrapKey->getUnsignedLongValue(CKA_CLASS, CKO_VENDOR_DEFINED) == CKO_PRIVATE_KEY)
+ 		rv = UnwrapKeyAsym(pMechanism, wrapped, token, unwrapKey, keydata);
+ 	else
+@@ -10003,6 +10313,7 @@ bool SoftHSM::setRSAPrivateKey(OSObject* key, ByteString ber, Token* token, bool
+ 	ByteString coefficient;
+ 	if (isPrivate)
+ 	{
++
+ 		token->encrypt(((RSAPrivateKey*)priv)->getN(), modulus);
+ 		token->encrypt(((RSAPrivateKey*)priv)->getE(), publicExponent);
+ 		token->encrypt(((RSAPrivateKey*)priv)->getD(), privateExponent);
+diff --git a/src/lib/SoftHSM.h b/src/lib/SoftHSM.h
+index b1dca26..9a04e41 100644
+--- a/src/lib/SoftHSM.h
++++ b/src/lib/SoftHSM.h
+@@ -405,7 +405,8 @@ private:
+ 		Token *token,
+ 		OSObject *wrapKey,
+ 		ByteString &keydata,
+-		ByteString &wrapped
++		ByteString &wrapped,
++		const ByteString& iv
+ 	);
+ 
+ 	CK_RV UnwrapKeyAsym
+@@ -423,7 +424,8 @@ private:
+ 		ByteString &wrapped,
+ 		Token* token,
+ 		OSObject *unwrapKey,
+-		ByteString &keydata
++		ByteString &keydata,
++		const ByteString& iv
+ 	);
+ 
+ 	CK_RV MechParamCheckRSAPKCSOAEP(CK_MECHANISM_PTR pMechanism);
+diff --git a/src/lib/crypto/AnssiPkiRNG.cpp b/src/lib/crypto/AnssiPkiRNG.cpp
+new file mode 100644
+index 0000000..111b143
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRNG.cpp
+@@ -0,0 +1,75 @@
++/* $Id: ANSSIPKIRNG.cpp 4773 2010-04-18 21:56:03Z rb $ */
++
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRNG.cpp
++
++ ANSSIPKI random number generator class
++ *****************************************************************************/
++
++#include <cstring>
++#include <string>
++#include "config.h"
++#include "AnssiPkiRNG.h"
++
++// Constructor
++AnssiPkiRNG::AnssiPkiRNG ()
++{
++  _prng = new DevUrandomPRNG();
++}
++
++
++// Destructor
++AnssiPkiRNG::~AnssiPkiRNG ()
++{
++  delete _prng;
++}
++
++
++// Generate random data
++bool AnssiPkiRNG::generateRandom(ByteString& data, const size_t len)
++{
++  unsigned char *output = new unsigned char [len];
++  _prng->getRandomBytes ((char *)output, len);
++
++  ByteString bs (output, len);
++  data.wipe(len);
++  data = bs;
++
++  delete [] output;
++  return true;
++}
++
++// Seed the random pool
++void AnssiPkiRNG::seed(ByteString& seedData)
++{
++  _prng->refresh ((char *) seedData.byte_str(), seedData.size());
++}
++
++
++
+diff --git a/src/lib/crypto/AnssiPkiRNG.h b/src/lib/crypto/AnssiPkiRNG.h
+new file mode 100644
+index 0000000..9d98272
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRNG.h
+@@ -0,0 +1,65 @@
++/* $Id: AnssiPkiRNG.h 4773 2010-04-18 21:56:03Z rb $ */
++
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRNG.h
++
++ ANSSIPKI random number generator class
++ *****************************************************************************/
++
++#ifndef _SOFTHSM_V2_ANSSIPKIRNG_H
++#define _SOFTHSM_V2_ANSSIPKIRNG_H
++
++#include "config.h"
++#include "ByteString.h"
++#include "anssipki-crypto.h"
++#include "RNG.h"
++
++class AnssiPkiRNG : public RNG
++{
++ public:
++  // Constructor
++  AnssiPkiRNG ();
++
++  // Destructor
++  virtual ~AnssiPkiRNG ();
++
++  // Generate random data
++  virtual bool generateRandom(ByteString& data, const size_t len);
++
++  // Seed the random pool
++  virtual void seed(ByteString& seedData);
++
++  PRNG *getPrng () const {return _prng;}
++
++ private:
++  PRNG *_prng;
++};
++
++#endif // !_SOFTHSM_V2_ANSSIPKIRNG_H
++
+diff --git a/src/lib/crypto/AnssiPkiRSA.cpp b/src/lib/crypto/AnssiPkiRSA.cpp
+new file mode 100644
+index 0000000..41bb0dc
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSA.cpp
+@@ -0,0 +1,1170 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSA.cpp
++
++ ANSSIPKI RSA asymmetric algorithm implementation
++ *****************************************************************************/
++
++#include "config.h"
++#include "log.h"
++#include "AnssiPkiRSA.h"
++#include "CryptoFactory.h"
++#include "RSAParameters.h"
++#include <algorithm>
++#include <assert.h>
++#include "OSSLCryptoFactory.h"
++#include "AnssiPkiRSAKeyPair.h"
++#include "AnssiPkiRNG.h"
++#include "AnssiPkiUtil.h"
++#include "anssipki-common.h"
++#include "anssipki-crypto.h"
++
++// Constructor
++AnssiPkiRSA::AnssiPkiRSA()
++{
++	pCurrentHash = NULL;
++	pSecondHash = NULL;
++	sLen = 0;
++}
++
++// Destructor
++AnssiPkiRSA::~AnssiPkiRSA()
++{
++	if (pCurrentHash != NULL)
++	{
++		delete pCurrentHash;
++	}
++
++	if (pSecondHash != NULL)
++	{
++		delete pSecondHash;
++	}
++}
++
++// Signing functions
++bool AnssiPkiRSA::sign(PrivateKey* privateKey, const ByteString& dataToSign,
++		   ByteString& signature, const AsymMech::Type mechanism,
++		   const void* param /* = NULL */, const size_t paramLen /* = 0 */)
++{
++	if (mechanism == AsymMech::RSA_PKCS)
++	{
++		// Separate implementation for RSA PKCS #1 signing without hash computation
++
++		// Check if the private key is the right type
++		if (!privateKey->isOfType(AnssiPkiRSAPrivateKey::type))
++		{
++			ERROR_MSG("Invalid key type supplied");
++
++			return false;
++		}
++
++		AnssiPkiRSAPrivateKey* anssipkiKey = NULL;
++		RSAKey* internalKey = NULL;
++
++		size_t allowedLen = 0;
++		size_t modulusLen = 0;
++
++		const unsigned char *pData = NULL;
++		size_t dataLen = 0;
++		unsigned char *pEncodedData = NULL;
++		unsigned char *pSignature = NULL;
++		size_t signatureLen = 0;
++
++		anssipkiKey = (AnssiPkiRSAPrivateKey*) privateKey;
++		modulusLen = anssipkiKey->getN().size();
++		internalKey = anssipkiKey->getAnssiPkiKey();
++
++		// In case of PKCS #1 signing the length of the input data may not exceed 40% of the
++		// modulus size
++		allowedLen = modulusLen - 11;
++
++		if (dataToSign.size() > allowedLen)
++		{
++			ERROR_MSG("Data to sign exceeds maximum for PKCS #1 signature");
++
++			return false;
++		}
++
++		pEncodedData = new unsigned char [modulusLen];
++		pSignature = new unsigned char [modulusLen];
++
++		// convert the ByteString dataToSign into uchar buffer
++		pData = dataToSign.const_byte_str ();
++		dataLen = dataToSign.size ();
++		
++		// PKCS1 v1.5 Encoding operation
++		if (internalKey->pkcs1_v1_5_encode (pEncodedData, modulusLen, pData, dataLen) != 0)
++		  {
++		    delete [] pEncodedData;
++		    delete [] pSignature;
++		    return false;
++		  }
++		
++		// RSA signature
++		if (internalKey->private_exponentiation (pSignature, &signatureLen, pEncodedData, modulusLen) != 0)
++		  {
++		    delete [] pEncodedData;
++		    delete [] pSignature;
++		    return false;
++		  }
++
++		ByteString tmpSignature (pSignature, signatureLen);
++
++		// convert uchar * sig into ByteString
++		signature.wipe(modulusLen - signatureLen);
++		signature += tmpSignature;
++
++		delete [] pEncodedData;
++		delete [] pSignature;
++
++		return true;
++	}
++	else if (mechanism == AsymMech::RSA)
++	{
++		// Separate implementation for raw RSA signing
++
++		// Check if the private key is the right type
++		if (!privateKey->isOfType(AnssiPkiRSAPrivateKey::type))
++		{
++			ERROR_MSG("Invalid key type supplied");
++
++			return false;
++		}
++
++		AnssiPkiRSAPrivateKey* anssipkiKey = NULL;
++		RSAKey *internalKey = NULL;
++		mpz_t mpz_data, mpz_signature;
++		ByteString tmpSignature;
++
++		mpz_init (mpz_data);
++		mpz_init (mpz_signature);
++
++		anssipkiKey = (AnssiPkiRSAPrivateKey*) privateKey;
++		internalKey = anssipkiKey->getAnssiPkiKey ();
++
++		// In case of raw RSA, the length of the input data must match the length of the modulus
++		if (dataToSign.size() != anssipkiKey->getN().size())
++		{
++			ERROR_MSG("Size of data to sign does not match the modulus size");
++			return false;
++		}
++
++		// convert dataToSign into mpz
++		if ( ANSSIPKI_GMP::byteString2mpz (&mpz_data, dataToSign) != 0 )
++		  {
++		    return false;
++		  }
++
++		// exponentiation
++		if (internalKey->private_exponentiation (&mpz_signature, &mpz_data) != 0)
++		  {
++		    return false;
++		  }
++
++		// convert mpz_signature int ByteString
++		tmpSignature = ANSSIPKI_GMP::mpz2ByteString(&mpz_signature);
++
++		// build the signature
++		signature.wipe (anssipkiKey->getN().size() - tmpSignature.size ());
++		signature += tmpSignature;
++
++		return true;
++	}
++	else
++	{
++		// Call default implementation
++		return AsymmetricAlgorithm::sign(privateKey, dataToSign, signature, mechanism, param, paramLen);
++	}
++}
++
++bool AnssiPkiRSA::signInit(PrivateKey* privateKey, const AsymMech::Type mechanism,
++		       const void* param /* = NULL */, const size_t paramLen /* = 0 */)
++{
++	if (!AsymmetricAlgorithm::signInit(privateKey, mechanism, param, paramLen))
++	{
++		return false;
++	}
++
++	// Check if the private key is the right type
++	if (!privateKey->isOfType(AnssiPkiRSAPrivateKey::type))
++	{
++		ERROR_MSG("Invalid key type supplied");
++
++		ByteString dummy;
++		AsymmetricAlgorithm::signFinal(dummy);
++
++		return false;
++	}
++
++	HashAlgo::Type hash1 = HashAlgo::Unknown;
++	HashAlgo::Type hash2 = HashAlgo::Unknown;
++
++	switch (mechanism)
++	{
++		case AsymMech::RSA_MD5_PKCS:
++			hash1 = HashAlgo::MD5;
++			break;
++		case AsymMech::RSA_SHA1_PKCS:
++			hash1 = HashAlgo::SHA1;
++			break;
++		case AsymMech::RSA_SHA224_PKCS:
++			hash1 = HashAlgo::SHA224;
++			break;
++		case AsymMech::RSA_SHA256_PKCS:
++			hash1 = HashAlgo::SHA256;
++			break;
++		case AsymMech::RSA_SHA384_PKCS:
++			hash1 = HashAlgo::SHA384;
++			break;
++		case AsymMech::RSA_SHA512_PKCS:
++			hash1 = HashAlgo::SHA512;
++			break;
++		case AsymMech::RSA_SHA1_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA1 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA1)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((privateKey->getBitLength()+6)/8-2-20))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, privateKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA1;
++			break;
++		case AsymMech::RSA_SHA224_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA224 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA224)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((privateKey->getBitLength()+6)/8-2-28))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, privateKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA224;
++			break;
++		case AsymMech::RSA_SHA256_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA256 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA256)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((privateKey->getBitLength()+6)/8-2-32))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, privateKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA256;
++			break;
++		case AsymMech::RSA_SHA384_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA384 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA384)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((privateKey->getBitLength()+6)/8-2-48))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, privateKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA384;
++			break;
++		case AsymMech::RSA_SHA512_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA512 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA512)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((privateKey->getBitLength()+6)/8-2-64))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, privateKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::signFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA512;
++			break;
++		case AsymMech::RSA_SSL:
++			hash1 = HashAlgo::MD5;
++			hash2 = HashAlgo::SHA1;
++			break;
++		default:
++			ERROR_MSG("Invalid mechanism supplied (%i)", mechanism);
++
++			ByteString dummy;
++			AsymmetricAlgorithm::signFinal(dummy);
++
++			return false;
++	}
++
++	pCurrentHash = CryptoFactory::i()->getHashAlgorithm(hash1);
++
++	if (pCurrentHash == NULL || !pCurrentHash->hashInit())
++	{
++		if (pCurrentHash != NULL)
++		{
++			delete pCurrentHash;
++			pCurrentHash = NULL;
++		}
++
++		ByteString dummy;
++		AsymmetricAlgorithm::signFinal(dummy);
++
++		return false;
++	}
++
++	if (hash2 != HashAlgo::Unknown)
++	{
++		pSecondHash = CryptoFactory::i()->getHashAlgorithm(hash2);
++
++		if (pSecondHash == NULL || !pSecondHash->hashInit())
++		{
++			delete pCurrentHash;
++			pCurrentHash = NULL;
++
++			if (pSecondHash != NULL)
++			{
++				delete pSecondHash;
++				pSecondHash = NULL;
++			}
++
++			ByteString dummy;
++			AsymmetricAlgorithm::signFinal(dummy);
++
++			return false;
++		}
++	}
++
++	return true;
++}
++
++bool AnssiPkiRSA::signUpdate(const ByteString& dataToSign)
++{
++	if (!AsymmetricAlgorithm::signUpdate(dataToSign))
++	{
++		return false;
++	}
++
++	if (!pCurrentHash->hashUpdate(dataToSign))
++	{
++		delete pCurrentHash;
++		pCurrentHash = NULL;
++
++		ByteString dummy;
++		AsymmetricAlgorithm::signFinal(dummy);
++
++		return false;
++	}
++
++	if ((pSecondHash != NULL) && !pSecondHash->hashUpdate(dataToSign))
++	{
++		delete pCurrentHash;
++		pCurrentHash = NULL;
++
++		delete pSecondHash;
++		pSecondHash = NULL;
++
++		ByteString dummy;
++		AsymmetricAlgorithm::signFinal(dummy);
++
++		return false;
++	}
++
++	return true;
++}
++
++bool AnssiPkiRSA::signFinal(ByteString& signature)
++{
++	// Save necessary state before calling super class signFinal
++	AnssiPkiRSAPrivateKey* pk = (AnssiPkiRSAPrivateKey*) currentPrivateKey;
++	AsymMech::Type mechanism = currentMechanism;
++
++	if (!AsymmetricAlgorithm::signFinal(signature))
++	{
++		return false;
++	}
++
++	ByteString firstHash, secondHash;
++
++	bool bFirstResult = pCurrentHash->hashFinal(firstHash);
++	bool bSecondResult = (pSecondHash != NULL) ? pSecondHash->hashFinal(secondHash) : true;
++
++	delete pCurrentHash;
++	pCurrentHash = NULL;
++
++	if (pSecondHash != NULL)
++	{
++		delete pSecondHash;
++
++		pSecondHash = NULL;
++	}
++
++	if (!bFirstResult || !bSecondResult)
++	{
++		return false;
++	}
++
++	ByteString digest = firstHash + secondHash;
++
++	// Resize the data block for the signature to the modulus size of the key
++	size_t modulusLen = pk->getN().size();
++
++	// Determine the signature type
++	ANSSIPKI_HASH::hash_function_t hash = ANSSIPKI_HASH::invalid;
++
++	switch (mechanism)
++	{
++		case AsymMech::RSA_SHA1_PKCS:
++			hash = ANSSIPKI_HASH::sha1;
++			break;
++		case AsymMech::RSA_SHA256_PKCS:
++			hash = ANSSIPKI_HASH::sha256;
++			break;
++		case AsymMech::RSA_SHA384_PKCS:
++			hash = ANSSIPKI_HASH::sha384;
++			break;
++		case AsymMech::RSA_SHA512_PKCS:
++			hash = ANSSIPKI_HASH::sha512;
++			break;
++		default:
++		    ERROR_MSG("Hash function not supported");
++		    return false;
++	}
++
++	// Perform the signature operation
++	unsigned int sigLen = signature.size();
++
++	RSAKey* internalKey = pk->getAnssiPkiKey();
++
++	unsigned char *pEncodedData = new unsigned char [modulusLen];
++	unsigned char *pSignature = new unsigned char [modulusLen];
++	size_t signatureLen = 0;
++
++	// convert the ByteString dataToSign into uchar buffer
++	const unsigned char *pDigest = digest.const_byte_str ();
++	size_t digestLen = digest.size ();
++
++	// PKCS1 v1.5 Encoding operation
++	if (internalKey->pkcs1_v1_5_encode (pEncodedData, modulusLen, pDigest, digestLen, hash) != 0)
++	  {
++	    delete [] pEncodedData;
++	    delete [] pSignature;
++	    return false;
++	  }
++
++	// RSA signature
++	if (internalKey->private_exponentiation (pSignature, &signatureLen, pEncodedData, modulusLen) != 0)
++	  {
++	    delete [] pEncodedData;
++	    delete [] pSignature;
++	    return false;
++	  }
++
++	ByteString tmpSignature (pSignature, signatureLen);
++
++	// convert uchar * sig into ByteString
++	signature.wipe(modulusLen - signatureLen);
++	signature += tmpSignature;
++
++	delete [] pEncodedData;
++	delete [] pSignature;
++
++	return true;
++}
++
++// Verification functions
++bool AnssiPkiRSA::verify(PublicKey* publicKey, const ByteString& originalData,
++		     const ByteString& signature, const AsymMech::Type mechanism,
++		     const void* param /* = NULL */, const size_t paramLen /* = 0 */)
++{
++	if (mechanism == AsymMech::RSA_PKCS)
++	{
++		// Specific implementation for PKCS #1 only verification; originalData is assumed to contain
++		// a digestInfo structure and verification is performed by comparing originalData to the data
++		// recovered from the signature
++
++		// Check if the public key is the right type
++		if (!publicKey->isOfType(AnssiPkiRSAPublicKey::type))
++		{
++			ERROR_MSG("Invalid key type supplied");
++
++			return false;
++		}
++
++		AnssiPkiRSAPublicKey* anssipkiKey = (AnssiPkiRSAPublicKey*) publicKey;
++		size_t modulusLen = anssipkiKey->getN().size();
++		
++		const unsigned char *pOriginalData = NULL;
++		size_t originalDataLen = 0;
++		
++		const unsigned char *pSignature = NULL;
++		size_t signatureLen = 0;
++
++		unsigned char *pRecoveredData = new unsigned char [modulusLen];
++		size_t recoveredDataLen = modulusLen;
++		
++		unsigned char *pEncodedOriginalData = new unsigned char [modulusLen];
++
++		// Check if the public key is the right type
++		if (!publicKey->isOfType(AnssiPkiRSAPublicKey::type))
++		{
++			ERROR_MSG("Invalid key type supplied");
++
++			return false;
++		}
++
++		// Perform the RSA public key operation
++		RSAKey* internalKey = anssipkiKey->getAnssiPkiKey();
++
++		// convert the ByteString signature into uchar buffer
++		pSignature = signature.const_byte_str ();
++		signatureLen = signature.size ();
++
++		// exponentiation
++		if (internalKey->public_exponentiation (pRecoveredData, &recoveredDataLen, pSignature, signatureLen) != 0)
++		  {
++		    delete [] pEncodedOriginalData;
++		    delete [] pRecoveredData;
++		    return false;
++		  }
++
++		// convert the ByteString originalData into uchar buffer
++		pOriginalData = originalData.const_byte_str ();
++		originalDataLen = originalData.size ();
++
++		// encodage pkcs1 v1.5 des data
++		if (internalKey->pkcs1_v1_5_encode (pEncodedOriginalData, modulusLen, pOriginalData, originalDataLen) != 0)
++		  {
++		    delete [] pEncodedOriginalData;
++		    delete [] pRecoveredData;
++		    return false;
++		  }
++
++		// conversion uchar * -> ByteString de encodedOriginalData et recoveredData
++		ByteString tmpRecoveredData (pRecoveredData, recoveredDataLen);
++		ByteString encodedOriginalData (pEncodedOriginalData, modulusLen);
++		ByteString recoveredData;
++		recoveredData.wipe (modulusLen - recoveredDataLen);
++		recoveredData += tmpRecoveredData;
++
++		// comparaison
++		delete [] pEncodedOriginalData;
++		delete [] pRecoveredData;
++		return (encodedOriginalData == recoveredData);
++	}
++	else if (mechanism == AsymMech::RSA)
++	{
++		// Specific implementation for raw RSA verifiction; originalData is assumed to contain the
++		// full input data used to compute the signature and verification is performed by comparing
++		// originalData to the data recovered from the signature
++
++		// Check if the public key is the right type
++		if (!publicKey->isOfType(AnssiPkiRSAPublicKey::type))
++		{
++			ERROR_MSG("Invalid key type supplied");
++
++			return false;
++		}
++
++		AnssiPkiRSAPublicKey* anssipkiKey = NULL;
++		ByteString recoveredData, tmp_rec;
++		RSAKey *internalKey = NULL;
++		mpz_t mpz_recoveredData, mpz_signature;
++
++		mpz_init (mpz_recoveredData);
++		mpz_init (mpz_signature);
++
++		// Perform the RSA public key operation
++		anssipkiKey = (AnssiPkiRSAPublicKey*) publicKey;
++		internalKey = anssipkiKey->getAnssiPkiKey();
++
++		// convert signature into mpz
++		if ( ANSSIPKI_GMP::byteString2mpz (&mpz_signature, signature) != 0 )
++		  {
++		    return false;
++		  }
++
++		// exponentiation
++		if (internalKey->public_exponentiation (&mpz_recoveredData, &mpz_signature) != 0)
++		  {
++		    return false;
++		  }
++
++		// convert mpz_recoveredData into ByteString
++		tmp_rec = ANSSIPKI_GMP::mpz2ByteString(&mpz_recoveredData);
++
++		// align size
++		recoveredData.wipe (anssipkiKey->getN().size() - tmp_rec.size ());
++		recoveredData += tmp_rec;
++		return (originalData == recoveredData);
++	}
++	else
++	{
++		// Call the generic function
++		return AsymmetricAlgorithm::verify(publicKey, originalData, signature, mechanism, param, paramLen);
++	}
++}
++
++bool AnssiPkiRSA::verifyInit(PublicKey* publicKey, const AsymMech::Type mechanism,
++			 const void* param /* = NULL */, const size_t paramLen /* = 0 */)
++{
++	if (!AsymmetricAlgorithm::verifyInit(publicKey, mechanism, param, paramLen))
++	{
++		return false;
++	}
++
++	// Check if the public key is the right type
++	if (!publicKey->isOfType(AnssiPkiRSAPublicKey::type))
++	{
++		ERROR_MSG("Invalid key type supplied");
++
++		ByteString dummy;
++		AsymmetricAlgorithm::verifyFinal(dummy);
++
++		return false;
++	}
++
++	HashAlgo::Type hash1 = HashAlgo::Unknown;
++	HashAlgo::Type hash2 = HashAlgo::Unknown;
++
++	switch (mechanism)
++	{
++		case AsymMech::RSA_MD5_PKCS:
++			hash1 = HashAlgo::MD5;
++			break;
++		case AsymMech::RSA_SHA1_PKCS:
++			hash1 = HashAlgo::SHA1;
++			break;
++		case AsymMech::RSA_SHA224_PKCS:
++			hash1 = HashAlgo::SHA224;
++			break;
++		case AsymMech::RSA_SHA256_PKCS:
++			hash1 = HashAlgo::SHA256;
++			break;
++		case AsymMech::RSA_SHA384_PKCS:
++			hash1 = HashAlgo::SHA384;
++			break;
++		case AsymMech::RSA_SHA512_PKCS:
++			hash1 = HashAlgo::SHA512;
++			break;
++		case AsymMech::RSA_SHA1_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA1 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA1)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((publicKey->getBitLength()+6)/8-2-20))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, publicKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA1;
++			break;
++		case AsymMech::RSA_SHA224_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA224 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA224)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((publicKey->getBitLength()+6)/8-2-28))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, publicKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA224;
++			break;
++		case AsymMech::RSA_SHA256_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA256 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA256)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((publicKey->getBitLength()+6)/8-2-32))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, publicKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA256;
++			break;
++		case AsymMech::RSA_SHA384_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA384 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA384)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((publicKey->getBitLength()+6)/8-2-48))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, publicKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA384;
++			break;
++		case AsymMech::RSA_SHA512_PKCS_PSS:
++			if (param == NULL || paramLen != sizeof(RSA_PKCS_PSS_PARAMS) ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->hashAlg != HashAlgo::SHA512 ||
++			    ((RSA_PKCS_PSS_PARAMS*) param)->mgf != AsymRSAMGF::MGF1_SHA512)
++			{
++				ERROR_MSG("Invalid parameters");
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			sLen = ((RSA_PKCS_PSS_PARAMS*) param)->sLen;
++			if (sLen > ((publicKey->getBitLength()+6)/8-2-64))
++			{
++				ERROR_MSG("sLen (%lu) is too large for current key size (%lu)",
++					  (unsigned long)sLen, publicKey->getBitLength());
++				ByteString dummy;
++				AsymmetricAlgorithm::verifyFinal(dummy);
++				return false;
++			}
++			hash1 = HashAlgo::SHA512;
++			break;
++		case AsymMech::RSA_SSL:
++			hash1 = HashAlgo::MD5;
++			hash2 = HashAlgo::SHA1;
++			break;
++		default:
++			ERROR_MSG("Invalid mechanism supplied (%i)", mechanism);
++
++			ByteString dummy;
++			AsymmetricAlgorithm::verifyFinal(dummy);
++
++			return false;
++	}
++
++	pCurrentHash = CryptoFactory::i()->getHashAlgorithm(hash1);
++
++	if (pCurrentHash == NULL || !pCurrentHash->hashInit())
++	{
++		if (pCurrentHash != NULL)
++		{
++			delete pCurrentHash;
++			pCurrentHash = NULL;
++		}
++
++		ByteString dummy;
++		AsymmetricAlgorithm::verifyFinal(dummy);
++
++		return false;
++	}
++
++	if (hash2 != HashAlgo::Unknown)
++	{
++		pSecondHash = CryptoFactory::i()->getHashAlgorithm(hash2);
++
++		if (pSecondHash == NULL || !pSecondHash->hashInit())
++		{
++			delete pCurrentHash;
++			pCurrentHash = NULL;
++
++			if (pSecondHash != NULL)
++			{
++				delete pSecondHash;
++				pSecondHash = NULL;
++			}
++
++			ByteString dummy;
++			AsymmetricAlgorithm::verifyFinal(dummy);
++
++			return false;
++		}
++	}
++
++	return true;
++}
++
++bool AnssiPkiRSA::verifyUpdate(const ByteString& originalData)
++{
++	if (!AsymmetricAlgorithm::verifyUpdate(originalData))
++	{
++		return false;
++	}
++
++	if (!pCurrentHash->hashUpdate(originalData))
++	{
++		delete pCurrentHash;
++		pCurrentHash = NULL;
++
++		ByteString dummy;
++		AsymmetricAlgorithm::verifyFinal(dummy);
++
++		return false;
++	}
++
++	if ((pSecondHash != NULL) && !pSecondHash->hashUpdate(originalData))
++	{
++		delete pCurrentHash;
++		pCurrentHash = NULL;
++
++		delete pSecondHash;
++		pSecondHash = NULL;
++
++		ByteString dummy;
++		AsymmetricAlgorithm::verifyFinal(dummy);
++
++		return false;
++	}
++
++	return true;
++}
++
++bool AnssiPkiRSA::verifyFinal(const ByteString& signature)
++{
++	// Save necessary state before calling super class verifyFinal
++	AnssiPkiRSAPublicKey* anssipkiKey = (AnssiPkiRSAPublicKey*) currentPublicKey;
++	RSAKey* internalKey = anssipkiKey->getAnssiPkiKey();
++	AsymMech::Type mechanism = currentMechanism;
++
++	if (!AsymmetricAlgorithm::verifyFinal(signature))
++	{
++		return false;
++	}
++
++	ByteString firstHash, secondHash;
++
++	bool bFirstResult = pCurrentHash->hashFinal(firstHash);
++	bool bSecondResult = (pSecondHash != NULL) ? pSecondHash->hashFinal(secondHash) : true;
++
++	delete pCurrentHash;
++	pCurrentHash = NULL;
++
++	if (pSecondHash != NULL)
++	{
++		delete pSecondHash;
++
++		pSecondHash = NULL;
++	}
++
++	if (!bFirstResult || !bSecondResult)
++	{
++		return false;
++	}
++
++	ByteString digest = firstHash + secondHash;
++
++	ANSSIPKI_HASH::hash_function_t hash = ANSSIPKI_HASH::invalid;
++	// Determine the signature type
++	switch (mechanism)
++	{
++		case AsymMech::RSA_SHA1_PKCS:
++			hash = ANSSIPKI_HASH::sha1;
++			break;
++		case AsymMech::RSA_SHA256_PKCS:
++			hash = ANSSIPKI_HASH::sha256;
++			break;
++		case AsymMech::RSA_SHA384_PKCS:
++			hash = ANSSIPKI_HASH::sha384;
++			break;
++		case AsymMech::RSA_SHA512_PKCS:
++			hash = ANSSIPKI_HASH::sha512;
++			break;
++		default:
++		    ERROR_MSG("Hash function not supported");
++		    return false;
++	  }
++
++	size_t modulusLen = anssipkiKey->getN().size();
++	unsigned char *pRecoveredData = new unsigned char [modulusLen];
++	size_t recoveredDataLen = modulusLen;
++	unsigned char *pEncodedOriginalData = new unsigned char [modulusLen];
++
++	// convert the ByteString signature into uchar buffer
++	const unsigned char *pSignature = signature.const_byte_str ();
++	size_t signatureLen = signature.size ();
++
++	// exponentiation
++	if (internalKey->public_exponentiation (pRecoveredData, &recoveredDataLen, pSignature, signatureLen) != 0)
++	  {
++	    delete [] pEncodedOriginalData;
++	    delete [] pRecoveredData;
++	    return false;
++	  }
++
++	// convert the ByteString originalData into uchar buffer
++	const unsigned char *pOriginalData = digest.const_byte_str ();
++	size_t originalDataLen = digest.size ();
++
++	// encodage pkcs1 v1.5 des data
++	if (internalKey->pkcs1_v1_5_encode (pEncodedOriginalData, modulusLen, pOriginalData, originalDataLen, hash) != 0)
++	  {
++	    delete [] pEncodedOriginalData;
++	    delete [] pRecoveredData;
++	    return false;
++	  }
++
++	// conversion uchar * -> ByteString de encodedOriginalData et recoveredData
++	ByteString tmpRecoveredData (pRecoveredData, recoveredDataLen);
++	ByteString encodedOriginalData (pEncodedOriginalData, modulusLen);
++	ByteString recoveredData;
++	recoveredData.wipe (modulusLen - recoveredDataLen);
++	recoveredData += tmpRecoveredData;
++
++	// comparaison
++	delete [] pEncodedOriginalData;
++	delete [] pRecoveredData;
++	return (encodedOriginalData == recoveredData);
++}
++
++// Encryption functions
++bool AnssiPkiRSA::encrypt(PublicKey* publicKey, const ByteString& data,
++		      ByteString& encryptedData, const AsymMech::Type padding)
++{
++	assert(0);
++}
++
++// Decryption functions
++bool AnssiPkiRSA::decrypt(PrivateKey* privateKey, const ByteString& encryptedData,
++		      ByteString& data, const AsymMech::Type padding)
++{
++	assert(0);
++}
++
++// Key factory
++bool AnssiPkiRSA::generateKeyPair(AsymmetricKeyPair** ppKeyPair, AsymmetricParameters* parameters, RNG* rng/* = NULL */)
++{
++	// Check parameters
++	if ((ppKeyPair == NULL) ||
++	    (parameters == NULL))
++	{
++		return false;
++	}
++
++	if (!parameters->areOfType(RSAParameters::type))
++	{
++		ERROR_MSG("Invalid parameters supplied for RSA key generation");
++
++		return false;
++	}
++
++	RSAParameters* params = (RSAParameters*) parameters;
++
++	if (params->getBitLength() < getMinKeySize() || params->getBitLength() > getMaxKeySize())
++	{
++		ERROR_MSG("This RSA key size (%lu) is not supported", params->getBitLength());
++
++		return false;
++	}
++
++	if (params->getBitLength() < 1024)
++	{
++		WARNING_MSG("Using an RSA key size < 1024 bits is not recommended");
++	}
++
++	// Retrieve the desired public exponent
++	unsigned long e = params->getE().long_val();
++
++	// Check the public exponent
++	if ((e == 0) || (e % 2 != 1))
++	{
++		ERROR_MSG("Invalid RSA public exponent %d", e);
++
++		return false;
++	}
++
++	size_t modBits = 0;
++	AnssiPkiRNG *anssipkiRng = NULL;
++	RSAKey *rsa = NULL;
++
++	modBits = params->getBitLength();
++	// Generate the key-pair
++	if (rng)
++	{
++		anssipkiRng = (AnssiPkiRNG*) rng;
++	}
++	else
++	{
++		anssipkiRng = (AnssiPkiRNG*) (OSSLCryptoFactory::i ()->getRNG ());
++		if (!anssipkiRng)
++		{
++			ERROR_MSG("RSA key generation failed");
++			return false;
++		}
++    }
++	try 
++	{
++		rsa = new RSAKey (*(anssipkiRng->getPrng ()), modBits, true);
++	}
++	catch (ANSSIPKIException &e)
++    {
++		ERROR_MSG("RSA key generation raised exception %s", e.what ());
++		return false;
++	}
++
++	 // Check if the key was successfully generated
++	if (rsa == NULL)
++	{
++		ERROR_MSG("RSA key generation failed");
++		return false;
++	}
++
++	// Create an asymmetric key-pair object to return
++	AnssiPkiRSAKeyPair* kp = new AnssiPkiRSAKeyPair();
++	((AnssiPkiRSAPublicKey*) kp->getPublicKey ())->setFromAnssiPki (rsa);
++	((AnssiPkiRSAPrivateKey*) kp->getPrivateKey ())->setFromAnssiPki (rsa);
++	*ppKeyPair = kp;
++
++	// Release the key
++	rsa->forgetKey ();
++
++	return true;
++}
++
++unsigned long AnssiPkiRSA::getMinKeySize()
++{
++	return 512;
++}
++
++unsigned long AnssiPkiRSA::getMaxKeySize()
++{
++	return 4096;
++}
++
++bool AnssiPkiRSA::reconstructKeyPair(AsymmetricKeyPair** ppKeyPair, ByteString& serialisedData)
++{
++	assert(0);
++}
++
++bool AnssiPkiRSA::reconstructPublicKey(PublicKey** ppPublicKey, ByteString& serialisedData)
++{
++	assert(0);
++}
++
++bool AnssiPkiRSA::reconstructPrivateKey(PrivateKey** ppPrivateKey, ByteString& serialisedData)
++{
++	assert(0);
++}
++
++PublicKey* AnssiPkiRSA::newPublicKey()
++{
++	return (PublicKey*) new AnssiPkiRSAPublicKey();
++}
++
++PrivateKey* AnssiPkiRSA::newPrivateKey()
++{
++	return (PrivateKey*) new AnssiPkiRSAPrivateKey();
++}
++
++AsymmetricParameters* AnssiPkiRSA::newParameters()
++{
++	return (AsymmetricParameters*) new RSAParameters();
++}
++
++bool AnssiPkiRSA::reconstructParameters(AsymmetricParameters** ppParams, ByteString& serialisedData)
++{
++	// Check input parameters
++	if ((ppParams == NULL) || (serialisedData.size() == 0))
++	{
++		return false;
++	}
++
++	RSAParameters* params = new RSAParameters();
++
++	if (!params->deserialise(serialisedData))
++	{
++		delete params;
++
++		return false;
++	}
++
++	*ppParams = params;
++
++	return true;
++}
+diff --git a/src/lib/crypto/AnssiPkiRSA.h b/src/lib/crypto/AnssiPkiRSA.h
+new file mode 100644
+index 0000000..33d4ce3
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSA.h
+@@ -0,0 +1,86 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSA.h
++
++ ANSSIPKI RSA asymmetric algorithm implementation
++ *****************************************************************************/
++
++#ifndef _SOFTHSM_V2_ANSSIPKIRSA_H
++#define _SOFTHSM_V2_ANSSIPKIRSA_H
++
++#include "config.h"
++#include "AsymmetricAlgorithm.h"
++#include "HashAlgorithm.h"
++
++class AnssiPkiRSA : public AsymmetricAlgorithm
++{
++public:
++	// Constructor
++	AnssiPkiRSA();
++
++	// Destructor
++	virtual ~AnssiPkiRSA();
++
++	// Signing functions
++	virtual bool sign(PrivateKey* privateKey, const ByteString& dataToSign, ByteString& signature, const AsymMech::Type mechanism, const void* param = NULL, const size_t paramLen = 0);
++	virtual bool signInit(PrivateKey* privateKey, const AsymMech::Type mechanism, const void* param = NULL, const size_t paramLen = 0);
++	virtual bool signUpdate(const ByteString& dataToSign);
++	virtual bool signFinal(ByteString& signature);
++
++	// Verification functions
++	virtual bool verify(PublicKey* publicKey, const ByteString& originalData, const ByteString& signature, const AsymMech::Type mechanism, const void* param = NULL, const size_t paramLen = 0);
++	virtual bool verifyInit(PublicKey* publicKey, const AsymMech::Type mechanism, const void* param = NULL, const size_t paramLen = 0);
++	virtual bool verifyUpdate(const ByteString& originalData);
++	virtual bool verifyFinal(const ByteString& signature);
++
++	// Encryption functions
++	virtual bool encrypt(PublicKey* publicKey, const ByteString& data, ByteString& encryptedData, const AsymMech::Type padding);
++
++	// Decryption functions
++	virtual bool decrypt(PrivateKey* privateKey, const ByteString& encryptedData, ByteString& data, const AsymMech::Type padding);
++
++	// Key factory
++	virtual bool generateKeyPair(AsymmetricKeyPair** ppKeyPair, AsymmetricParameters* parameters, RNG* rng = NULL);
++	virtual unsigned long getMinKeySize();
++	virtual unsigned long getMaxKeySize();
++	virtual bool reconstructKeyPair(AsymmetricKeyPair** ppKeyPair, ByteString& serialisedData);
++	virtual bool reconstructPublicKey(PublicKey** ppPublicKey, ByteString& serialisedData);
++	virtual bool reconstructPrivateKey(PrivateKey** ppPrivateKey, ByteString& serialisedData);
++	virtual bool reconstructParameters(AsymmetricParameters** ppParams, ByteString& serialisedData);
++	virtual PublicKey* newPublicKey();
++	virtual PrivateKey* newPrivateKey();
++	virtual AsymmetricParameters* newParameters();
++
++private:
++	HashAlgorithm* pCurrentHash;
++	HashAlgorithm* pSecondHash;
++	size_t sLen;
++};
++
++#endif // !_SOFTHSM_V2_ANSSIPKIRSA_H
++
+diff --git a/src/lib/crypto/AnssiPkiRSAKeyPair.cpp b/src/lib/crypto/AnssiPkiRSAKeyPair.cpp
+new file mode 100644
+index 0000000..167eccd
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSAKeyPair.cpp
+@@ -0,0 +1,70 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSAKeyPair.cpp
++
++ ANSSIPKI RSA key-pair class
++ *****************************************************************************/
++
++#include "config.h"
++#include "log.h"
++#include "AnssiPkiRSAKeyPair.h"
++
++// Set the public key
++void AnssiPkiRSAKeyPair::setPublicKey(AnssiPkiRSAPublicKey& publicKey)
++{
++	pubKey = publicKey;
++}
++
++// Set the private key
++void AnssiPkiRSAKeyPair::setPrivateKey(AnssiPkiRSAPrivateKey& privateKey)
++{
++	privKey = privateKey;
++}
++
++// Return the public key
++PublicKey* AnssiPkiRSAKeyPair::getPublicKey()
++{
++	return &pubKey;
++}
++
++const PublicKey* AnssiPkiRSAKeyPair::getConstPublicKey() const
++{
++	return &pubKey;
++}
++
++// Return the private key
++PrivateKey* AnssiPkiRSAKeyPair::getPrivateKey()
++{
++	return &privKey;
++}
++
++const PrivateKey* AnssiPkiRSAKeyPair::getConstPrivateKey() const
++{
++	return &privKey;
++}
++
+diff --git a/src/lib/crypto/AnssiPkiRSAKeyPair.h b/src/lib/crypto/AnssiPkiRSAKeyPair.h
+new file mode 100644
+index 0000000..9897239
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSAKeyPair.h
+@@ -0,0 +1,67 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSAKeyPair.h
++
++ ANSSIPKI RSA key-pair class
++ *****************************************************************************/
++
++#ifndef _SOFTHSM_V2_ANSSIPKIRSAKEYPAIR_H
++#define _SOFTHSM_V2_ANSSIPKIRSAKEYPAIR_H
++
++#include "config.h"
++#include "AsymmetricKeyPair.h"
++#include "AnssiPkiRSAPublicKey.h"
++#include "AnssiPkiRSAPrivateKey.h"
++
++class AnssiPkiRSAKeyPair : public AsymmetricKeyPair
++{
++public:
++	// Set the public key
++	void setPublicKey(AnssiPkiRSAPublicKey& publicKey);
++
++	// Set the private key
++	void setPrivateKey(AnssiPkiRSAPrivateKey& privateKey);
++
++	// Return the public key
++	virtual PublicKey* getPublicKey();
++	virtual const PublicKey* getConstPublicKey() const;
++
++	// Return the private key
++	virtual PrivateKey* getPrivateKey();
++	virtual const PrivateKey* getConstPrivateKey() const;
++
++private:
++	// The public key
++	AnssiPkiRSAPublicKey pubKey;
++
++	// The private key
++	AnssiPkiRSAPrivateKey privKey;
++};
++
++#endif // !_SOFTHSM_V2_ANSSIPKIRSAKEYPAIR_H
++
+diff --git a/src/lib/crypto/AnssiPkiRSAPrivateKey.cpp b/src/lib/crypto/AnssiPkiRSAPrivateKey.cpp
+new file mode 100644
+index 0000000..c5728b8
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSAPrivateKey.cpp
+@@ -0,0 +1,285 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSAPrivateKey.cpp
++
++ ANSSIPKI RSA private key class
++ *****************************************************************************/
++
++#include "config.h"
++#include "log.h"
++#include "AnssiPkiRSAPrivateKey.h"
++#include "AnssiPkiUtil.h"
++#include <string.h>
++
++// Constructors
++AnssiPkiRSAPrivateKey::AnssiPkiRSAPrivateKey()
++{
++  _rsa = new RSAKey ();
++}
++
++AnssiPkiRSAPrivateKey::AnssiPkiRSAPrivateKey(const RSAKey* inRSA)
++{
++  AnssiPkiRSAPrivateKey ();
++  setFromAnssiPki (inRSA);
++}
++
++// Destructor
++AnssiPkiRSAPrivateKey::~AnssiPkiRSAPrivateKey()
++{
++  delete _rsa;
++}
++
++// The type
++/*static*/ const char* AnssiPkiRSAPrivateKey::type = "ANSSIPKI RSA Private Key";
++
++// Set from internal representation
++int AnssiPkiRSAPrivateKey::setFromAnssiPki (const RSAKey* rsaFrom)
++{
++  if (rsaFrom && rsaFrom->isInitialized ())
++    {
++      mpz_t pubEl;
++      mpz_t d, p, q, p1, q1, dp, dq, qInv;
++
++      mpz_init (d);
++      mpz_init (p);
++      mpz_init (q);
++      mpz_init (p1);
++      mpz_init (q1);
++      mpz_init (dp);
++      mpz_init (dq);
++      mpz_init (qInv);
++
++      if (! rsaFrom->copyN (&pubEl))
++	return -1;
++      ByteString bs_n = ANSSIPKI_GMP::mpz2ByteString (&pubEl);
++
++      if (! rsaFrom->copyE (&pubEl))
++	return -1;
++      ByteString bs_e = ANSSIPKI_GMP::mpz2ByteString (&pubEl);
++
++      if (! rsaFrom->copyD (&d))
++	return -1;
++      ByteString bs_d = ANSSIPKI_GMP::mpz2ByteString (&d);
++
++      if (! rsaFrom->copyP (&p))
++	return -1;
++      ByteString bs_p = ANSSIPKI_GMP::mpz2ByteString (&p);
++
++      if (! rsaFrom->copyQ (&q))
++	return -1;
++      ByteString bs_q = ANSSIPKI_GMP::mpz2ByteString (&q);
++
++      // p1 = p-1
++      mpz_sub_ui (p1, p, 1);
++
++      // q1 = q-1
++      mpz_sub_ui (q1, q, 1);
++
++      // dp = d mod (p-1)
++      mpz_mod (dp, d, p1);
++
++      // dq = d mod (q-1)
++      mpz_mod (dq, d, q1);
++
++      // qInv = q mod (p)
++      mpz_mod (qInv, q, p);
++
++
++      /* don't copy dp, dq, qInv in RSAKey (RSAKey doesn't keep these infos) */
++      ByteString bs_dp = ANSSIPKI_GMP::mpz2ByteString (&dp);
++      ByteString bs_dq = ANSSIPKI_GMP::mpz2ByteString (&dq);
++      ByteString bs_qInv = ANSSIPKI_GMP::mpz2ByteString (&qInv);
++      
++
++      mpz_shred (pubEl);
++      mpz_shred (d);
++      mpz_shred (p);
++      mpz_shred (q);
++      mpz_shred (p1);
++      mpz_shred (q1);
++      mpz_shred (dp);
++      mpz_shred (dq);
++      mpz_shred (qInv);
++      
++      setN (bs_n);
++      setE (bs_e);
++      setD (bs_d);
++      setP (bs_p);
++      setQ (bs_q);
++      setDP1 (bs_dp);
++      setDQ1 (bs_dq);
++      setPQ (bs_qInv);
++      _rsa->setInitialized ();
++    }
++}
++
++// Check if the key is of the given type
++bool AnssiPkiRSAPrivateKey::isOfType(const char* type)
++{
++  return !strcmp(AnssiPkiRSAPrivateKey::type, type);
++}
++
++// Setters for the RSA private key components
++void AnssiPkiRSAPrivateKey::setP(const ByteString& p)
++{
++  mpz_t newP;
++  ANSSIPKI_GMP::byteString2mpz (&newP, p);
++  RSAPrivateKey::setP (p);
++  _rsa->setP (&newP);
++}
++
++void AnssiPkiRSAPrivateKey::setQ(const ByteString& q)
++{
++  mpz_t newQ;
++  ANSSIPKI_GMP::byteString2mpz (&newQ, q);
++  RSAPrivateKey::setQ (q);
++  _rsa->setQ (&newQ);
++}
++
++void AnssiPkiRSAPrivateKey::setPQ(const ByteString& pq)
++{
++	RSAPrivateKey::setPQ(pq);
++}
++
++void AnssiPkiRSAPrivateKey::setDP1(const ByteString& dp1)
++{
++	RSAPrivateKey::setDP1(dp1);
++}
++
++void AnssiPkiRSAPrivateKey::setDQ1(const ByteString& dq1)
++{
++	RSAPrivateKey::setDQ1(dq1);
++}
++
++void AnssiPkiRSAPrivateKey::setD(const ByteString& d)
++{
++  mpz_t newD;
++  ANSSIPKI_GMP::byteString2mpz(&newD, d);
++  RSAPrivateKey::setD (d);
++  _rsa->setD (&newD);
++}
++
++
++// Setters for the RSA public key components
++void AnssiPkiRSAPrivateKey::setN(const ByteString& n)
++{
++  mpz_t newN;
++  ANSSIPKI_GMP::byteString2mpz(&newN, n);
++  RSAPrivateKey::setN (n);
++  _rsa->setN (&newN);
++}
++
++void AnssiPkiRSAPrivateKey::setE(const ByteString& e)
++{
++  mpz_t newE;
++  ANSSIPKI_GMP::byteString2mpz(&newE, e);
++  RSAPrivateKey::setE (e);
++  _rsa->setE (&newE);
++}
++
++// Encode into PKCS#8 DER
++ByteString AnssiPkiRSAPrivateKey::PKCS8Encode()
++{
++  /*
++	ByteString der;
++	if (rsa == NULL) return der;
++	EVP_PKEY* pkey = EVP_PKEY_new();
++	if (pkey == NULL) return der;
++	if (!EVP_PKEY_set1_RSA(pkey, rsa))
++	{
++		EVP_PKEY_free(pkey);
++		return der;
++	}
++	PKCS8_PRIV_KEY_INFO* p8inf = EVP_PKEY2PKCS8(pkey);
++	EVP_PKEY_free(pkey);
++	if (p8inf == NULL) return der;
++	int len = i2d_PKCS8_PRIV_KEY_INFO(p8inf, NULL);
++	if (len < 0)
++	{
++		PKCS8_PRIV_KEY_INFO_free(p8inf);
++		return der;
++	}
++	der.resize(len);
++	unsigned char* p = &der[0];
++	int len2 = i2d_PKCS8_PRIV_KEY_INFO(p8inf, &p);
++	PKCS8_PRIV_KEY_INFO_free(p8inf);
++	if (len2 != len) der.wipe();
++	return der;
++  */
++  String str;
++
++  // call encoding method from internal rsa key
++  str = _rsa->ASN1PrivateKeyInfo ();
++
++  const unsigned char *buf = (const unsigned char *)str.toChar ();
++  size_t len = str.size ();
++
++  // format result
++  ByteString bs (buf, len);
++  return bs;
++}
++
++// Decode from PKCS#8 BER
++bool AnssiPkiRSAPrivateKey::PKCS8Decode(const ByteString& ber)
++{
++  /*
++	int len = ber.size();
++	if (len <= 0) return false;
++	const unsigned char* p = ber.const_byte_str();
++	PKCS8_PRIV_KEY_INFO* p8 = d2i_PKCS8_PRIV_KEY_INFO(NULL, &p, len);
++	if (p8 == NULL) return false;
++	EVP_PKEY* pkey = EVP_PKCS82PKEY(p8);
++	PKCS8_PRIV_KEY_INFO_free(p8);
++	if (pkey == NULL) return false;
++	RSA* key = EVP_PKEY_get1_RSA(pkey);
++	EVP_PKEY_free(pkey);
++	if (key == NULL) return false;
++	setFromOSSL(key);
++	RSA_free(key);
++	return true;
++  */
++  bool br = false;
++  String str ((const char* const)ber.const_byte_str (), ber.size ());
++  try 
++    {
++      br = _rsa-> setFromASN1PrivateKeyInfo (str);
++    }
++  catch (ANSSIPKIException &e)
++    {
++      return false;
++    }
++  this -> setFromAnssiPki (_rsa);
++  return br;
++}
++
++
++// Retrieve the internal representation of the key
++RSAKey* AnssiPkiRSAPrivateKey::getAnssiPkiKey()
++{
++  return _rsa;
++}
+diff --git a/src/lib/crypto/AnssiPkiRSAPrivateKey.h b/src/lib/crypto/AnssiPkiRSAPrivateKey.h
+new file mode 100644
+index 0000000..4a213c0
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSAPrivateKey.h
+@@ -0,0 +1,87 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSAPrivateKey.h
++
++ ANSSIPKI RSA private key class
++ *****************************************************************************/
++
++#ifndef _SOFTHSM_V2_ANSSIPKIRSAPRIVATEKEY_H
++#define _SOFTHSM_V2_ANSSIPKIRSAPRIVATEKEY_H
++
++#include "config.h"
++#include "RSAPrivateKey.h"
++#include "anssipki-crypto.h"
++
++class AnssiPkiRSAPrivateKey : public RSAPrivateKey
++{
++public:
++	// Constructors
++	AnssiPkiRSAPrivateKey();
++
++	AnssiPkiRSAPrivateKey(const RSAKey* inRSA);
++
++	// Destructor
++	virtual ~AnssiPkiRSAPrivateKey();
++
++	// The type
++	static const char* type;
++
++	// Check if the key is of the given type
++	virtual bool isOfType(const char* type);
++
++	// Setters for the RSA private key components
++	virtual void setP(const ByteString& p);
++	virtual void setQ(const ByteString& q);
++	virtual void setPQ(const ByteString& pq);
++	virtual void setDP1(const ByteString& dp1);
++	virtual void setDQ1(const ByteString& dq1);
++	virtual void setD(const ByteString& d);
++
++	// Setters for the RSA public key components
++	virtual void setN(const ByteString& n);
++	virtual void setE(const ByteString& e);
++
++	// Encode into PKCS#8 DER
++	virtual ByteString PKCS8Encode();
++
++	// Decode from PKCS#8 BER
++	virtual bool PKCS8Decode(const ByteString& ber);
++	
++	// Set from internal representation
++	virtual int setFromAnssiPki(const RSAKey* rsa);
++
++	// Retrieve the internal representation of the key
++	RSAKey* getAnssiPkiKey();
++
++private:
++	// The internal librcrypto ANSSIPKI representation
++	RSAKey* _rsa;
++};
++
++#endif // !_SOFTHSM_V2_ANSSIPKIRSAPRIVATEKEY_H
++
+diff --git a/src/lib/crypto/AnssiPkiRSAPublicKey.cpp b/src/lib/crypto/AnssiPkiRSAPublicKey.cpp
+new file mode 100644
+index 0000000..3cbcdf8
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSAPublicKey.cpp
+@@ -0,0 +1,109 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSAPublicKey.cpp
++
++ ANSSIPKI RSA private key class
++ *****************************************************************************/
++
++#include "config.h"
++#include "log.h"
++#include "AnssiPkiRSAPublicKey.h"
++#include "AnssiPkiUtil.h"
++#include <string.h>
++
++// Constructors
++AnssiPkiRSAPublicKey::AnssiPkiRSAPublicKey()
++{
++  _rsa = new RSAKey ();
++}
++
++AnssiPkiRSAPublicKey::AnssiPkiRSAPublicKey(const RSAKey* inRSA)
++{
++	AnssiPkiRSAPublicKey ();
++	setFromAnssiPki (inRSA);
++}
++
++// Destructor
++AnssiPkiRSAPublicKey::~AnssiPkiRSAPublicKey()
++{
++  delete _rsa;
++}
++
++// The type
++/*static*/ const char* AnssiPkiRSAPublicKey::type = "ANSSIPKI RSA Public Key";
++
++// Check if the key is of the given type
++bool AnssiPkiRSAPublicKey::isOfType(const char* type)
++{
++	return !strcmp(AnssiPkiRSAPublicKey::type, type);
++}
++
++// Set from internal representation
++int AnssiPkiRSAPublicKey::setFromAnssiPki(const RSAKey* rsaFrom)
++{
++  if (rsaFrom && rsaFrom->isInitialized ())
++    {
++      mpz_t fromKey;
++
++      if (! rsaFrom->copyN (&fromKey))
++	return -1;
++      ByteString n = ANSSIPKI_GMP::mpz2ByteString (&fromKey);
++
++      if (! rsaFrom->copyE (&fromKey))
++	return -1;
++      ByteString e = ANSSIPKI_GMP::mpz2ByteString (&fromKey);
++
++      setN(n);
++      setE(e);
++      
++      _rsa->setInitialized ();
++    }
++}
++
++// Setters for the RSA public key components
++void AnssiPkiRSAPublicKey::setN(const ByteString& n)
++{
++  mpz_t newN;
++  ANSSIPKI_GMP::byteString2mpz(&newN, n);
++  RSAPublicKey::setN (n);
++  _rsa->setN (&newN);
++}
++
++void AnssiPkiRSAPublicKey::setE(const ByteString& e)
++{
++  mpz_t newE;
++  ANSSIPKI_GMP::byteString2mpz(&newE, e);
++  RSAPublicKey::setE (e);
++  _rsa->setE (&newE);
++}
++
++// Retrieve the internal representation of the key
++RSAKey* AnssiPkiRSAPublicKey::getAnssiPkiKey()
++{
++	return _rsa;
++}
+diff --git a/src/lib/crypto/AnssiPkiRSAPublicKey.h b/src/lib/crypto/AnssiPkiRSAPublicKey.h
+new file mode 100644
+index 0000000..3c814c1
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiRSAPublicKey.h
+@@ -0,0 +1,73 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiRSAPublicKey.h
++
++ ANSSIPKI RSA public key class
++ *****************************************************************************/
++
++#ifndef _SOFTHSM_V2_ANSSIPKIRSAPUBLICKEY_H
++#define _SOFTHSM_V2_ANSSIPKIRSAPUBLICKEY_H
++
++#include "config.h"
++#include "RSAPublicKey.h"
++#include "anssipki-crypto.h"
++
++class AnssiPkiRSAPublicKey : public RSAPublicKey
++{
++public:
++	// Constructors
++	AnssiPkiRSAPublicKey();
++
++	AnssiPkiRSAPublicKey(const RSAKey* inRSA);
++
++	// Destructor
++	virtual ~AnssiPkiRSAPublicKey();
++
++	// The type
++	static const char* type;
++
++	// Check if the key is of the given type
++	virtual bool isOfType(const char* type);
++
++	// Setters for the RSA public key components
++	virtual void setN(const ByteString& n);
++	virtual void setE(const ByteString& e);
++
++	// Set from internal representation
++	virtual int setFromAnssiPki(const RSAKey* rsa);
++
++	// Retrieve the internal representation of the key
++	RSAKey* getAnssiPkiKey();
++
++private:
++	// The internal librcrypto ANSSIPKI representation
++	RSAKey* _rsa;
++};
++
++#endif // !_SOFTHSM_V2_ANSSIPKIRSAPUBLICKEY_H
++
+diff --git a/src/lib/crypto/AnssiPkiUtil.cpp b/src/lib/crypto/AnssiPkiUtil.cpp
+new file mode 100644
+index 0000000..9724128
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiUtil.cpp
+@@ -0,0 +1,77 @@
++/* $Id: AnssiPkiUtil.cpp 4773 2010-04-18 21:56:03Z rb $ */
++
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiUtil.h
++
++ ANSSIPKI convenience functions
++ *****************************************************************************/
++
++#include "config.h"
++#include "log.h"
++#include "AnssiPkiUtil.h"
++#include <cstring>
++
++// Convert an GMP mpz to a ByteString
++ByteString ANSSIPKI_GMP::mpz2ByteString(mpz_t* a)
++{
++  size_t size = mpz_sizeinbase (*a, 16);
++  char *hexStr = new char [size + 2];
++  mpz_get_str (hexStr, 16, *a);
++  ByteString rv (hexStr);
++  delete [] hexStr;
++  return rv;
++}
++
++// Convert a ByteString to a GMP mpz
++int ANSSIPKI_GMP::byteString2mpz(mpz_t* mpz_to, const ByteString& byteString)
++{
++  if (mpz_to)
++    {
++      int res = 0;
++      int len = 0;
++      char *cstr = NULL;
++
++      mpz_init (*mpz_to);
++
++      std::string hexString = byteString.hex_str ();
++      len = hexString.length ();
++      cstr = new char [len + 1];
++
++      std::strcpy (cstr, hexString.c_str ());
++
++      res = mpz_set_str (*mpz_to, cstr, 16);
++
++      delete [] cstr;
++      return res;
++    }
++
++  else
++    return -1;
++}
++
+diff --git a/src/lib/crypto/AnssiPkiUtil.h b/src/lib/crypto/AnssiPkiUtil.h
+new file mode 100644
+index 0000000..7d5a16b
+--- /dev/null
++++ b/src/lib/crypto/AnssiPkiUtil.h
+@@ -0,0 +1,51 @@
++/*
++ * Copyright (c) 2010 SURFnet bv
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
++ * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
++ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*****************************************************************************
++ AnssiPkiUtil.h
++
++ AnssiPki convenience functions
++ *****************************************************************************/
++
++#ifndef _SOFTHSM_V2_ANSSIPKIUTIL_H
++#define _SOFTHSM_V2_ANSSIPKIUTIL_H
++
++#include "config.h"
++#include "ByteString.h"
++#include "gmp.h"
++
++namespace ANSSIPKI_GMP
++{
++  // Convert a GMP mpz_t to a ByteString
++  ByteString mpz2ByteString(mpz_t *a);
++
++  // Convert a ByteString to a GMP mpz_t
++  // return 0 if OK, -1 if mpz_to = null
++  int byteString2mpz(mpz_t* mpz_to, const ByteString& byteString);
++}
++
++#endif // !_SOFTHSM_V2_ANSSIPKIUTIL_H
++
+diff --git a/src/lib/crypto/Makefile.am b/src/lib/crypto/Makefile.am
+index 438578a..0ed1cfb 100644
+--- a/src/lib/crypto/Makefile.am
++++ b/src/lib/crypto/Makefile.am
+@@ -76,6 +76,17 @@ libsofthsm_crypto_la_SOURCES +=	OSSLAES.cpp \
+ 				OSSLUtil.cpp
+ endif
+ 
++if WITH_ANSSIPKI
++libsofthsm_crypto_la_SOURCES +=         \
++       AnssiPkiRNG.cpp \
++       AnssiPkiRSA.cpp \
++       AnssiPkiUtil.cpp \
++       AnssiPkiRSAKeyPair.cpp \
++       AnssiPkiRSAPublicKey.cpp \
++       AnssiPkiRSAPrivateKey.cpp
++
++endif
++
+ # Compile with support of Botan
+ if WITH_BOTAN
+ libsofthsm_crypto_la_SOURCES +=	BotanAES.cpp \
+diff --git a/src/lib/crypto/OSSLAES.cpp b/src/lib/crypto/OSSLAES.cpp
+index 6e5d345..2a9ffcd 100644
+--- a/src/lib/crypto/OSSLAES.cpp
++++ b/src/lib/crypto/OSSLAES.cpp
+@@ -36,42 +36,28 @@
+ #include <openssl/aes.h>
+ #include "salloc.h"
+ 
++static bool wrapUnwrapKeyGeneric(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv, const int wrap);
++
+ // Wrap/Unwrap keys
+-#ifdef HAVE_AES_KEY_WRAP
+-bool OSSLAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out)
++bool OSSLAES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
+ {
+ 	// RFC 3394 input length checks do not apply to RFC 5649 mode with padding
+ 	if (mode == SymWrap::AES_KEYWRAP && !checkLength(in.size(), 16, "wrap"))
+ 		return false;
+ 
+-	return wrapUnwrapKey(key, mode, in, out, 1);
+-}
+-#else
+-bool OSSLAES::wrapKey(const SymmetricKey* /*key*/, const SymWrap::Type /*mode*/, const ByteString& /*in*/, ByteString& /*out*/)
+-{
+-	return false;
++	return wrapUnwrapKeyGeneric(key, mode, in, out, iv, 1);
+ }
+-#endif
+ 
+-#ifdef HAVE_AES_KEY_WRAP
+-bool OSSLAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out)
++bool OSSLAES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
+ {
+ 	// RFC 3394 algorithm produce at least 3 blocks of data
+ 	if ((mode == SymWrap::AES_KEYWRAP && !checkLength(in.size(), 24, "unwrap")) ||
+ 	// RFC 5649 algorithm produce at least 2 blocks of data
+ 	    (mode == SymWrap::AES_KEYWRAP_PAD && !checkLength(in.size(), 16, "unwrap")))
+ 		return false;
+-	return wrapUnwrapKey(key, mode, in, out, 0);
+-}
+-#else
+-bool OSSLAES::unwrapKey(const SymmetricKey* /*key*/, const SymWrap::Type /*mode*/, const ByteString& /*in*/, ByteString& /*out*/)
+-{
+-	return false;
++	return wrapUnwrapKeyGeneric(key, mode, in, out, iv, 0);
+ }
+-#endif
+ 
+-#ifdef HAVE_AES_KEY_WRAP
+-// RFC 3394 wrapping and all unwrapping algorithms require aligned blocks
+ bool OSSLAES::checkLength(const int insize, const int minsize, const char * const operation) const
+ {
+ 	if (insize < minsize)
+@@ -87,6 +73,8 @@ bool OSSLAES::checkLength(const int insize, const int minsize, const char * cons
+ 	return true;
+ }
+ 
++#ifdef HAVE_AES_KEY_WRAP
++// RFC 3394 wrapping and all unwrapping algorithms require aligned blocks
+ const EVP_CIPHER* OSSLAES::getWrapCipher(const SymWrap::Type mode, const SymmetricKey* key) const
+ {
+ 	if (key == NULL)
+@@ -139,12 +127,19 @@ const EVP_CIPHER* OSSLAES::getWrapCipher(const SymWrap::Type mode, const Symmetr
+ // EVP wrapping/unwrapping
+ // wrap = 1 -> wrapping
+ // wrap = 0 -> unwrapping
+-bool OSSLAES::wrapUnwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const int wrap) const
++bool OSSLAES::wrapUnwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv, const int wrap) const
+ {
+ 	const char *prefix = "";
+ 	if (wrap == 0)
+ 		prefix = "un";
+ 
++	// TODO: implement other modes
++	if (mode != SymWrap::AES_KEYWRAP && mode != SymWrap::AES_KEYWRAP_PAD)
++	{
++		ERROR_MSG("Failed to %swrap: unsupported cipher mode", prefix);
++		return false;
++	}
++
+ 	// Determine the cipher method
+ 	const EVP_CIPHER* cipher = getWrapCipher(mode, key);
+ 	if (cipher == NULL)
+@@ -199,6 +194,30 @@ bool OSSLAES::wrapUnwrapKey(const SymmetricKey* key, const SymWrap::Type mode, c
+ }
+ #endif
+ 
++static bool wrapUnwrapKeyAES_generic_modes(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv, const int wrap)
++{
++	if(mode != SymWrap::AES_CBC || mode != SymWrap::AES_CBC_PAD || mode != SymWrap::AES_ECB || mode != SymWrap::AES_CTR){
++		return false;
++	}
++	return false;
++}
++
++static bool wrapUnwrapKeyGeneric(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv, const int wrap)
++{
++
++#if defined(AES_KEYWRAP) || defined(AES_KEYWRAP_PAD)
++	if (mode == SymWrap::AES_KEYWRAP || mode == SymWrap::AES_KEYWRAP_PAD){
++		return wrapUnwrapKey(key, mode, in, out, iv, wrap);
++	}
++#endif	
++	if(mode == SymWrap::AES_CBC || mode == SymWrap::AES_CBC_PAD || mode == SymWrap::AES_ECB || mode == SymWrap::AES_CTR){
++		return wrapUnwrapKeyAES_generic_modes(key, mode, in, out, iv, wrap);
++	}
++	ERROR_MSG("Failed to wrap/unwrap: unsupported cipher mode");
++	return false;
++}
++
++
+ const EVP_CIPHER* OSSLAES::getCipher() const
+ {
+ 	if (currentKey == NULL) return NULL;
+diff --git a/src/lib/crypto/OSSLAES.h b/src/lib/crypto/OSSLAES.h
+index 6310f31..ad735ba 100644
+--- a/src/lib/crypto/OSSLAES.h
++++ b/src/lib/crypto/OSSLAES.h
+@@ -45,18 +45,20 @@ public:
+ 	virtual ~OSSLAES() { }
+ 
+ 	// Wrap/Unwrap keys
+-	virtual bool wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out);
++	virtual bool wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv);
+ 
+-	virtual bool unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out);
++	virtual bool unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv);
+ 
+ 	// Return the block size
+ 	virtual size_t getBlockSize() const;
+ 
+ protected:
++#ifdef HAVE_AES_KEY_WRAP
+ 	// Return the right EVP cipher for the operation
+-	virtual const EVP_CIPHER* getCipher() const;
+ 	const EVP_CIPHER* getWrapCipher(const SymWrap::Type mode, const SymmetricKey* key) const;
+-	bool wrapUnwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const int wrap) const;
++	bool wrapUnwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv, const int wrap) const;
++#endif
++	virtual const EVP_CIPHER* getCipher() const;
+ 	bool checkLength(const int insize, const int minsize, const char * const operation) const;
+ };
+ 
+diff --git a/src/lib/crypto/OSSLCryptoFactory.cpp b/src/lib/crypto/OSSLCryptoFactory.cpp
+index b0730d6..e3950a3 100644
+--- a/src/lib/crypto/OSSLCryptoFactory.cpp
++++ b/src/lib/crypto/OSSLCryptoFactory.cpp
+@@ -66,6 +66,12 @@
+ #ifdef WITH_GOST
+ #include <openssl/objects.h>
+ #endif
++#ifdef WITH_ANSSIPKI
++#include "anssipki-crypto.h"
++#include "AnssiPkiRNG.h"
++#include "AnssiPkiRSA.h"
++using namespace ANSSIPKI_ASN1;
++#endif
+ 
+ // Initialise the one-and-only instance
+ #ifdef HAVE_CXX11
+@@ -144,12 +150,16 @@ OSSLCryptoFactory::OSSLCryptoFactory()
+ 	}
+ 	FipsSelfTestStatus = true;
+ #endif
+-
++#ifdef WITH_ANSSIPKI
++       // Initialise the one-and-only RNG
++       rng = new AnssiPkiRNG ();
++#else
+ 	// Initialise OpenSSL
+ 	OpenSSL_add_all_algorithms();
+ 
+ 	// Initialise the one-and-only RNG
+ 	rng = new OSSLRNG();
++#endif
+ 
+ #ifdef WITH_GOST
+ 	// Load engines
+@@ -284,8 +294,14 @@ AsymmetricAlgorithm* OSSLCryptoFactory::getAsymmetricAlgorithm(AsymAlgo::Type al
+ {
+ 	switch (algorithm)
+ 	{
++
++
+ 		case AsymAlgo::RSA:
++#ifdef WITH_ANSSIPKI
++                       return new AnssiPkiRSA();
++#else
+ 			return new OSSLRSA();
++#endif
+ 		case AsymAlgo::DSA:
+ 			return new OSSLDSA();
+ 		case AsymAlgo::DH:
+diff --git a/src/lib/crypto/OSSLDES.cpp b/src/lib/crypto/OSSLDES.cpp
+index 4fb56b5..c41617e 100644
+--- a/src/lib/crypto/OSSLDES.cpp
++++ b/src/lib/crypto/OSSLDES.cpp
+@@ -35,20 +35,353 @@
+ #include <algorithm>
+ #include "odd.h"
+ 
+-bool OSSLDES::wrapKey(const SymmetricKey* /*key*/, const SymWrap::Type /*mode*/, const ByteString& /*in*/, ByteString& /*out*/)
++#include <stdio.h>
++#include <stdlib.h>
++
++// ------- Wrap
++static bool DESwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
++{
++        DES_cblock cb;
++        DES_key_schedule ks;
++        DES_cblock iv_cblock = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++        int i;
++        // Check iv length (if null this means no iv will be used)
++        if(iv.size() != 0){
++                if(iv.size() != 8){
++                        ERROR_MSG("Invalid IV key length for DES based (%d bits)", iv.size());
++                        return false;
++                }
++        }
++        if(mode == SymWrap::DES_ECB || mode == SymWrap::DES_CBC || mode == SymWrap::DES_CBC_PAD){
++                // Check key bits length
++                if (key->getBitLen() != 64)
++                {
++                        ERROR_MSG("Invalid DES key length (%d bits)", key->getBitLen());
++                        return false;
++                }
++                // Extract the three DES key
++                memcpy(cb, key->getKeyBits().const_byte_str(), 8);
++                // Compute the parity bits
++                for(i=0; i < 8; i++){
++                        cb[i] = odd_parity[cb[i]];
++                }
++		if(mode != SymWrap::DES_ECB){
++       	       // The iv, default is zeroes
++               	if(iv.size() == 8){
++                       	memcpy(iv_cblock, iv.const_byte_str(), 8);
++	                }
++		}
++                // Key schedule
++                if (DES_set_key_checked(&cb, &ks)) {
++                        ERROR_MSG("Error during DES key schedule (during DES Wrap)");
++                        return false;
++                }
++        }
++        if(mode == SymWrap::DES_CBC_PAD || mode == SymWrap::DES_CBC_PAD){
++                // We handle the RC5 padding
++                unsigned int padded_len;
++                unsigned char padding_byte;
++                padded_len = in.size() + (8 - (in.size() % 8));
++                padding_byte = (8 - (in.size() % 8));
++                unsigned char* padded_in = (unsigned char*)malloc(padded_len * sizeof(char));
++                // Pad with the padding byte
++                memset(padded_in, padding_byte, padded_len * sizeof(char));
++                // Copy the input
++                memcpy(padded_in, in.const_byte_str(), in.size());
++                out.resize(padded_len);
++                DES_ncbc_encrypt(padded_in, &out[0], padded_len, &ks, &iv_cblock, DES_ENCRYPT);
++                free(padded_in);
++                return true;
++        }
++	else if(mode == SymWrap::DES_CBC){
++		// No padding
++		if(in.size() % 8 != 0){
++                        ERROR_MSG("Error during DES Wrap: bad input length %d for no a PAD mode", in.size());
++                        return false;
++		}
++                DES_ncbc_encrypt(in.const_byte_str(), &out[0], in.size(), &ks, &iv_cblock, DES_ENCRYPT);
++		return true;
++	}
++	else if(mode == SymWrap::DES_ECB){
++		// No padding
++		if(in.size() % 8 != 0){
++                        ERROR_MSG("Error during DES Wrap: bad input length %d for no a PAD mode", in.size());
++                        return false;
++		}
++		DES_ecb_encrypt((const_DES_cblock*)in.const_byte_str(), (const_DES_cblock*)&out[0], &ks, DES_ENCRYPT);
++		return true;
++	}
++
++        ERROR_MSG("Invalid DES mode");
++	return false;
++}
++
++static bool DES3wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
++{
++        DES_cblock cb1, cb2, cb3;
++        DES_key_schedule ks1, ks2, ks3;
++        DES_cblock iv_cblock = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++        int i;
++
++        // Check iv length (if null this means no iv will be used)
++        if(iv.size() != 0){
++                if(iv.size() != 8){
++                        ERROR_MSG("Invalid IV key length for DES3 based (%d bits)", iv.size());
++                        return false;
++                }
++        }
++        if(mode == SymWrap::DES3_ECB || mode == SymWrap::DES3_CBC || mode == SymWrap::DES3_CBC_PAD){
++                // Check key bits length
++                if (key->getBitLen() != 192)
++                {
++                        ERROR_MSG("Invalid DES3 key length (%d bits)", key->getBitLen());
++                        return false;
++                }
++                // Extract the three DES keys
++                memcpy(cb1, key->getKeyBits().const_byte_str(), 8);
++                memcpy(cb2, key->getKeyBits().const_byte_str() + 8,  8);
++                memcpy(cb3, key->getKeyBits().const_byte_str() + 16, 8);
++                // Compute the parity bits
++                for(i=0; i < 8; i++){
++                        cb1[i] = odd_parity[cb1[i]];
++                        cb2[i] = odd_parity[cb2[i]];
++                        cb3[i] = odd_parity[cb3[i]];
++                }
++		if(mode != SymWrap::DES3_ECB){
++	                // The iv, default is zeroes
++       	        if(iv.size() == 8){
++               	        memcpy(iv_cblock, iv.const_byte_str(), 8);
++	                }
++		}
++                // Key schedule
++                if (DES_set_key_checked(&cb1, &ks1) || DES_set_key_checked(&cb2, &ks2) || DES_set_key_checked(&cb3, &ks3)) {
++                        ERROR_MSG("Error during DES3 key schedule (during DES3_CBC Wrap)");
++                        return false;
++                }
++        }
++        if(mode == SymWrap::DES3_CBC_PAD){
++                // We handle the RC5 padding
++                unsigned int padded_len;
++                unsigned char padding_byte;
++                padded_len = in.size() + (8 - (in.size() % 8));
++                padding_byte = (8 - (in.size() % 8));
++                unsigned char* padded_in = (unsigned char*)malloc(padded_len * sizeof(char));
++                // Pad with the padding byte
++                memset(padded_in, padding_byte, padded_len * sizeof(char));
++                // Copy the input
++                memcpy(padded_in, in.const_byte_str(), in.size());
++                out.resize(padded_len);
++                DES_ede3_cbc_encrypt(padded_in, &out[0], padded_len, &ks1, &ks2, &ks3, &iv_cblock, DES_ENCRYPT);
++                free(padded_in);
++                return true;
++        }
++	else if(mode == SymWrap::DES3_CBC){
++		// No padding
++		if(in.size() % 8 != 0){
++                        ERROR_MSG("Error during DES3 Wrap: bad input length %d for no a PAD mode", in.size());
++                        return false;
++		}
++                DES_ede3_cbc_encrypt(in.const_byte_str(), &out[0], in.size(), &ks1, &ks2, &ks3, &iv_cblock, DES_ENCRYPT);
++		return true;
++	}
++	else if(mode == SymWrap::DES3_ECB){
++		// No padding
++		if(in.size() % 8 != 0){
++                        ERROR_MSG("Error during DES3 Wrap: bad input length %d for no a PAD mode", in.size());
++                        return false;
++		}
++		DES_ecb3_encrypt((const_DES_cblock*)in.const_byte_str(), (const_DES_cblock*)&out[0], &ks1, &ks2, &ks3, DES_ENCRYPT);
++		return true;
++	}
++ 
++        ERROR_MSG("Invalid DES3 mode");
++	return false;
++}
++
++
++bool OSSLDES::wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
+ {
+-	ERROR_MSG("DES does not support key wrapping");
++        if(mode == SymWrap::DES_ECB || mode == SymWrap::DES_CBC || mode == SymWrap::DES_CBC_PAD){
++		return DESwrapKey(key, mode, in, out, iv);
++	}
++	if (mode == SymWrap::DES3_ECB || mode == SymWrap::DES3_CBC || mode == SymWrap::DES3_CBC_PAD){
++		return DES3wrapKey(key, mode, in, out, iv);
++	}
++
++        ERROR_MSG("Invalid DES/DES3 mode");
++	return false;
++}
++
++// ------- Unwrap
++static bool DESunwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
++{
++        DES_cblock cb;
++        DES_key_schedule ks;
++        DES_cblock iv_cblock = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++        int i;
++
++        // Check iv length (if null this means no iv will be used)
++        if(iv.size() != 0){
++                if(iv.size() != 8){
++                        ERROR_MSG("Invalid IV key length for DES based (%d bits)", iv.size());
++                        return false;
++                }
++        }
++        if((mode == SymWrap::DES_ECB) || (mode == SymWrap::DES_CBC) || (mode == SymWrap::DES_CBC_PAD)){
++                // Check key bits length
++                if (key->getBitLen() != 64)
++                {
++                        ERROR_MSG("Invalid DES key length (%d bits)", key->getBitLen());
++                        return false;
++                }
++                // Check the input length (it should be padded)
++                if(in.size() % 8 != 0){
++                        ERROR_MSG("Invalid DES input length (%d bits)", in.size());
++                        return false;
++                }
++                // Extract the three DES keys
++                memcpy(cb, key->getKeyBits().const_byte_str(), 8);
++                // Compute the parity bits
++                for(i=0; i < 8; i++){
++                        cb[i] = odd_parity[cb[i]];
++                }
++                // The iv, default is zeroes
++                if(iv.size() == 8){
++                        memcpy(iv_cblock, iv.const_byte_str(), 8);
++                }
++                // Key schedule
++                if (DES_set_key_checked(&cb, &ks)) {
++                        ERROR_MSG("Error during DES key schedule (during DES3_CBC Unwrap)");
++                        return false;
++                }
++                out.resize(in.size());
++       	if(mode == SymWrap::DES_ECB){
++			DES_ecb_encrypt((const_DES_cblock*)in.const_byte_str(), (const_DES_cblock*)&out[0], &ks, DES_DECRYPT);
++	        }
++		if(mode == SymWrap::DES_CBC || mode == SymWrap::DES_CBC_PAD){
++               	DES_ncbc_encrypt(in.const_byte_str(), &out[0], in.size(), &ks, &iv_cblock, DES_DECRYPT);
++		}
++        }
++        if(mode == SymWrap::DES_CBC_PAD){
++                if(out.size() < 8){
++                        ERROR_MSG("Error during DES CBC_PAD (during DES_CBC_PAD Unwrap): bad padding");
++                        return false;
++                }
++                // Check the padding: get the final byte of the final block
++                unsigned char padding_byte = out[out.size()-1];
++                if(padding_byte > 8){
++                        ERROR_MSG("Error during DES CBC_PAD (during DES_CBC_PAD Unwrap): bad padding");
++                        return false;
++                }
++                // Check all the bytes that should be at this value
++                for(i=1; i<= 8-padding_byte; i++){
++                        if(out[out.size() - i] != padding_byte){
++                                ERROR_MSG("Error during DES CBC_PAD (during DES_CBC_PAD Unwrap): bad padding");
++                                return false;
++                        }
++                }
++                // RC5 padding is OK: resize the output
++                out.resize(out.size() - padding_byte);
++                return true;
++        }
+ 
++        ERROR_MSG("Invalid DES mode");
++	return false;
++}
++static bool DES3unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
++{
++        DES_cblock cb1, cb2, cb3;
++        DES_key_schedule ks1, ks2, ks3;
++        DES_cblock iv_cblock = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++        int i;
++
++        // Check iv length (if null this means no iv will be used)
++        if(iv.size() != 0){
++                if(iv.size() != 8){
++                        ERROR_MSG("Invalid IV key length for DES3 based (%d bits)", iv.size());
++                        return false;
++                }
++        }
++        if((mode == SymWrap::DES3_ECB) || (mode == SymWrap::DES3_CBC) || (mode == SymWrap::DES3_CBC_PAD)){
++                // Check key bits length
++                if (key->getBitLen() != 192)
++                {
++                        ERROR_MSG("Invalid DES3 key length (%d bits)", key->getBitLen());
++                        return false;
++                }
++                // Check the input length (it should be padded)
++                if(in.size() % 8 != 0){
++                        ERROR_MSG("Invalid DES3 input length (%d bits)", in.size());
++                        return false;
++                }
++                // Extract the three DES keys
++                memcpy(cb1, key->getKeyBits().const_byte_str(), 8);
++                memcpy(cb2, key->getKeyBits().const_byte_str() + 8,  8);
++                memcpy(cb3, key->getKeyBits().const_byte_str() + 16, 8);
++                // Compute the parity bits
++                for(i=0; i < 8; i++){
++                        cb1[i] = odd_parity[cb1[i]];
++                        cb2[i] = odd_parity[cb2[i]];
++                        cb3[i] = odd_parity[cb3[i]];
++                }
++                // The iv, default is zeroes
++                if(iv.size() == 8){
++                        memcpy(iv_cblock, iv.const_byte_str(), 8);
++                }
++                // Key schedule
++                if (DES_set_key_checked(&cb1, &ks1) || DES_set_key_checked(&cb2, &ks2) || DES_set_key_checked(&cb3, &ks3)) {
++                        ERROR_MSG("Error during DES3 key schedule (during DES3_CBC Unwrap)");
++                        return false;
++                }
++                out.resize(in.size());
++       	if(mode == SymWrap::DES3_ECB){
++			DES_ecb3_encrypt((const_DES_cblock*)in.const_byte_str(), (const_DES_cblock*)&out[0], &ks1, &ks2, &ks3, DES_DECRYPT);
++	        }
++		if(mode == SymWrap::DES3_CBC || mode == SymWrap::DES3_CBC_PAD){
++               	DES_ede3_cbc_encrypt(in.const_byte_str(), &out[0], in.size(), &ks1, &ks2, &ks3, &iv_cblock, DES_DECRYPT);
++		}
++        }
++        if(mode == SymWrap::DES3_CBC_PAD){
++                if(out.size() < 8){
++                        ERROR_MSG("Error during DES3 CBC_PAD (during DES3_CBC_PAD Unwrap): bad padding");
++                        return false;
++                }
++                // Check the padding: get the final byte of the final block
++                unsigned char padding_byte = out[out.size()-1];
++                if(padding_byte > 8){
++                        ERROR_MSG("Error during DES3 CBC_PAD (during DES3_CBC_PAD Unwrap): bad padding");
++                        return false;
++                }
++                // Check all the bytes that should be at this value
++                for(i=1; i<= 8-padding_byte; i++){
++                        if(out[out.size() - i] != padding_byte){
++                                ERROR_MSG("Error during DES3 CBC_PAD (during DES3_CBC_PAD Unwrap): bad padding");
++                                return false;
++                        }
++                }
++                // RC5 padding is OK: resize the output
++                out.resize(out.size() - padding_byte);
++                return true;
++        }
++
++        ERROR_MSG("Invalid DES3 mode");
+ 	return false;
+ }
+ 
+-bool OSSLDES::unwrapKey(const SymmetricKey* /*key*/, const SymWrap::Type /*mode*/, const ByteString& /*in*/, ByteString& /*out*/)
++bool OSSLDES::unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv)
+ {
+-	ERROR_MSG("DES does not support key unwrapping");
++        if(mode == SymWrap::DES_ECB || mode == SymWrap::DES_CBC || mode == SymWrap::DES_CBC_PAD){
++		return DESunwrapKey(key, mode, in, out, iv);
++	}
++	if (mode == SymWrap::DES3_ECB || mode == SymWrap::DES3_CBC || mode == SymWrap::DES3_CBC_PAD){
++		return DES3unwrapKey(key, mode, in, out, iv);
++	}
+ 
++        ERROR_MSG("Invalid DES/DES3 mode");
+ 	return false;
+ }
+ 
++
+ const EVP_CIPHER* OSSLDES::getCipher() const
+ {
+ 	if (currentKey == NULL) return NULL;
+diff --git a/src/lib/crypto/OSSLDES.h b/src/lib/crypto/OSSLDES.h
+index 1ecdc8c..a9e4edf 100644
+--- a/src/lib/crypto/OSSLDES.h
++++ b/src/lib/crypto/OSSLDES.h
+@@ -37,6 +37,7 @@
+ #include <string>
+ #include "config.h"
+ #include "OSSLEVPSymmetricAlgorithm.h"
++#include <openssl/des.h>
+ 
+ class OSSLDES : public OSSLEVPSymmetricAlgorithm
+ {
+@@ -45,9 +46,9 @@ public:
+ 	virtual ~OSSLDES() { }
+ 
+ 	// Wrap/Unwrap keys
+-	virtual bool wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out);
++	virtual bool wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv);
+ 
+-	virtual bool unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out);
++	virtual bool unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv);
+ 
+ 	// Generate key
+ 	virtual bool generateKey(SymmetricKey& key, RNG* rng = NULL);
+diff --git a/src/lib/crypto/SymmetricAlgorithm.h b/src/lib/crypto/SymmetricAlgorithm.h
+index 7eb1aac..6aef841 100644
+--- a/src/lib/crypto/SymmetricAlgorithm.h
++++ b/src/lib/crypto/SymmetricAlgorithm.h
+@@ -67,7 +67,18 @@ struct SymWrap
+ 	{
+ 		Unknown,
+ 		AES_KEYWRAP,
+-		AES_KEYWRAP_PAD
++		AES_KEYWRAP_PAD,
++                AES_ECB,
++                AES_CBC,
++                AES_CBC_PAD,
++                AES_CTR,
++                DES_ECB,
++                DES_CBC,
++                DES_CBC_PAD,
++                DES3_ECB,
++                DES3_CBC,
++                DES3_CBC_PAD,
++
+ 	};
+ };
+ 
+@@ -91,9 +102,9 @@ public:
+ 	virtual bool decryptFinal(ByteString& data);
+ 
+ 	// Wrap/Unwrap keys
+-	virtual bool wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out) = 0;
++	virtual bool wrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv) = 0;
+ 
+-	virtual bool unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out) = 0;
++	virtual bool unwrapKey(const SymmetricKey* key, const SymWrap::Type mode, const ByteString& in, ByteString& out, const ByteString& iv) = 0;
+ 
+ 	// Key factory
+ 	virtual void recycleKey(SymmetricKey* toRecycle);
+diff --git a/src/lib/object_store/DB.cpp b/src/lib/object_store/DB.cpp
+index d82d7cb..bae4cd0 100644
+--- a/src/lib/object_store/DB.cpp
++++ b/src/lib/object_store/DB.cpp
+@@ -36,6 +36,7 @@
+ #include "log.h"
+ #include <cstdlib>
+ #include <cstdio>
++#include <cstring>
+ #include <iostream>
+ #include <vector>
+ #include <sqlite3.h>
+@@ -44,7 +45,9 @@
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <errno.h>
+-
++extern "C" {
++#include <fdp-client.h>
++}
+ #include "DB.h"
+ 
+ #if HAVE_SQL_TRACE
+@@ -816,13 +819,18 @@ bool DB::Connection::connect(const char *
+ {
+ 	// Create and set file permissions if the DB does not exist.
+ 	int fd = open(_dbpath.c_str(), O_CREAT, S_IRUSR | S_IWUSR);
++#ifdef SQLITE_HAS_CODEC
++	if (fd == -1 && errno != ENXIO) // ENXIO: libfdp-client
++#else
+ 	if (fd == -1)
++#endif
+ 	{
+ 		DB::logError("Could not open database: %s (errno %i)",
+ 			     _dbpath.c_str(), errno);
+ 		return false;
+ 	}
+-	::close(fd);
++	if (fd != -1)
++		::close(fd);
+ 
+ 	int rv = sqlite3_open_v2(_dbpath.c_str(),
+ 							 &_db,
+@@ -836,6 +844,29 @@ bool DB::Connection::connect(const char *
+ 		return false;
+ 	}
+ 
++#ifdef SQLITE_HAS_CODEC
++	char* key = getenv("SOFTHSM2_KEY");
++	char _key[25];
++	char* keyfile = getenv("SOFTHSM2_KEYFILE");
++	int keyfileFd = 0;
++	if ((key == NULL) && (keyfile != NULL)) {
++		keyfileFd = fdp_open(keyfile, 0, O_RDONLY);
++		if (read(keyfileFd, _key, 24) != 24) {
++			return false;
++		}
++		::close(keyfileFd);
++		_key[24] = '\0';
++		key = _key;
++	}
++	if (key != NULL) {
++		rv = sqlite3_key(_db, key, strlen(key));
++		if (rv != SQLITE_OK) {
++			reportErrorDB(_db);
++			return false;
++		}
++	}
++#endif
++
+ 	int foreignKeyEnabled = 0;
+ 	rv = sqlite3_db_config(_db,SQLITE_DBCONFIG_ENABLE_FKEY,1,&foreignKeyEnabled);
+ 	if (rv != SQLITE_OK) {
+diff --git a/src/lib/object_store/DBToken.cpp b/src/lib/object_store/DBToken.cpp
+index 7cede7a..5cee004 100644
+--- a/src/lib/object_store/DBToken.cpp
++++ b/src/lib/object_store/DBToken.cpp
+@@ -172,6 +172,7 @@ DBToken::DBToken(const std::string &baseDir, const std::string &tokenName)
+ 	std::string tokenDir = baseDir + OS_PATHSEP + tokenName;
+ 	std::string tokenPath = tokenDir + OS_PATHSEP + DBTOKEN_FILE;
+ 
++#ifndef SQLITE_HAS_CODEC // Allow libfdp-client with SQLCipher
+ 	// Refuse to open an already existing database.
+ 	FILE *f = fopen(tokenPath.c_str(),"r");
+ 	if (f == NULL)
+@@ -180,6 +181,7 @@ DBToken::DBToken(const std::string &baseDir, const std::string &tokenName)
+ 		return;
+ 	}
+ 	fclose(f);
++#endif
+ 
+ 	// Create a database connection.
+ 	_connection = DB::Connection::Create(tokenDir, DBTOKEN_FILE);
+diff --git a/src/lib/object_store/ObjectStore.cpp b/src/lib/object_store/ObjectStore.cpp
+index 171cede..daa32f1 100644
+--- a/src/lib/object_store/ObjectStore.cpp
++++ b/src/lib/object_store/ObjectStore.cpp
+@@ -40,6 +40,7 @@
+ #include "ObjectStoreToken.h"
+ #include "OSPathSep.h"
+ #include "UUID.h"
++#include <stdlib.h>
+ #include <stdio.h>
+ 
+ // Constructor
+@@ -142,6 +143,13 @@ ObjectStoreToken* ObjectStore::newToken(const ByteString& label)
+ 	std::string serialNumber = tokenUUID.substr(19, 4) + tokenUUID.substr(24);
+ 	ByteString serial((const unsigned char*) serialNumber.c_str(), serialNumber.size());
+ 
++#ifdef SQLITE_HAS_CODEC
++	// Use a specific directory name if the database is encrypted
++	if ((getenv("SOFTHSM2_KEY") != NULL) || (getenv("SOFTHSM2_KEYFILE")))
++	{
++		tokenUUID = "encrypted";
++	}
++#endif
+ 	// Create the token
+ 	ObjectStoreToken* newToken = ObjectStoreToken::createToken(storePath, tokenUUID, label, serial);
+ 

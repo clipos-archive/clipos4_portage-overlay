@@ -1,0 +1,3 @@
+# CLIP additions to package-specific use flags
+sys-fs/e2fsprogs:clip-lib - install only libraries.
+

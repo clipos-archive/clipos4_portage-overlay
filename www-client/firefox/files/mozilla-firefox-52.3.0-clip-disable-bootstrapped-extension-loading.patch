@@ -1,0 +1,18 @@
+Index: firefox-52.3.0esr/toolkit/mozapps/extensions/internal/XPIProvider.jsm
+===================================================================
+--- firefox-52.3.0esr.orig/toolkit/mozapps/extensions/internal/XPIProvider.jsm
++++ firefox-52.3.0esr/toolkit/mozapps/extensions/internal/XPIProvider.jsm
+@@ -2690,9 +2690,10 @@ this.XPIProvider = {
+         logger.warn("Failed to add directory install location " + aName, e);
+         return;
+       }
+-
+-      XPIProvider.installLocations.push(location);
+-      XPIProvider.installLocationsByName[location.name] = location;
++      if (dir.path.startsWith("/usr/local/lib") && !dir.path.includes("..")) {
++        XPIProvider.installLocations.push(location);
++        XPIProvider.installLocationsByName[location.name] = location;
++      }
+     }
+ 
+     function addSystemAddonInstallLocation(aName, aKey, aPaths, aScope) {

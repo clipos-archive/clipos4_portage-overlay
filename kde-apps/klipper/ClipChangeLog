@@ -1,0 +1,13 @@
+# CLIP ChangeLog for kde-apps/klipper
+
+*klipper-4.11.19-r1 (19 Jul 2017)
+
+  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +klipper-4.11.19-r1.ebuild, -klipper-4.11.19.ebuild:
+  Add clip-deps for zlib
+
+*klipper-4.11.19 (05 May 2017)
+
+  05 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +klipper-4.11.19.ebuild:
+  Resurrect klipper

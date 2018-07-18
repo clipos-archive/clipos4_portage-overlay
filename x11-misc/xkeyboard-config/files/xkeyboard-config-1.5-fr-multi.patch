@@ -1,0 +1,11 @@
+--- symbols/fr	2009-09-28 18:55:55.000000000 +0200
++++ symbols/fr	2009-09-28 19:12:12.000000000 +0200
+@@ -174,6 +174,8 @@
+     key <AB08>  { [        semicolon,           period,             multiply,             0x10022C5 ] }; // ; . × ⋅
+     key <AB09>  { [            colon,            slash,             division,             0x1002215 ] }; // : / ÷ ∕
+     key <AB10>  { [           exclam,          section,           exclamdown,             0x1002212 ] }; // ! § ¡ −
++
++    include "compose(lwin)"
+ };
+ 
+ partial alphanumeric_keys

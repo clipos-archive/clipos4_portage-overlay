@@ -1,0 +1,23 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+source /lib/clip/misc.sub
+source "/etc/conf.d/clip"
+
+STUNNEL_EXIT_PIPE="/tmp/var/run/stunnel.exit"
+
+uid=$(current_uid)
+gid=$(current_gid)
+
+for JAIL in ${CLIP_JAILS}; do
+
+	if vsctl ${JAIL} enter -u $uid -g $gid -c /user -i /dev/full -o /dev/null -- /bin/test -p "${STUNNEL_EXIT_PIPE}"; then
+		vsctl ${JAIL} enter -u $uid -g $gid -c /user <<-- >/dev/null 2>&1
+set -e
+/bin/echo 1 > "${STUNNEL_EXIT_PIPE}"
+/bin/rm -f -- "${STUNNEL_EXIT_PIPE}"
+-
+		exit $?
+	fi
+done

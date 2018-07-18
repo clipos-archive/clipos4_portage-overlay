@@ -1,0 +1,23 @@
+Due to the way TigerVNC works since the upgrade, it uses now these mapping
+for determining how to "bind" a altgr. + "(" keypress. This results in a "("
+character instead of a "[".
+
+These disabled keys don't seem to exist on the keyboards we have.
+
+Index: xkeyboard-config-2.9/symbols/inet
+===================================================================
+--- xkeyboard-config-2.9.orig/symbols/inet
++++ xkeyboard-config-2.9/symbols/inet
+@@ -165,8 +165,9 @@ xkb_symbols "evdev" {
+ //  key <I184>   {      [ ]       }; // KEY_EDIT
+     key <I185>   {      [ XF86ScrollUp          ]       };
+     key <I186>   {      [ XF86ScrollDown        ]       };
+-    key <I187>   {      [ parenleft             ]       };
+-    key <I188>   {      [ parenright            ]       };
++// parenleft and parenright are disabled due to TigerVNC inner functionning
++    key <I187>   {      [ ]       }; //parenleft
++    key <I188>   {      [ ]       }; //parenright
+     key <I189>   {      [ XF86New               ]       };
+     key <I190>   {      [ Redo                  ]       };
+     key <I192>   {      [ XF86LaunchA           ]       };
+

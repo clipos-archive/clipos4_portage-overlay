@@ -1,0 +1,9 @@
+#!/bin/sh
+
+/update/usr/sbin/syslog-rm \
+	-f /update/etc/syslog-ng/syslog-ng.conf \
+	-C /audit \
+	-u syslog -g syslog \
+	--pidfile /var/run/syslog/syslog-ng.pid \
+	-c /var/run/syslog/syslog-ng.ctl \
+	</dev/null 1>/dev/null 2>/dev/null

@@ -1,0 +1,26 @@
+# CLIP ChangeLog for media-libs/gst-plugins-ugly
+
+*gst-plugins-ugly-1.4.5 (31 Dec 2015)
+
+  31 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-ugly-1.4.5.ebuild, -gst-plugins-ugly-1.2.4-r1.ebuild:
+  Bump to latest.
+
+*gst-plugins-ugly-1.2.4-r1 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-ugly-1.2.4-r1.ebuild, -gst-plugins-ugly-1.2.0.ebuild:
+  Bump to latest, make multilib-aware.
+
+*gst-plugins-ugly-1.2.0 (12 Nov 2013)
+
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-ugly-1.2.0.ebuild, -gst-plugins-ugly-1.0.6.ebuild:
+  Bump to latest.
+
+*gst-plugins-ugly-1.0.6 (22 Jul 2013)
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  gst-plugins-ugly-1.0.6.ebuild:
+  Initial import, clip-deps fix.
+

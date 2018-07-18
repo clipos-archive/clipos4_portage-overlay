@@ -1,0 +1,113 @@
+# CLIP Changelog for sys-auth/pam_pkcs11
+
+*pam_pkcs11-0.6.3-r7 (07 Aug 2014)
+
+  07 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r7.ebuild, -pam_pkcs11-0.6.3-r6.ebuild,
+  files/pam_pkcs11-0.6.3-clip-label.patch:
+  Fix previous edit where config file was added twice to the structure. (build
+  failure on amd64 but silent on 32b arches)
+
+*pam_pkcs11-0.6.3-r6 (12 Feb 2014)
+
+  12 Feb 2014; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r6.ebuild, -pam_pkcs11-0.6.3-r5.ebuild:
+  pam_pkcs11.conf has moved to /var/run/
+
+*pam_pkcs11-0.6.3-r5 (11 Feb 2014)
+
+  11 Feb 2014; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r5.ebuild, -pam_pkcs11-0.6.3-r4.ebuild:
+  pam_pkcs11.conf is not part of this package anymore.
+
+*pam_pkcs11-0.6.3-r4 (11 Feb 2014)
+
+  11 Feb 2014; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r4.ebuild, -pam_pkcs11-0.6.3-r3.ebuild:
+  Fixed bug in key selection during signature.
+
+  22 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/pam_pkcs11-0.6.3-clip-label.patch:
+  Remove relative paths ('..') from patch, those are no longer
+  supported with the latest eutils.
+
+*pam_pkcs11-0.6.3-r3 (28 Mar 2013)
+
+  28 Mar 2013; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r3.ebuild, -pam_pkcs11-0.6.3-r2.ebuild:
+  Remove threads use (conflicts with libgtop11dotnet and
+  p11proxy filter).
+  Changed expected certificate label.
+
+*pam_pkcs11-0.6.3-r1 (24 Oct 2012)
+
+  24 Oct 2012; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r1.ebuild, -pam_pkcs11-0.6.3,
+  -files/_debian:
+  Remove maintainer scripts which reference an init script that
+  no longer exists.
+
+*pam_pkcs11-0.6.3-r1 (12 Oct 2012)
+
+  12 Oct 2012; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3-r1.ebuild, -pam_pkcs11-0.6.3:
+  Remove event_mgr for use with smartcard-monitor.
+
+*pam_pkcs11-0.6.3 (04 Oct 2012)
+
+  04 Oct 2012; ANSSI <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.3.ebuild, -pam_pkcs11-0.6.2-r7:
+  Update to last version. Updates in configuration file.
+
+*pam_pkcs11-0.6.2-r7 (21 Apr 2011)
+
+  21 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r7.ebuild, -pam_pkcs11-0.6.2-r6.ebuild,
+  files/pkcs11_eventmgr:
+  Fix init script dependencies.
+
+*pam_pkcs11-0.6.2-r6 (02 Fev 2011)
+
+  02 Fev 2011; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r6.ebuild, -pam_pkcs11-0.6.2-r5.ebuild:
+  bugfix in the ebuild (wrong pam_pkcs11.conf was installed).
+
+*pam_pkcs11-0.6.2-r5 (14 Jan 2011)
+
+  14 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r5.ebuild, -pam_pkcs11-0.6.2-r4.ebuild,
+  files/clip_pam_pkcs11.conf:
+  Move the ca/crl path to /etc/admin.
+  Remove verictl2 eclass (no longer used) and move install
+  commands from pkg_predeb to src_install where they belong.
+
+*pam_pkcs11-0.6.2-r4 (17 Dec 2010)
+
+  17 Dec 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r4.ebuild, -pam_pkcs11-0.6.2-r3.ebuild,
+  files/clip_pam_pkcs11.conf:
+  Removed the empty_mapper_file (irrelevant) and modified the
+  location of the mapper file in configuration file
+
+*pam_pkcs11-0.6.2-r3 (01 Dec 2010)
+
+  01 Dec 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r3.ebuild, -pam_pkcs11-0.6.2-r2.ebuild:
+  Modified the mapper used in the configuration file ;
+  Added a patch to support label=xxxx to select the certificate
+  to be used for signature.
+
+*pam_pkcs11-0.6.2-r2 (10 Nov 2010)
+
+  10 Nov 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r2.ebuild, -pam_pkcs11-0.6.2-r1.ebuild:
+  Replaced the pkcs11 module used in the pam configuration
+  files to use the p11 proxy.
+
+*pam_pkcs11-0.6.2-r1 (13 Jul 2010)
+
+  13 Jul 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pam_pkcs11-0.6.2-r1.ebuild:
+  Initial overlay import. added card removal & insert xscreensaver scripts & configuration files, pam pkcs11 configuration file, paxctl entries to load oberthur libraries
+
+

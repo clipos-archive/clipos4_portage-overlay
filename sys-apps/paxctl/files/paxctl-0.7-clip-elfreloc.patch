@@ -1,0 +1,51 @@
+--- ./paxctl.c.orig	2012-04-06 13:48:47.000000000 +0200
++++ ./paxctl.c	2012-04-06 13:50:33.000000000 +0200
+@@ -34,6 +34,7 @@ static void report_flags(const Elf64_Wor
+     { "RANDEXEC", PF_RANDEXEC, 'X' },
+     { "EMUTRAMP", PF_EMUTRAMP, 'E' },
+     { "RANDMMAP", PF_RANDMMAP, 'R' },
++    { "ELFRELOC", PF_ELFRELOC, 'L' },
+   };
+ 
+   const unsigned int num_pax_flags = sizeof pax_flags / sizeof pax_flags[0];
+@@ -82,6 +83,7 @@ static void usage(void)
+     "options:\n"
+     "\t-p: disable PAGEEXEC\t\t-P: enable PAGEEXEC\n"
+     "\t-e: disable EMUTRAMP\t\t-E: enable EMUTRAMP\n"
++    "\t-l: disable ELFRELOC\t\t-L: enable ELFRELOC\n"
+     "\t-m: disable MPROTECT\t\t-M: enable MPROTECT\n"
+     "\t-r: disable RANDMMAP\t\t-R: enable RANDMMAP\n"
+     "\t-x: disable RANDEXEC\t\t-X: enable RANDEXEC\n"
+@@ -188,7 +190,7 @@ static int pax_process_files(struct pax_
+ static int pax_parse_args(int argc, struct pax_state * const state)
+ {
+   while (1) {
+-    switch(getopt(argc, state->argv, "pPsSmMeErRxXvqQzcC")) {
++    switch(getopt(argc, state->argv, "pPsSlLmMeErRxXvqQzcC")) {
+     case -1:
+       state->files = (unsigned int)optind;
+       return optind < argc ? EXIT_SUCCESS : EXIT_FAILURE;
+@@ -212,6 +214,7 @@ static int pax_parse_args(int argc, stru
+ 
+     parse_flag('p', 'P', PAGEEXEC);
+     parse_flag('s', 'S', SEGMEXEC);
++    parse_flag('l', 'L', ELFRELOC);
+     parse_flag('m', 'M', MPROTECT);
+     parse_flag('e', 'E', EMUTRAMP);
+     parse_flag('r', 'R', RANDMMAP);
+--- ./paxctl.h.orig	2012-04-06 13:52:11.000000000 +0200
++++ ./paxctl.h	2012-04-06 13:51:03.000000000 +0200
+@@ -66,6 +66,13 @@ struct pax_state {
+ 
+ #endif
+ 
++#ifndef PF_ELFRELOC
++#define PF_ELFRELOC	(1U << 20)	/* Enable  ELFRELOCS */
++#endif
++#ifndef PF_NOELFRELOC
++#define PF_NOELFRELOC	(1U << 21)	/* Disable ELFRELOCS */
++#endif
++
+ #define PF_PAX_MASK	0xFFF0U
+ 
+ #endif

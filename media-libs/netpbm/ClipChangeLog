@@ -1,0 +1,28 @@
+# CLIP ChangeLog for media-libs/netpbm
+
+*netpbm-10.61.00-r1 (13 Nov 2013)
+
+  13 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +netpbm-10.61.00-r1.ebuild, -netpbm-10.61.00.ebuild:
+  Force rebuild - libpng revdep.
+
+*netpbm-10.61.00 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +netpbm-10.61.00.ebuild, -netpbm-10.57.00.ebuild,
+  +files/netpbm-10.61-test.patch:
+  Bump to latest.
+
+*netpbm-10.57.00 (02 Apr 2012)
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +netpbm-10.57.00.ebuild, -netpbm-10.49.00.ebuild,
+  -files/netpbm-10.48.00-pnmtopng-zlib.patch,
+  -files/netpbm-10.49.00-sigpower.patch:
+  Bump to latest.
+
+*netpbm-10.49.00 (07 Jul 2011)
+ 
+  07 Jul 2011; Arnauld Michelizza <clipos@ssi.gouv.fr>
+  netpbm-10.49.00.ebuild:
+  Initial import. CPREFIX fixes.

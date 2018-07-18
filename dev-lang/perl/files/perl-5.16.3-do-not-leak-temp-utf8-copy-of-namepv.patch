@@ -1,0 +1,16 @@
+Index: perl-5.16.3/pad.c
+===================================================================
+--- perl-5.16.3.orig/pad.c
++++ perl-5.16.3/pad.c
+@@ -891,8 +891,10 @@ Perl_pad_findmy_pvn(pTHX_ const char *na
+ 
+         if (is_utf8)
+             flags |= padadd_UTF8_NAME;
+-        else
++        else {
+             flags &= ~padadd_UTF8_NAME;
++	    SAVEFREEPV(namepv);
++	   }
+     }
+ 
+     offset = pad_findlex(namepv, namelen, flags,

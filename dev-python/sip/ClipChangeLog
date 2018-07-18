@@ -1,0 +1,39 @@
+# CLIP ChangeLog for dev-python/sip
+
+*sip-4.16.8 (14 Sep 2015)
+
+  14 Sep 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +sip-4.16.8.ebuild, -sip-4.16.2.ebuild:
+  Bumped to 4.16.8
+
+*sip-4.16.2 (15 Jul 2014)
+
+  21 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sip-4.16.2.ebuild, -sip-4.14.3.ebuild,
+  -files/sip-4.9.3-darwin.patch,
+  +files/sip-4.15.5-darwin.patch:
+  Bump to latest stable.
+  
+*sip-4.14.3 (24 Jul 2013)
+
+  24 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sip-4.14.3.ebuild, -sip-4.13.3.ebuild:
+
+*sip-4.13.3 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sip-4.13.3.ebuild, -sip-4.12.4-r1.ebuild:
+  Bump to latest.
+
+*sip-4.12.4-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sip-4.12.4-r1.ebuild, -sip-4.12.4.ebuild:
+  Force rebuild
+
+*sip-4.12.4 (13 Sep 2011)
+
+  13 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sip-4.12.4.ebuild:
+  Initial import. CPREFIX fixes.
+

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+LIST="/var/pkg/lib/dpkg/info/ghostscript-gpl.list"
+
+sed -i -e '/^\/etc/d; /^\/usr\/share/d; /^\/usr\/lib/d' "${LIST}"
+true

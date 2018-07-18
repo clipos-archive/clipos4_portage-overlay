@@ -1,0 +1,48 @@
+--- CPP/7zip/Bundles/Format7zFree/makefile.orig	2010-01-21 21:19:19.097336769 +0100
++++ CPP/7zip/Bundles/Format7zFree/makefile	2010-01-21 21:19:42.641336473 +0100
+@@ -150,13 +150,7 @@
+   NsisIn.o \
+   NsisRegister.o \
+ 
+-RAR_OBJS = \
+-  RarHandler.o \
+-  RarHeader.o \
+-  RarIn.o \
+-  RarItem.o \
+-  RarVolumeInStream.o \
+-  RarRegister.o \
++RAR_OBJS =
+ 
+ TAR_OBJS = \
+   TarHandler.o \
+@@ -233,12 +227,7 @@
+   ZlibDecoder.o \
+   ZDecoder.o \
+ 
+-COMPRESS_OBJS_NON_FREE = \
+-  Rar1Decoder.o \
+-  Rar2Decoder.o \
+-  Rar3Decoder.o \
+-  Rar3Vm.o \
+-  RarCodecsRegister.o \
++COMPRESS_OBJS_NON_FREE =
+ 
+ CRYPTO_OBJS = \
+   7zAes.o \
+@@ -247,8 +236,6 @@
+   MyAes.o \
+   Pbkdf2HmacSha1.o \
+   RandGen.o \
+-  Rar20Crypto.o \
+-  RarAes.o \
+   Sha1.o \
+   WzAes.o \
+   ZipCrypto.o \
+@@ -298,7 +285,6 @@
+   $(HFS_OBJS) \
+   $(ISO_OBJS) \
+   $(NSIS_OBJS) \
+-  $(RAR_OBJS) \
+   $(TAR_OBJS) \
+   $(UDF_OBJS) \
+   $(WIM_OBJS) \

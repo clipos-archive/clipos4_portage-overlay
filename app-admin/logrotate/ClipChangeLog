@@ -1,0 +1,80 @@
+# CLIP ChangeLog for app-admin/logrotate
+
+*logrotate-3.8.1-r8 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r8.ebuild, -logrotate-3.8.1-r7.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*logrotate-3.8.1-r7 (10 Nov 2015)
+
+  10 Nov 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r7.ebuild, -logrotate-3.8.1-r7.ebuild,
+  files/logrotate-3.8.1-clip-flags.patch:
+  Change the "ext2_fs.h" include path to match with the linux-headers update in
+  3.14.
+  Update the ebuild dependencies.
+
+*logrotate-3.8.1-r7 (21 Oct 2014)
+
+  21 Oct 2014; Hugo Chargois <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r7.ebuild, -logrotate-3.8.1-r6.ebuild,
+  files/logrotate.skel:
+  Add "rotate" variable which is still needed when "maxage" is used.
+
+*logrotate-3.8.1-r6 (24 Dec 2013)
+
+  24 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r6.ebuild, -logrotate-3.8.1-r5.ebuild,
+  files/logrotate.skel:
+  Change SYSLOG_FILES to a bash array, in accordance with
+  the latest baselayout-clip evolution.
+
+*logrotate-3.8.1-r5 (02 Oct 2012)
+
+  02 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r5.ebuild, -logrotate-3.8.1-r4.ebuild,
+  files/logrotate.skel:
+  Do not overwrite 'rotate' or 'maxage' directive.
+
+*logrotate-3.8.1-r4 (19 Jul 2012)
+
+  19 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r4.ebuild, -logrotate-3.8.1-r3.ebuild:
+  Create /var/log/keep.
+
+*logrotate-3.8.1-r3 (10 Jul 2012)
+
+  10 Jul 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r3.ebuild, -logrotate-3.8.1-r2.ebuild, files/logrotate.skel:
+  Add maxage variable.
+  Remove dmesg from rotation.
+
+*logrotate-3.8.1-r2 (05 Jul 2012)
+
+  05 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r2.ebuild, -logrotate-3.8.1-r1.ebuild,
+  files/logrotate-3.8.1-clip-flags.patch,
+  files/logrotate.skel:
+  Correctly reposition append_only after copytruncate.
+  Try to fix permissions.
+
+*logrotate-3.8.1-r1 (13 Jun 2012)
+
+  13 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +logrotate-3.8.1-r1.ebuild, -logrotate-3.8.1.ebuild,
+  files/logrotate-3.8.1-clip-flags.patch:
+  Fix removal of old compressed logs.
+  Switch from mktemp to mkstemp.
+  
+
+*logrotate-3.8.1 (06 Jun 2012)
+
+  06 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  logrotate-3.8.1.ebuild, +files/logrotate.skel,
+  +files/logrotate-3.8.1-clip-flags.patch,
+  +files/logrotate.cron.clip:
+  Initial overlay import. Add skeleton file to generate logrotate.conf
+  on CLIP, add patch to make logrotate manage immutable/append-only flags
+  itself, add verictl entry to give logrotate CAP_LINUX_IMMUTABLE
+  when the caller has it in its inheritable mask.

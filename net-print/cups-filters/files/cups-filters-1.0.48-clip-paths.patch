@@ -1,0 +1,112 @@
+--- ./configure.ac.orig	2014-03-20 17:34:32.743983965 +0100
++++ ./configure.ac	2014-03-20 17:34:34.395983907 +0100
+@@ -92,11 +92,11 @@ CUPS_VERSION=`$CUPSCONFIG --version`
+ AC_SUBST(CUPS_CFLAGS)
+ AC_SUBST(CUPS_LIBS)
+ 
+-CUPS_DATADIR="`$CUPSCONFIG --datadir`"
++CUPS_DATADIR="${datarootdir}/cups"
+ AC_DEFINE_UNQUOTED(CUPS_DATADIR, "$CUPS_DATADIR", [CUPS datadir])
+ AC_SUBST(CUPS_DATADIR)
+ 
+-CUPS_SERVERROOT="`$CUPSCONFIG --serverroot`"
++CUPS_SERVERROOT="${sysconfdir}/cups"
+ AC_DEFINE_UNQUOTED(CUPS_SERVERROOT, "$CUPS_SERVERROOT", [CUPS serverroot])
+ AC_SUBST(CUPS_SERVERROOT)
+ 
+@@ -104,7 +104,7 @@ CUPS_FONTPATH="$CUPS_DATADIR/fonts"
+ AC_DEFINE_UNQUOTED(CUPS_FONTPATH, "$CUPS_FONTPATH", [Path to CUPS fonts dir])
+ AC_SUBST(CUPS_FONTPATH)
+ 
+-CUPS_SERVERBIN="`$CUPSCONFIG --serverbin`"
++CUPS_SERVERBIN="${libexecdir}/cups"
+ AC_DEFINE_UNQUOTED(CUPS_SERVERBIN, "$CUPS_SERVERBIN", [Path to CUPS binaries dir])
+ AC_SUBST(CUPS_SERVERBIN)
+ 
+--- ./filter/gstoraster.c.orig	2014-03-20 17:34:32.744983965 +0100
++++ ./filter/gstoraster.c	2014-03-20 17:34:34.397983907 +0100
+@@ -51,10 +51,10 @@ MIT Open Source License  -  http://www.o
+ #define PDF_MAX_CHECK_COMMENT_LINES	20
+ 
+ #ifndef CUPS_FONTPATH
+-#define CUPS_FONTPATH "/usr/share/cups/fonts"
++#define CUPS_FONTPATH "/usr/local/share/cups/fonts"
+ #endif
+ #ifndef CUPSDATA
+-#define CUPSDATA "/usr/share/cups"
++#define CUPSDATA "/usr/local/share/cups"
+ #endif
+ 
+ typedef enum {
+--- ./filter/gstopxl.orig	2014-03-20 17:34:32.744983965 +0100
++++ ./filter/gstopxl	2014-03-20 17:34:34.397983907 +0100
+@@ -21,7 +21,7 @@
+ #
+ 
+ # Set the library/font path...
+-GS_LIB="${CUPS_FONTPATH:=/usr/share/cups/fonts}"
++GS_LIB="${CUPS_FONTPATH:=/usr/local/share/cups/fonts}"
+ export GS_LIB
+ 
+ # Determine the PCL XL/PCL 6 driver to use...
+@@ -208,11 +208,11 @@ tempfiles="$tempfiles $ifile"
+ 
+ cat >"$ifile"
+ 
+-echo INFO: Starting GPL Ghostscript `/usr/bin/gs --version`... 1>&2
+-echo DEBUG: Running /usr/bin/gs $gsopts $ppd_opts -sOUTPUTFILE="%stdout" -c "$ps_code" -f "$ifile" 1>&2
++echo INFO: Starting GPL Ghostscript `/usr/local/bin/gs --version`... 1>&2
++echo DEBUG: Running /usr/local/bin/gs $gsopts $ppd_opts -sOUTPUTFILE="%stdout" -c "$ps_code" -f "$ifile" 1>&2
+ 
+ # Now run Ghostscript...
+-/usr/bin/gs $gsopts $ppd_opts -sOUTPUTFILE="%stdout" -c "$ps_code" -f "$ifile"
++/usr/local/bin/gs $gsopts $ppd_opts -sOUTPUTFILE="%stdout" -c "$ps_code" -f "$ifile"
+ 
+ #
+ #
+--- ./filter/gstopxl.in.orig	2014-03-20 17:34:32.744983965 +0100
++++ ./filter/gstopxl.in	2014-03-20 17:34:34.397983907 +0100
+@@ -21,7 +21,7 @@
+ #
+ 
+ # Set the library/font path...
+-GS_LIB="${CUPS_FONTPATH:=/usr/share/cups/fonts}"
++GS_LIB="${CUPS_FONTPATH:=/usr/local/share/cups/fonts}"
+ export GS_LIB
+ 
+ # Determine the PCL XL/PCL 6 driver to use...
+--- ./filter/pstopdf.orig	2014-03-20 17:34:32.743983965 +0100
++++ ./filter/pstopdf	2014-03-20 17:34:34.396983907 +0100
+@@ -14,8 +14,8 @@
+ 
+ set -e
+ 
+-PS2PS=`which ps2ps`
+-GS=`which gs`
++PS2PS=/usr/local/bin/ps2ps
++GS=/usr/local/bin/gs
+ 
+ PS2PS_OPTIONS="-dAutoRotatePages=/None -dAutoFilterColorImages=false \
+                -dNOPLATFONTS -dPARANOIDSAFER -dNOINTERPOLATE -sstdout=%stderr"
+--- ./filter/imagetops.orig	2014-03-20 17:34:32.743983965 +0100
++++ ./filter/imagetops	2014-03-20 17:34:34.396983907 +0100
+@@ -19,7 +19,7 @@
+ # Released under GPL 2 or later
+ #
+ 
+-PDF2PS=`which pdf2ps`
++PDF2PS=/usr/local/bin/pdf2ps
+ 
+ echo "DEBUG: imagetops argv[$#] = $@" >&2
+ echo "DEBUG: PPD: $PPD" >&2
+--- ./filter/texttops.orig	2014-03-20 17:34:32.743983965 +0100
++++ ./filter/texttops	2014-03-20 17:34:34.396983907 +0100
+@@ -19,7 +19,7 @@
+ # Released under GPL 2 or later
+ #
+ 
+-PDF2PS=`which pdf2ps`
++PDF2PS=/usr/local/bin/pdf2ps
+ 
+ echo "DEBUG: texttops argv[$#] = $@" >&2
+ echo "DEBUG: PPD: $PPD" >&2

@@ -1,0 +1,107 @@
+# CLIP ChangeLog for app-arch/tar
+
+*tar-1.26-r5 (09 Nov 2015)
+
+  09 Nov 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tar-1.26-r5.ebuild, -tar-1.26-r4.ebuild:
+  Build fix for the 4.4.2 specfile.
+
+*tar-1.26-r4 (03 Nov 2015)
+
+  03 Nov 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tar-1.26-r4.ebuild, -tar-1.26-r3.ebuild:
+  Fix generated RDEPEND.
+
+*tar-1.26-r3 (22 Oct 2015)
+
+  22 Oct 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tar-1.26-r3.ebuild, -tar-1.26-r2.ebuild:
+  Install on the admin and audit jails too.
+  Fix libexecdir installation path for RM.
+
+*tar-1.26-r2 (21 Feb 2014)
+
+  21 Feb 2014; ANSSI <clipos@ssi.gouv.fr>
+  +tar-1.26-r2.ebuild, -tar-1.26-r1.ebuild:
+  Missing dependency to autotools eclass in ebuild.
+
+*tar-1.26-r1 (20 Dec 2012)
+
+  20 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +tar-1.26-r1.ebuild, -tar-1.26.ebuild, +files/tar-1.26-no-gets.patch:
+  Fix build against glibc 2.16.
+
+*tar-1.26 (21 Mar 2012)
+
+  21 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tar-1.26.ebuild, -tar-1.23-r4.ebuild,
+  -files/tar-1.23-revert-pipe.patch,
+  -files/tar-1.23-strncpy.patch,
+  -files/tar-1.23-tests.patch,
+  -files/tar-1.23-symlink-k-hang.patch:
+  Bump to latest.
+
+*tar-1.23-r4 (27 Oct 2011)
+
+  27 Oct 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +tar-1.23-r4.ebuild, -tar-1.23-r3.ebuild:
+  Remove the unpack/cd to effectively apply the strncpy patch needed by
+  gcc-4.5 to prevent buffer overflow.
+
+*tar-1.23-r3 (19 Jul 2010)
+
+  19 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tar-1.23-r3.ebuild, -tar-1.22.ebuild,
+  -files/tar-1.21-revert-pipe.patch, +files/tar-1.23-revert-pipe.patch,
+  +files/tar-1.23-strncpy.patch, +files/tar-1.23-symlink-k-hang.patch,
+  +files/tar-1.23-tests.patch, files/tar.1:
+  Bump to latest, fix for CVE-2010-0624.
+
+*tar-1.22 (03 Mar 2010)
+
+  03 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tar-1.22.ebuild, -tar-1.19-r2.ebuild,
+  -files/tar-1.19-gnu-inline.patch, -files/tar-1.19-update-flag.patch,
+  +files/tar-1.21-revert-pipe.patch:
+  Bump to latest. Install everything in /usr if USE clip-rm is set, so
+  that sharing will be automatic between all views.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  tar-1.19-r2.ebuild:
+  Switch to verictl2.eclass.
+
+*tar-1.19-r2 (16 Jul 2008)
+
+  16 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tar-1.19-r2.ebuild, -tar-1.19-r1.ebuild:
+  Switch to CCSD veriexec hashes.
+
+*tar-1.19-r1 (26 Apr 2007)
+
+  26 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tar-1.19-r1.ebuild, -tar-1.16.1-r1.ebuild, 
+  +files/tar-1.19-gnu-inline.patch, +files/tar-1.19-update-flag.patch:
+  Bump to latest *unstable* tar to fix GLSA-200709-09 and compilation
+  issues with glibc-2.6. This is taken from gentoo's ~x86 and marked x86
+  because the latest gentoo stable version has issues with ark (see gentoo
+  bug #200315.
+  Changeset is the same as 1.16.1-r1, except that CAP_MKNOD is only given to
+  tar in CLIP core, not in RM.
+
+*tar-1.16.1-r1 (26 Apr 2007)
+
+  26 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +tar-1.16.1-r1.ebuild, -tar-1.16.1.ebuild:
+  Add IUSE clip-rm to install a copy of tar in /user_root/bin, to 
+  provide the USER view with an ark-compatible tar.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  -tar-1.15.1.ebuild:
+  Remove stale ebuild.
+
+*tar-1.16.1 (26 Apr 2007)
+
+  26 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  tar-1.16.1.ebuild:
+  Initial CLIP import, add verictl support providing an authorized
+  CAP_SYS_MKNOD for /bin/tar, needed for the new (u)mount.crypt.

@@ -1,0 +1,82 @@
+#!/sbin/runscript
+# Copyright 2010 SGDSN/ANSSI
+# Author: Benjamin Morin <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+source "/etc/conf.d/p11proxy"
+
+source /lib/clip/jails.sub
+
+
+depend() {
+	need clock hostname veriexec pcscd
+}
+
+wait_loop() {
+	local cnt=0
+	local p11jail="$1"
+	local p11proxy_jail=$(cat "/etc/jails/${p11jail}/root")
+	local p11proxy_ready="${p11proxy_jail}/proxyready"
+
+	while /bin/true; do
+		[[ -f "${p11proxy_ready}" ]] && break
+		einfo "Waiting for PKCS11 proxy"
+		sleep 0.5
+		let "cnt+=1"
+		if [[ ${cnt} -ge 10 ]]; then
+			ewarn "Timed-out waiting for PKCS11 proxy"
+			return 1
+		fi
+	done
+}
+
+start() {
+	ebegin "Setting up PKCS11 proxy service"
+
+	local p11proxy_p11module="${P11MODULE}"
+	local jail=""
+
+	for jail in ${P11CLIENTSOCK} ; do
+	    eindent
+
+	    local p11proxyjail="p11proxy_${jail}"
+	    local ctx="$(cat "/etc/jails/${p11proxyjail}/context")"
+	    local root="$(cat "/etc/jails/${p11proxyjail}/root")"
+	    # Remove leftover mark
+	    rm -f "${root}/proxyready"
+
+	    ebegin "Setting up ${p11proxyjail} jail"
+	    
+	    local p11proxy_socket_path=""
+	    if [[ "${jail}" == "core" ]] ; then
+		    p11proxy_socket_path="/var/run/p11proxy"
+	    else
+		    p11proxy_socket_path="/vservers/${jail}/user_priv/var/run/p11proxy"
+	    fi
+
+	    [[ ! -d "${p11proxy_socket_path}" ]] && mkdir "${p11proxy_socket_path}"
+
+	    jail_setup_wait "${p11proxyjail}"
+	    eend $?
+	
+	    ebegin "Starting PKCS11 proxy in jail ${p11proxyjail}"
+	    /usr/sbin/p11proxy -X "${ctx}" -m "${p11proxy_p11module}" -s "${p11proxy_socket_path}"
+	    eend $?
+	    #local ret=$?
+	    #wait_loop "${p11proxyjail}" || ret=1
+	    #eend $ret
+
+	    eoutdent
+	done
+
+}
+
+stop() {
+	ebegin "Stopping p11proxy services"
+
+	for jail in ${P11CLIENTSOCK} ; do
+		/sbin/vsctl "p11proxy_${jail}" stop
+		eend $?
+	done
+}
+

@@ -1,0 +1,62 @@
+# CLIP ChangeLog for dev-vcs/mercurial
+
+*mercurial-2.8.2 (12 Jun 2014)
+
+  12 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mercurial-2.8.2.ebuild, -mercurial-2.6.3.ebuild:
+  Bump to latest stable.
+
+*mercurial-2.6.3 (07 Aug 2013)
+
+  07 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mercurial-2.6.3.ebuild, -mercurial-1.5-r7.ebuild,
+  +files/cacerts.rc:
+  Bump to latest, switch to distutils-r1.
+
+*mercurial-1.5-r7 (13 Sep 2012)
+
+  13 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r7.ebuild, -mercurial-1.5-r6.ebuild:
+  Add CATEGORY_FR.
+
+*mercurial-1.5-r6 (13 Sep 2012)
+
+  13 Sep 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r6.ebuild, -mercurial-1.5-r5.ebuild:
+  Rebuild with Tk support (hgk).
+
+*mercurial-1.5-r5 (27 Jan 2011)
+
+  27 Jan 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r5.ebuild, -mercurial-1.5-r4.ebuild:
+  Clean shebang replacement and remove config.
+
+*mercurial-1.5-r4 (26 Aug 2010)
+
+  26 Aug 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r4.ebuild, -mercurial-1.5-r3.ebuild:
+  Add default configuration.
+
+*mercurial-1.5-r3 (13 Aug 2010)
+
+  13 Aug 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r3.ebuild, -mercurial-1.5-r2.ebuild:
+  Bugfixes (IUSE tk/clip, PREFIX) and cleanup.
+
+*mercurial-1.5-r2 (12 Aug 2010)
+
+  12 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r2.ebuild, -mercurial-1.5-r1.ebuild:
+  Add verictl entries for network access (script mode).
+
+*mercurial-1.5-r1 (06 Aug 2010)
+
+  06 Aug 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +mercurial-1.5-r1.ebuild, -mercurial-1.5.ebuild:
+  Add DESCRIPTION_FR needed for optional packages.
+
+*mercurial-1.5 (22 Jul 2010)
+
+  22 Jul 2010; Olivier Levillain <clipos@ssi.gouv.fr>
+  +mercurial-1.5.ebuild:
+  Initial overlay import

@@ -1,0 +1,27 @@
+#!/sbin/runscript
+# Copyright 2010 SGDSN/ANSSI
+# Author: Benjamin Morin <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+#source "/etc/conf.d/pcscd"
+
+
+PIDFILE=/var/run/pcscd/pcscd.pid
+PCSCBIN=/usr/sbin/pcscd
+
+depend() {
+	need clock hostname
+}
+
+start() {
+	ebegin "Starting pcsc daemon"
+	start-stop-daemon --start --make-pidfile --pidfile ${PIDFILE} --exec ${PCSCBIN}
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping pcsc daemon"
+	start-stop-daemon --stop --pidfile ${PIDFILE} --exec ${PCSCBIN}
+	eend $?
+}
+

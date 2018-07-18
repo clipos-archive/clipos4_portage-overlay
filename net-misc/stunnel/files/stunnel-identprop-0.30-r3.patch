@@ -1,0 +1,1292 @@
+diff -pruN stunnel-4.31.orig/doc/stunnel.fr.pod stunnel-4.31/doc/stunnel.fr.pod
+--- stunnel-4.31.orig/doc/stunnel.fr.pod	2007-09-23 17:29:19.000000000 +0200
++++ stunnel-4.31/doc/stunnel.fr.pod	2010-08-19 16:29:22.000000000 +0200
+@@ -197,6 +197,75 @@ au lieu de syslog (sauf si B<output> est
+ 
+ Par défaultE<nbsp>: arrière-plan en mode daemon.
+ 
++=item B<identAdmin> = [hôte]:port
++
++Accepte des connexions d'administration pour l'identification sur cette 
++adresse et ce port. 
++
++Si l'hôte n'est pas indiqué, le port est ouvert pour toutes les adresses IP de
++la machine locale.
++
++Les requêtes possibles sont :
++
++=over 2
++
++=item *
++
++max_conns : nombre maximum de connexions simultanées depuis le lancement 
++de stunnel ou depuis la remise à zéro du compteur.
++
++=item *
++
++max_users : nombre maximum d'utilisateurs simultanés depuis le lancement 
++de stunnel ou depuis la remise à zéro du compteur.
++
++=item *
++
++max_conns_user : nombre maximum de connexions simultanées pour un 
++utilisateur depuis le lancement de stunnel ou depuis la remise 
++à zéro du compteur.
++
++=item *
++
++clear_max : remise à zéro des compteurs de maximum.
++
++=item *
++
++nb_conns : nombre actuel de connexions simultanées.
++
++=item *
++
++nb_users : nombre actuel d'utilisateurs connectés.
++
++=item *
++
++list_users : liste des utilisateurs actuellement connectés et nombre de 
++connexions pour chacun des utilisateurs.
++
++=item *
++
++quit : termine la connexion avec le serveur d'administration.
++
++=back
++
++Par défautE<nbsp>: 127.0.0.1:790 (interface locale sur le port 790)
++
++=item B<identAdminAllowed> = hôte
++
++La machine spécifiée est autorisée à effectuer des requêtes administratives
++au serveur administratif d'identification (voir identAdmin)
++
++Par défautE<nbsp>: localhost
++
++=item B<identBind> = [hôte]:port
++
++Accepte des connexions d'identification (RFC 1413) sur cette adresse. 
++
++Si l'hôte n'est pas indiqué, le port est ouvert pour toutes les adresses IP de
++la machine locale.
++
++Par défautE<nbsp>: 0.0.0.0:113 (toutes les interfaces sur le port 113)
++
+ =item B<key> = fichier
+ 
+ Fichier de clef privée pour le certificat spécifié par I<cert>
+@@ -370,6 +439,25 @@ Les arguments sont séparés par un nombre
+ 
+ Applique le contrôle d'identité d'utilisateur IDENT (RFC 1413)
+ 
++=item B<identFields> = nombre
++
++sélection des champs d'identification à retourner lors des requêtes d'identification
++
++         1 : subject Common Name (par défaut)
++         2 : subject Organization Unit
++         4 : subject Organization
++         8 : subject Locality
++        16 : subject Country
++        32 : issuer Common Name
++        64 : issuer Organization Unit
++       128 : issuer Organization
++       256 : issuer Locality
++       512 : issuer Country
++
++=item B<identServer> = yes|no
++
++Active ou désactive le serveur d'identification pour ce service.
++
+ =item B<local> = hôte
+ 
+ Adresse IP de l'interface de sortie utilisée pour les connexions distantes.
+diff -pruN stunnel-4.31.orig/doc/stunnel.pod stunnel-4.31/doc/stunnel.pod
+--- stunnel-4.31.orig/doc/stunnel.pod	2010-02-03 13:46:41.000000000 +0100
++++ stunnel-4.31/doc/stunnel.pod	2010-08-19 16:29:22.000000000 +0200
+@@ -181,6 +181,67 @@ instead of via syslog (unless B<output> 
+ 
+ default: background in daemon mode
+ 
++=item B<identAdmin> = [host:]port
++
++Accept administrative ident connections on the specified host:port.
++
++If no host specified, defaults to all IP addresses for the local host.
++
++The available requests are :
++
++=over 2
++
++=item *
++
++max_conns : maximum number of simultaneous connections since start or reset of counter.
++
++=item *
++
++max_users : maximum number of simultaneous users since start or reset of counter.
++
++=item *
++
++max_conns_user : maximum number of simultaneous connections for one user since start or reset of counter.
++
++=item *
++
++clear_max : reset max counters to zero.
++
++=item *
++
++nb_conns : current number of simultaneous connections.
++
++=item *
++
++nb_users : current number of users connected.
++
++=item *
++
++list_users : list users currently connected and number of connections
++for each user.
++
++=item *
++
++quit : close connection with ident admin server.
++
++=back
++
++default: 127.0.0.1:790 (loopback interface on localhost, port 790)
++
++=item B<identAdminAllowed> = host
++
++The specified host is allowed to ask adminitrative ident requests (see identAdmin)
++
++default: localhost
++
++=item B<identBind> = [host:]port
++
++Accept ident requests (see RFC 1413) on the specified host.
++
++If no host specified, defaults to all IP addresses for the local host.
++
++default: 0.0.0.0:113 (all interfaces on localhost)
++
+ =item B<output> = file
+ 
+ append log messages to a file instead of using syslog
+@@ -399,6 +460,25 @@ default: rr
+ 
+ use IDENT (RFC 1413) username checking
+ 
++=item B<identFields> = number
++
++Selects which combination of ident fields to answer to ident requests :
++
++         1 : subject Common Name (default)
++         2 : subject Organization Unit
++         4 : subject Organization
++         8 : subject Locality
++        16 : subject Country
++        32 : issuer Common Name
++        64 : issuer Organization Unit
++       128 : issuer Organization
++       256 : issuer Locality
++       512 : issuer Country
++
++=item B<identServer> = yes|no
++
++Activate ident server for this service.
++
+ =item B<key> = keyfile
+ 
+ private key for certificate specified with I<cert> option
+diff -pruN stunnel-4.31.orig/src/client.c stunnel-4.31/src/client.c
+--- stunnel-4.31.orig/src/client.c	2010-01-29 11:42:16.000000000 +0100
++++ stunnel-4.31/src/client.c	2010-08-19 16:34:37.000000000 +0200
+@@ -152,6 +152,7 @@ static void run_client(CLI *c) {
+          error==1 ? "reset" : "closed", c->ssl_bytes, c->sock_bytes);
+ 
+         /* cleanup IDENT socket */
++    remove_ident_connection(c);
+     if(c->fd>=0)
+         closesocket(c->fd);
+ 
+@@ -259,6 +260,7 @@ static void init_remote(CLI *c) {
+     /* setup c->remote_fd, now */
+     if(c->opt->option.remote) {
+         c->remote_fd.fd=connect_remote(c);
++        add_ident_connection(c);
+     } else /* NOT in remote mode */
+         c->remote_fd.fd=connect_local(c);
+     c->remote_fd.is_socket=1; /* always! */
+diff -pruN stunnel-4.31.orig/src/ident.c stunnel-4.31/src/ident.c
+--- stunnel-4.31.orig/src/ident.c	1970-01-01 01:00:00.000000000 +0100
++++ stunnel-4.31/src/ident.c	2010-08-19 16:29:22.000000000 +0200
+@@ -0,0 +1,755 @@
++/*
++ *   ident.c   patch added for Universal SSL tunnel
++ *   Copyright (C) 2008 Christophe Nanteuil <christophe.nanteuil@gmail.com>
++ *
++ *   This program is free software; you can redistribute it and/or modify it
++ *   under the terms of the GNU General Public License as published by the
++ *   Free Software Foundation; either version 2 of the License, or (at your
++ *   option) any later version.
++ * 
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ *   See the GNU General Public License for more details.
++ * 
++ *   You should have received a copy of the GNU General Public License along
++ *   with this program; if not, see <http://www.gnu.org/licenses>.
++ * 
++ *   The socket dialogs, using the ident protocol specified in RFC 1413,
++ *   with programs that stunnel connects to in order to provide identification 
++ *   propagation from stunnel clients certificates.
++ */
++
++#include "common.h"
++#include "prototypes.h"
++
++#include <sys/types.h> 
++#include <sys/socket.h>
++#include <assert.h>
++
++/* RFC 1413 compliant error messages */
++#define IDT_MSG_INVALIDPORT "ERROR : INVALID-PORT"
++#define IDT_MSG_UNKNOWN "ERROR : UNKNOWN-ERROR"
++#define IDT_MSG_NOUSER  "ERROR : NO-USER"
++#define IDT_MSG_HIDDENUSER "ERROR : HIDDEN-USER"
++
++/* selection of fields to print to ident requests */
++typedef int NameFields;
++#define FIELD_SEP                 '/'
++#define COMMON_NAME_S               1
++#define ORG_UNIT_S                  2
++#define ORG_S                       4
++#define LOCALITY_S                  8
++#define COUNTRY_S                  16
++#define COMMON_NAME_I              32
++#define ORG_UNIT_I                 64
++#define ORG_I                     128
++#define LOCALITY_I                256
++#define COUNTRY_I                 512
++
++#define NB_FIELDS                   5
++#define SENTINEL_NAMEFIELD_S	 1<<NB_FIELDS
++#define SENTINEL_NAMEFIELD_I     1<<(2*NB_FIELDS)
++
++/**
++ * A chained list seems fast enough to process all users
++ **/
++struct _user_list {
++	struct _user_list *next;
++	struct _user_list *prev;
++	char *dn;
++	char *idn;
++	unsigned int nb_conns;
++};
++
++typedef struct _user_list Userlist;
++
++static Userlist head_user = { NULL, NULL, NULL, 0};
++static unsigned int nb_users = 0;
++static unsigned int max_users = 0;
++static unsigned int nb_connections = 0;
++static unsigned int max_connections = 0;
++static unsigned int max_connections_user = 0;
++
++static int get_local_port(CLI *c) {
++    SOCKADDR_UNION loc_addr;
++    socklen_t addrlen=sizeof(SOCKADDR_UNION);
++    assert(c!=NULL);
++    memset(&loc_addr, 0, addrlen);
++    if(getsockname(c->remote_fd.fd, (struct sockaddr *)&loc_addr, 
++            &addrlen)) {
++        sockerror("getsockname");
++        return 0;
++    } else 
++        return ntohs(loc_addr.in.sin_port);
++} /* get_local_port */
++
++/*****************************
++ * Userlist related functions
++ **/
++
++/**
++ * finds user in list 
++ * @param head start of the users list 
++ * @param dn distinguished name of user
++ * @param idn distinguished name of issuer 
++ * @return pointer to the user or NULL if user does not exists in list
++ **/
++static Userlist *find_user_in_list(const Userlist *head, 
++	const char *dn, const char *idn) {
++	Userlist *usr = head->next;
++	
++	assert((dn!=NULL)&&(idn!=NULL));
++	
++	while ((usr!=NULL) && 
++	  (usr->dn!=NULL) && (strcmp( usr->dn, dn)!=0) &&
++	  (usr->idn!=NULL) && (strcmp( usr->idn, idn)!=0))
++		usr = usr->next;
++	return usr;
++} /* find_user_in_list */
++
++/**
++ * adds one connection to user account in user list
++ * if the user has no previous connection, creates an entry in the list
++ * We are in critical section (called from add_ident_connection)
++ * @param head start of the users list 
++ * @param dn distinguished name of user
++ * @param idn distinguished name of issuer 
++ * @return 0 if ok
++ *        <0 if error
++ **/
++static int add_conn_user(Userlist *head, const char *dn, const char *idn) {
++	Userlist *usr;
++	
++	assert((dn!=NULL)&&(idn!=NULL));
++	
++	if ((usr=find_user_in_list( head, dn, idn))!=NULL) {
++		if (++usr->nb_conns>max_connections_user)
++			max_connections_user=usr->nb_conns;
++		return 0;
++	} 
++	if (((usr=malloc(sizeof(Userlist)))==NULL) ||
++		((usr->dn=strdup(dn))==NULL) ||
++		((usr->idn=strdup(idn))==NULL)) {
++		s_log( LOG_ERR, "Memory Allocation failed");
++		return -1;
++	}
++	usr->nb_conns = 1;
++	usr->next = head->next;
++	usr->prev = head;
++	if (usr->next != NULL)
++		usr->next->prev = usr;
++	head->next = usr;
++	if (++nb_users>max_users)
++		max_users=nb_users;
++	return 0;
++} /* add_conn_user */
++
++/**
++ * removes one connection to user account in user list
++ * if the user has no more connection, deletes the entry from list
++ * We are in critical section (called from remove_ident_connection)
++ * @param head start of the users list 
++ * @param dn distinguished name of user
++ * @param idn distinguished name of issuer 
++ * @return 0 if ok
++ *        <0 if error
++ **/
++static int remove_conn_user(Userlist *head, const char *dn, const char *idn) {
++	Userlist *usr;		
++
++	assert((dn!=NULL)&&(idn!=NULL));
++	
++	if ((usr=find_user_in_list( head, dn, idn))==NULL) {
++		s_log( LOG_ERR, "User %s(%s) not found in user list", dn,idn);
++		return -1;
++	} 
++	if (--usr->nb_conns>0) 
++		return 0;
++	if (usr->prev==NULL) {
++		s_log( LOG_ERR, "Error while processing user list");
++		return -1;
++	}
++	usr->prev->next=usr->next;
++	if (usr->next!=NULL)
++		usr->next->prev=usr->prev;
++	free(usr->dn);
++	free(usr->idn);
++	free(usr);
++	nb_users--;
++	assert(nb_users>=0);
++	return 0;
++} /* remove_conn_user */
++
++/**
++ * elementary append one field from subject to res
++ * @param fields  set describing which fields we want
++ * @param which_one the one we are processing
++ * @param subject string containing all NB_FIELDS fields 
++ *                (either subject or issuer)
++ * @param res string containing result
++ * @param lgth max length of res string
++ **/
++static void add_field(NameFields fields, NameFields which_one, 
++	char *subject, char *res, unsigned int lgth) {
++    static char *heads[NB_FIELDS] = { "CN", "OU", "O", "L", "C" };
++    char head[5];
++    int i=0,j=0;
++    char *strfield;
++    
++    assert(res!=NULL);
++    assert(subject!=NULL);
++    
++    while ((which_one>>j)>1)
++        j++;
++    if (j>=NB_FIELDS)
++        j=j%NB_FIELDS;
++#ifdef HAVE_SNPRINTF
++    snprintf(&head[0], 5,
++#else
++    sprintf(&head[0],
++#endif
++    "%s=", heads[j]); 
++    if ((fields & which_one) && (strfield=strstr(subject, head))) {
++    	/* find end of res */
++        while ((res[i]!='\0') && (i<lgth-1))
++            i++;
++        if (fields==which_one) /* it is the only field */
++            strfield=&strfield[strlen(head)];
++        else
++            res[i++]=FIELD_SEP;
++        j=0;
++        /* append field at the end of res */
++        while ((i<lgth)&&(strfield[j]!=FIELD_SEP)&&(strfield[j]!='\0'))
++            res[i++]=strfield[j++];   
++    }
++} /* add_field */
++
++/**
++ * get the specified fields of the user from 'oneline' subject name
++ * to construct an answer in specified format
++ * @param res result of the extraction
++ * @param lgth maximum length of res string
++ * @param content string containing 'oneline' subject name
++ * @param field which field to extract from content
++ * @return the answer in the format "USERID : OTHER : ..." or error msg
++ **/
++static void construct_name(char *res, unsigned int lgth, const char *id,
++	const char *idn, NameFields fields) {    
++    char *subject_name, *issuer_name, *name;
++    unsigned int i;
++    
++    assert(res!=NULL);
++    assert(lgth>0);
++    assert((id!=NULL) && (idn!=NULL));
++    
++    if (((name = malloc(lgth)) == NULL) || 
++        ((subject_name = strdup(id)) == NULL) ||
++        ((issuer_name = strdup(idn)) == NULL)) {
++        s_log( LOG_ERR, "Memory Allocation failed");
++        strncpy( res, IDT_MSG_UNKNOWN, lgth);
++        free(name);
++        free(subject_name);
++        free(issuer_name);
++        return;
++    }
++    memset(name, 0, lgth);
++    
++    for (i = COMMON_NAME_S ; i < SENTINEL_NAMEFIELD_S ; i <<= 1)
++        add_field( fields, i, subject_name, name, lgth);
++    for (i = COMMON_NAME_I ; i < SENTINEL_NAMEFIELD_I ; i <<=1)
++        add_field( fields, i, issuer_name, name, lgth); 
++    if (name[0] == '\0')
++        strncpy( res, IDT_MSG_UNKNOWN, lgth);
++    else
++#ifdef HAVE_SNPRINTF
++    snprintf(res, lgth,
++#else
++    sprintf(res,
++#endif
++        " USERID : OTHER : %s", name);
++	free(name);
++	free(subject_name);
++	free(issuer_name);
++} /* construct_name */
++
++/*************************************
++ * global connection related functions
++ **/
++
++/** 
++ * determine the dn and idn of the user to add the connection to 
++ * the chained list of users
++ * and add the connection to the chained list of service c 
++ * @param c connection parameters
++ **/ 
++void add_ident_connection(CLI *c) {
++	char dn[STRLEN],idn[STRLEN];
++	X509 *peer_cert;
++	
++	assert(c!=NULL);
++	
++	dn[0]=idn[0]='\0';
++	if ((peer_cert=SSL_get_peer_certificate(c->ssl))==NULL) return;
++	X509_NAME_oneline(X509_get_subject_name(peer_cert), dn, STRLEN);
++	X509_NAME_oneline(X509_get_issuer_name(peer_cert), idn, STRLEN);
++	X509_free(peer_cert);
++	enter_critical_section(CRIT_IDENT); 
++	if (dn[0] && idn[0])
++		if	(add_conn_user( &head_user, dn, idn)<0)
++			s_log( LOG_ERR, "Error while adding connection to user list."); 
++	c->next=c->opt->connection_list;
++	c->opt->connection_list=c;
++	c->local_port=get_local_port(c);
++	leave_critical_section(CRIT_IDENT); 
++	if (++nb_connections>max_connections)
++		max_connections=nb_connections;
++} /* add_ident_connection */
++
++/** 
++ * removes the connection to the chained list of service c 
++ * and to the chained list of users
++ * @param c connection parameters
++ **/ 
++void remove_ident_connection(CLI *c) {
++	CLI *current, *prev;
++	char dn[STRLEN],idn[STRLEN];
++	X509 *peer_cert;
++
++	assert(c!=NULL);
++	
++	dn[0]=idn[0]='\0';
++	if ((peer_cert = SSL_get_peer_certificate(c->ssl)) == NULL) return;
++	X509_NAME_oneline(X509_get_subject_name(peer_cert), dn, STRLEN);
++	X509_NAME_oneline(X509_get_issuer_name(peer_cert), idn, STRLEN);
++	X509_free(peer_cert);
++	enter_critical_section(CRIT_IDENT);	
++	if (dn[0] && idn[0])
++		remove_conn_user( &head_user, dn, idn);
++	prev=current=c->opt->connection_list;
++	if (current==NULL) {
++		leave_critical_section(CRIT_IDENT); 
++		s_log( LOG_ERR, "Error : No connection in list, cannot remove");
++		return;
++	}
++	while ((current!=NULL)&&(current!=c)) {
++		prev=current;
++		current=current->next;
++	}
++	if (current==NULL) {
++		leave_critical_section(CRIT_IDENT); 
++		s_log( LOG_ERR, "Error while removing connection (FD:%i)",
++			c->remote_fd.fd);
++		return;
++	}
++	if (prev==current)
++		c->opt->connection_list=c->next;
++	else
++		prev->next=current->next;
++	leave_critical_section(CRIT_IDENT); 
++	nb_connections--;
++} /* remove_ident_connection */
++
++/**
++ * gets dn and idn from SSL context of the connection
++ * @param port source port of connection
++ * @param section service associated to the connection
++ * @param dn string housing subject distinguished name of remote user certificate
++ * @param idn string housing issuer distinguished name of remote user certificate
++ * @return 0 if success , <0 if error
++ **/
++static int get_peer_names(Port port, SERVICE_OPTIONS *section, char *dn, char *idn) {
++	char name[STRLEN];
++	X509 *peer_cert;
++	CLI *conn;
++
++	assert((dn!=NULL)&&(idn!=NULL));
++
++	enter_critical_section(CRIT_IDENT);
++	conn=section->connection_list;
++	while ((conn!=NULL) && (conn->local_port!=port)) 
++		conn=conn->next;
++	leave_critical_section(CRIT_IDENT);	
++	if (conn==NULL) {
++		s_log( LOG_ERR, "Connection from port %u not found", port);
++		return -1;
++	}
++	if ((peer_cert = SSL_get_peer_certificate(conn->ssl)) == NULL) 
++		return -2;
++	safecopy(dn, "SSL_CLIENT_DN=");
++	X509_NAME_oneline(X509_get_subject_name(peer_cert), name, STRLEN);
++	safestring(name);
++	safeconcat(dn, name);
++	safecopy(idn, "SSL_CLIENT_I_DN=");
++	X509_NAME_oneline(X509_get_issuer_name(peer_cert), name, STRLEN);
++	X509_free(peer_cert);
++	safestring(name);
++	safeconcat(idn, name);
++	return 0;
++} /* get_peer_names */
++
++static void do_ident_serve(IdentRequestParams *params) {
++    Port sport=60, dport=8080;
++    int num;
++    char name[2*STRLEN];
++    char dn[STRLEN], idn[STRLEN];
++    SERVICE_OPTIONS *section;
++
++	while (1) {
++		if (fdscanf((CLI *)params, params->fd, "%[^\n]", &name[0]) < 1) {
++			s_log( LOG_ERR, "Unable to parse request");
++			longjmp(params->err, 1);
++		}
++		if (sscanf( &name[0], " %u , %u ", &sport, &dport) < 2) {
++			s_log( LOG_ERR, "Unable to parse buffer %s", name);
++			longjmp(params->err, 1);
++		}
++		if ((sport <= 0) || (dport <= 0) || 
++			(sport > PORT_MAX) || (dport > PORT_MAX)) {
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"%u,%u: %s", sport, dport, IDT_MSG_INVALIDPORT);
++			longjmp(params->err, 1);
++		}
++
++		/* search service associated to the request */
++		for (section=service_options.next;section;section=section->next) {
++			unsigned int a;
++			for (a=0;a<MAX_HOSTS;a++) {
++				if ((section->remote_addr.addr[a].in.sin_addr.s_addr==params->client_addr.sin_addr.s_addr) 
++					&& (ntohs(section->remote_addr.addr[a].in.sin_port) == dport)) {
++					if (!section->option.ident) {
++							if (global_options.option.ident_mask_error) 
++								strncpy( name, IDT_MSG_UNKNOWN, STRLEN);
++							else
++								strncpy( name, IDT_MSG_HIDDENUSER, STRLEN);
++							s_log( LOG_INFO, "Ident not activated for service %s", 
++							section->servname);
++						goto send;
++					} 
++					if (get_peer_names( sport, section, dn, idn) == 0) {
++						construct_name( name, 2*STRLEN, dn, idn, 
++							section->ident_fields);
++					} else {
++						if (global_options.option.ident_mask_error) 
++							strncpy( name, IDT_MSG_UNKNOWN, STRLEN);
++						else
++							strncpy( name, IDT_MSG_NOUSER, STRLEN);
++					} /* if get_peer_names */
++					goto send;
++				} /* if good host and good port */
++			} /* for host in service */
++		} /* for service */
++		s_log( LOG_ERR, "Ident : %s:%u does not match any service", 
++			params->remnumname, dport);
++		if (global_options.option.ident_mask_error) 
++			strncpy( name, IDT_MSG_UNKNOWN, STRLEN);
++		else
++			strncpy( name, IDT_MSG_NOUSER, STRLEN);		
++send:
++		num=fdprintf((CLI *) params, params->fd, "%5u,%5u :%s", 
++			sport, dport, name);
++        switch(num) {
++            case -1: /* error */
++                sockerror("writesocket");
++                longjmp(params->err, 1);
++            case 0:
++                s_log(LOG_DEBUG, "No data written to the socket: retrying");
++                goto send;
++            default:
++                params->sock_bytes+=num;
++         } /* switch num */
++		
++	} /* while 1 */
++} /* do_ident_serve */
++
++static void run_ident_serve(IdentRequestParams *params) {
++    int error;
++    int s;    
++    char service[10];    
++    
++   	s=getnameinfo( (struct sockaddr*) &params->client_addr, params->len, 
++   		params->remnumname, IPLEN, service, 10, NI_NUMERICHOST|NI_NUMERICSERV);
++   	if (s!=0) {
++		s_log( LOG_ERR, "getnameinfo: %s\n", gai_strerror(s));
++		return;
++	}
++
++   	s_log( LOG_INFO, "handling ident request from %s (FD %u)", 
++   		params->remnumname, params->fd);    
++	error=setjmp(params->err);
++    if(!error) 
++    	do_ident_serve(params);
++    	
++    s_log(LOG_NOTICE,
++        "Connection %s: %d bytes sent ",
++         error==1 ? "reset" : "closed", params->sock_bytes);
++    if (params->fd>0)
++    	closesocket(params->fd);
++} /* run_ident_serve */
++            
++/**
++ * handles ident FRC 1413 requests from programs that stunnel connects to
++ * @param params parameters of ident connection
++ **/
++static void *handle_ident(IdentRequestParams *params) {
++	assert(params);    
++    assert(params->fd>0);
++
++    s_log(LOG_DEBUG, "Ident started");    
++	if (alloc_fd(params->fd))
++		return NULL;
++   	
++   	run_ident_serve(params);
++	s_log( LOG_INFO, "Ident finished");
++	if (params && params->opt) free(params->opt);
++	if (params) free(params);
++#if defined(USE_WIN32) && !defined(_WIN32_WCE)
++    _endthread();
++#endif
++#ifdef USE_UCONTEXT
++    s_log(LOG_DEBUG, "Context %ld closed", ready_head->id);
++    s_poll_wait(NULL, 0, 0); /* wait on poll() */
++    s_log(LOG_ERR, "INTERNAL ERROR: failed to drop context");
++#endif
++    return NULL;
++} /* handle_ident */
++
++/**
++ * Process ident admin requests.
++ * Connection is closed on client request (quit) or on bad command.
++ * request can be : 
++ *      - clear_max : reset max counters
++ * 		- nb_conns : current number of simultaneous connections
++ *		- max_conns_user : maximum number of simultaneous connections since start
++ * 		- max_users : maximum number of simultaneous users since start
++ *		- max_conns : maximum number of simultaneous connections since start
++ * 		- nb_users : current number of users connected
++ * 		- list_users : list users currently connected and number of connections for each user
++ * 		- quit : close connection with ident admin server
++ * @param arg parameters of ident connection
++ **/
++static void run_iadmin_serve(IdentRequestParams *params) {
++	char buffer[STRLEN];
++	
++	while (1) {
++		memset( buffer, '\0', STRLEN);
++		fdscanf((CLI *)params, params->fd, "%s", buffer);    
++		
++		if (!strcasecmp( &buffer[0], "CLEAR_MAX")) {
++			max_connections_user=0;
++			max_users=0;
++			max_connections=0;
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Clearing done");
++			continue;
++		}    
++		
++		if (!strcasecmp( &buffer[0], "NB_CONNS")) {
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Nb connections : %u", nb_connections);
++			continue;		}
++
++		if (!strcasecmp( &buffer[0], "MAX_CONNS_USER")) {	
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Max conns for 1 user : %u",max_connections_user);
++			continue;		}
++
++		if (!strcasecmp( &buffer[0], "MAX_CONNS")) {	
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Max conns : %u", max_connections);
++			continue;		}
++
++		if (!strcasecmp( &buffer[0], "MAX_USERS")) {	
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Max users : %u", max_users);
++			continue;		}
++
++		if (!strcasecmp( &buffer[0], "NB_USERS")) {	
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Nb users : %u", nb_users);
++			continue;		}
++		
++		if (!strcasecmp( &buffer[0], "LIST_USERS")) {	
++			Userlist *user=head_user.next;		
++			unsigned int nblines=0;
++			while (user!=NULL) {
++				if ((user->dn) && (user->idn)) 
++					params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++						"User : %s(%s) - %u connections",
++						user->dn, user->idn, user->nb_conns);
++				else
++					params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++						"User : Unknown");
++				user=user->next;
++				nblines++;
++			}
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"End of list (%u lines)", nblines);			
++			continue;
++		}
++		
++		if (!strcasecmp( &buffer[0], "QUIT")) {	
++			params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++				"Bye.");
++			break;			
++		}		
++		params->sock_bytes+=fdprintf((CLI *)params, params->fd, 
++			"Unknown command");
++		break;
++	} /* while 1 */
++} /* run_iadmin_serve */ 
++
++static void handle_iadmin(IdentRequestParams *params) {
++    char remhostname[STRLEN], *tmp=NULL;
++    int error;
++    
++    assert(params->fd>0);
++    assert(global_options.ident_admin_allowed!=NULL);
++    
++    s_log(LOG_DEBUG, "Ident admin started");    
++	if ((s_ntop(remhostname, (SOCKADDR_UNION *) &params->client_addr)==NULL) ||
++		((tmp=strstr(remhostname, ":"))==NULL)) {
++		closesocket(params->fd);
++		free(params->opt);
++		free(params);
++		return;
++	}
++	tmp[0]='\0';	/* remove port from remhostname */
++   	if (strcasecmp( remhostname, global_options.ident_admin_allowed)) {
++   		s_log( LOG_ERR, "%s is not allowed to process administrative Ident request.", 
++   			remhostname);
++		closesocket(params->fd);
++		free(params->opt);
++		free(params);
++   		return;
++   	}
++		
++	error=setjmp(params->err);
++	if (!error) 
++		run_iadmin_serve(params);
++    s_log(LOG_NOTICE,
++        "Connection %s: %d bytes sent ",
++         error==1 ? "reset" : "closed", params->sock_bytes);	
++    closesocket(params->fd);
++    if (params && params->opt) free(params->opt);
++    if (params) free(params);
++} /* handle_iadmin */
++
++/**
++ * set structure params before threading/forking
++ * @param fd listening socket 
++ * @return params new structure allocated on heap with following
++ * fields initialized : opt, fd, client_addr, sock_bytes
++ * left unitialized : err 
++ **/
++static IdentRequestParams *prepare_request_handle(int fd) {
++	IdentRequestParams *params;
++
++	if ((params=malloc(sizeof(IdentRequestParams)))==NULL) {
++		s_log( LOG_ERR, "Memory Allocation Error");
++		return NULL;
++	}
++	memset( params, 0, sizeof(IdentRequestParams));
++	if ((params->opt=malloc(sizeof(SERVICE_OPTIONS)))==NULL) {
++		s_log( LOG_ERR, "Memory Allocation Error");
++		free(params);
++		return NULL;
++	}
++
++	params->len=sizeof(params->client_addr);
++    while ((params->fd = accept( fd, (struct sockaddr *) &params->client_addr, 
++    	&params->len)) < 0) {
++        switch(get_last_socket_error()) {
++            case EINTR:
++                break; /* retry */
++            case EMFILE:
++#ifdef ENFILE
++            case ENFILE:
++#endif
++#ifdef ENOBUFS
++            case ENOBUFS:
++#endif
++            case ENOMEM:
++                sleep(1); /* temporarily out of resources - short delay */
++            default:
++                sockerror("accept");
++		    	free(params->opt);
++    			free(params);
++                return NULL; /* error */
++        }
++    }    
++	params->opt->stack_size=DEFAULT_STACK_SIZE;
++	params->opt->timeout_busy=30;
++	params->sock_bytes=0;
++	return params;
++} /* prepare_request_handle */
++
++void accept_ident_request(int fd_ident) {
++	IdentRequestParams *params;
++    
++    assert(fd_ident>0);
++    
++	if ((params=prepare_request_handle(fd_ident))==NULL)
++		return;
++    if (create_client( fd_ident, params->fd, (CLI *) params, (void *) handle_ident)) {
++        s_log(LOG_ERR, "Connection rejected: create_client failed");
++       	closesocket(params->fd);
++       	free(params->opt);
++       	free(params);
++    }
++} /* accept_ident_request */
++
++void accept_iadmin_request(int fd_admin) {
++	IdentRequestParams *params;
++
++    assert(fd_admin>0);
++
++	if ((params=prepare_request_handle(fd_admin))==NULL)
++		return;
++    if (create_client( fd_admin, params->fd, (CLI *) params, (void *) handle_iadmin)) {
++        s_log(LOG_ERR, "Connection rejected: create_client failed");
++       	closesocket(params->fd);
++       	free(params->opt);
++       	free(params);
++    }
++} /* accept_iadmin_request */
++
++static int create_server_socket(const char *serv_name, 
++	const SOCKADDR_LIST *sockaddr) {
++    SOCKADDR_UNION addr;
++    int fdi;
++    char straddr[STRLEN];
++    
++    memset(&addr, 0, sizeof(SOCKADDR_UNION));
++	memcpy(&addr, &sockaddr->addr[0], sizeof(SOCKADDR_UNION));
++	if((fdi=socket(addr.sa.sa_family, SOCK_STREAM, 0))<0) {
++		sockerror("local socket");
++		die(1);
++	}
++	if(alloc_fd(fdi))
++		die(1);
++	if(set_socket_options(fdi,1)<0)
++		die(1);
++	s_ntop( &straddr[0], &addr);
++	if(bind(fdi, &addr.sa, addr_len(addr))) {
++		s_log(LOG_ERR, "Error binding %s to %s", serv_name, &straddr[0]);
++		sockerror("bind");
++		die(1);
++	}
++	s_log(LOG_DEBUG, "%s bound to %s", serv_name, &straddr[0]);
++	if(listen(fdi, 5)) {
++		sockerror("listen");
++		die(1);
++	}
++    return fdi;
++} /* create_server_socket */
++
++int create_ident_admin_socket() {
++	int fd=create_server_socket( "Administrative ident server", &global_options.ident_admin);
++	s_log(LOG_DEBUG, "%s is allowed to process admnistrative ident requests", global_options.ident_admin_allowed);
++	return fd;
++} /* create_ident_admin_socket */
++
++int create_ident_socket() {
++	return create_server_socket( "Ident server", &global_options.ident_bind);
++} /* create_ident_socket */
+diff -pruN stunnel-4.31.orig/src/Makefile.am stunnel-4.31/src/Makefile.am
+--- stunnel-4.31.orig/src/Makefile.am	2009-11-08 20:17:34.000000000 +0100
++++ stunnel-4.31/src/Makefile.am	2010-08-19 16:29:22.000000000 +0200
+@@ -3,7 +3,7 @@
+ # File lists
+ 
+ common_headers = common.h prototypes.h
+-common_sources = file.c client.c log.c options.c protocol.c network.c resolver.c ssl.c ctx.c verify.c sthreads.c stunnel.c
++common_sources = file.c client.c log.c options.c protocol.c network.c resolver.c ssl.c ctx.c verify.c sthreads.c stunnel.c ident.c
+ unix_sources = pty.c libwrap.c
+ shared_sources = env.c
+ win32_sources = gui.c resources.h resources.rc stunnel.ico
+diff -pruN stunnel-4.31.orig/src/options.c stunnel-4.31/src/options.c
+--- stunnel-4.31.orig/src/options.c	2010-01-29 11:43:23.000000000 +0100
++++ stunnel-4.31/src/options.c	2010-08-19 16:29:22.000000000 +0200
+@@ -269,6 +269,89 @@ static char *parse_global_option(CMD cmd
+     }
+ #endif
+ 
++    /* IdentAdmin */
++    switch(cmd) {
++    case CMD_INIT:
++        memset(&new_global_options.ident_admin, 0, sizeof(SOCKADDR_LIST));
++        hostport2addrlist( &new_global_options.ident_admin, DEFAULT_LOOPBACK, IDENT_ADMIN_PORT_DEFAULT);
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "identAdmin"))
++            break;
++        if(!name2addrlist(&new_global_options.ident_admin, arg, DEFAULT_LOOPBACK))
++            return "Failed to resolve address";
++        return NULL; /* OK */
++    case CMD_DEFAULT:
++        s_log(LOG_NOTICE, "%-15s = %s:%s", "identAdmin", DEFAULT_LOOPBACK, IDENT_ADMIN_PORT_DEFAULT);
++        break;
++    case CMD_HELP:
++        s_log(LOG_NOTICE, "%-15s = listening address for administrative ident server ", "identAdmin");
++        break;
++    }
++
++    /* IdentAdminAllowed */
++    switch(cmd) {
++    case CMD_INIT:
++		new_global_options.ident_admin_allowed=strdup(DEFAULT_LOOPBACK);
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "identAdminAllowed"))
++            break;
++        if (new_global_options.ident_admin_allowed)
++        	free(new_global_options.ident_admin_allowed);
++        new_global_options.ident_admin_allowed=strdup(arg);
++        return NULL; /* OK */
++    case CMD_DEFAULT:
++        s_log(LOG_NOTICE, "%-15s = %s", "identAdminAllowed", IDENT_ADMIN_ALLOWED_DEFAULT);
++        break;
++    case CMD_HELP:
++        s_log(LOG_NOTICE, "%-15s = machine which is allowed to ask administrative ident requests ", "identAdminAllowed");
++        break;
++    }
++
++    /* IdentBind */
++    switch(cmd) {
++    case CMD_INIT:
++        memset(&new_global_options.ident_bind, 0, sizeof(SOCKADDR_LIST));
++        new_global_options.ident_bind.addr[0].in.sin_family=AF_INET;
++        new_global_options.ident_bind.addr[0].in.sin_port=htons(IDENT_PORT_DEFAULT);
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "identBind"))
++            break;
++        if(!name2addrlist(&new_global_options.ident_bind, arg, DEFAULT_ANY))
++            return "Failed to resolve address";
++        return NULL; /* OK */
++    case CMD_DEFAULT:
++        s_log(LOG_NOTICE, "%-15s = %s:%u", "identBind", DEFAULT_ANY, IDENT_PORT_DEFAULT);
++        break;
++    case CMD_HELP:
++        s_log(LOG_NOTICE, "%-15s = listening address for ident server ", "identBind");
++        break;
++    }
++
++    /* IdentMaskError */
++    switch(cmd) {
++    case CMD_INIT:
++        new_global_options.option.ident_mask_error=0; 
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "identMaskError"))
++            break;
++        if(!strcasecmp(arg, "yes")) 
++            new_global_options.option.ident_mask_error=1;
++        else if(!strcasecmp(arg, "no"))
++            new_global_options.option.ident_mask_error=0;
++        else
++            return "Argument should be either 'yes' or 'no'";
++        return NULL; /* OK */
++    case CMD_DEFAULT:
++        break;
++    case CMD_HELP:
++        s_log(LOG_ERR, "%-15s = yes|no return UNKNOWN-ERROR in lieu of other specific error code", "identMaskError");
++        break;
++    }
++
+     /* output */
+     switch(cmd) {
+     case CMD_INIT:
+@@ -708,6 +791,53 @@ static char *parse_service_option(CMD cm
+         break;
+     }
+ 
++    /* IdentServer */
++    switch(cmd) {
++    case CMD_INIT:
++        section->option.ident=0; 
++        section->connection_list=NULL;
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "identServer"))
++            break;
++        if(!strcasecmp(arg, "yes")) {
++            section->option.ident=1;
++            new_global_options.option.ident_server=1;
++        }
++        else if(!strcasecmp(arg, "no"))
++            section->option.ident=0;
++        else
++            return "Argument should be either 'yes' or 'no'";
++        return NULL; /* OK */
++    case CMD_DEFAULT:
++        break;
++    case CMD_HELP:
++        s_log(LOG_NOTICE, "%-15s = yes|no activate ident server", "identServer");
++        break;
++    }
++
++    /* IdentFields */
++    switch(cmd) {
++    case CMD_INIT:
++        section->ident_fields=IDENT_FIELDS_DEFAULT;
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "identFields"))
++            break;
++        if (section->option.ident==0)
++        	return "Ident must be set to yes prior to set IdentFields";
++        section->ident_fields=atoi(arg);
++        if((section->ident_fields < 1)||(section->ident_fields > 1023)) 
++        	return "IdentFields must be set between 1 and 1023 (see manual)";
++        return NULL; /* OK */
++    case CMD_DEFAULT:
++        s_log(LOG_NOTICE, "%-15s = %u", "identFields", IDENT_FIELDS_DEFAULT);
++        break;
++    case CMD_HELP:
++        s_log(LOG_NOTICE, "%-15s = 1 to 1023 (see manual)", "identFields");
++        break;
++    }
++
+     /* CRLpath */
+     switch(cmd) {
+     case CMD_INIT:
+diff -pruN stunnel-4.31.orig/src/prototypes.h stunnel-4.31/src/prototypes.h
+--- stunnel-4.31.orig/src/prototypes.h	2010-01-29 11:36:17.000000000 +0100
++++ stunnel-4.31/src/prototypes.h	2010-08-19 16:29:22.000000000 +0200
+@@ -84,6 +84,11 @@ typedef struct {
+     char *win32_service;
+ #endif
+ 
++		/* Ident Server data for ident.c */
++	SOCKADDR_LIST ident_bind;  /* listening address for ident server */
++	SOCKADDR_LIST ident_admin;  /* listening address for administrative ident server */
++	char *ident_admin_allowed; /* machine which can ask administrative ident requests */
++
+         /* logging-support data for log.c */
+     int debug_level;                              /* debug level for logging */
+ #ifndef USE_WIN32
+@@ -100,6 +105,8 @@ typedef struct {
+         unsigned int foreground:1;
+         unsigned int syslog:1;
+ #endif
++        unsigned int ident_server:1;  /* set if at least one service ask for */
++        unsigned int ident_mask_error:1;
+ #ifdef USE_FIPS
+         unsigned int fips:1;                       /* enable FIPS 140-2 mode */
+ #endif
+@@ -121,6 +128,7 @@ typedef struct service_options_struct {
+ #ifndef USE_FORK
+     int stack_size;                            /* stack size for this thread */
+ #endif
++    struct _CLI *connection_list;                       /* for ident purpose */
+ 
+         /* service-specific data for ctx.c */
+     char *ca_dir;                              /* directory for hashed certs */
+@@ -148,6 +156,7 @@ typedef struct service_options_struct {
+     SOCKADDR_LIST local_addr, remote_addr, source_addr;
+     char *username;
+     char *remote_address;
++    unsigned int ident_fields;
+     int timeout_busy; /* maximum waiting for data time */
+     int timeout_close; /* maximum close_notify time */
+     int timeout_connect; /* maximum connect() time */
+@@ -170,6 +179,7 @@ typedef struct service_options_struct {
+         unsigned int remote:1;
+         unsigned int retry:1; /* loop remote+program */
+         unsigned int sessiond:1;
++        unsigned int ident:1;
+ #ifndef USE_WIN32
+         unsigned int program:1;
+         unsigned int pty:1;
+@@ -327,8 +327,13 @@ typedef struct {
+     int is_socket; /* file descriptor is a socket */
+ } FD;
+ 
+-typedef struct {
++typedef unsigned int Port;
++
++typedef struct _CLI {
+     SERVICE_OPTIONS *opt;
++    jmp_buf err; /* moved here to be compliant with IdentRequestParams */
++    struct _CLI *next;
++    Port local_port;
+     char accepted_address[IPLEN]; /* text */
+     SOCKADDR_LIST peer_addr; /* peer address */
+     FD local_rfd, local_wfd; /* read and write local descriptors */
+@@ -338,7 +343,6 @@ typedef struct {
+         /* IP for explicit local bind or transparent proxy */
+     unsigned long pid; /* PID of local process */
+     int fd; /* temporary file descriptor */
+-    jmp_buf err;
+ 
+     char sock_buff[BUFFSIZE]; /* socket read buffer */
+     char ssl_buff[BUFFSIZE]; /* SSL read buffer */
+@@ -379,7 +389,7 @@ char *s_ntop(char *, SOCKADDR_UNION *);
+ 
+ typedef enum {
+     CRIT_KEYGEN, CRIT_INET, CRIT_CLIENTS, CRIT_WIN_LOG, CRIT_SESSION,
+-    CRIT_LIBWRAP, CRIT_SSL, CRIT_SECTIONS
++    CRIT_IDENT, CRIT_LIBWRAP, CRIT_SSL, CRIT_SECTIONS
+ } SECTION_CODE;
+ 
+ void enter_critical_section(SECTION_CODE);
+@@ -456,6 +466,33 @@ LPSTR tstr2str(const LPTSTR);
+ void libwrap_init(int);
+ void auth_libwrap(CLI *);
+ 
++/**************************************** Prototypes for ident.c */
++#define IDENT_ADMIN_ALLOWED_DEFAULT "localhost"
++#define IDENT_FIELDS_DEFAULT         1
++#define IDENT_PORT_DEFAULT         113
++#define IDENT_ADMIN_PORT_DEFAULT "790"
++#define PORT_MAX                 65535
++
++int create_ident_socket();
++int create_ident_admin_socket();
++void accept_ident_request(int fd_ident);
++void accept_iadmin_request(int fd_admin);
++void add_ident_connection(CLI *c);
++void remove_ident_connection(CLI *c);
++
++struct _IdentRequestParams {
++	/* opt and err must be first fields to be compliant with CLI structure */
++    SERVICE_OPTIONS *opt; /* needed for stack_size and timeout_busy */
++    jmp_buf err; /* needed by some functions to exit from errors */
++    int fd; 
++	int sock_bytes; /* counter of sent bytes on the socket fd */
++	struct sockaddr_in client_addr;
++	socklen_t len;
++	char remnumname[IPLEN];
++};
++
++typedef struct _IdentRequestParams IdentRequestParams;
++
+ #endif /* defined PROTOTYPES_H */
+ 
+ /* end of prototypes.h */
+diff -pruN stunnel-4.31.orig/src/stunnel.c stunnel-4.31/src/stunnel.c
+--- stunnel-4.31.orig/src/stunnel.c	2010-02-03 14:16:26.000000000 +0100
++++ stunnel-4.31/src/stunnel.c	2010-08-19 17:53:46.000000000 +0200
+@@ -62,6 +62,8 @@ s_poll_set fds; /* file descriptors of l
+ int signal_fd;
+ #endif
+ 
++static int fd_ident=0,fd_ident_admin=0;
++
+     /* functions */
+ 
+ #ifndef USE_WIN32
+@@ -131,6 +133,14 @@ void main_initialize(char *arg1, char *a
+     /* log_open() must be be called before daemonize()
+      * since daemonize() invalidates stderr */
+     log_open();
++    
++    if (global_options.option.ident_server && (fd_ident==0)) {
++        if ((fd_ident=create_ident_socket())>0) {
++            s_poll_add( &fds, fd_ident, 1, 0);
++            if ((fd_ident_admin=create_ident_admin_socket())>0)
++                s_poll_add( &fds, fd_ident_admin, 1, 0);
++        }
++    }
+ 
+ #if !defined(USE_WIN32) && !defined(__vms) && !defined(USE_OS2)
+     if(service_options.next) { /* there are service sections -> daemon mode */
+@@ -166,6 +176,11 @@ static void daemon_loop(void) {
+         for(opt=service_options.next; opt; opt=opt->next)
+             if(s_poll_canread(&fds, opt->fd))
+                 accept_connection(opt);
++
++        if((fd_ident!=0)&&(s_poll_canread(&fds, fd_ident)))
++            accept_ident_request(fd_ident);
++        if((fd_ident_admin!=0)&&(s_poll_canread(&fds, fd_ident_admin)))
++            accept_iadmin_request(fd_ident_admin);
+     } else {
+         log_error(LOG_INFO, get_last_socket_error(),
+             "daemon_loop: s_poll_wait");

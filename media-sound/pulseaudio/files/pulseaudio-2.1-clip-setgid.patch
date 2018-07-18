@@ -1,0 +1,32 @@
+--- ./src/daemon/main.c.orig	2013-07-31 19:18:23.000000000 +0200
++++ ./src/daemon/main.c	2013-07-31 19:19:20.000000000 +0200
+@@ -433,6 +433,7 @@ int main(int argc, char *argv[]) {
+        admittedly a bit snake-oilish.
+     */
+ 
++    #if 0 /* CLIP - completely broken with our glibc when running setgid - loops infinitely */
+     if (!getenv("LD_BIND_NOW")) {
+         char *rp;
+         char *canonical_rp;
+@@ -461,6 +462,7 @@ int main(int argc, char *argv[]) {
+         } else
+             pa_log_warn("Couldn't canonicalize binary path, cannot self execute.");
+     }
++    #endif
+ #endif
+ 
+     if ((e = getenv("PULSE_PASSED_FD"))) {
+--- ./src/daemon/caps.c.orig	2013-07-31 19:04:00.000000000 +0200
++++ ./src/daemon/caps.c	2013-07-31 19:06:36.000000000 +0200
+@@ -56,8 +56,10 @@ void pa_drop_root(void) {
+     gid_t gid;
+ 
+     pa_log_debug(_("Cleaning up privileges."));
++    /* CLIP : use egid since we're running setgid audio */
+     uid = getuid();
+-    gid = getgid();
++    //gid = getgid();
++    gid = getegid();
+ 
+ #if defined(HAVE_SETRESUID)
+     pa_assert_se(setresuid(uid, uid, uid) >= 0);

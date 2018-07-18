@@ -1,0 +1,83 @@
+Disable copy/paste and various hotkey handling in vncviewer
+
+Distributed under the terms of the GNU General Public License v2
+
+diff --git a/vncviewer/Viewport.cxx b/vncviewer/Viewport.cxx
+index 4daff16..5af9892 100644
+--- a/vncviewer/Viewport.cxx
++++ b/vncviewer/Viewport.cxx
+@@ -343,6 +343,7 @@ int Viewport::handle(int event)
+   DownMap::const_iterator iter;
+ 
+   switch (event) {
++#if 0
+   case FL_PASTE:
+     buffer = new char[Fl::event_length() + 1];
+ 
+@@ -363,6 +364,7 @@ int Viewport::handle(int event)
+     delete [] buffer;
+ 
+     return 1;
++#endif
+ 
+   case FL_ENTER:
+     // Yes, we would like some pointer events please!
+@@ -427,6 +429,7 @@ int Viewport::handle(int event)
+ #endif
+     return 1;
+ 
++#if 0
+   case FL_KEYDOWN:
+     handleFLTKKeyPress();
+     return 1;
+@@ -434,6 +437,7 @@ int Viewport::handle(int event)
+   case FL_KEYUP:
+     handleKeyRelease(Fl::event_original_key());
+     return 1;
++#endif
+   }
+ 
+   return Fl_Widget::handle(event);
+@@ -515,6 +519,7 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
+ {
+   static bool menuRecursion = false;
+ 
++#if 0
+   // Prevent recursion if the menu wants to send its own
+   // activation key.
+   if (menuKeySym && (keySym == menuKeySym) && !menuRecursion) {
+@@ -523,6 +528,7 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
+     menuRecursion = false;
+     return;
+   }
++#endif
+ 
+   if (viewOnly)
+     return;
+@@ -1060,6 +1066,7 @@ void Viewport::handleFLTKKeyPress(void)
+ }
+ 
+ 
++#if 0
+ void Viewport::initContextMenu()
+ {
+   contextMenu->clear();
+@@ -1098,8 +1105,10 @@ void Viewport::initContextMenu()
+ 
+   contextMenu->add(_("Dismiss menu"), 0, NULL, (void*)ID_DISMISS, 0);
+ }
++#endif
+ 
+ 
++#if 0
+ void Viewport::popupContextMenu()
+ {
+   const Fl_Menu_Item *m;
+@@ -1196,6 +1205,7 @@ void Viewport::popupContextMenu()
+     break;
+   }
+ }
++#endif
+ 
+ 
+ void Viewport::setMenuKey()

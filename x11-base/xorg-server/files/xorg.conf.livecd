@@ -1,0 +1,90 @@
+Section "Files"
+    FontPath "/usr/share/fonts/100dpi"
+    FontPath "/usr/share/fonts/75dpi"
+    FontPath "/usr/share/fonts/Type1"
+    FontPath "/usr/share/fonts/TTF"
+    FontPath "/usr/share/fonts/misc"
+    FontPath "/usr/share/fonts/corefonts"
+    FontPath "/usr/share/fonts/ttf-bitstream-vera"
+EndSection
+
+Section "ServerFlags"
+    Option "DontZap" "true" # disable <Crtl><Alt><BS> (server abort)
+    Option "AllowMouseOpenFail" "true"
+    Option "AutoAddDevices" "true"
+    Option "Xinerama" "false"
+    Option "AIGLX" "false"
+    Option "DRI2" "false"
+    Option "UseDefaultFontPath" "false"
+    Option "UseSIGIO" "false"
+EndSection
+
+
+Section "Module"
+    Load        "dbe"  	# Double buffer extension
+    Load	"extmod"
+    Load	"glx"
+    SubSection  "extmod"
+      Option    "omit xfree86-dga"   # don't initialise the DGA extension
+    EndSubSection
+EndSection
+
+Section "InputClass"
+	Identifier "keyboards"
+	Driver "evdev"
+	MatchIsKeyboard "true"
+	Option "XkbRules"	"xorg"
+	Option "XkbModel"	"evdev"
+	Option "XkbLayout"	"fr"
+	Option "XkbVariant"	"oss"
+EndSection
+
+Section "InputDevice"
+	Identifier	"Keyboard0"
+	Driver	"kbd"
+	Option "XkbLayout"	"fr"
+	Option "XkbVariant"	"oss"
+EndSection
+
+Section "InputDevice"
+    Identifier	"Mouse1"
+    Driver	"mouse"
+    Option "Protocol"    "IMPS/2"	# IntelliMouse PS/2
+    Option "Device"      "/dev/input/mice"
+
+    Option "ZAxisMapping"   "4 5 6 7"
+
+    Option "Emulate3Buttons"
+EndSection
+
+Section "Monitor"
+
+    Identifier  "LCD"
+
+EndSection
+
+
+Section "Device"
+    Identifier  "fbdev"
+    Driver      "fbdev"
+EndSection
+
+
+Section "Screen"
+    Identifier  "Screen 1"
+    Device      "fbdev"
+    Monitor     "LCD"
+    Option "DPMS" "true"
+EndSection
+
+
+Section "ServerLayout"
+
+    Identifier  "Simple Layout"
+
+    Screen "Screen 1"
+
+    InputDevice "Keyboard0" "CoreKeyboard"
+    InputDevice "Mouse1" "CorePointer"
+EndSection
+

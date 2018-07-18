@@ -1,0 +1,285 @@
+# CLIP ChangeLog for net-print/cups
+
+*cups-2.0.3 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-2.0.3.ebuild, -cups-1.7.5.ebuild,
+  +files/cups-2.0.1-xinetd-installation-fix.patch,
+  +files/cups-2.0.2-rename-systemd-service-files.patch,
+  +files/cups-2.0.2-systemd-socket.patch:
+  Security bump to latest (CVE-2015-11{58,59}).
+
+  20 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +cups-1.7.5-r2.ebuild, -cups-1.7.1-r2.ebuild:
+  Bump to latest.
+
+*cups-1.7.5-r2 (16 Oct 2014)
+*cups-1.7.1-r2 (03 Jun 2014)
+
+  03 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.7.1-r2.ebuild, -cups-1.7.1-r1.ebuild,
+  files/cups-files.conf.clip:
+  Restore syslog logging, which had been deactivated with
+  cups-1.6.4.
+
+*cups-1.7.1-r1 (15 May 2014)
+
+  15 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.7.1-r1.ebuild, -cups-1.6.4-r1.ebuild,
+  -files/cups-1.5.0-systemd-socket-2.patch,
+  -files/cups-1.6.2-statedir.patch,
+  +files/cups-1.7.1-str4356.patch:
+  Bump to latest.
+
+*cups-1.6.4-r1 (08 Jan 2014)
+
+  08 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.6.4-r1.ebuild, -cups-1.6.4.ebuild:
+  Bump dependency on cups-filters to a version that integrates
+  foomatic-filters, remove filters USE flag.
+
+*cups-1.6.4 (19 Dec 2013)
+
+  19 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.6.4.ebuild, -cups-1.6.2-r6.ebuild,
+  +files/cups-files.conf.clip:
+  Bump to latest. Ship our own cups-files.conf as well, the 
+  vanilla refers to a non-existing group, which crashes cups.
+
+*cups-1.6.2-r6 (12 Nov 2013)
+
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.6.2-r6.ebuild, -cups-1.6.2-r5.ebuild,
+  -files/cups-1.6.2-CLIP-cupsdconf.patch,
+  +files/cupsd.conf.clip:
+  Ship our own cupsd.conf instead of (ineffectively) patching
+  the upstream one.
+
+*cups-1.6.2-r5 (31 Oct 2013)
+
+  31 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.6.2-r5.ebuild, -cups-1.5.3.ebuild,
+  -files/cups-1.4.4-dont-compress-manpages.patch,
+  -files/cups-1.4.4-perl-includes.patch,
+  -files/cups-1.4.4-php-destdir.patch,
+  -files/cups-1.5.0-systemd-socket.patch,
+  -files/cups-1.5.2-browsing.patch,
+  -files/cups-1.5.2-linkperl.patch,
+  -files/cups-1.5.3-fix-install-perms.patch,
+  -files/cups-1.5.3-CLIP-cupsdconf.patch,
+  +files/cups-1.6.2-CLIP-cupsdconf.patch,
+  +files/cups-1.5.0-systemd-socket-2.patch,
+  +files/cups-1.6.0-dont-compress-manpages.patch,
+  +files/cups-1.6.0-fix-install-perms.patch,
+  +files/cups-1.6.2-statedir.patch,
+  +files/cupsd.init.d-r1:
+  Bump to latest stable.
+
+*cups-1.5.3 (26 Jul 2012)
+
+  26 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.5.3.ebuild, -cups-1.4.8-r25.ebuild,
+  +files/cups-1.5.0-systemd-socket.patch,
+  +files/cups-1.5.3-fix-install-perms.patch,
+  +files/cups-1.5.2-linkperl.patch,
+  +files/cups-1.5.2-browsing.patch,
+  +files/cups-1.5.3-CLIP-cupsdconf.patch,
+  +files/cups-1.5.3-CLIP-disable-libusb.patch,
+  -files/cups-1.4.6-CLIP-disable-libusb.patch,
+  -files/cups-1.4.8-CLIP-cupsdconf.patch,
+  -files/cups-1.4.6-force-gnutls.patch,
+  -files/cups-1.4.4-fix-install-perms.patch,
+  -files/cups-1.4.0-backend-https.patch,
+  -files/cups-1.4.8-CVE-2011-3170.patch,
+  -files/cups-1.4.8-largeimage.patch,
+  -files/cups-1.4.6-serialize-gnutls.patch,
+  files/cupsd.init.d:
+  Bump to latest.
+
+*cups-1.4.8-r25 (10 Apr 2012)
+
+  10 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.8-r25.ebuild, -cups-1.4.8-r24.ebuild:
+  Make foomatic-filters a PDEPEND, to avoid a circular dependency.
+
+*cups-1.4.8-r24 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.8-r24.ebuild, -cups-1.4.8-r23.ebuild:
+  Force rebuild.
+
+*cups-1.4.8-r23 (12 Oct 2011)
+
+  12 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.8-r23.ebuild, -cups-1.4.8-r22.ebuild,
+  +files/cups-1.4.8-CLIP-cupsdconf.patch,
+  -files/cups-1.4.5-CLIP-cupsdconf.patch,
+  files/cups.user:
+  Fix cupsd.conf.
+
+  28 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  cups-1.4.8-r22.ebuild, +files/cups-cleanup-clip, files/cups.user,
+  -files/cups-1.4.5-CLIP-backend-kprinter.patch:
+  Switch dbus notifier to Session bus on CLIP.
+  Remove legacy 'ImpressionAvancee' printer at session start.
+  Remove unused patch.
+
+*cups-1.4.8-r22 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.8-r22.ebuild, -cups-1.4.6-r1.ebuild,
+  +files/cups-1.4.8-CVE-2011-3170.patch,
+  +files/cups-1.4.8-largeimage.patch:
+  Bump to latest. Disable kprinter backend.
+
+  10 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  cups-1.4.6-r1.ebuild:
+  Revert previous change to avoid a circular dependency, but 
+  pass a full path to pdftops to avoid checks that would otherwise
+  fail in configure when poppler is not installed.
+
+  25 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  cups-1.4.6-r1.ebuild:
+  Make poppler a build depend, as configure won't run without it.
+
+*cups-1.4.6-r1 (31 Jan 2011)
+
+  31 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.6-r1.ebuild, -cups-1.4.6.ebuild,
+  +files/cups-1.4.6-CLIP-disable-libusb.patch:
+  Force-disable the libusb backend, use only the backward-compatible
+  (and working on CLIP) usb backend.
+
+*cups-1.4.6 (31 Jan 2011)
+
+  31 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.6.ebuild, -cups-1.4.5.ebuild,
+  +files/cups-1.4.6-force-gnutls.patch,
+  +files/cups-1.4.6-serialize-gnutls.patch:
+  Bump to latest, same changeset.
+
+*cups-1.4.5 (06 Dec 2010)
+
+  06 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.4.5.ebuild, -cups-1.3.11-r5.ebuild,
+  +files/cups-1.4.5-CLIP-backend-kprinter.patch,
+  +files/cups-1.4.5-CLIP-cupsdconf.patch,
+  +files/cups-1.4.4-fix-install-perms.patch,
+  +files/cups-1.4.4-nostrip.patch,
+  +files/cups.user,
+  +files/cups-1.4.4-php-destdir.patch,
+  +files/cups-1.4.0-backend-https.patch,
+  +files/cups-1.4.4-perl-includes.patch,
+  +files/cups-1.4.4-dont-compress-manpages.patch,
+  -files/cups-1.3.10-str3178.patch,
+  -files/cups-1.3.11-str3401-security-1.3v2-regression.patch,
+  -files/cups-1.3.7-backend-https.patch,
+  -files/cups-1.3.11-str3200.patch,
+  -files/cups-1.3.0-configure.patch,
+  -files/cups-1.3.9-CLIP-cupsdconf.patch,
+  -files/cups-1.3.10-CLIP-backend-kprinter.patch,
+  -files/cups-1.3.11-str3367-security-1.3v2.patch,
+  -files/cups-1.3.10-CLIP-cupsdconf.patch:
+  Bump to latest, simplify ebuild.
+
+*cups-1.3.11-r5 (03 Sep 2010)
+
+  03 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.11-r5.ebuild, -cups-1.3.11-r4.ebuild:
+  Bump to latest gentoo (-r2), rebuild with use gnutls.
+
+*cups-1.3.11-r4 (15 Jul 2010)
+
+  15 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.11-r4.ebuild, -cups-1.3.11-r3.ebuild,
+  +files/cups-1.3.11-str3200.patch:
+  Bump to EAPI 2. Fix CVE-2009-3553.
+  Fix pdftops path.
+
+  02 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  cups-1.3.11-r3.ebuild:
+  Remove poppler-utils depend on devstation as well.
+
+*cups-1.3.11-r3 (04 Mar 2010)
+
+  04 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.11-r3.ebuild, -cups-1.3.11-r2.ebuild:
+  Remove dependency on poppler-utils.
+
+*cups-1.3.11-r2 (11 Feb 2010)
+
+  11 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.11-r2.ebuild, -cups-1.3.11-r1.ebuild:
+  Add DBUS_SESSION_BUS_ADDRESS definition when running cups
+  at session startup.
+
+*cups-1.3.11-r1 (29 Jan 2010)
+  29 Jan 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +files/cups-1.3.10-str3178.patch
+  +files/cups-1.3.11-str3401-security-1.3v2-regression.patch
+  +files/pdftops-1.20.gentoo
+  +files/cups-1.3.11-str3367-security-1.3v2.patch
+  +cups-1.3.11-r1.ebuild
+  Bump to latest release, ajout des autorisation rx sur le script backend/ipp et ajout des entrees veriexec.
+
+*cups-1.3.10-r3 (18 Jan 2010)
+
+  18 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.10-r3.ebuild, -cups-1.3.10-r2.ebuild,
+  files/cups-1.3.10-CLIP-backend-kprinter.patch:
+  Use new 'rm-env' file from rm-sessions to export LANG,etc. in
+  kprinter backend. Typo fix in the ebuild generated user data
+  update script.
+
+  18 Jan 2009; Olivier Levillain <clipos@ssi.gouv.fr>
+  Add some lines to the cups script launched at the beginning of
+  a session. It now tries to add a kprinter:/ printer named
+  "ImpressionAvancee" if no kprinter:/ printer already exists.
+  Fix /usr/bin/clip-user-data-update-scripts/cups which missed "".
+ 
+*cups-1.3.10-r2 (14 Jan 2009)
+
+  14 Jan 2009; Olivier Levillain <clipos@ssi.gouv.fr>
+  +cups-1.3.10-r2.ebuild, +files/cups-1.3.10-CLIP-backend-kprinter.patch
+  Add a backend to use old kprinter dialog.
+ 
+*cups-1.3.10-r1 (26 Jun 2009)
+
+  26 Jun 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  +cups-1.3.10-r1.ebuild, +files/cups-1.3.10-CLIP-cupsdconf.patch
+  Move temporary and spool directory to /home/user/.cupsd/tmp 
+  to allow large file printing
+ 
+*cups-1.3.10 (23 Apr 2009)
+
+  23 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.10.ebuild, -cups-1.3.9-r3.ebuild,
+  -files/pdftops-1.20.gentoo, -files/cups-1.3.9-CVE-2008-5286.patch:
+  Bump to latest, fixes multiple vulnerabilities.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  cups-1.3.9-r3.ebuild:
+  Switch to verictl2.eclass.
+
+*cups-1.3.9-r3 (20 Jan 2009)
+
+  20 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +cups-1.3.9-r3.ebuild, -cups-1.3.9-r2.ebuild:
+  Fix /etc/cups permissions for CLIP - cups configuration files
+  need to be readable by any user.
+
+  16 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  cups-1.3.9-r2.ebuild, -files/cups-1.3.9-r1.ebuild:
+  Remove older ebuild. Some cleanup in cups-1.3.9-r2 : 
+   - add missing IUSE clip
+   - fix some dodir (/var, /usr/libexec stuff that is not needed on CLIP).
+   - fix some install paths (pdftops in libexec/)
+
+*cups-1.3.9-r2 (01 Jan 2009)
+
+  01 Jan 2009; Benjamin Morin <clipos@ssi.gouv.fr> 
+  cups-1.3.9-r2.ebuild, +files/cups-1.3.9-CLIP-cupsdconf.patch:
+  Added clipcupsdconf.patch to modify template cups policy file  
+  Changed ebuild accordingly as well as econf parameters and added pkg_predeb()
+  to handle verictl entries.
+

@@ -1,0 +1,13 @@
+# CLIP ChangeLog for net-print/libgnomecups
+
+*libgnomecanvas-2.30.3-r1 (05 Aug 2013)
+
+  05 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libgnomecanvas-2.30.3-r1.ebuild, -libgnomecanvas-2.30.3.ebuild:
+  Force rebuild.
+
+*libgnomecanvas-2.30.3 (13 Apr 2011)
+
+  13 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  libgnomecanvas-2.30.3.ebuild:
+  Initial import - clip-deps fix.

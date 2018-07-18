@@ -1,0 +1,59 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+
+rootdev="${ROOT_DEVICE_NOCRYPT}"
+if test -f /etc/conf.d/uboot.rootdev; then
+	rootdev="$(/bin/head -n 1 /etc/conf.d/uboot.rootdev)"
+fi
+for f in /boot/uboot_5.scr /boot/uboot_10.scr ; do
+	/bin/sed -i -e "s/@ROOT_DEV@/${rootdev}/g" "${f}"
+done
+
+bootargs=""
+if test -f /etc/bootargs; then
+        bootargs="$(/bin/head -n 1 /etc/bootargs)"
+fi
+
+uboot_prepare=""
+if test -f /etc/conf.d/uboot.prepare; then
+	uboot_prepare="$(/bin/head -n 1 /etc/conf.d/uboot.prepare)"
+fi
+
+console="ttyS0,115200"
+if test -f /etc/conf.d/uboot.console; then
+        console="$(/bin/head -n 1 /etc/conf.d/uboot.console)"
+fi
+
+loadaddr_vmlinuz="0x2000000"
+if test -f /etc/conf.d/uboot.loadaddr_vmlinuz; then
+        loadaddr_vmlinuz="$(/bin/head -n 1 /etc/conf.d/uboot.loadaddr_vmlinuz)"
+fi
+
+loadaddr_initrd="0x5000000"
+if test -f /etc/conf.d/uboot.loadaddr_initrd; then
+        loadaddr_initrd="$(/bin/head -n 1 /etc/conf.d/uboot.loadaddr_initrd)"
+fi
+
+ext2load_device="usb 1"
+if test -f /etc/conf.d/uboot.ext2load_device; then
+        ext2load_device="$(/bin/head -n 1 /etc/conf.d/uboot.ext2load_device)"
+fi
+
+
+for f in /boot/uboot_5 /boot/uboot_10 ; do
+	/bin/sed -i -e "s/@BOOTARGS@/${bootargs}/g" "${f}.scr"
+	/bin/sed -i -e "s/@UBOOT_PREPARE@/${uboot_prepare}/g" "${f}.scr"
+	/bin/sed -i -e "s/@CONSOLE@/${console}/g" "${f}.scr"
+	/bin/sed -i -e "s/@EXT2LOAD_DEVICE@/${ext2load_device}/g" "${f}.scr"
+	/bin/sed -i -e "s/@LOADADDR_VMLINUZ@/${loadaddr_vmlinuz}/g" "${f}.scr"
+	/bin/sed -i -e "s/@LOADADDR_INITRD@/${loadaddr_initrd}/g" "${f}.scr"
+	mkimage -A arm -O linux -T script -n "CLIP loader" -d "${f}.scr" "${f}"
+done
+
+if [[ ! -f /boot/uboot ]]; then
+        ln -s uboot_5 /boot/uboot
+fi
+
+

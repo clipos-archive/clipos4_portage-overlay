@@ -1,0 +1,30 @@
+# CLIP ChangeLog for media-libs/babl
+
+*babl-0.1.10-r1 (16 Oct 2014)
+
+  16 Oct 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +babl-0.1.10-r1.ebuild, -babl-0.1.10.ebuild,
+  +files/babl-0.1.10-clang.patch,
+  +files/babl-0.1.10-g-ir-compiler-crash.patch,
+  +files/babl-0.1.10-introspection.patch,
+	-files/babl-0.1.6-introspection.patch:
+  Bump to latest.
+
+*babl-0.1.10 (23 Jul 2012)
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +babl-0.1.10.ebuild, -babl-0.1.2.ebuild,
+  +files/babl-0.1.6-introspection.patch:
+  Bump to latest.
+
+*babl-0.1.2 (04 Jan 2011)
+
+  04 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +babl-0.1.2.ebuild, -babl-0.0.22.ebuild:
+  Bump to latest.
+
+*babl-0.0.22 (13 Jul 2009)
+
+  13 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  babl-0.0.22.ebuild:
+  Initial import. clip-deps fixes.

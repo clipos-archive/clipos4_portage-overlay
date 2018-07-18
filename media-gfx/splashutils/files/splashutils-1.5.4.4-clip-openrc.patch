@@ -1,0 +1,11 @@
+--- splash.c.orig	2013-10-15 11:22:08.000000000 +0200
++++ splash.c	2013-10-15 11:58:13.000000000 +0200
+@@ -864,7 +864,7 @@ int rc_plugin_hook(RC_HOOK hook, const c
+ 
+ 	case RC_HOOK_RUNLEVEL_START_OUT:
+ 		/* Stop the splash daemon after boot-up is finished. */
+-		if (strcmp(name, bootlevel)) {
++		if (!strcmp(name, defaultlevel)) {
+ 			config->verbosity = FBSPL_VERB_QUIET;
+ 			i = fbsplash_check_daemon(&pid_daemon);
+ 			config->verbosity = FBSPL_VERB_NORMAL;

@@ -1,0 +1,8 @@
+# CLIP ChangeLog for app-text/liblangtag
+
+*liblangtag-0.5.1 (26 Jul 2013)
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  liblangtag-0.5.1.ebuild:
+  Initial import - clip-deps fix.
+

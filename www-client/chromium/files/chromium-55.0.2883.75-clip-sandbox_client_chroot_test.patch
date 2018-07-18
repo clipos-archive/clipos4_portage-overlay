@@ -1,0 +1,101 @@
+Index: chromium-55.0.2883.75/sandbox/linux/suid/client/setuid_sandbox_client.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/sandbox/linux/suid/client/setuid_sandbox_client.cc
++++ chromium-55.0.2883.75/sandbox/linux/suid/client/setuid_sandbox_client.cc
+@@ -19,8 +19,47 @@
+ #include "base/strings/string_number_conversions.h"
+ #include "sandbox/linux/suid/common/sandbox.h"
+ 
++#include <sys/types.h>
++#include <dirent.h>
++
+ namespace {
+ 
++int lsdir (char* dirname) {
++    DIR *directory_p;
++    struct dirent *directory_entry_p;
++
++    directory_p = opendir(dirname);
++    if (directory_p != NULL) {
++           while (directory_entry_p = readdir(directory_p))
++                LOG(ERROR) << directory_entry_p->d_name;
++               closedir(directory_p);
++    } else
++    LOG(ERROR) << "Couldn't open the directory";
++
++    return 0;
++}
++
++// -------------------------------------------------------------
++// return true if dirname dir is empty
++// return false if dirname dir is not empty or can not be opened
++bool IsDirEmpty (char* dirname) {
++    DIR *directory_p;
++    struct dirent *directory_entry_p;
++
++    directory_p = opendir(dirname);
++    if (directory_p != NULL) {
++       while (directory_entry_p = readdir(directory_p)) {
++               closedir(directory_p);
++                return false;
++       }
++       closedir(directory_p);
++       return true;
++    } else
++    LOG(ERROR) << "Couldn't open the directory";
++
++    return false;
++}
++
+ bool IsFileSystemAccessDenied() {
+   base::ScopedFD root_dir(HANDLE_EINTR(open("/", O_RDONLY)));
+   return !root_dir.is_valid();
+@@ -123,7 +162,47 @@ bool SetuidSandboxClient::ChrootMe() {
+ 
+   // We now consider ourselves "fully sandboxed" as far as the
+   // setuid sandbox is concerned.
+-  CHECK(IsFileSystemAccessDenied());
++  // CHECK(IsFileSystemAccessDenied());
++
++  // CLIP specific :
++  // Test now in case / is still accessible, that it is the current work directory and that it is empty
++  if (!IsFileSystemAccessDenied()) {
++	LOG(ERROR) << "checking that sandboxclient is chrooted";
++	LOG(ERROR) << "warning : sandbox client can access /";
++	LOG(ERROR) << "so test if current directory is / and if / is empty";
++
++	char* test_current_dir = get_current_dir_name();
++
++	if (test_current_dir == NULL) {
++		LOG(ERROR) << "can not get the current directory name";
++		CHECK(false);
++	}
++
++	if (0 == strcmp("/", test_current_dir)) {
++
++		bool is_current_dir_empty = IsDirEmpty(test_current_dir);
++
++		if (!is_current_dir_empty) {
++			LOG(ERROR) << "current dir is / but is not empty";
++			lsdir(test_current_dir);
++			free(test_current_dir);
++			CHECK(false);
++		} else
++		{
++			LOG(ERROR) << "current dir is / and is empty";
++			free(test_current_dir);
++			sandboxed_ = true;
++			return true;
++		}
++
++	} else {
++		LOG(ERROR) << "current dir is not /";
++		LOG(ERROR) << "current dir is : " << test_current_dir;
++		free(test_current_dir);
++		CHECK(false);
++	}
++  }
++
+   sandboxed_ = true;
+   return true;
+ }

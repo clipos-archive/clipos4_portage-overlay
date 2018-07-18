@@ -1,0 +1,38 @@
+# CLIP ChangeLog for dev-cpp/libcmis
+
+*libcmis-0.5.0 (27 Dec 2014)
+
+  20 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +libcmis-0.5.0.ebuild, -libcmis-0.4.1-r1.ebuild:
+  Bump to latest, new slot, for libreoffice 4.4.
+
+*libcmis-0.4.1-r1 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libcmis-0.4.1-r1.ebuild, -libcmis-0.4.1.ebuild:
+  Force rebuild (boost revdep).
+
+*libcmis-0.4.1 (07 May 2014)
+
+  07 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libcmis-0.4.1.ebuild, -libcmis-0.3.1.ebuild:
+  Bump to latest, new slot, for libreoffice 4.3.
+
+*libcmis-0.3.1 (26 Jul 2013)
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libcmis-0.3.1.ebuild, -libcmis-0.2.3-r2.ebuild,
+  -files/libcmis-0.2.3-do-not-override-phases.patch:
+  Bump to latest.
+
+*libcmis-0.2.3-r2 (02 Jan 2013)
+
+  02 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libcmis-0.2.3-r2.ebuild, -libcmis-0.2.3-r1.ebuild:
+  Force rebuild with newer boost.
+
+*libcmis-0.2.3-r1 (22 Oct 2012)
+
+  22 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  libcmis-0.2.3-r1.ebuild: 
+  Initial import, clip-deps/CPREFIX fix + create cmis-client symlink.

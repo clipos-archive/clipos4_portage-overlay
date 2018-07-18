@@ -1,0 +1,150 @@
+--- ./scripts/paxmark.sh.orig	2014-04-23 14:33:35.000000000 +0200
++++ ./scripts/paxmark.sh	2014-04-23 14:51:19.000000000 +0200
+@@ -44,12 +44,12 @@ paxmarksh() {
+ 			done
+ 
+ 		#Next try paxctl-ng -> this will not create/convert any program headers
+-		elif type -p paxctl-ng > /dev/null && paxctl-ng -L ; then
++		elif type -p paxctl-ng > /dev/null && paxctl-ng -X ; then
+ 			flags="${flags//z}"
+ 			for f in "$@"; do
+-				[[ ${dodefault} == "yes" ]] && paxctl-ng -L -z "${f}" >/dev/null 2>&1
++				[[ ${dodefault} == "yes" ]] && paxctl-ng -X -z "${f}" >/dev/null 2>&1
+ 				[[ "${flags}" ]] || continue
+-				paxctl-ng -L -${flags} "${f}" >/dev/null 2>&1 && continue
++				paxctl-ng -X -${flags} "${f}" >/dev/null 2>&1 && continue
+ 				pt_fail=1
+ 				pt_failures="${pt_failures} ${f}"
+ 			done
+@@ -74,11 +74,11 @@ paxmarksh() {
+ 		flags="${flags//z}"
+ 
+ 		#First try paxctl-ng
+-		if type -p paxctl-ng > /dev/null && paxctl-ng -l ; then
++		if type -p paxctl-ng > /dev/null && paxctl-ng -x ; then
+ 			for f in "$@"; do
+ 				[[ ${dodefault} == "yes" ]] && paxctl-ng -d "${f}" >/dev/null 2>&1
+ 				[[ "${flags}" ]] || continue
+-				paxctl-ng -l -${flags} "${f}" >/dev/null 2>&1 && continue
++				paxctl-ng -x -${flags} "${f}" >/dev/null 2>&1 && continue
+ 				xt_fail=1
+ 				xt_failures="${tx_failures} ${f}"
+ 			done
+@@ -107,5 +107,5 @@ paxmarksh() {
+ 	return ${ret}
+ }
+ 
+-PAX_MARKINGS=${PAX_MARKINGS:="PT XT"}
++PAX_MARKINGS=${PAX_MARKINGS:="PT"}
+ paxmarksh "$@"
+--- ./src/paxctl-ng.c.orig	2014-04-23 14:30:36.000000000 +0200
++++ ./src/paxctl-ng.c	2014-04-23 14:50:37.000000000 +0200
+@@ -48,6 +48,13 @@
+  #define PF_NORANDMMAP   (1 << 15)       /* Disable RANDMMAP */
+ #endif
+ 
++#ifndef PF_ELFRELOC
++#define PF_ELFRELOC	(1U << 20)	/* Enable  ELFRELOCS */
++#endif
++#ifndef PF_NOELFRELOC
++#define PF_NOELFRELOC	(1U << 21)	/* Disable ELFRELOCS */
++#endif
++
+ #ifdef XTPAX
+  #include <attr/xattr.h>
+  #define PAX_NAMESPACE	"user.pax.flags"
+@@ -78,9 +85,9 @@ print_help_exit(char *v)
+ 		"Program Name : %s\n"
+ 		"Description  : Get or set pax flags on an ELF object\n\n"
+ #if defined(PTPAX) && defined(XTPAX)
+-		"Usage        : %s -PpEeMmRrSs|-Z|-z [-L|-l] [-v] ELF\n"
++		"Usage        : %s -PpEeLlMmRrSs|-Z|-z [-X|-x] [-v] ELF\n"
+ #else
+-		"Usage        : %s -PpEeMmRrSs|-Z|-z [-v] ELF\n"
++		"Usage        : %s -PpEeLlMmRrSs|-Z|-z [-v] ELF\n"
+ #endif
+ #ifdef XTPAX
+ 		"             : %s -C|-c|-d [-v] ELF\n"
+@@ -89,16 +96,17 @@ print_help_exit(char *v)
+ 		"             : %s -F|-f [-v] ELF\n"
+ #endif
+ 		"             : %s -v ELF\n"
+-		"             : %s -L|-l\n"
++		"             : %s -X|-x\n"
+ 		"             : %s [-h]\n\n"
+ 		"Options      : -P enable PAGEEXEC\t-p disable  PAGEEXEC\n"
+ 		"             : -E enable EMUTRAMP\t-e disable  EMUTRAMP\n"
++		" [CLIP]      : -L enable ELFRELOC\t-l disable  ELFRELOC\n"
+ 		"             : -M enable MPROTECT\t-m disable  MPROTECT\n"
+ 		"             : -R enable RANDMMAP\t-r disable  RANDMMAP\n"
+ 		"             : -S enable SEGMEXEC\t-s disable  SEGMEXEC\n"
+ 		"             : -Z all secure settings\t-z all default settings\n"
+ #if defined(PTPAX) && defined(XTPAX)
+-		"             : -L set only PT_PAX flags\t-l set only XATTR_PAX flags\n"
++		"             : -X set only PT_PAX flags\t-x set only XATTR_PAX flags\n"
+ #endif
+ 		"             :\n"
+ #ifdef XTPAX
+@@ -111,14 +119,14 @@ print_help_exit(char *v)
+ 		"             : -f copy XATTR_PAX to PT_PAX\n"
+ #endif
+ #ifdef PTPAX
+-		"             : -L when given alone, EXIT_SUCCESS (PT_PAX is supported)\n"
++		"             : -X when given alone, EXIT_SUCCESS (PT_PAX is supported)\n"
+ #else
+-		"             : -L when given alone, EXIT_FAILURE (PT_PAX is not supported)\n"
++		"             : -X when given alone, EXIT_FAILURE (PT_PAX is not supported)\n"
+ #endif
+ #ifdef XTPAX
+-		"             : -l when given alone, EXIT_SUCCESS (XATTR_PAX is supported)\n"
++		"             : -x when given alone, EXIT_SUCCESS (XATTR_PAX is supported)\n"
+ #else
+-		"             : -l when given alone, EXIT_FAILURE (XATTR_PAX is not supported)\n"
++		"             : -x when given alone, EXIT_FAILURE (XATTR_PAX is not supported)\n"
+ #endif
+ 		"             : -v view the flags, along with any accompanying operation\n"
+ 		"             : -h print out this help\n\n"
+@@ -157,11 +165,11 @@ parse_cmd_args(int argc, char *argv[], u
+ 	*cp_flags = 0; 
+ 
+ #if defined(PTPAX) && defined(XTPAX)
+-	while((oc = getopt(argc, argv,":PpEeMmRrSsZzCcdFfLlvh")) != -1)
++	while((oc = getopt(argc, argv,":PpEeLlMmRrSsZzCcdFfXxvh")) != -1)
+ #elif defined(XTPAX) && !defined(PTPAX)
+-	while((oc = getopt(argc, argv,":PpEeMmRrSsZzCcdLlvh")) != -1)
++	while((oc = getopt(argc, argv,":PpEeLlMmRrSsZzCcdXxvh")) != -1)
+ #else
+-	while((oc = getopt(argc, argv,":PpEeMmRrSsZzLlvh")) != -1)
++	while((oc = getopt(argc, argv,":PpEeLlMmRrSsZzXxvh")) != -1)
+ #endif
+ 	{
+ 		switch(oc)
+@@ -182,6 +190,14 @@ parse_cmd_args(int argc, char *argv[], u
+ 				*pax_flags |= PF_NOEMUTRAMP;
+ 				setflags |= 1;
+ 				break ;
++			case 'L':
++				*pax_flags |= PF_ELFRELOC;
++				setflags |= 1;
++				break;
++			case 'l':
++				*pax_flags |= PF_NOELFRELOC;
++				setflags |= 1;
++				break;
+ 			case 'M':
+ 				*pax_flags |= PF_MPROTECT;
+ 				setflags |= 1;
+@@ -241,11 +257,11 @@ parse_cmd_args(int argc, char *argv[], u
+ 				break;
+ #endif
+ #endif
+-			case 'L':
++			case 'X':
+ 				limitflags += 1;
+ 				*limit = LIMIT_TO_PT_FLAGS;
+ 				break;
+-			case 'l':
++			case 'x':
+ 				limitflags += 1;
+ 				*limit = LIMIT_TO_XT_FLAGS;
+ 				break;

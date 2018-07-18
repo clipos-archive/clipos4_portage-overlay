@@ -1,0 +1,28 @@
+# Passer à yes pour activer le déport des journaux
+REMOTE_LOGGING=no
+
+# Destinataire du déport de journaux (IP ou hostname)
+REMOTE_LOG_HOST=
+# Port destination
+REMOTE_LOG_PORT=601
+
+# Passer à yes pour utiliser une authentification TLS du
+# serveur distant (l'AC correspondante doit être installée
+# dans /etc/audit/cacert).
+REMOTE_LOG_TLS=no
+# Passer à yes pour également authentifier le client syslog
+# par TLS (la clé privée et le certificat doivent être installés
+# dans /etc/audit/keys, client_key.pem et client_cert.pem respectivement).
+REMOTE_LOG_TLS_CLIENTCERT=no
+
+# Passer à yes pour transmettre les journaux réseau (pare-feu, IKE)
+REMOTE_LOG_NETWORKING=no
+# Passer à yes pour transmettre les journaux de mise à jour 
+REMOTE_LOG_UPDATE=no
+# Passer à yes pour transmettre les alertes de sécurité
+REMOTE_LOG_SEC_ALERT=no
+# Passer à yes pour transmettre les avertissements de sécurité
+REMOTE_LOG_SEC_WARNING=no
+# Passer à yes pour transmettre les informations de sécurité
+REMOTE_LOG_SEC_INFO=no
+# Passer à yes pour transmettre les autres journaux

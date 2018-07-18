@@ -1,0 +1,11 @@
+--- ./crypt/crypt_blowfish.c.orig	2011-08-10 11:08:17.000000000 +0200
++++ ./crypt/crypt_blowfish.c	2011-08-10 11:12:18.000000000 +0200
+@@ -554,7 +554,7 @@ static void BF_set_key(__CONST char *key
+ 		tmp = 0;
+ 		for (j = 0; j < 4; j++) {
+ 			tmp <<= 8;
+-			tmp |= *ptr;
++			tmp |= (unsigned char)*ptr;
+ 
+ 			if (!*ptr) ptr = key; else ptr++;
+ 		}

@@ -1,0 +1,25 @@
+diff --git a/encfs/main.cpp b/encfs/main.cpp
+index 0fdcb0c..558be22 100644
+--- a/encfs/main.cpp
++++ b/encfs/main.cpp
+@@ -522,6 +522,20 @@ void encfs_destroy(void *_ctx) {
+ }
+ 
+ int main(int argc, char *argv[]) {
++  gid_t gid;
++
++  if (fuse_clip_mtab_open("a+")) {
++    perror("mtab_open");
++    return EXIT_FAILURE;
++  }
++
++  /* Reset set-GID */
++  gid = getgid();
++  if (setresgid(gid, gid, gid)) {
++    perror("setresgid");
++    return EXIT_FAILURE;
++  }
++
+   // initialize the logging library
+   RLogInit(argc, argv);
+ 

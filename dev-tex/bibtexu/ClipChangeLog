@@ -1,0 +1,43 @@
+# CLIP ChangeLog for dev-tex/bibtexu
+
+*bibtexu-3.71_p20120701-r5 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20120701-r5.ebuild, -bibtexu-3.71_p20120701-r4.ebuild:
+  Rbump to link with icu 58.2.
+
+*bibtexu-3.71_p20120701-r4 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20120701-r4.ebuild, -bibtexu-3.71_p20120701-r3.ebuild:
+  Rbump to link with icu 55.1.
+
+*bibtexu-3.71_p20120701-r3 (13 May 2015)
+
+  13 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20120701-r3.ebuild, -bibtexu-3.71_p20120701-r2.ebuild:
+  Rebuild against icu 54.1.
+
+*bibtexu-3.71_p20120701-r2 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20120701-r2.ebuild, -bibtexu-3.71_p20120701-r1.ebuild:
+  Force rebuild (icu revdep).
+
+*bibtexu-3.71_p20120701-r1 (13 Nov 2013)
+
+  13 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20120701-r1.ebuild, -bibtexu-3.71_p20120701.ebuild:
+  Force rebuild - icu revdep.
+
+*bibtexu-3.71_p20110705-r1 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20110705-r1.ebuild, -bibtexu-3.71_p20110705.ebuild:
+  Force rebuild.
+
+*bibtexu-3.71_p20110705 (21 Dec 2011)
+
+  21 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bibtexu-3.71_p20110705:
+  Initial import - CPREFIX fixes.

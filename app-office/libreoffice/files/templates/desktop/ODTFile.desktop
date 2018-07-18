@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ODT File...
+Name[fr]=Texte OpenDocument...
+Comment=Enter ODT filename:
+Comment[fr]=Saisir le nom du fichier ODT :
+Type=Link
+URL=.source/ODTFile.odt
+Icon=application-vnd.oasis.opendocument.text

@@ -1,0 +1,164 @@
+# CLIP ChangeLog for dev-libs/libpng
+
+*libpng-1.6.29-r1 (28 Sep 2017)
+
+  28 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libpng-1.6.29-r1.ebuild, -libpng-1.6.25-r1.ebuild:
+  Bump for thunderbird 52.3.0.
+
+*libpng-1.6.25-r1 (14 Dec 2016)
+
+  14 Dec 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libpng-1.6.25-r1.ebuild, -libpng-1.6.16.ebuild:
+  Update for firefox 45.5.0.
+
+*libpng-1.6.16 (25 Sep 2015)
+
+  25 Sep 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +libpng-1.6.16.ebuild, -libpng-1.6.10.ebuild:
+
+*libpng-1.2.53 (24 Sep 2015)
+
+  24 Sep 2015; Timothée Ravier <clipos@ssi.gouv.fr>
+  +libpng-1.2.53.ebuild:
+  Re-introduce libpng 1.2 (as libpng12), required by icaclient 13.2.1.
+
+*libpng-1.6.10 (18 Mar 2014)
+
+  18 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.6.10.ebuild, -libpng-1.6.8.ebuild:
+  Security bump, CVE-2014-0333.
+
+*libpng-1.6.8 (06 Jan 2014)
+
+  06 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.6.8.ebuild, -libpng-1.6.6.ebuild,
+  -libpng-1.5.17-r1.ebuild:
+  Bump to latest, remove old.
+
+*libpng-1.6.6 (29 Oct 2013)
+*libpng-1.5.17-r1 (29 Oct 2013)
+
+  29 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.6.6.ebuild, +libpng-1.5.17-r1.ebuild, 
+  -libpng-1.5.17.ebuild:
+  Bump to 1.6, keep a 1.5 compat version.
+
+  07 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  -libpng-1.4.12-r1.ebuild, -files/libpng-1.4.8-build.patch:
+  Remove old.
+
+*libpng-1.5.17 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.5.17.ebuild, -libpng-1.5.13-r1.ebuild:
+  Bump to latest.
+
+  03 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  -libpng-1.2.50.ebuild:
+  Remove old. libpng14 remains in use in RM for now.
+
+*libpng-1.5.13-r1 (22 Nov 2012)
+
+  22 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.5.13-r1.ebuild, -libpng-1.5.12.ebuild:
+  Bump to latest.
+
+*libpng-1.5.12 (23 Jul 2012)
+*libpng-1.4.12-r1 (23 Jul 2012)
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.5.12.ebuild, +libpng-1.4.12-r1.ebuild, -libpng-1.4.12.ebuild:
+  First import of libpng15.
+  New version of libpng14, to provide only libpng14.so and nothing
+  else, for backward compatibility while we migrate to libpng15.so.
+
+*libpng-1.4.12 (16 Jul 2012)
+*libpng-1.2.50 (16 Jul 2012)
+
+  16 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.4.12.ebuild, -libpng-1.4.11.ebuild,
+  +libpng-1.2.50.ebuild, -libpng-1.2.49.ebuild:
+  Security bump to latest.
+
+*libpng-1.4.11 (04 Apr 2012)
+*libpng-1.2.49 (04 Apr 2012)
+
+  04 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.49.ebuild, -libpng-1.2.47.ebuild,
+  +libpng-1.4.11.ebuild, -libpng-1.4.9.ebuild:
+  Security bump to latest.
+
+*libpng-1.4.9 (21 Feb 2012)
+*libpng-1.2.47 (21 Feb 2012)
+
+  21 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.47.ebuild, -libpng-1.2.45.ebuild,
+  +libpng-1.4.9.ebuild, -libpng-1.4.8-r2.ebuild,
+  -files/libpng-1.2.45-build.patch:
+  Security bump to latest.
+
+*libpng-1.4.8-r2 (10 Aug 2011)
+
+  10 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.4.8-r2.ebuild, -libpng-1.4.8-r1.ebuild:
+  Bump to force rebuild with USE apng for firefox.
+
+*libpng-1.4.8-r1 (12 Jul 2011)
+*libpng-1.2.45 (12 Jul 2011)
+
+  12 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.4.8-r1.ebuild, -libpng-1.4.4.ebuild,
+  +libpng-1.2.45.ebuild, -libpng-1.2.44-r1.ebuild,
+  -files/libpng-1.4.x-update.sh,
+  +files/libpng-1.2.45-build.patch,
+  +files/libpng-1.4.8-build.patch:
+  Security bump.
+
+*libpng-1.4.4 (07 Dec 2010)
+*libpng-1.2.44-r1 (07 Dec 2010)
+
+  07 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.44-r1.ebuild, +libpng-1.4.4.ebuild,
+  -libpng-1.2.44.ebuild, +files/libpng-1.4.x-update.sh:
+  Initial import of 1.4 version, keep a 1.2 version with a
+  DEB_NAME_SUFFIX of 12 to provide libpng12.so.0.
+
+*libpng-1.2.44 (28 Jun 2010)
+
+  28 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.44.ebuild, -libpng-1.2.43-r2.ebuild:
+
+*libpng-1.2.43-r2 (15 Jun 2010)
+
+  15 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.43-r2.ebuild, -libpng-1.2.37.ebuild:
+  Bump to latest, fix for CVE-2010-0205.
+
+*libpng-1.2.37 (17 Jun 2009)
+
+  17 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.37.ebuild, -libpng-1.2.35.ebuild:
+  Bump to latest, fixes CVE-2009-2042.
+
+*libpng-1.2.35 (03 Mar 2009)
+
+  03 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.35.ebuild, -libpng-1.2.26-r1.ebuild,
+  -files/libpng-1.2.26-CVE-2008-1382.patch:
+  Bump to latest stable to fix CVE-2009-0040.
+
+*libpng-1.2.26-r1 (15 Apr 2008)
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libpng-1.2.26-r1.ebuild, -libpng-1.2.12-r1.ebuild,
+  +files/libpng-1.2.24-pngconf-setjmp.patch,
+  +files/libpng-1.2.26-CVE-2008-1382.patch, -files/1.2.7-gentoo.diff:
+  Bump to latest stable to fix GLSA-200804-15.
+
+*libpng-1.2.12-r1 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  libpng-1.2.12-r1.ebuild:
+  Initial overlay import from gentoo's -1.2.12. Add IUSE clip-deps
+  to remove dependency on zlib.

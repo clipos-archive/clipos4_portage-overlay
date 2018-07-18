@@ -1,0 +1,25 @@
+--- a/modules/affile/affile-dest.c
++++ b/modules/affile/affile-dest.c
+@@ -162,7 +162,7 @@ affile_dw_reopen(AFFileDestWriter *self)
+   if (self->owner->flags & AFFILE_PIPE)
+     flags = O_RDWR | O_NOCTTY | O_NONBLOCK | O_LARGEFILE;
+   else
+-    flags = O_WRONLY | O_CREAT | O_NOCTTY | O_NONBLOCK | O_LARGEFILE | O_APPEND;
++    flags = O_WRONLY | O_APPEND | O_CLOEXEC | O_NOATIME | O_NOFOLLOW | O_NOCTTY | O_NONBLOCK | O_LARGEFILE;
+ 
+ 
+   if (affile_open_file(self->filename, flags, &self->owner->file_perm_options,
+--- a/syslog-ng/main.c
++++ b/syslog-ng/main.c
+@@ -242,9 +242,10 @@ main(int argc, char *argv[])
+   /* in this case we switch users early while retaining a limited set of
+    * credentials in order to initialize/reinitialize the configuration.
+    */
+-  g_process_start();
+   rc = main_loop_init();
+   
++  g_process_start();
++
+   if (rc)
+     {
+       g_process_startup_failed(rc, TRUE);

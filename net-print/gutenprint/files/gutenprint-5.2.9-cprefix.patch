@@ -1,0 +1,99 @@
+--- configure.ac.orig	2009-05-19 19:59:58.660473681 +0200
++++ configure.ac	2009-05-19 20:07:03.720474355 +0200
+@@ -188,12 +188,12 @@
+   [cups],
+   [=PREFIX],
+   [whether to build CUPS driver],
+-  [(default PREFIX=/usr)],
++  [(default PREFIX=CPREFIX)],
+   [BUILD_CUPS],
+   [(automatic)],
+   [
+-    yes) [BUILD_CUPS]="yes" ; AC_MSG_RESULT([yes]) ; cups_prefix="/usr" ;;
+-    no) [BUILD_CUPS]="no" ; AC_MSG_RESULT([no]) ; cups_prefix="/usr" ;;
++    yes) [BUILD_CUPS]="yes" ; AC_MSG_RESULT([yes]) ; cups_prefix="CPREFIX" ;;
++    no) [BUILD_CUPS]="no" ; AC_MSG_RESULT([no]) ; cups_prefix="CPREFIX" ;;
+     *) if test -d ${withval} ; then
+          [BUILD_CUPS]="yes"
+ 	 AC_MSG_RESULT([yes (using specified prefix)])
+--- m4/stp_cups.m4.orig	2010-04-22 19:47:53.041377536 +0200
++++ m4/stp_cups.m4	2010-04-22 19:48:06.201377415 +0200
+@@ -149,12 +149,6 @@
+   cups_sbindir="${cups_prefix}/sbin"
+ fi
+ 
+-# Get explicit CUPS directories if possible
+-if test "x$CUPS_CONFIG" != x; then
+-  cups_conf_datadir="`$CUPS_CONFIG --datadir`"
+-  cups_conf_serverbin="`$CUPS_CONFIG --serverbin`"
+-  cups_conf_serverroot="`$CUPS_CONFIG --serverroot`"
+-else
+ # Some logical guessing
+   if test "${datadir}" = "\${prefix}/share" -a "${cups_prefix}" = "/" ; then
+     cups_conf_datadir="/usr/share/cups"
+@@ -166,12 +160,9 @@
+   else
+     cups_conf_serverbin="${cups_prefix}/lib/cups"
+   fi
+-  if test "${sysconfdir}" = "\${prefix}/etc"; then
+     if test "${cups_prefix}" = "/usr" ; then
+       cups_conf_serverroot="/etc/cups"
+     else
+       cups_conf_serverroot="${cups_prefix}/etc/cups"
+     fi
+-  fi
+-fi
+ ])
+--- ./src/gutenprintui2/plist.c.orig	2013-08-21 13:05:25.000000000 +0200
++++ ./src/gutenprintui2/plist.c	2013-08-21 13:06:13.000000000 +0200
+@@ -89,33 +89,15 @@ typedef struct
+  * See bug 742187 (huge delays with lpstat -d -p) for an explanation.
+  */
+ static const print_system_t default_printing_system =
+-  { "SysV", N_("System V lp"), "lp -s", "-d", "-oraw", "/usr/bin/lp",
+-    "/usr/bin/lpstat -v | awk '/^device for /i {sub(\":\", \"\", $3); print $3}'",
++  { "SysV", N_("System V lp"), "lp -s", "-d", "-oraw", "/usr/local/bin/lp",
++    "/usr/local/bin/lpstat -v | awk '/^device for /i {sub(\":\", \"\", $3); print $3}'",
+   "-n" };
+ 
+ static print_system_t known_printing_systems[] =
+ {
+-  { "CUPS", N_("CUPS"), "lp -s", "-d", "-oraw", "/usr/sbin/cupsd",
+-    "/usr/bin/lpstat -v | awk '/^device for /i {sub(\":\", \"\", $3); print $3}'",
++  { "CUPS", N_("CUPS"), "lp -s", "-d", "-oraw", "/usr/local/sbin/cupsd",
++    "/usr/local/bin/lpstat -v | awk '/^device for /i {sub(\":\", \"\", $3); print $3}'",
+     "-n" },
+-  { "SysV", N_("System V lp"), "lp -s", "-d", "-oraw", "/usr/bin/lp",
+-    "/usr/bin/lpstat -v | awk '/^device for /i {sub(\":\", \"\", $3); print $3}'",
+-    "-n" },
+-  { "lpd", N_("Berkeley lpd (/etc/lpc)"), "lpr", "-P", "-l", "/etc/lpc",
+-    "/etc/lpc status | awk '/^...*:/ {sub(\":.*\", \"\"); print}'",
+-    "-#" },
+-  { "lpd", N_("Berkeley lpd (/usr/bsd/lpc)"), "lpr", "-P", "-l", "/usr/bsd/lpc",
+-    "/usr/bsd/lpc status | awk '/^...*:/ {sub(\":.*\", \"\"); print}'",
+-    "-#" },
+-  { "lpd", N_("Berkeley lpd (/usr/etc/lpc"), "lpr", "-P", "-l", "/usr/etc/lpc",
+-    "/usr/etc/lpc status | awk '/^...*:/ {sub(\":.*\", \"\"); print}'",
+-    "-#" },
+-  { "lpd", N_("Berkeley lpd (/usr/libexec/lpc)"), "lpr", "-P", "-l", "/usr/libexec/lpc",
+-    "/usr/libexec/lpc status | awk '/^...*:/ {sub(\":.*\", \"\"); print}'",
+-    "-#" },
+-  { "lpd", N_("Berkeley lpd (/usr/sbin/lpc)"), "lpr", "-P", "-l", "/usr/sbin/lpc",
+-    "/usr/sbin/lpc status | awk '/^...*:/ {sub(\":.*\", \"\"); print}'",
+-    "-#" },
+ };
+ 
+ static unsigned print_system_count = sizeof(known_printing_systems) / sizeof(print_system_t);
+--- ./src/escputil/escputil.c.orig	2013-08-21 13:06:58.000000000 +0200
++++ ./src/escputil/escputil.c	2013-08-21 13:07:11.000000000 +0200
+@@ -477,9 +477,7 @@ do_print_cmd(void)
+     }
+   else
+     {
+-      if (!access("/bin/lpr", X_OK) ||
+-          !access("/usr/bin/lpr", X_OK) ||
+-          !access("/usr/bsd/lpr", X_OK))
++      if (!access("/usr/local/bin/lpr", X_OK))
+         {
+         if (the_printer == NULL)
+           strcpy(command, "lpr -l");

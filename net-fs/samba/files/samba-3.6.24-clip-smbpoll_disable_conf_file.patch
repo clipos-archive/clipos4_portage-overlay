@@ -1,0 +1,25 @@
+smbpool on clip will try to load /usr/local/etc/samba/smb.conf, and fail because it is not present on the system.
+Here, we make the code load /dev/null, which is the equivalent of any empty smb.conf file.
+
+If by any luck, a smb.conf file exists on the system, it'll get loaded.
+
+Without this patch, it is not possible to print with cups using smb://.
+
+Index: samba-3.6.24-abi_x86_32.x86/source3/client/smbspool.c
+===================================================================
+--- samba-3.6.24-abi_x86_32.x86.orig/source3/client/smbspool.c
++++ samba-3.6.24-abi_x86_32.x86/source3/client/smbspool.c
+@@ -250,8 +250,11 @@ main(int argc,			/* I - Number of comman
+ 	load_case_tables();
+ 
+ 	if (!lp_load(get_dyn_CONFIGFILE(), True, False, False, True)) {
+-		fprintf(stderr, "ERROR: Can't load %s - run testparm to debug it\n", get_dyn_CONFIGFILE());
+-		goto done;
++		fprintf(stderr, "WARN: Can't load %s - run testparm to debug it, loading empty file\n", get_dyn_CONFIGFILE());
++		if (!lp_load("/dev/null", True, False, False, True)) {
++			fprintf(stderr, "ERROR: Can't load empty file, maybe you should create %s\n", get_dyn_CONFIGFILE());
++			goto done;
++		}
+ 	}
+ 
+ 	if (workgroup == NULL) {

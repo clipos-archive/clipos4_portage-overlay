@@ -1,0 +1,17 @@
+Index: kdebase-workspace-4.11.9/ksmserver/CMakeLists.txt
+===================================================================
+--- kdebase-workspace-4.11.9.orig/ksmserver/CMakeLists.txt
++++ kdebase-workspace-4.11.9/ksmserver/CMakeLists.txt
+@@ -11,12 +11,6 @@ include_directories(
+ 
+ add_subdirectory( tests )
+ 
+-if(NOT WIN32)
+-   macro_optional_add_subdirectory( screenlocker )
+-   set(COMPILE_SCREEN_LOCKER 1)
+-   set(SCREEN_LOCKER "screenlocker_static")
+-endif(NOT WIN32)
+-
+ check_library_exists(ICE _IceTransNoListen "" HAVE__ICETRANSNOLISTEN)
+ configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
+ 

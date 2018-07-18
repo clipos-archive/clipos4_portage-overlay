@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Icon=libreoffice-startcenter
+Type=Application
+Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Other;
+Exec=libreoffice %U
+MimeType=application/vnd.openofficeorg.extension;
+Name=LibreOffice 
+GenericName=Office 
+GenericName[fr]=Suite bureautique
+GenericName[qtz]=A1QD‖Office
+Comment=The office productivity suite compatible to the open and standardized ODF document format. Supported by The Document Foundation.
+Comment[fr]=La suite bureautique LibreOffice.
+Comment[qtz]=8PL0‖The office productivity suite compatible to the open and standardized ODF document format. Supported by The Document Foundation.

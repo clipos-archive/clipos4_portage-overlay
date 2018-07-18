@@ -1,0 +1,15 @@
+--- python.eselect.orig	2010-06-21 23:00:37.000000000 +0200
++++ python.eselect	2010-06-21 23:00:51.000000000 +0200
+@@ -7,9 +7,9 @@ MAINTAINER="python@gentoo.org"
+ SVN_DATE='$Date: 2009-12-30 21:44:18 +0100 (śro) $'
+ VERSION=$(svn_date_to_version "${SVN_DATE}" )
+ 
+-ENV_D_PATH="${ROOT%/}/etc/env.d"
+-INTERPRETER_PATH="${ROOT%/}/usr/bin/"
+-MAN_PATH="${ROOT%/}/usr/share/man/man1/"
++ENV_D_PATH="/etc/env.d"
++INTERPRETER_PATH="/usr/bin/"
++MAN_PATH="/usr/share/man/man1/"
+ 
+ PYTHON_INTERPRETERS_GROUP=""
+ 

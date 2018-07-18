@@ -1,0 +1,11 @@
+[Desktop Entry]
+GenericName=Java Web Start
+GenericName[fr]=Java Web Start
+Name=Java Web Start
+Icon=security-low
+Exec=javaws %f
+Terminal=false
+Type=Application
+MimeType=application/x-java-jnlp-file;
+Categories=Network;WebBrowser;
+NoDisplay=true

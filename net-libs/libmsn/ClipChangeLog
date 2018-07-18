@@ -1,0 +1,37 @@
+# CLIP ChangeLog for net-libs/libmsn
+
+*libmsn-4.2.1 (24 Jan 2014)
+
+  24 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmsn-4.2.1.ebuild, -libmsn-4.2.ebuild,
+  -files/libmsn-4.2-install-xmlparser-header.patch,
+  +files/libmsn-4.2.1-gcc47.patch:
+  Bump to latest, fixes build.
+
+*libmsn-4.2 (03 Apr 2012)
+
+  03 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmsn-4.2.ebuild, -libmsn-4.1-r1.ebuild,
+  +files/libmsn-4.2-install-xmlparser-header.patch,
+  -files/libmsn-4.1-openssl-1.patch:
+  Bump to latest.
+
+*libmsn-4.1-r1 (22 Mar 2011)
+
+  22 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmsn-4.1-r1.ebuild, -libmsn-4.1.ebuild,
+  +files/libmsn-4.1-openssl-1.patch:
+  Fix compilation with openssl-1.
+
+*libmsn-4.1 (25 Jun 2010)
+
+  25 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmsn-4.1.ebuild, -libmsn-4.0_beta8.ebuild:
+  Bump to latest.
+
+*libmsn-4.0_beta8 (21 Dec 2009)
+
+  21 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  libmsn-4.0_beta8.ebuild:
+  Initial import. clip-deps fixes.
+

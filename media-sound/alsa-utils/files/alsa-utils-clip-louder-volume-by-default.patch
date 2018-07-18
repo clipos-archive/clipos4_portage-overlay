@@ -1,0 +1,13 @@
+Index: alsa-utils-1.0.27.2/alsactl/init/default
+===================================================================
+--- alsa-utils-1.0.27.2.orig/alsactl/init/default
++++ alsa-utils-1.0.27.2/alsactl/init/default
+@@ -12,7 +12,7 @@
+ 
+ ENV{ppercent}:="75%"
+ ENV{cpercent}:="75%"
+-ENV{pvolume}:="-20dB"
++ENV{pvolume}:="-3dB"
+ ENV{cvolume}:="12dB"
+ ENV{has_pmaster_vol}:="false"
+ 

@@ -1,0 +1,8 @@
+# CLIP ChangeLog for sci-visualization/gnuplot
+
+*gnuplot-4.6.2-r1 (09 Apr 2013)
+
+  09 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnuplot-4.6.2-r1.ebuild:
+  Initial overlay import - clip-deps / CPREFIX fixes.
+  Add DESCRIPTION_FR/CATEGORY_FR.

@@ -1,0 +1,60 @@
+@version: 3.4
+#
+# Syslog-ng configuration file for RM
+#
+# Copyright 2007 SGDN/DCSSI
+# Copyright 2010 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+# Author : Vincent Strubel <clipos@ssi.gouv.fr>
+
+options { 
+	chain_hostnames(no); 
+	flush_lines(0); 
+	use_dns(no); 
+	stats_freq(43200);
+};
+
+################################
+#          Sources             #
+################################
+
+source rmsrc { 
+	internal();
+	unix-stream("/update_priv/audit_root/log"); 
+	unix-stream("/update_root/log"); 
+	unix-stream("/update_priv/user_root/log"); 
+};
+
+################################
+#          Destinations        #
+################################
+
+destination out { unix-dgram("/var/run/logger"); };
+
+################################
+#          Filters             #
+################################
+
+# Facilities
+filter f_authpriv { level(info...emerg) and facility(auth, authpriv); };
+filter f_cron { level(info...emerg) and facility(cron); };
+filter f_daemon { level(info...emerg) and facility(daemon); };
+filter f_user { level(info...emerg) and facility(user); };
+filter f_messages { level(info...emerg) and not facility(auth, authpriv, cron, daemon, kern, user); };
+
+# Levels
+filter f_debug { level(debug); };
+filter f_nodebug { level(info...emerg); };
+filter f_info { level(info); };
+filter f_notice { level(notice); };
+filter f_warn { level(warn); };
+filter f_err { level(err); };
+filter f_emergency { level(emerg); };
+filter f_crit { level(crit); };
+
+################################
+#          Logs                #
+################################
+
+log { source(rmsrc); filter(f_nodebug); destination(out); };
+

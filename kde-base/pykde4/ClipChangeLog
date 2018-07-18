@@ -1,0 +1,78 @@
+# CLIP ChangeLog for kde-base/pykde4
+
+*pykde4-4.14.3-r1 (23 May 2016)
+
+  23 May 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pykde4-4.14.3-r1.ebuild, -pykde4-4.14.3.ebuild,
+  +files/pykde4-4.14.3-gcc-5.patch,
+  +files/kpythonpluginfactorywrapper.c-r2,
+  -files/kpythonpluginfactorywrapper.c-r1:
+  RBump to latest, fix build with gcc-5.
+  Make PYQT4_SIP_DIR definition depends on USE=clip.
+
+*pykde4-4.14.3 (15 Sep 2015)
+
+  15 Sep 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +pykde4-4.14.3.ebuild, -pykde4-4.12.5.ebuild:
+  Bumped to 4.14.3
+
+*pykde4-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.12.5.ebuild, -pykde4-4.12.3.ebuild:
+  Bump to latest.
+
+*pykde4-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.12.3.ebuild, -pykde4-4.9.5-r1.ebuild:
+  Bump to latest.
+
+*pykde4-4.9.5-r1 (24 Jul 2013)
+
+  24 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.9.5-r1.ebuild, -pykde4-4.9.5.ebuild:
+  Force rebuild.
+
+*pykde4-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.9.5.ebuild, -pykde4-4.9.4.ebuild:
+  Bump to latest.
+
+*pykde4-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.9.4.ebuild, -pykde4-4.7.3-r1.ebuild,
+  +files/kpythonpluginfactorywrapper.c-r1,
+  -files/pykde4-4.4.4-arm-sip.patch,
+  -files/pykde4-4.6.3-python-3.2.patch,
+  -files/kpythonpluginfactorywrapper.c:
+  Bump to latest.
+
+*pykde4-4.7.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.7.3-r1.ebuild, -pykde4-4.7.3.ebuild:
+  Force rebuild.
+
+*pykde4-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.7.3.ebuild, -pykde4-4.7.1-r1.ebuild:
+  Bump to latest.
+
+*pykde4-4.7.1-r1 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.7.1-r1.ebuild, -pykde4-4.7.1.ebuild:
+  Bump to force rebuild that actually installs something...
+  More CPREFIX fixes... Do not use kpluginfactory wrapper
+  in CLIP / clip-devstation.
+
+*pykde4-4.7.1 (13 Sep 2011)
+
+  13 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pykde4-4.7.1.ebuild:
+  Initial import. CPREFIX fixes.
+

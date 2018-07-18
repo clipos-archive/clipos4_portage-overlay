@@ -1,0 +1,313 @@
+#!/bin/sh
+#
+# Syslog-ng configuration file generator for CLIP core
+#
+# Copyright 2007 SGDN/DCSSI
+# Copyright 2010-2013 SGDSN/ANSSI
+# Distributed under the terms of the GNU General Public License v2
+# Authors :
+#   Vincent Strubel <clipos@ssi.gouv.fr>
+#   Mickaël Salaün <clipos@ssi.gouv.fr>
+
+[[ -n "${OUTPUT}" ]] || OUTPUT="/var/run/syslog-ng.conf"
+
+if [[ -e "/etc/conf.d/clip" ]]; then
+	source "/etc/conf.d/clip"
+else
+	source "/etc/conf.d/.clip.confnew"
+fi
+
+DST_OTHER=""
+DST_NETWORKING=""
+DST_SEC_ALERT=""
+DST_SEC_WARNING=""
+DST_SEC_INFO=""
+DST_UPDATE=""
+
+# Add generic logging sources and destinations for a jail
+# Usage: add_jail_source <jail name> [<socket>]
+# If no <socket> is given, use the one defined in /etc/jails/<jail name>/syslog.socket. In both
+# cases, the <socket> definition should be a full definition (without the trailing ';'), i.e. 
+#   "unix-stream("/path/to/socket/log" [options])"
+add_jail_source() {
+	local jail="${1}"
+	local sock="${2}"
+
+	[[ -n "${sock}" ]] || sock="$(cat "/etc/jails/${jail}/syslog.socket")"
+	if [[ -z "${sock}" ]]; then
+		echo "Undefined socket path for jail ${jail}, ignoring it" >&2
+		return 1
+	fi
+
+	cat >> "${OUTPUT}" <<EOF
+
+# ${jail} jail
+source ${jail}_src {
+	${sock};
+};
+
+destination ${jail}_authlog { file("/log/${jail}_auth.log"); }; 
+destination ${jail}_daemon { file("/log/${jail}_daemon.log"); }; 
+destination ${jail}_cron { file("/log/${jail}_cron.log"); }; 
+destination ${jail}_messages { file("/log/${jail}_messages.log"); }; 
+destination ${jail}_ssp { file("/log/${jail}_ssp.log"); };
+destination ${jail}_update { file("/log/${jail}_update.log"); };
+EOF
+}
+
+# Create generic logging rules for a jail
+# Usage: add_jail_rules <jail name>
+# This creates a set of generic rules for the specified jail, using the source and destinations created
+# for the same jail by add_jail_source().
+# The rules are declared final, so any custom rules for this jail should be created *before* calling
+# add_jail_rules
+add_jail_rules() {
+	local jail="${1}"
+	cat >> "${OUTPUT}" <<EOF
+
+log { source(${jail}_src); filter(f_user); filter(f_ssp); destination(${jail}_ssp); ${DST_SEC_ALERT} flags(final); };
+log { source(${jail}_src); filter(f_daemon); filter(f_update); destination(${jail}_update); ${DST_UPDATE} flags(final); };
+log { source(${jail}_src); filter(f_authpriv); destination(${jail}_authlog); ${DST_OTHER} flags(final); };
+log { source(${jail}_src); filter(f_cron); destination(${jail}_cron); ${DST_OTHER} flags(final); };
+log { source(${jail}_src); filter(f_daemon); destination(${jail}_daemon); ${DST_OTHER} flags(final); };
+log { source(${jail}_src); filter(f_messagesmore); destination(${jail}_messages); ${DST_OTHER} flags(final); };
+
+EOF
+}
+
+add_remote_dest() {
+	REMOTE_PORT="${REMOTE_LOG_PORT:-601}"
+	# Add destination
+	cat >> "${OUTPUT}" << EOF
+destination remote_syslog{
+	syslog("${REMOTE_LOG_HOST}"
+EOF
+	if [[ "${REMOTE_LOG_TLS}" == "yes" ]]; then
+		cat >> "${OUTPUT}" << EOF
+		transport("tls")
+		port("${REMOTE_PORT}")
+		tls(peer-verify(required-trusted)
+			ca_dir('/etc/audit/cacert')
+EOF
+		if [[ "${REMOTE_LOG_TLS_CLIENTCERT}" ]]; then
+			cat >> "${OUTPUT}" << EOF
+			key_file('/etc/audit/keys/client_key.pem')
+			cert_file('/etc/audit/keys/client_cert.pem')
+		)
+EOF
+		else # No client cert, close tls() statement
+			cat >> "${OUTPUT}" << EOF
+		)
+EOF
+		fi
+	else # No TLS
+		cat >> "${OUTPUT}" << EOF
+		transport("tcp")
+		port("${REMOTE_PORT}")
+EOF
+	fi # end TLS
+	# Now close the statement
+	cat >> "${OUTPUT}" << EOF
+		flags("no_multi_line")
+		flush_lines(10)
+		flush_timeout(1000)
+	);
+};
+EOF
+	# Add log statements
+	if [[ "${REMOTE_LOG_NETWORKING}" == "yes" ]]; then
+		DST_NETWORKING="destination(remote_syslog);"
+	fi
+	if [[ "${REMOTE_LOG_SEC_ALERT}" == "yes" ]]; then
+		DST_SEC_ALERT="destination(remote_syslog);"
+	fi
+	if [[ "${REMOTE_LOG_SEC_WARNING}" == "yes" ]]; then
+		DST_SEC_WARNING="destination(remote_syslog);"
+	fi
+	if [[ "${REMOTE_LOG_SEC_INFO}" == "yes" ]]; then
+		DST_SEC_INFO="destination(remote_syslog);"
+	fi
+	if [[ "${REMOTE_LOG_UPDATE}" == "yes" ]]; then
+		DST_UPDATE="destination(remote_syslog);"
+	fi
+	if [[ "${REMOTE_LOG_OTHER}" == "yes" ]]; then
+		DST_OTHER="destination(remote_syslog);"
+	fi
+}
+
+# Common part
+cat > "${OUTPUT}" <<EOF
+@version: 3.4
+options { 
+	chain_hostnames(no); 
+	flush_lines(0); 
+	use_dns(no); 
+	stats_freq(43200);
+};
+
+################################
+#          Sources             #
+################################
+
+source kernsrc { file("/proc/kmsg"); };
+source clipsrc { 
+	internal();
+	unix-stream("/dev/log"); 
+	unix-stream("/mounts/audit_priv/dev/log" max-connections(256)); 
+	unix-stream("/mounts/update_priv/dev/log" max-connections(256));
+	unix-stream("/mounts/user_priv/dev/log" max-connections(256)); 
+	unix-stream("/mounts/admin_priv/dev/log" max-connections(256));
+	unix-stream("/var/lib/p11proxy_core/dev/log" max-connections(256));
+	unix-stream("/var/lib/p11proxy_rm_b/dev/log" max-connections(256));
+	unix-stream("/var/lib/p11proxy_rm_h/dev/log" max-connections(256));
+};
+
+################################
+#          Destinations        #
+################################
+
+destination authlog { file("/log/auth.log"); };
+destination cron { file("/log/cron.log"); };
+destination daemon { file("/log/daemon.log"); };
+destination fw { file("/log/fw.log"); };
+destination kern { file("/log/kern.log"); };
+destination user { file("/log/user.log"); };
+destination audit { file("/log/audit.log"); };
+destination pax { file("/log/pax.log"); };
+destination grsec_mount { file("/log/grsec_mount.log"); };
+destination grsec { file("/log/grsec.log"); };
+destination clsm { file("/log/clsm.log"); };
+destination veriexec { file("/log/veriexec.log"); };
+destination vserver { file("/log/vserver.log"); };
+destination ssp { file("/log/ssp.log"); };
+destination debug { file("/log/debug"); };
+destination messages { file("/log/messages"); };
+destination fstrace { file("/log/fstrace.log"); };
+destination download { file("/log/download.log"); };
+destination update { file("/log/update.log"); };
+destination ike { file("/log/ike.log"); };
+destination cryptd { file("/log/cryptd.log"); };
+destination nosp { file("/log/nosp.log"); };
+
+################################
+#          Filters             #
+################################
+
+# Facilities
+filter f_kern { facility(kern); };
+filter f_authpriv { level(info...emerg) and facility(auth, authpriv); };
+filter f_authmore { level(info...emerg) and facility(auth, authpriv, daemon); };
+filter f_cron { level(info...emerg) and facility(cron); };
+filter f_daemon { level(info...emerg) and facility(daemon); };
+filter f_user { level(info...emerg) and facility(user); };
+filter f_messages { level(info...emerg) and not facility(auth, authpriv, cron, daemon, kern, user); };
+filter f_messagesmore { level(info...emerg) and not facility(auth, authpriv, cron, daemon); };
+
+# Levels
+filter f_debug { level(debug); };
+filter f_info { level(info); };
+filter f_notice { level(notice); };
+filter f_warn { level(warn); };
+filter f_err { level(err); };
+filter f_emergency { level(emerg); };
+filter f_crit { level(crit); };
+
+# Regexps
+filter f_ssp { match("buffer overflow detected" value("MSGHDR")); };
+filter f_audit { message("^audit.*"); };
+filter f_pax { message("^PAX:.*"); };
+filter f_fw { message("^FW:.*"); };
+filter f_grsec_mount { message("^grsec: (un|)mount.*"); };
+filter f_grsec { message("^grsec:.*") and not message("^grsec: (un|)mount.*"); };
+filter f_clsm { message("^CLSM:.*") and level(notice...emerg) ; };
+filter f_veriexec { message("^VERIEXEC:.*"); };
+filter f_nosp { message("^vxW:.*denied network access without a SP"); };
+filter f_vserver { message("^vxW:.*"); };
+filter f_fstrace { message("^fstrace:.*"); };
+filter f_download { match("^clip_download.*:" value("MSGHDR")); };
+filter f_update { match("^clip_install.*:" value("MSGHDR")); };
+filter f_ike { match("^charon.*:" value("MSGHDR")); };
+filter f_cryptd { match("^cryptd.*:" value("MSGHDR")); };
+
+EOF
+
+# Remote logging
+if [[ "${REMOTE_LOGGING}" == "yes" && -n "${REMOTE_LOG_HOST}" ]]; then
+	add_remote_dest
+fi
+
+# Core part
+cat >>"${OUTPUT}" <<EOF
+
+################################
+#          Logs                #
+################################
+
+# Kernel
+log { source(kernsrc); filter(f_pax); destination(pax); ${DST_SEC_ALERT} flags(final); };
+log { source(kernsrc); filter(f_veriexec); destination(veriexec); ${DST_SEC_ALERT} flags(final); };
+log { source(kernsrc); filter(f_nosp); destination(nosp); ${DST_SEC_ALERT} flags(final); };
+log { source(kernsrc); filter(f_grsec_mount); destination(grsec_mount); ${DST_SEC_WARNING} flags(final); };
+log { source(kernsrc); filter(f_grsec); destination(grsec); ${DST_SEC_WARNING} flags(final); };
+log { source(kernsrc); filter(f_clsm); destination(clsm); ${DST_SEC_WARNING} flags(final); };
+log { source(kernsrc); filter(f_vserver); destination(vserver); ${DST_SEC_WARNING} flags(final); };
+log { source(kernsrc); filter(f_fstrace); destination(fstrace); ${DST_SEC_INFO} flags(final); };
+log { source(kernsrc); filter(f_fw); destination(fw); ${DST_NETWORKING} flags(final); };
+log { source(kernsrc); filter(f_audit); destination(audit); ${DST_OTHER} flags(final); };
+log { source(kernsrc); filter(f_kern); destination(kern); ${DST_OTHER} flags(final); }; # Match all remaining
+
+# Userland
+log { source(clipsrc); filter(f_user); filter(f_ssp); destination(ssp); ${DST_SEC_ALERT} flags(final); };
+log { source(clipsrc); filter(f_authpriv); filter(f_cryptd); destination(cryptd); ${DST_SEC_INFO} flags(final); };
+log { source(clipsrc); filter(f_daemon); filter(f_download); destination(download); ${DST_UPDATE} flags(final); };
+log { source(clipsrc); filter(f_daemon); filter(f_update); destination(update); ${DST_UPDATE} flags(final); };
+log { source(clipsrc); filter(f_daemon); filter(f_ike); destination(ike); ${DST_NETWORKING} flags(final); };
+log { source(clipsrc); filter(f_authpriv); destination(authlog); ${DST_OTHER} flags(final); };
+log { source(clipsrc); filter(f_cron); destination(cron); ${DST_OTHER} flags(final); };
+log { source(clipsrc); filter(f_daemon); destination(daemon); ${DST_OTHER} flags(final); };
+log { source(clipsrc); filter(f_user); destination(user); ${DST_OTHER} flags(final); };
+log { source(clipsrc); filter(f_debug); destination(debug); ${DST_OTHER} flags(final); };
+log { source(clipsrc); filter(f_messages); destination(messages); ${DST_OTHER} flags(final); };
+
+EOF
+
+
+# Add RM jail sources (only those actually used on the system)
+for jail in ${CLIP_JAILS}; do
+	add_jail_source "${jail}" \
+		"unix-dgram(\"/vservers/${jail}/var/run/logger\" max-connections(16))"
+done
+
+# Add other jail sources if their configuration includes a 'syslog.socket' file
+for jailpath in /etc/jails/*; do
+	[[ -e "${jailpath}/syslog.socket" ]] || continue
+	add_jail_source "$(basename "${jailpath}")"
+done
+
+# Statically include extra rules / destinations as defined in /etc/syslog.d/*.conf
+for extra in /etc/syslog.d/*.conf; do
+	if [[ -f "${extra}" ]]; then
+		cat "${extra}" >> "${OUTPUT}"
+	fi
+done
+
+# Run any extra configuration script in /etc/syslog.d/*.script, to dynamically generate
+# extra rules
+for extra in /etc/syslog.d/*.script; do
+	if [[ -x "${extra}" ]]; then
+		source "${extra}"
+	fi
+done
+
+# Add RM jail rules (only those actually used on the system)
+for jail in ${CLIP_JAILS}; do
+	add_jail_rules "${jail}"
+done
+
+# Add other jail sources if their configuration includes a 'syslog.socket' file
+for jailpath in /etc/jails/*; do
+	[[ -e "${jailpath}/syslog.socket" ]] || continue
+	add_jail_rules "$(basename "${jailpath}")"
+done
+
+

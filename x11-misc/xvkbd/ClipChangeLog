@@ -1,0 +1,71 @@
+# CLIP ChangeLog for x11-misc/xvkbd
+
+*xvkbd-3.6-r1 (26 Sep 2016)
+
+  26 Sep 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +xvkbd-3.6-r1.ebuild, -xvkbd-3.6.ebuild:
+  Add argument to force cellwriter window to show and thus fix issue with
+  cellwriter not appearing again.
+
+*xvkbd-3.6 (11 Dec 2015)
+  11 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xvkbd-3.6.ebuild, -xvkbd-3.4a-r1.ebuild,
+  +files/xvkbd-3.6-last_altgr_mask.patch:
+  Bump to latest stable.
+
+*xvkbd-3.4a-r1 (04 Sep 2013)
+
+  09 Sep 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  xvkbd-3.4a-r1.ebuild:
+  Depend on x11-libs/libXp
+
+  04 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xvkbd-3.4a-r1.ebuild, -xvkbd-3.2-r6.ebuild:
+  Bump to latest. Note : actually depends on libXaw3d[unicode].
+
+*xvkbd-3.2-r6 (03 Sep 2013)
+
+  03 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xvkbd-3.2-r6.ebuild, -xvkbd-3.2-r5.ebuild:
+  Switch dependency from Xaw3d to libXaw3d.
+
+  17 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  xvkbd-3.2-r5.ebuild, +files/toggle_kbd.sh.livecd:
+  Add IUSE clip-livecd + toggle_kbd.sh version for livecd.
+
+*xvkbd-3.2-r5 (08 Oct 2012)
+
+  08 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xvkbd-3.2-r5.ebuild, -xvkbd-3.2-r4.ebuild,
+  files/toggle_kbd.sh:
+  Support using cellwriter once a user is logged in (we only retain
+  xvkbd for xdm logging, since I'm not sure we want to run cellwriter
+  as root).
+
+*xvkbd-3.2-r4 (07 Sep 2012)
+
+  07 Sep 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xvkbd-3.2-r4.ebuild, -xvkbd-3.2-r3.ebuild, files/XVkbd.resources:
+  brown paper bag, the logic was actually reversed
+
+*xvkbd-3.2-r3 (30 Aug 2012)
+
+  30 Aug 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xvkbd-3.2-r3.ebuild, -xvkbd-3.2-r2.ebuild, files/toggle_kbd.sh:
+  force -nocpp when calling xrdb.
+	files/XVkbd.resources: only hide keypad, not function key (so backspace key
+  is present)
+
+*xvkbd-3.2-r2 (23 Mar 2012)
+
+  22 Mar 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xvkbd-3.2-r2.ebuild, -xvkbd-3.2-r1.ebuild, files/XVkbd.resources:
+  Enable secure mode.
+
+*xvkbd-3.2-r1 (10 Jan 2012)
+
+  10 Jan 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xvkbd-3.2-r1.ebuild, -xvkbd-3.2.ebuild, +files/XVkbd.resources,
+  +files/toggle_kbd.sh:
+  Provide configuration for xvkbd and add a little script to run/kill xvkbd from
+  adeskbar.

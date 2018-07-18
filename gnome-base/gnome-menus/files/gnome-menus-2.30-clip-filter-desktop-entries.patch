@@ -1,0 +1,90 @@
+--- libmenu/desktop-entries.c.orig	2011-12-08 11:03:10.000000000 +0100
++++ libmenu/desktop-entries.c	2011-12-08 11:26:41.000000000 +0100
+@@ -22,6 +22,7 @@
+ #include "desktop-entries.h"
+ 
+ #include <string.h>
++#include <stdlib.h>
+ 
+ #include "menu-util.h"
+ 
+@@ -65,6 +66,8 @@ struct DesktopEntrySet
+ /*
+  * Desktop entries
+  */
++static  char     **show_in_v = NULL;
++
+ 
+ static guint
+ get_flags_from_key_file (DesktopEntry *entry,
+@@ -79,7 +82,14 @@ get_flags_from_key_file (DesktopEntry *e
+   gboolean   tryexec_failed;
+   char      *tryexec;
+   guint      flags;
+-  int        i;
++  int        i, j;
++
++  if (!show_in_v)
++    {
++      char *var = getenv("SHOW_DESKTOP_ENTRIES");
++      if (var)
++        show_in_v = g_strsplit(var, " ", 0);
++    }
+ 
+   error = NULL;
+   no_display = g_key_file_get_boolean (key_file,
+@@ -112,14 +122,19 @@ get_flags_from_key_file (DesktopEntry *e
+   if (strv)
+     {
+       show_in_gnome = FALSE;
+-      for (i = 0; strv[i]; i++)
+-        {
+-          if (!strcmp (strv[i], "GNOME"))
+-            {
+-              show_in_gnome = TRUE;
+-              break;
+-            }
+-        }
++      if (show_in_v) {
++        for (i = 0; strv[i]; i++)
++          {
++            for (j = 0; show_in_v[j]; j++)
++              {
++                if (!strcmp (strv[i], show_in_v[j]))
++                  {
++                    show_in_gnome = TRUE;
++                    break;
++                  }
++              }
++          }
++      }
+     }
+   else
+     {
+@@ -131,13 +146,19 @@ get_flags_from_key_file (DesktopEntry *e
+       if (strv)
+         {
+           show_in_gnome = TRUE;
+-          for (i = 0; strv[i]; i++)
+-            {
+-              if (!strcmp (strv[i], "GNOME"))
+-                {
+-                  show_in_gnome = FALSE;
+-                }
+-            }
++          if (show_in_v) {
++            for (i = 0; strv[i]; i++)
++              {
++                for (j = 0; show_in_v[j]; j++)
++                  {
++                    if (!strcmp (strv[i], show_in_v[j]))
++                      {
++                        show_in_gnome = FALSE;
++                        break;
++                      }
++                  }
++              }
++          }
+         }
+     }
+   g_strfreev (strv);

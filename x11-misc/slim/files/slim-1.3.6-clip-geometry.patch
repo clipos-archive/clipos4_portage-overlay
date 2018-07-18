@@ -1,0 +1,57 @@
+--- ./app.cpp.orig	2013-11-18 14:12:34.000000000 +0100
++++ ./app.cpp	2013-11-18 14:12:43.000000000 +0100
+@@ -1317,11 +1317,23 @@ void App::blankScreen()
+ 
+ void App::setBackground(const string& themedir) {
+ 	string filename;
+-	filename = themedir + "/background.png";
++	int width = XWidthOfScreen(ScreenOfDisplay(Dpy, Scr));
++	int height = XHeightOfScreen(ScreenOfDisplay(Dpy, Scr));
++	/*
++	 * width / height == 16 / fract 
++	 */
++	int fract = (16 * height) / width;
++
++	stringstream path, path_fallback;
++	path << themedir << "/background-" << width << "x" << height;
++	path_fallback << themedir << "/background-16x" << fract;
++	filename = path.str() + ".png";
+ 	image = new Image;
++	logStream << "Loading: " << filename << endl;
+ 	bool loaded = image->Read(filename.c_str());
+-	if (!loaded){ /* try jpeg if png failed */
+-		filename = themedir + "/background.jpg";
++	if (!loaded){ // try fallback
++		filename = path_fallback.str() + ".png";
++		logStream << "Loading: " << filename << endl;
+ 		loaded = image->Read(filename.c_str());
+ 	}
+ 	if (loaded) {
+--- ./panel.cpp.orig	2013-11-18 14:12:53.000000000 +0100
++++ ./panel.cpp	2013-11-18 14:13:50.000000000 +0100
+@@ -111,10 +111,22 @@ Panel::Panel(Display* dpy, int scr, Wind
+ 	Image* bg = new Image();
+ 	string bgstyle = cfg->getOption("background_style");
+ 	if (bgstyle != "color") {
+-		panelpng = themedir +"/background.png";
++		stringstream path, path_fallback;
++		int width = XWidthOfScreen(ScreenOfDisplay(Dpy, Scr));
++		int height = XHeightOfScreen(ScreenOfDisplay(Dpy, Scr));
++		/*
++		 * width / height == 16 / fract 
++		 */
++		int fract = (16 * height) / width;
++		
++		path << themedir << "/background-" << width << "x" << height;
++		path_fallback << themedir << "/background-16x" << fract;
++		panelpng = path.str() + ".png";
++		logStream << "Loading background: " << panelpng << endl;
+ 		loaded = bg->Read(panelpng.c_str());
+-		if (!loaded) { /* try jpeg if png failed */
+-			panelpng = themedir + "/background.jpg";
++		if (!loaded) { // try fallback
++			panelpng = path_fallback.str() + ".jpg";
++			logStream << "Loading background: " << panelpng << endl;
+ 			loaded = bg->Read(panelpng.c_str());
+ 			if (!loaded){
+ 				logStream << APPNAME

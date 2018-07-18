@@ -1,0 +1,158 @@
+# CLIP ChangeLog for dev-db/sqlite
+
+*sqlite-3.17.0-r1 (28 Sep 2017)
+
+  28 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +sqlite-3.17.0-r1.ebuild, -sqlite-3.12.0-r2.ebuild:
+  Bump for firefox update to 52.3.0.
+
+*sqlite-3.12.0-r2 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +sqlite-3.12.0-r2.ebuild, -sqlite-3.12.0-r1.ebuild:
+  Rbump to link with icu 58.2.
+
+*sqlite-3.12.0-r1 (14 Dec 2016)
+
+  14 Dec 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +sqlite-3.12.0-r1.ebuild, -sqlite-3.8.9-r1.ebuild:
+  Update for firefox 45.5.0.
+
+*sqlite-3.8.9-r1 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +sqlite-3.8.9-r1.ebuild, -sqlite-3.8.9.ebuild:
+  Rbump to link with icu 55.1.
+
+*sqlite-3.8.9 (13 May 2015)
+
+  13 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sqlite-3.8.9.ebuild, -sqlite-3.8.6-r1.ebuild:
+  Bump to latest, rebuild against icu 54.1.
+
+*sqlite-3.8.6-r1 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.8.6-r1.ebuild, -sqlite-3.8.6.ebuild:
+  Force rebuild (icu revdep).
+
+*sqlite-3.8.6 (23 Dec 2014)
+
+  23 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.8.6.ebuild, -sqlite-3.8.5.ebuild:
+  Bump to latest stable.
+
+*sqlite-3.8.5 (06 Jun 2014)
+
+  08 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sqlite-3.8.5.ebuild, -sqlite-3.8.2.ebuild:
+  Bump to latest.
+
+*sqlite-3.8.2 (25 Mar 2014)
+
+  25 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.8.2.ebuild, -sqlite-3.7.17-r1.ebuild,
+  -files/sqlite-3.8.1-autoconf-dlopen_check.patch,
+  -files/sqlite-3.8.1-src-dlopen_check.patch,
+  -files/sqlite-3.8.1-tests-icu-52.patch:
+  Bump to latest stable. Re-add a (now useless) 'extensions'
+  USE flag to help satisfy python's build-deps.
+
+*sqlite-3.7.17-r1 (07 Nov 2013)
+
+  07 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.17-r1.ebuild, -sqlite-3.7.17.ebuild:
+  Force rebuild (icu revdep).
+
+*sqlite-3.7.17 (08 Aug 2013)
+
+  08 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.17.ebuild, -sqlite-3.7.14.1.ebuild:
+
+*sqlite-3.7.14.1 (20 Nov 2012)
+
+  20 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.14.1.ebuild, -sqlite-3.7.13.ebuild:
+  Bump to latest.
+
+*sqlite-3.7.13 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.13.ebuild, -sqlite-3.7.10.ebuild:
+  Bump to latest.
+
+*sqlite-3.7.10 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.10.ebuild, -sqlite-3.7.9.ebuild:
+  Bump to latest.
+
+*sqlite-3.1.9 (22 Dec 2011)
+
+  22 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.1.9.ebuild, -sqlite-3.7.6.2-r2.ebuild,
+  -files/sqlite-3.6.22-dlopen.patch,
+  -files/sqlite-3.6.22-interix-fixes-amalgamation.patch,
+  -files/sqlite-3.7.5-utimes.patch:
+  Bump to latest.
+
+*sqlite-3.7.6.2-r2 (10 Aug 2011)
+
+  10 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.6.2-r2.ebuild, -sqlite-3.7.6.2-r1.ebuild:
+  Rbump - force rebuild with use unlock-notify.
+
+*sqlite-3.7.6.2-r1 (19 Jul 2011)
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.6.2-r1.ebuild, -sqlite-3.7.6.2.ebuild:
+  Rbump - force rebuild against newer icu.
+
+*sqlite-3.7.6.2 (02 May 2011)
+
+  02 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.6.2.ebuild, -sqlite-3.7.3.ebuild,
+  +files/sqlite-3.7.5-utimes.patch,
+  -files/sqlite-3.6.22-interix-fixes.patch:
+  Bump to latest.
+
+*sqlite-3.7.3 (20 Oct 2010)
+
+  20 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.7.2.ebuild, -sqlite-3.6.23.1.ebuild:
+  Bump to latest.
+
+*sqlite-3.6.23.1 (25 Jun 2010)
+
+  25 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.6.23.1.ebuild, -sqlite-3.6.22-r2.ebuild:
+  Bump to latest.
+
+*sqlite-3.6.22-r2 (04 Mar 2010)
+
+  04 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.6.22-r2.ebuild, -sqlite-3.6.21.ebuild:
+  Bump to latest.
+
+*sqlite-3.6.21 (15 Dec 2009)
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.6.21.ebuild, -sqlite-3.6.16.ebuild:
+  Bump to latest ~x86 for better firefox support. See gentoo
+  bug #281695.
+
+  08 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  sqlite-3.6.16.ebuild, -sqlite-3.5.9.ebuild:
+  Stabilize latest version.
+
+*sqlite-3.6.16 (06 Jul 2009)
+
+  06 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sqlite-3.6.16.ebuild:
+  Add latest ~x86 to enable firefox-3.5 migration.
+
+*sqlite-3.5.9 (14 Jan 2009)
+
+  14 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  sqlite-3.5.9.ebuild:
+  Initial CLIP overlay import. Fix for CPREFIX.

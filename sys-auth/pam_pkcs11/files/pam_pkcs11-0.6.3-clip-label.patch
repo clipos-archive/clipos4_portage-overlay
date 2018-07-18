@@ -1,0 +1,250 @@
+diff -Naur pam_pkcs11-0.6.3/src/common/cert_vfy.h pam_pkcs11-0.6.3_clip/src/common/cert_vfy.h
+--- pam_pkcs11-0.6.3/src/common/cert_vfy.h	2010-04-10 16:04:57.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/common/cert_vfy.h	2014-02-12 08:27:24.805522348 +0100
+@@ -53,6 +53,7 @@
+ 	const char *crl_dir;
+ 	const char *nss_dir;
+ 	int ocsp_policy;
++	const char *label;
+ };
+ 
+ #ifndef __CERT_VFY_C
+--- pam_pkcs11-0.6.3/src/common/pkcs11_lib.c	2010-04-10 16:36:03.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/common/pkcs11_lib.c	2014-02-12 08:27:24.805522348 +0100
+@@ -687,7 +687,7 @@
+ 
+ 
+ 
+-cert_object_t **get_certificate_list(pkcs11_handle_t *h, int *count)
++cert_object_t **get_certificate_list(pkcs11_handle_t *h, int *count, const char *label)
+ {
+   CERTCertList * certList;
+   CERTCertListNode *node;
+@@ -1423,7 +1423,7 @@
+ }
+ 
+ /* get a list of certificates */
+-cert_object_t **get_certificate_list(pkcs11_handle_t *h, int *ncerts)
++cert_object_t **get_certificate_list(pkcs11_handle_t *h, int *ncerts, const char *label)
+ {
+   CK_BYTE *id_value;
+   CK_BYTE *cert_value;
+@@ -1432,9 +1432,14 @@
+   X509 *x509;
+   cert_object_t **certs = NULL;
+   int rv;
++  char *label_value;
+ 
+   CK_OBJECT_CLASS cert_class = CKO_CERTIFICATE;
+   CK_CERTIFICATE_TYPE cert_type = CKC_X_509;
++  CK_ATTRIBUTE label_template[] = {
++    {CKA_LABEL, NULL, 0}
++  };
++
+   CK_ATTRIBUTE cert_template[] = {
+     {CKA_CLASS, &cert_class, sizeof(CK_OBJECT_CLASS)}
+     ,
+@@ -1476,6 +1481,7 @@
+         set_error("CertID length: C_GetAttributeValue() failed: 0x%08lX", rv);
+         goto getlist_error;
+     }
++
+     /* allocate enought space */
+     id_value = malloc(cert_template[2].ulValueLen);
+     if (id_value == NULL) {
+@@ -1491,6 +1497,49 @@
+         goto getlist_error;
+     }
+ 
++    /* pass 1.5: get cert label */
++    if(label == NULL) {
++      DBG("No label specified\n");
++      goto nolabel;
++    }
++
++    /* retrieve cert object label length */
++    label_template[0].pValue = NULL;
++    label_template[0].ulValueLen = 0;
++    rv = h->fl->C_GetAttributeValue(h->session, object, label_template, 1);
++    if (rv != CKR_OK) {
++            DBG1("Error in get attribute value : %d\n", label_template[0].ulValueLen);
++        set_error("Cert label length: C_GetAttributeValue() failed: 0x%08lX", rv);
++        goto getlist_error;
++    }
++    /* allocate enought space */
++    label_value = malloc(label_template[0].ulValueLen + 1);
++    if (label_value == NULL) {
++        set_error("CertLabel malloc(%d): not enough free memory available", label_template[0].ulValueLen);
++        goto getlist_error;
++    }
++    /* read cert label into allocated space */
++    label_template[0].pValue = label_value;
++    rv = h->fl->C_GetAttributeValue(h->session, object, label_template, 1);
++    if (rv != CKR_OK) {
++        free(label_value);
++        set_error("CertLabel value: C_GetAttributeValue() failed: 0x%08lX", rv);
++        goto getlist_error;
++    }
++    label_value[label_template[0].ulValueLen] = '\0';
++
++    /* compare requested label with current label */
++    if((strlen(label) != label_template[0].ulValueLen) || strncmp(label_value, label, label_template[0].ulValueLen)) {
++      DBG1("Certificate label \"%s\" does not match", label_value);
++      free(id_value);
++      free(label_value);
++      continue;
++    }
++
++    DBG2("Certificate label \"%s\" matches : \"%s\"", label_template[0].pValue, label_value);
++
++    /* /label */
++    nolabel:
+     /* pass 2: get certificate */
+ 
+     /* retrieve cert length */
+@@ -1609,7 +1658,7 @@
+ 
+   key_template[3].pValue = cert->id;
+   key_template[3].ulValueLen = cert->id_length;
+-  rv = h->fl->C_FindObjectsInit(h->session, key_template, 2);
++  rv = h->fl->C_FindObjectsInit(h->session, key_template, 4);
+   if (rv != CKR_OK) {
+     set_error("C_FindObjectsInit() failed: 0x%08lX", rv);
+     return -1;
+--- pam_pkcs11-0.6.3/src/common/pkcs11_lib.h	2010-04-10 16:04:57.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/common/pkcs11_lib.h	2014-02-12 08:27:24.805522348 +0100
+@@ -60,7 +60,8 @@
+ PKCS11_EXTERN int pkcs11_pass_login(pkcs11_handle_t *h, int nullok);
+ PKCS11_EXTERN int get_slot_login_required(pkcs11_handle_t *h);
+ PKCS11_EXTERN cert_object_t **get_certificate_list(pkcs11_handle_t *h,
+-                                                  int *ncert);
++                                                  int *ncert,
++						  const char * label);
+ PKCS11_EXTERN int get_private_key(pkcs11_handle_t *h, cert_object_t *);
+ PKCS11_EXTERN int sign_value(pkcs11_handle_t *h, cert_object_t *,
+                unsigned char *data, unsigned long length,
+--- pam_pkcs11-0.6.3/src/pam_pkcs11/pam_config.c	2010-04-10 16:04:57.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/pam_pkcs11/pam_config.c	2014-02-12 08:30:48.621528733 +0100
+@@ -37,7 +37,7 @@
+ */
+ 
+ struct configuration_st configuration = {
+-	CONFDIR "/pam_pkcs11.conf",	/* char * config_file; */
++	"/var/run/pam_pkcs11.conf",	/* char * config_file; */
+ 	NULL,				/* scconf_context *ctx; */
+         0,				/* int debug; */
+         0,				/* int nullok; */
+@@ -64,6 +64,7 @@
+ 	},
+ 	N_("Smart card"),			/* token_type */
+ 	NULL,				/* char *username */
++	NULL,				/* char *label */
+ 	0                               /* int quiet */
+ };
+ 
+@@ -88,6 +89,7 @@
+         DBG1("crl_policy %d",configuration.policy.crl_policy);
+         DBG1("signature_policy %d",configuration.policy.signature_policy);
+         DBG1("ocsp_policy %d",configuration.policy.ocsp_policy);
++	DBG1("label %s",configuration.label);
+ }
+ #endif
+ 
+@@ -203,6 +205,9 @@
+ 
+ 		configuration.token_type = (char *)
+ 			scconf_get_str(pkcs11_mblk,"token_type",configuration.token_type);
++		configuration.label = (char *)
++			scconf_get_str(pkcs11_mblk,"label",configuration.label);
++
+ 	}
+ 	screen_saver_list = scconf_find_list(root,"screen_savers");
+ 	if (screen_saver_list) {
+@@ -348,6 +353,11 @@
+ 		continue;
+ 	   }
+ 
++	   if (strstr(argv[i],"label=") ) {
++		res=sscanf(argv[i],"label=%255s",configuration.label);
++		continue;
++	   }
++	   
+ 	   if (strstr(argv[i],"config_file=") ) {
+ 		/* already parsed, skip */
+ 		continue;
+--- pam_pkcs11-0.6.3/src/pam_pkcs11/pam_config.h	2010-04-10 16:04:57.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/pam_pkcs11/pam_config.h	2014-02-12 08:27:24.805522348 +0100
+@@ -44,6 +44,7 @@
+ 	cert_policy policy;
+ 	const char *token_type;
+ 	const char *username; /* provided user name */
++	const char *label; /* object label */
+ 	int quiet;
+ };
+ 
+--- pam_pkcs11-0.6.3/src/pam_pkcs11/pam_pkcs11.c	2010-04-10 16:47:04.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/pam_pkcs11/pam_pkcs11.c	2014-02-12 08:27:24.809522348 +0100
+@@ -467,7 +467,7 @@
+     }
+   }
+ 
+-  cert_list = get_certificate_list(ph, &ncert);
++  cert_list = get_certificate_list(ph, &ncert, configuration->label);
+   if (rv<0) {
+     ERR1("get_certificate_list() failed: %s", get_error());
+     if (!configuration->quiet)
+--- pam_pkcs11-0.6.3/src/tools/Makefile.am	2010-02-03 18:35:40.000000000 +0100
++++ pam_pkcs11-0.6.3_clip/src/tools/Makefile.am	2014-02-12 08:27:24.809522348 +0100
+@@ -23,7 +23,7 @@
+ pkcs11_eventmgr_LDADD = ../scconf/libscconf.la ../common/libcommon.la $(CRYPTO_LIBS)
+ 
+ pkcs11_inspect_SOURCES = pkcs11_inspect.c
+-pkcs11_inspect_LDADD = ../pam_pkcs11/libfinder.la ../mappers/libmappers.la
++pkcs11_inspect_LDADD = ../pam_pkcs11/libfinder.la ../mappers/libmappers.la ../common/libcommon.la
+ 
+ pkcs11_setup_SOURCES = pkcs11_setup.c
+ pkcs11_setup_LDADD = ../scconf/libscconf.la ../common/libcommon.la
+--- pam_pkcs11-0.6.3/src/tools/card_eventmgr.c	2010-04-10 16:38:24.000000000 +0200
++++ pam_pkcs11-0.6.3_clip/src/tools/card_eventmgr.c	2014-02-12 08:27:24.809522348 +0100
+@@ -312,7 +312,7 @@
+ int main(int argc, char *argv[]) {
+     int current_reader;
+     LONG rv;
+-    SCARD_READERSTATE_A *rgReaderStates_t = NULL;
++    SCARD_READERSTATE *rgReaderStates_t = NULL;
+     DWORD dwReaders, dwReadersOld;
+     LPSTR mszReaders = NULL;
+     char *ptr, **readers = NULL;
+--- pam_pkcs11-0.6.3/src/tools/pkcs11_inspect.c	2010-02-03 18:35:40.000000000 +0100
++++ pam_pkcs11-0.6.3_clip/src/tools/pkcs11_inspect.c	2014-02-12 08:27:24.809522348 +0100
+@@ -113,7 +113,7 @@
+ #endif
+ 
+   /* get certificate list (cert space is owned by ph) */
+-  certs = get_certificate_list(ph, &cert_count);
++  certs = get_certificate_list(ph, &cert_count, configuration->label);
+   if (certs == NULL) {
+     close_pkcs11_session(ph);
+     release_pkcs11_module(ph);
+--- pam_pkcs11-0.6.3/src/tools/pkcs11_listcerts.c	2010-02-03 18:35:40.000000000 +0100
++++ pam_pkcs11-0.6.3_clip/src/tools/pkcs11_listcerts.c	2014-02-12 08:27:24.809522348 +0100
+@@ -110,7 +110,7 @@
+   }
+ 
+   /* get certificate list */
+-  certs = get_certificate_list(ph, &ncerts);
++  certs = get_certificate_list(ph, &ncerts, configuration->label);
+   if (certs == NULL) {
+     close_pkcs11_session(ph);
+     release_pkcs11_module(ph);
+--- pam_pkcs11-0.6.3/src/tools/pklogin_finder.c	2010-02-03 18:35:40.000000000 +0100
++++ pam_pkcs11-0.6.3_clip/src/tools/pklogin_finder.c	2014-02-12 08:27:24.809522348 +0100
+@@ -112,7 +112,7 @@
+ #endif
+ 
+   /* get certificate list */
+-  certs = get_certificate_list(ph, &cert_count);
++  certs = get_certificate_list(ph, &cert_count, configuration->label);
+   if (certs == NULL) {
+     close_pkcs11_session(ph);
+     release_pkcs11_module(ph);

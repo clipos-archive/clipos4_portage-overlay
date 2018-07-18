@@ -1,0 +1,7 @@
+CLIP ChangeLog for kde-base/khelpcenter
+
+ *khelpcenter-4.14.3 (13 Nov 2015)
+
+   13 Nov 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+     +khelpcenter-4.14.3-r1.ebuild, -khelpcenter-4.14.3.ebuild:
+     Removed the kdesu dependency.

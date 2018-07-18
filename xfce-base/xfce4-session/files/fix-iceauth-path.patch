@@ -1,0 +1,22 @@
+diff --git a/xfce4-session/ice-layer.c b/xfce4-session/ice-layer.c
+index 4ad0bc5..9aa1f7b 100644
+--- a/xfce4-session/ice-layer.c
++++ b/xfce4-session/ice-layer.c
+@@ -339,7 +339,7 @@ ice_setup_listeners (int           num_listeners,
+   fclose (cleanup_fp);
+ 
+   /* setup ICE authority and remove setup file */
+-  command = g_strdup_printf ("%s source %s", ICEAUTH_CMD, auth_setup_file);
++  command = g_strdup_printf ("%s source %s", "/usr/local/bin/iceauth", auth_setup_file);
+   if (system (command) != 0)
+     {
+       g_warning ("Failed to setup the ICE authentication data, session "
+@@ -360,7 +360,7 @@ ice_cleanup (void)
+   g_return_if_fail (auth_cleanup_file != NULL);
+ 
+   /* remove newly added ICE authority entries */
+-  command = g_strdup_printf ("%s source %s", ICEAUTH_CMD, auth_cleanup_file);
++  command = g_strdup_printf ("%s source %s", "/usr/local/bin/iceauth", auth_cleanup_file);
+   if (system (command))
+     g_warning ("Failed to execute \"%s\"", command);
+   g_free (command);

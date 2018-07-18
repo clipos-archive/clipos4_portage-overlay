@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [[ "${CLIP_DEFAULT_TOOLKIT}" == "gtk" ]]; then
+	exec pinentry-gtk-2 "${@}"
+else
+	exec pinentry-qt4 "${@}"
+fi

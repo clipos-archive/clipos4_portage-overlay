@@ -1,0 +1,40 @@
+#!/sbin/runscript
+# Copyright 1999-2010 Gentoo Foundation
+# Copyright 2011 SGDSN/ANSSI
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+depend() {
+	need localmount 
+	after bootmisc consolefont modules netmount
+}
+
+make_configs_rw() {
+	if grep -q 'cdboot' '/proc/cmdline'; then
+		# We're booting of a readonly media - make a tmpfs copy of /mnt/cdrom/configs
+		rsync -ar /mnt/cdrom/config /tmp/
+		mount --bind /tmp/config /mnt/cdrom/config
+	else 
+		mount -o remount,rw /mnt/cdrom 
+	fi
+}
+
+start() {
+	grep -q "nofb" "/proc/cmdline" && return 0
+	[[ -e "/dev/fb0" ]] || return 0
+
+	# Yeah, I know it's ugly...
+	make_configs_rw
+
+	ebegin "Starting X server"
+	/usr/bin/startx -- vt7 1>/tmp/.xlog 2>/tmp/.xerr &
+	eend $?
+}
+
+stop() {
+	if [[ -e /tmp/.X0-lock ]]; then
+		ebegin "Stopping X server"
+		killall X
+		eend $?
+	fi
+}

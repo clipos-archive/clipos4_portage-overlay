@@ -1,0 +1,15 @@
+Index: chromium-55.0.2883.75/net/udp/udp_socket_posix.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/net/udp/udp_socket_posix.cc
++++ chromium-55.0.2883.75/net/udp/udp_socket_posix.cc
+@@ -48,8 +48,8 @@ namespace net {
+ namespace {
+ 
+ const int kBindRetries = 10;
+-const int kPortStart = 1024;
+-const int kPortEnd = 65535;
++const int kPortStart = 32768;
++const int kPortEnd = 61000;
+ 
+ #if defined(OS_MACOSX)
+ 

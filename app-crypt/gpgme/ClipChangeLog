@@ -1,0 +1,26 @@
+# CLIP ChangeLog for app-crypt/gpgme
+
+*gpgme-1.3.2-r1 (27 Dec 2012)
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gpgme-1.3.2-r1.ebuild, -gpgme-1.3.2.ebuild:
+  Fix gpgconf path for CPREFIX, again.
+
+*gpgme-1.3.2 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gpgme-1.3.2.ebuild, -gpgme-1.2.0-r1.ebuild,
+  -files/gpgme-1.2.0-fix_implicit_declaration.patch:
+  Bump to latest, needed for kdepim 4.9.
+
+*gpgme-1.2.0-r1 (12 Jan 2010)
+
+  12 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gpgme-1.2.0-r1.ebuild, -gpgme-1.2.0.ebuild:
+  CPREFIX fix for gpgconf path.
+
+*gpgme-1.2.0 (10 Dec 2009)
+
+  10 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gpgme-1.2.0.ebuild:
+  Initial import. CPREFIX fixes.

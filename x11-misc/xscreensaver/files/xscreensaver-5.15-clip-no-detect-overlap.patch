@@ -1,0 +1,30 @@
+--- driver/screens.c	2009-05-01 09:05:59.000000000 +0200
++++ driver/screens.c	2014-03-18 15:20:05.604276018 +0100
+@@ -710,20 +710,13 @@
+ static Bool
+ monitors_overlap_p (monitor *a, monitor *b)
+ {
+-  /* Two rectangles overlap if the max of the tops is less than the
+-     min of the bottoms and the max of the lefts is less than the min
+-     of the rights.
+-   */
+-# undef MAX
+-# undef MIN
+-# define MAX(A,B) ((A)>(B)?(A):(B))
+-# define MIN(A,B) ((A)<(B)?(A):(B))
+-
+-  int maxleft  = MAX(a->x, b->x);
+-  int maxtop   = MAX(a->y, b->y);
+-  int minright = MIN(a->x + a->width  - 1, b->x + b->width);
+-  int minbot   = MIN(a->y + a->height - 1, b->y + b->height);
+-  return (maxtop < minbot && maxleft < minright);
++  /* Don't detect overlaps, xscreensaver does the wrong thing if
++   * it detects an overlap: it doesn't start a hack/blank window
++   * on all monitors and thus the desktop is not hidden on all
++   * monitors. Simply deactivating this check makes it fall into
++   * default mode: launching a hack/blank window on both monitors,
++   * which is good. */
++  return 0;
+ }
+ 
+ 

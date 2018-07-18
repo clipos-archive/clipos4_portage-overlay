@@ -1,0 +1,15 @@
+*timezone-data-2015b (21 Mar 2015)
+
+  21 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +timezone-data-2015b.ebuild,-timezone-data-2014i-r2.ebuild,
+  -files/timezone-data-2014h-makefile.patch,
+  +files/timezone-data-2015a-makefile.patch:
+  Update to latest stable.
+
+*timezone-data-2014i-r2 (04 Mar 2015)
+
+  04 Mar 2015; ANSSI <clipos@ssi.gouv.fr>
+  +timezone-data-2014i-r2.ebuild,-timezone-data-2014i-r1.ebuild:
+  Remove conflict with glibc for CLIP.
+
+

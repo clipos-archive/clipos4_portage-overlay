@@ -1,0 +1,149 @@
+Index: firefox-52.3.0esr/toolkit/components/telemetry/TelemetryHistogram.cpp
+===================================================================
+--- firefox-52.3.0esr.orig/toolkit/components/telemetry/TelemetryHistogram.cpp
++++ firefox-52.3.0esr/toolkit/components/telemetry/TelemetryHistogram.cpp
+@@ -245,12 +245,14 @@ namespace {
+ 
+ bool
+ internal_CanRecordBase() {
+-  return gCanRecordBase;
++  // return gCanRecordBase;
++  return false;
+ }
+ 
+ bool
+ internal_CanRecordExtended() {
+-  return gCanRecordExtended;
++  // return gCanRecordExtended;
++  return false;
+ }
+ 
+ bool
+@@ -677,9 +679,11 @@ nsresult
+ internal_HistogramAdd(Histogram& histogram, int32_t value, uint32_t dataset)
+ {
+   // Check if we are allowed to record the data.
+-  bool canRecordDataset = CanRecordDataset(dataset,
+-                                           internal_CanRecordBase(),
+-                                           internal_CanRecordExtended());
++  // bool canRecordDataset = CanRecordDataset(dataset,
++  //                                         internal_CanRecordBase(),
++  //                                         internal_CanRecordExtended());
++  bool canRecordDataset = false;
++
+   if (!canRecordDataset || !histogram.IsRecordingEnabled()) {
+     return NS_OK;
+   }
+@@ -914,7 +918,12 @@ public:
+   nsresult GetJSSnapshot(JSContext* cx, JS::Handle<JSObject*> obj,
+                          bool subsession, bool clearSubsession);
+ 
+-  void SetRecordingEnabled(bool aEnabled) { mRecordingEnabled = aEnabled; };
++  void SetRecordingEnabled(bool aEnabled) {
++    // clip : desactivation de l'enregistrement
++    // mRecordingEnabled = aEnabled;
++    mRecordingEnabled = false;
++  };
++
+   bool IsRecordingEnabled() const { return mRecordingEnabled; };
+ 
+   nsresult Add(const nsCString& key, uint32_t aSample);
+@@ -1030,9 +1039,11 @@ KeyedHistogram::GetDataset(uint32_t* dat
+ nsresult
+ KeyedHistogram::Add(const nsCString& key, uint32_t sample)
+ {
+-  bool canRecordDataset = CanRecordDataset(mDataset,
+-                                           internal_CanRecordBase(),
+-                                           internal_CanRecordExtended());
++  // bool canRecordDataset = CanRecordDataset(mDataset,
++  //                                         internal_CanRecordBase(),
++  //                                          internal_CanRecordExtended());
++  bool canRecordDataset = false;
++
+   if (!canRecordDataset) {
+     return NS_OK;
+   }
+@@ -1310,14 +1321,16 @@ internal_SetHistogramRecordingEnabled(mo
+     const nsDependentCString id(gHistograms[aID].id());
+     KeyedHistogram* keyed = internal_GetKeyedHistogramById(id);
+     if (keyed) {
+-      keyed->SetRecordingEnabled(aEnabled);
++      // keyed->SetRecordingEnabled(aEnabled);
++      keyed->SetRecordingEnabled(false);
+       return;
+     }
+   } else {
+     Histogram *h;
+     nsresult rv = internal_GetHistogramByEnumId(aID, &h, GeckoProcessType_Default);
+     if (NS_SUCCEEDED(rv)) {
+-      h->SetRecordingEnabled(aEnabled);
++      // h->SetRecordingEnabled(aEnabled);
++      h->SetRecordingEnabled(false);
+       return;
+     }
+   }
+@@ -2035,8 +2048,10 @@ void TelemetryHistogram::InitializeGloba
+   MOZ_ASSERT(!gInitDone, "TelemetryHistogram::InitializeGlobalState "
+              "may only be called once");
+ 
+-  gCanRecordBase = canRecordBase;
+-  gCanRecordExtended = canRecordExtended;
++  // gCanRecordBase = canRecordBase;
++  // gCanRecordExtended = canRecordExtended;
++  gCanRecordBase = false;
++  gCanRecordExtended = false;
+ 
+   // gHistogramMap should have been pre-sized correctly at the
+   // declaration point further up in this file.
+@@ -2130,25 +2145,29 @@ bool TelemetryHistogram::GlobalStateHasB
+ bool
+ TelemetryHistogram::CanRecordBase() {
+   StaticMutexAutoLock locker(gTelemetryHistogramMutex);
+-  return internal_CanRecordBase();
++  // return internal_CanRecordBase();
++  return false;
+ }
+ 
+ void
+ TelemetryHistogram::SetCanRecordBase(bool b) {
+   StaticMutexAutoLock locker(gTelemetryHistogramMutex);
+-  gCanRecordBase = b;
++  // gCanRecordBase = b;
++  gCanRecordBase = false;
+ }
+ 
+ bool
+ TelemetryHistogram::CanRecordExtended() {
+   StaticMutexAutoLock locker(gTelemetryHistogramMutex);
+-  return internal_CanRecordExtended();
++  // return internal_CanRecordExtended();
++  return false;
+ }
+ 
+ void
+ TelemetryHistogram::SetCanRecordExtended(bool b) {
+   StaticMutexAutoLock locker(gTelemetryHistogramMutex);
+-  gCanRecordExtended = b;
++  // gCanRecordExtended = b;
++  gCanRecordExtended = false;
+ }
+ 
+ 
+@@ -2185,13 +2204,15 @@ TelemetryHistogram::SetHistogramRecordin
+   Histogram *h;
+   nsresult rv = internal_GetHistogramByName(id, &h);
+   if (NS_SUCCEEDED(rv)) {
+-    h->SetRecordingEnabled(aEnabled);
++    // h->SetRecordingEnabled(aEnabled);
++    h->SetRecordingEnabled(false);
+     return NS_OK;
+   }
+ 
+   KeyedHistogram* keyed = internal_GetKeyedHistogramById(id);
+   if (keyed) {
+-    keyed->SetRecordingEnabled(aEnabled);
++    // keyed->SetRecordingEnabled(aEnabled);
++    keyed->SetRecordingEnabled(false);
+     return NS_OK;
+   }
+ 

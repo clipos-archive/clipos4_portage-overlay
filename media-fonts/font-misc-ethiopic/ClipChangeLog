@@ -1,0 +1,14 @@
+# CLIP ChangeLog for media-fonts/font-misc-ethiopic
+
+*font-misc-ethiopic-1.0.3 (05 Aug 2013)
+
+  05 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +font-misc-ethiopic-1.0.3.ebuild, -font-misc-ethiopic-1.0.1-r1.ebuild:
+  Bump to latest.
+
+*font-misc-ethiopic-1.0.1-r1 (21 Sep 2010)
+
+  21 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +font-misc-ethiopic-1.0.1-r1.ebuild:
+  Initial import, CPREFIX fixes.
+

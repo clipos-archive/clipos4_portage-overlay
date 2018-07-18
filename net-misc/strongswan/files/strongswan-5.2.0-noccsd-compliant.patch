@@ -1,0 +1,12 @@
+diff --git a/configure.ac b/configure.ac
+index 7f7248e..12ff8b1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1540,6 +1540,7 @@ AM_CONDITIONAL(USE_SVC, test x$svc = xtrue)
+ AM_CONDITIONAL(USE_SYSTEMD, test x$systemd = xtrue)
+ AM_CONDITIONAL(USE_LEGACY_SYSTEMD, test -n "$systemdsystemunitdir" -a "x$systemdsystemunitdir" != xno)
+ AM_CONDITIONAL(USE_RUBY_GEMS, test x$ruby_gems = xtrue)
++AM_CONDITIONAL(USE_CCSD, test x$ccsd = xtrue)
+ 
+ # ========================
+ #  set global definitions

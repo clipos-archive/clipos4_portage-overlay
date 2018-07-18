@@ -1,0 +1,23 @@
+#%PAM-1.0
+
+auth       required	pam_securetty.so
+auth       required	pam_shells.so
+auth       required	pam_nologin.so
+auth       include	system-auth
+@clip-bare_pam-exec-pwd@auth	[success=done default=die]	pam_exec_pwd.so
+
+account    required	pam_access.so
+account    include	system-auth
+
+password   include	system-auth
+
+session    required	pam_env.so
+session    optional	pam_lastlog.so
+session    optional	pam_motd.so motd=/etc/motd
+
+session    include	system-auth
+
+@clip-bare_pam-exec-pwd@session	required	pam_exec_pwd.so close_run_all
+@clip-bare_pam-jail@session	required	pam_jail.so proxy
+
+

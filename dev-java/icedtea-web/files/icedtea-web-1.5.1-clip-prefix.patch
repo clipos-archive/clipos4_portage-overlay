@@ -1,0 +1,21 @@
+diff --git a/launcher/launchers.in b/launcher/launchers.in
+index 22ff183..70eb658 100644
+--- a/launcher/launchers.in
++++ b/launcher/launchers.in
+@@ -15,15 +15,7 @@ if [ "x$CONFIG_HOME" = "x" ] ; then
+ fi;
+ PROPERTY_NAME=deployment.jre.dir
+ CUSTOM_JRE_REGEX="^$PROPERTY_NAME *= *"
+-CUSTOM_JRE=`grep "$CUSTOM_JRE_REGEX" $CONFIG_HOME/icedtea-web/deployment.properties 2>/dev/null |  sed "s/$CUSTOM_JRE_REGEX//g"`
+-#now check in legacy one
+-if [ "x$CUSTOM_JRE" = "x" ] ; then
+-  CUSTOM_JRE=`grep "$CUSTOM_JRE_REGEX" ~/.icedtea/deployment.properties 2>/dev/null |  sed "s/$CUSTOM_JRE_REGEX//g"`
+-fi;
+-#now check in global one
+-if [ "x$CUSTOM_JRE" = "x" ] ; then
+-  CUSTOM_JRE=`grep "$CUSTOM_JRE_REGEX" /etc/.java/.deploy/deployment.properties 2>/dev/null |  sed "s/$CUSTOM_JRE_REGEX//g"`
+-fi;
++CUSTOM_JRE=`grep "$CUSTOM_JRE_REGEX" /usr/local/etc/.java/.deploy/deployment.properties 2>/dev/null |  sed "s/$CUSTOM_JRE_REGEX//g"`
+ if [ "x$CUSTOM_JRE" != "x" ] ; then
+   if [ -e  "$CUSTOM_JRE" -a -e "$CUSTOM_JRE/bin/java" -a -e "$CUSTOM_JRE/lib/rt.jar" ] ; then
+     JAVA=$CUSTOM_JRE/bin/java

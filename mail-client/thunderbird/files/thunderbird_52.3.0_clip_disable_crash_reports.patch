@@ -1,0 +1,346 @@
+Index: thunderbird-52.3.0/mozilla/toolkit/crashreporter/client/crashreporter_gtk_common.cpp
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/crashreporter/client/crashreporter_gtk_common.cpp
++++ thunderbird-52.3.0/mozilla/toolkit/crashreporter/client/crashreporter_gtk_common.cpp
+@@ -192,6 +192,7 @@ gpointer SendThread(gpointer args)
+   string response, error;
+   long response_code;
+ 
++/*
+   bool success = google_breakpad::HTTPUpload::SendRequest
+     (gSendURL,
+      gQueryParameters,
+@@ -209,10 +210,11 @@ gpointer SendThread(gpointer args)
+   }
+ 
+   SendCompleted(success, response);
++*/
+   // Apparently glib is threadsafe, and will schedule this
+   // on the main thread, see:
+   // http://library.gnome.org/devel/gtk-faq/stable/x499.html
+-  g_idle_add(ReportCompleted, (gpointer)success);
++//  g_idle_add(ReportCompleted, (gpointer)success);
+ 
+   return nullptr;
+ }
+@@ -241,7 +243,7 @@ static void MaybeSubmitReport()
+ {
+   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gSubmitReportCheck))) {
+     gDidTrySend = true;
+-    SendReport();
++    // SendReport();
+   } else {
+     gtk_main_quit();
+   }
+@@ -251,7 +253,7 @@ void CloseClicked(GtkButton* button,
+                   gpointer userData)
+ {
+   SaveSettings();
+-  MaybeSubmitReport();
++  // MaybeSubmitReport();
+ }
+ 
+ void RestartClicked(GtkButton* button,
+@@ -259,7 +261,7 @@ void RestartClicked(GtkButton* button,
+ {
+   SaveSettings();
+   RestartApplication();
+-  MaybeSubmitReport();
++  // MaybeSubmitReport();
+ }
+ 
+ static void UpdateURL()
+Index: thunderbird-52.3.0/mozilla/toolkit/crashreporter/client/crashreporter_linux.cpp
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/crashreporter/client/crashreporter_linux.cpp
++++ thunderbird-52.3.0/mozilla/toolkit/crashreporter/client/crashreporter_linux.cpp
+@@ -119,8 +119,9 @@ void SendReport()
+ #endif
+ 
+   // and spawn a thread to do the sending
+-  GError* err;
+-  gSendThreadID = g_thread_create(SendThread, nullptr, TRUE, &err);
++  // clip : dont spawn the thread
++  // GError* err;
++  // gSendThreadID = g_thread_create(SendThread, nullptr, TRUE, &err);
+ }
+ 
+ static void ShowReportInfo(GtkTextView* viewReportTextView)
+Index: thunderbird-52.3.0/mozilla/old-configure.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/old-configure.in
++++ thunderbird-52.3.0/mozilla/old-configure.in
+@@ -3521,24 +3521,24 @@ dnl ====================================
+ dnl = Breakpad crash reporting (on by default on supported platforms)
+ dnl ========================================================
+ 
+-case $target in
+-i?86-*-mingw*|x86_64-*-mingw*)
+-  MOZ_CRASHREPORTER=1
+-  ;;
+-i?86-apple-darwin*|x86_64-apple-darwin*)
+-  if test -z "$MOZ_IOS"; then
+-    MOZ_CRASHREPORTER=1
+-  fi
+-  ;;
+-i?86-*-linux*|x86_64-*-linux*|arm-*-linux*)
+-  if test "$MOZ_ENABLE_GTK"; then
+-    MOZ_CRASHREPORTER=1
+-  fi
+-  ;;
+-*-android*|*-linuxandroid*)
+-  MOZ_CRASHREPORTER=1
+-  ;;
+-esac
++dnl case $target in
++dnl i?86-*-mingw*|x86_64-*-mingw*)
++dnl   MOZ_CRASHREPORTER=1
++dnl   ;;
++dnl i?86-apple-darwin*|x86_64-apple-darwin*)
++dnl   if test -z "$MOZ_IOS"; then
++dnl     MOZ_CRASHREPORTER=1
++dnl   fi
++dnl   ;;
++dnl i?86-*-linux*|x86_64-*-linux*|arm-*-linux*)
++dnl   if test "$MOZ_ENABLE_GTK"; then
++dnl     MOZ_CRASHREPORTER=1
++dnl   fi
++dnl   ;;
++dnl *-android*|*-linuxandroid*)
++dnl   MOZ_CRASHREPORTER=1
++dnl   ;;
++dnl esac
+ 
+ MOZ_ARG_DISABLE_BOOL(crashreporter,
+ [  --disable-crashreporter Disable breakpad crash reporting],
+@@ -3552,21 +3552,21 @@ if test "$OS_ARCH" != "$HOST_OS_ARCH" -a
+   MOZ_CRASHREPORTER=
+ fi
+ 
+-if test -n "$MOZ_CRASHREPORTER"; then
+-   AC_DEFINE(MOZ_CRASHREPORTER)
+-
+-  if test "$OS_TARGET" = "Linux" && \
+-    test -z "$SKIP_LIBRARY_CHECKS"; then
+-    PKG_CHECK_MODULES(MOZ_GTHREAD, gthread-2.0)
+-  fi
+-
+-  if test "$OS_ARCH" = "WINNT"; then
+-    if test -z "$HAVE_64BIT_BUILD" -a -n "$COMPILE_ENVIRONMENT"; then
+-      MOZ_CRASHREPORTER_INJECTOR=1
+-      AC_DEFINE(MOZ_CRASHREPORTER_INJECTOR)
+-    fi
+-  fi
+-fi
++dnl if test -n "$MOZ_CRASHREPORTER"; then
++dnl    AC_DEFINE(MOZ_CRASHREPORTER)
++dnl
++dnl   if test "$OS_TARGET" = "Linux" && \
++dnl     test -z "$SKIP_LIBRARY_CHECKS"; then
++dnl     PKG_CHECK_MODULES(MOZ_GTHREAD, gthread-2.0)
++dnl   fi
++dnl
++dnl   if test "$OS_ARCH" = "WINNT"; then
++dnl     if test -z "$HAVE_64BIT_BUILD" -a -n "$COMPILE_ENVIRONMENT"; then
++dnl      MOZ_CRASHREPORTER_INJECTOR=1
++dnl       AC_DEFINE(MOZ_CRASHREPORTER_INJECTOR)
++dnl     fi
++dnl   fi
++dnl fi
+ 
+ MOZ_ARG_WITH_STRING(crashreporter-enable-percent,
+ [  --with-crashreporter-enable-percent=NN
+Index: thunderbird-52.3.0/mozilla/old-configure
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/old-configure
++++ thunderbird-52.3.0/mozilla/old-configure
+@@ -15178,26 +15178,26 @@ EOF
+ fi
+ 
+ 
++MOZ_CRASHREPORTER=
+ 
+-
+-case $target in
+-i?86-*-mingw*|x86_64-*-mingw*)
+-  MOZ_CRASHREPORTER=1
+-  ;;
+-i?86-apple-darwin*|x86_64-apple-darwin*)
+-  if test -z "$MOZ_IOS"; then
+-    MOZ_CRASHREPORTER=1
+-  fi
+-  ;;
+-i?86-*-linux*|x86_64-*-linux*|arm-*-linux*)
+-  if test "$MOZ_ENABLE_GTK"; then
+-    MOZ_CRASHREPORTER=1
+-  fi
+-  ;;
+-*-android*|*-linuxandroid*)
+-  MOZ_CRASHREPORTER=1
+-  ;;
+-esac
++# case $target in
++# i?86-*-mingw*|x86_64-*-mingw*)
++#   MOZ_CRASHREPORTER=1
++#   ;;
++# i?86-apple-darwin*|x86_64-apple-darwin*)
++#   if test -z "$MOZ_IOS"; then
++#     MOZ_CRASHREPORTER=1
++#   fi
++#   ;;
++# i?86-*-linux*|x86_64-*-linux*|arm-*-linux*)
++#   if test "$MOZ_ENABLE_GTK"; then
++#     MOZ_CRASHREPORTER=1
++#   fi
++#   ;;
++# *-android*|*-linuxandroid*)
++#   MOZ_CRASHREPORTER=1
++#   ;;
++# esac
+ 
+ # Check whether --enable-crashreporter or --disable-crashreporter was given.
+ if test "${enable_crashreporter+set}" = set; then
+@@ -15205,7 +15205,7 @@ if test "${enable_crashreporter+set}" =
+   if test "$enableval" = "no"; then
+     MOZ_CRASHREPORTER=
+   elif test "$enableval" = "yes"; then
+-    MOZ_CRASHREPORTER=F # Force enable breakpad
++    MOZ_CRASHREPORTER= # clip : Force to not enable breakpad
+   else
+     { echo "configure: error: Option, crashreporter, does not take an argument ($enableval)." 1>&2; echo "configure: error: Option, crashreporter, does not take an argument ($enableval)." 1>&5; exit 1; }
+   fi
+@@ -15220,12 +15220,12 @@ if test "$OS_ARCH" != "$HOST_OS_ARCH" -a
+ fi
+ 
+ if test -n "$MOZ_CRASHREPORTER"; then
+-   cat >> confdefs.pytmp <<\EOF
+-    (''' MOZ_CRASHREPORTER ''', ' 1 ')
+-EOF
+-cat >> confdefs.h <<\EOF
+-#define MOZ_CRASHREPORTER 1
+-EOF
++#    cat >> confdefs.pytmp <<\EOF
++#     (''' MOZ_CRASHREPORTER ''', ' 1 ')
++# EOF
++# cat >> confdefs.h <<\EOF
++# #define MOZ_CRASHREPORTER 1
++# EOF
+ 
+ 
+   if test "$OS_TARGET" = "Linux" && \
+Index: thunderbird-52.3.0/mozilla/Makefile.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/Makefile.in
++++ thunderbird-52.3.0/mozilla/Makefile.in
+@@ -302,12 +302,12 @@ MAKE_SYM_STORE_ARGS += --install-manifes
+ 
+ SYM_STORE_SOURCE_DIRS := $(topsrcdir)
+ 
+-ifdef MOZ_CRASHREPORTER
+-include $(topsrcdir)/toolkit/mozapps/installer/package-name.mk
++# ifdef MOZ_CRASHREPORTER
++# include $(topsrcdir)/toolkit/mozapps/installer/package-name.mk
+ 
+-SYMBOL_INDEX_NAME = \
+-  $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)-$(CPU_ARCH)-symbols.txt
+-endif
++# SYMBOL_INDEX_NAME = \
++#   $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)-$(CPU_ARCH)-symbols.txt
++# endif
+ 
+ .PHONY: generatesymbols
+ generatesymbols:
+@@ -341,17 +341,18 @@ symbolsarchive: generatesymbols
+           zip -r5D '../$(PKG_PATH)$(SYMBOL_ARCHIVE_BASENAME).zip' . -i '*.sym' -i '*.txt'
+ 
+ ifdef MOZ_CRASHREPORTER
+-buildsymbols: symbolsfullarchive symbolsarchive
++# buildsymbols: symbolsfullarchive symbolsarchive
++buildsymbols:
+ else
+ buildsymbols:
+ endif
+ 
+ uploadsymbols:
+-ifdef MOZ_CRASHREPORTER
+-ifdef SOCORRO_SYMBOL_UPLOAD_TOKEN_FILE
+-	$(PYTHON) -u $(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.py '$(DIST)/$(PKG_PATH)$(SYMBOL_FULL_ARCHIVE_BASENAME).zip'
+-endif
+-endif
++# ifdef MOZ_CRASHREPORTER
++# ifdef SOCORRO_SYMBOL_UPLOAD_TOKEN_FILE
++# 	$(PYTHON) -u $(topsrcdir)/toolkit/crashreporter/tools/upload_symbols.py '$(DIST)/$(PKG_PATH)$(SYMBOL_FULL_ARCHIVE_BASENAME).zip'
++# endif
++# endif
+ 
+ .PHONY: update-packaging
+ update-packaging:
+Index: thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/python/mozbuild/mozbuild/mozinfo.py
++++ thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+@@ -82,7 +82,8 @@ def build_dict(config, env=os.environ):
+     d['nightly_build'] = substs.get('NIGHTLY_BUILD') == '1'
+     d['release_or_beta'] = substs.get('RELEASE_OR_BETA') == '1'
+     d['pgo'] = substs.get('MOZ_PGO') == '1'
+-    d['crashreporter'] = bool(substs.get('MOZ_CRASHREPORTER'))
++    # d['crashreporter'] = bool(substs.get('MOZ_CRASHREPORTER'))
++    d['crashreporter'] = False
+     d['datareporting'] = bool(substs.get('MOZ_DATA_REPORTING'))
+     # d['healthreport'] = substs.get('MOZ_SERVICES_HEALTHREPORT') == '1'
+     d['healthreport'] = False
+Index: thunderbird-52.3.0/mozilla/xpcom/system/moz.build
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/xpcom/system/moz.build
++++ thunderbird-52.3.0/mozilla/xpcom/system/moz.build
+@@ -18,9 +18,9 @@ XPIDL_SOURCES += [
+     'nsIXULRuntime.idl',
+ ]
+ 
+-if CONFIG['MOZ_CRASHREPORTER']:
+-    XPIDL_SOURCES += [
+-        'nsICrashReporter.idl',
+-    ]
++# if CONFIG['MOZ_CRASHREPORTER']:
++#    XPIDL_SOURCES += [
++#        'nsICrashReporter.idl',
++#    ]
+ 
+ XPIDL_MODULE = 'xpcom_system'
+Index: thunderbird-52.3.0/mozilla/toolkit/modules/AppConstants.jsm
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/modules/AppConstants.jsm
++++ thunderbird-52.3.0/mozilla/toolkit/modules/AppConstants.jsm
+@@ -186,7 +186,7 @@ this.AppConstants = Object.freeze({
+ 
+   MOZ_CRASHREPORTER:
+ #if 0
+-  true,
++  false,
+ #else
+   false,
+ #endif
+Index: thunderbird-52.3.0/mozilla/toolkit/locales/Makefile.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/locales/Makefile.in
++++ thunderbird-52.3.0/mozilla/toolkit/locales/Makefile.in
+@@ -30,11 +30,11 @@ chrome-%:
+ libs:: update.locale
+ 	sed -e 's/%AB_CD%/$(AB_CD)/' $< > $(FINAL_TARGET)/update.locale
+ 
+-ifdef MOZ_CRASHREPORTER
+-libs:: crashreporter.ini
+-ifeq (cocoa,$(MOZ_WIDGET_TOOLKIT))
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(FINAL_TARGET)/crashreporter.app/Contents/Resources
+-else
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(FINAL_TARGET)
+-endif
+-endif
++# ifdef MOZ_CRASHREPORTER
++# libs:: crashreporter.ini
++# ifeq (cocoa,$(MOZ_WIDGET_TOOLKIT))
++# 	$(SYSINSTALL) $(IFLAGS1) $^ $(FINAL_TARGET)/crashreporter.app/Contents/Resources
++# else
++# 	$(SYSINSTALL) $(IFLAGS1) $^ $(FINAL_TARGET)
++# endif
++# endif

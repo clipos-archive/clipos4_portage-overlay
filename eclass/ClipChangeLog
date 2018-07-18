@@ -1,0 +1,932 @@
+# CLIP Changelog for portage-overlay/eclass files
+
+* eutils (01 Dec 2015)
+* toolchain-funcs (01 Dec 2015)
+* toolchain (01 Dec 2015)
+  01 Dec 2015; Alain Ozanne <clipos@ssi.gouv.fr>:
+  Update these eclass with their releases from snapshot of the 28/10/2015.
+
+  30 Nov 2015; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Integrate, cleanup and fix gcc-lib into the toolchain with is_clip_gcc_lib.
+
+* x-modular (11 Feb 2015)
+  11 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to current (deprecated) gentoo version. No ebuild use it anymore in CLIP.
+
+* xorg-2 (10 Feb 2015)
+
+  10 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+* python-utils-r1 (09 Feb 2016)
+
+  09 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  24 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  11 Feb 2014; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Fix CPREFIX in python_scriptinto.
+
+* aspell-dict (??)
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  ??; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. CPREFIX fixes.
+
+* cmake-utils (16 Sep 2009) - from 20090617
+
+  29 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130724 version.
+
+  29 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20121025 version.
+
+  11 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Set SKIP_RPATH to ON on CLIP with CPREFIX set, to get the
+  RPATH defined through LDFLAGS and only that.
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110718 version.
+
+  28 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove part of the RPATH hack that leads to '.' in some RPATHs.
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20091215.
+
+  16 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fix + add IUSE clip to add a custom cmake rule to
+  keep those RPATH elements passed through LDFLAGS in the installed
+  binary (by default, cmake stripts all RPATH elements when 
+  installing).
+
+* cron (06 Jun 2012) - from 20110822
+
+  06 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  IUSE clip => do not depend on virtual/mta, do not install
+  crontab setuid root, add pkg_predeb to run crontab /etc/crontab
+  on postinst.
+
+* db (16 Apr 2008) - from 20071003
+
+  16 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes.
+
+* distutils-r1 (27 Dec 2012)
+
+  24 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20150220.
+
+  28 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20140824.
+
+  12 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20140519 version. _distutils-r1_rename_scripts() becomes
+  _distutils-r1_wrap_scripts().
+
+  14 Jun 2013; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Fix CPREFIX use case.
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Do nothing in _distutils-r1_rename_scripts() if USE clip.
+
+* distutils (14 Dec 2009) - from 20090730
+ 
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110412 version.
+
+  24 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  More CPREFIX fixes + compile python modules in predeb.
+
+  14 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes.
+
+* elisp (11 Jul 2012) - from 20090329
+
+  11 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Do no RDEPEND on emacs on CLIP.
+
+* elisp-common (22 Jun 2012) - from 20120427
+
+  10 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix emacs executable path.
+
+  22 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes.
+
+* enlightenment (22 Apr 2010) - from 20090307
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20111227 version.
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  clip-deps fix.
+
+* eutils (16 Jan 2007) - from 20060704
+
+  24 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20150114.
+
+  28 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20140711.
+
+  19 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20131203 version.
+
+  14 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20121023 version.
+
+  12 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120607 version.
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20111027 version.
+
+  23 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110809 version.
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 2010/05/20 version.
+
+  21 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fix in make_wrapper.
+
+  29 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version. Add missing eshopts* and
+  epatch_user.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump eclasses, the redundant pam functions have been removed 
+  by upstream, but we need a new fix for built_with_use()-like 
+  functions, which need to perform checks on the build host 
+  (ROOT=/) rather than in the target (actual ROOT value).
+  
+  16 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix redundant newpamd definition the same way as the one in 
+  pam.eclass. Grrrr.
+
+* font (03 Sep 2009)
+
+  03 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Add .deb postinst creation, formerly in x-modular.
+
+* gnome2-utils (15 Jan 2014) - from 20130915
+
+  15 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes for preinst 'savelist' functions.
+
+* gstreamer (02 Jul 2014) - from 20140619
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import, clip-deps fix.
+
+* gst-plugins10 (22 Jul 2013) - from 20130131
+ 
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130929 version.
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial overlay import, merge CPREFIX/clip-deps/naming changes
+  formerly in gst-plugins-{good,bad,base,ugly} + add RDEPEND
+  hack so that 0.10 ebuilds kept for compatibility in CLIP will
+  pull the corresponding 1.0 ebuilds to avoid conflicting files.
+
+* gst-plugins-bad (29 Apr 2011) - from 20110413
+
+  09 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  clip-deps fix.
+
+  29 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. CPREFIX / agent fixes.
+
+* gst-plugins-base (28 May 2009) - from 20090525
+
+  29 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes.
+
+  29 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to latest from gentoo.
+
+  29 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to latest from gentoo.
+
+* gst-plugins-good (29 Apr 2010) - from 20100403
+
+  29 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX / naming fixes.
+
+  29 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to latest from gentoo.
+
+* gst-plugins-ugly (29 Apr 2011) - from 20110317
+
+  29 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. Agent fixes.
+
+* java-pkg-2 (15 Apr 2008) - from 20071003
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120721 version.
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 2010/02/01 version.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. Fixes for CPREFIX and dependencies.
+
+* java-pkg-opt-2 (15 Apr 2008) - from 20071003
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120721 version.
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 2010/02/01 version.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. Fixes for CPREFIX and dependencies.
+
+* java-utils-2 (15 Apr 2008) - from 20071003
+
+  18 May 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20160419 version.
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130417 version.
+
+  25 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Add DEPEND on java-config-wrapper.
+
+  04 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix java-pkg_doso for CPREFIX.
+
+  02 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix java-pkg_dojar for CPREFIX.
+
+  12 Nov 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix java-pkg_getjar{,s} for CPREFIX.
+
+  24 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix JAVA_PKG_SHAREPATH for CPREFIX.
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 2010/04/28 version.
+
+  09 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove java-config depend.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. Fixes for CPREFIX and dependencies.
+
+* java-vm-2 (01 Jun 2007) - from 20061111
+
+  15 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20160615 version.
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120723 version.
+
+  21 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20111205 version.
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 2010/04/17 version.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  01 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Removed java-config RDEPEND when USE clip.
+  
+* kde4-base (12 Nov 2009) - from 20091110
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20140305 version. Add a simple pkg_predeb call
+  to fix perms and generate a postinst to update FDO mime/desktop
+  databases.
+
+  24 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20120819.
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20111029.
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20110907.
+
+  11 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Comment out redundant CMAKE SKIP_RPATH line - now set in
+  cmake-utils.eclass.
+
+  08 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix perl dependency for clip-deps.
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20101206 version. Remove cmake files on
+  use clip.
+
+  29 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20100622 version.
+
+  03 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20100202 version.
+
+  22 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Re-Fix install path without CPREFIX.
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20091215.
+
+  11 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix install path without CPREFIX.
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. CPREFIX / clip-deps fixes.
+
+* kde4-functions (12 Nov 2009) - from 20091110
+
+  20 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20150329 version.
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130801 version.
+
+  24 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20120927.
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20111006.
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20110822.
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20101206 version.
+
+  29 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20100515 version.
+
+  28 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Do not emit blockers for other slots of the same package when
+  USE clip is set.
+
+  03 Feb 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20100202 version.
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20091215.
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. CPREFIX fixes.
+
+* kde4-meta (12 Nov 2009) - from 20091110
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20140206 version, add a simple predeb hook.
+
+  24 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20120904.
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20111029.
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to upstream 20110710.
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20101202 version.
+
+  29 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20100622 version.
+
+  08 Feb 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Install KDEWorkspace4.cmake in kdebase-workspace.
+
+  03 Feb 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to gentoo's 20100202 version.
+
+  05 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Add support for new 'meta' packages - kdebase-{apps,runtime,
+  workspace}.
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20091215.
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. clip-deps fixes.
+
+* kernel-2 (31 Jul 2006) - from 20060704
+
+  21 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Optionally support xz compression of distfiles.
+
+  19 Nov 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to latest.
+
+  24 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110819 version.
+
+  24 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to latest.
+
+  21 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove stupid depend on virtual/baselayout.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump eclasses, same CLIP changes.
+
+  31 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Added "image" ETYPE to fix dependencies and slots.
+
+* latex-package (09 Jun 2011) - from 20090111
+
+  09 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove dependency on virtual/latex-base.
+
+* linux-info (24 Jul 2012) - from 20100827
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial overlay import - remove $ROOT from KERNEL_DIR default
+  path.
+
+* linux-mod (25 Aug 2006) - from 20060704
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump eclasses, same CLIP changes.
+
+  25 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove RDEPENDS.
+
+* mozconfig-v5.31 (23 Dec 2014) - from 20141203
+
+  23 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial overlay import - CPREFIX + clip-deps fixes.
+
+* mozextension (18 Sep 2006) - from 20060704 
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  New variable : MOZ_EXTENSION_TARGET. Set to 'firefox' to
+  install the extension in firefox specific paths.
+
+  07 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130528 version.
+
+  29 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Allow passing emid explicitly to xpi_install.
+
+  23 Aug 2010; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Add jar_epatch function.
+
+  11 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix em:id parsing some more more.
+
+  08 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix em:id parsing some more.
+
+  25 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Proper fix for <em:id> parsing.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  09 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix xpi_install for some weird <em:id> formats.
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump eclasses, same CLIP changes.
+
+  18 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix install path when CPREFIX is set.
+
+* mozilla-launcher (30 Sep 2008) - from 20060704
+ 
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  30 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes.
+
+* multilib-build (16 Jul 2013) - from 20130531
+
+  20 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20141213 version.
+  Handle cPREFIX in MULTILIB_CHOST_TOOLS.
+
+  28 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20140817 version.
+
+  12 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20140507 version.
+
+  15 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20131001 version.
+
+  02 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Really fix MULTILIB_WRAPPED_HEADERS handling (I hope).
+
+  30 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix typo in MULTILIB_WRAPPED_HEADERS handling.
+
+  28 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130808 version.
+
+  16 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import - CPREFIX fixes for multilib-*-wrapper().
+
+* pam (18 Jul 2006) - from 20051105
+	
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump eclasses, same CLIP changes.
+
+  18 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Modified pam eclass to respect CPREFIX...
+
+* pax-utils (24 May 2011) - from 20080707
+
+  24 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to latest.
+
+  08 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Don't use attr markings by default.
+
+  01 Dec 2015; Alain Ozanne <clipos@ssi.gouv.fr>:
+  Update from snapshot of the 28/10/2015.
+
+  24 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove scanelf/chpax support, add explicit paxctl DEPEND.
+
+* perl-module (16 May 2013)
+
+  20 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130731 version. Update dependencies for perl 5.16.
+
+  16 May 2013; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Bump to latest.
+  Use ExtUtils::MakeMaker when available to handle CPREFIX.
+
+  11 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110822 version, add CPREFIX fixes.
+
+  01 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110130 version.
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix hardcoded perl RDEPEND.
+
+* poppler (10 Nov 2009) - from 20090730
+
+  10 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove systematic conflict with poppler if IUSE clip.
+
+* python-single-r1 (17 Apr 2015)
+  17 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Drop python-exec dependency on clip.
+
+* python-r1 (24 Mar 2015)
+
+  15 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20150321 version.
+
+  24 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20150220 version.
+
+  12 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20140526 version.
+
+  03 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove python-exec dependency on clip.
+
+  25 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20131229 version.
+
+  14 Jun 2013; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Fix python-exec use and add clip to IUSE.
+
+* python (24 Mar 2010) - from 20090730
+ 
+  03 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20121124 version.
+
+  20 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Consider all pkg_predeb() calls local scope.
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20111015 version.
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110910 version.
+
+  21 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Revert previous fix, which actually breaks a few things. 
+  Anyway, our newer portage (>= 2.1.10) should handle those
+  prefix issues transparently.
+
+  30 Jun 2011; ANSSI <clipos@ssi.gouv.fr>:
+  Fix prefix problems in function python_generate_wrapper_scripts
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20100529 version.
+
+  24 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes.
+
+*python-r1.eclass - from 20121217
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130521 version.
+
+  27 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Do not depend on python and python-exec unless USE python 
+  is set.
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Do nothing in python_replicate_script if USE clip.
+
+*python-utils-r1.eclass - from 20121215
+
+  15 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20150321 version.
+
+  11 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20140904 version.
+
+  12 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20140526 version.
+
+  16 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20131030 version.
+
+  12 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  CPREFIX fixes for python_export() and python_optimize().
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130531 version.
+
+  19 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130307 version.
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix _python_rewrite_shebang for CPREFIX, do not rewrite implementation
+  specific shebangs if use CLIP.
+
+* qmake-utils (21 Feb 2014) - from 20131202
+
+  22 Sept 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to latest for PyQT4.
+
+  21 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import, replaces part of qt4-r2. CPREFIX fix.
+
+* qt4-build (31 Jul 2009) - from 20090730
+
+  21 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20131111 version. Remove V_QT_* definitions, fix
+  version 4.8.4 for virtual/qt-* depends.
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130706 version.
+
+  09 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix QTSYSCONFDIR (missing CPREFIX).
+
+  05 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix typo in QT_INSTALL_IMPORTS sed line.
+
+  04 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120927 version.
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110829 version.
+
+  16 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20101113 version.
+
+  28 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix V_QTTRANSDIR, etc.
+
+  15 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20100530 versoin.
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to current gentoo implementation, support qt > 4.5.2.
+
+  31 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial overlay import. Make CPREFIX aware.
+
+* sgml-common (21 Dec 2010) - from 20100616
+
+  21 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Add CPREFIX support + generate maintainer scripts to update
+  catalogs.
+
+* systemd (24 Oct 2011) - from 20110917
+
+  13 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130413 version.
+
+  24 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Move systemd files out of the way with CPREFIX.
+
+* texlive-common - 2 Mar 2009
+
+  21 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20110829 version, for texlive-2011.
+
+  28 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix /var/lib install path (-> /var/shared/lib).
+
+  25 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fixed compilation on clip-devstation.
+
+  27 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Added IUSE clip declaration.
+
+  02 Mar 2009; Benjamin Morin <clipos@ssi.gouv.fr>:
+  Added eclass for texlive
+  Modified default values for TEXMF_PATH, TEXMF_DIST_PATH,TEXMF_VAR_PATH
+  Added C_TEXMF_PATH,C_TEXMF_DIST_PATH for those paths that are not 
+  "CLIP-aware" (i.e. ebuild commands that do not take CPREFIX into account)
+
+* texlive-modules - 2 Mar 2009
+
+  21 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update to 20110829 version, for texlive-2011.
+
+  09 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix SRC_URI - use ${P} instead of ${PF}.
+
+  28 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix /var/lib install path (-> /var/shared/lib).
+  Add pkg_predeb to run texmf-update on postinst / prerm.
+
+  02 Mar 2009; Benjamin Morin <clipos@ssi.gouv.fr>:
+  Added eclass for texlive modules
+  Modified eclass to export pkg_predeb() function
+
+
+* toolchain (11 Aug 2011) - from 20100525
+
+  06 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20140601 version.
+
+  23 Oct 2013; ANSSI <clipos@ssi.gouv.fr>:
+  Bump to 20130815 version. 
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120315 version.
+
+  11 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix glibc_has_pie() test - ignore $ROOT.
+
+* toolchain-funcs (27 Jul 2010) - from 20091201
+
+  06 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Bump to 20140711 version.
+
+  25 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20121229 version.
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120315 version.
+
+  23 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110712 version.
+
+  24 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix gen_usr_ld_script - do not generate anything when 'nostatlib'
+  is in FEATURES, instead of when USE clip is set.
+
+  27 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Add IUSE clip to not generate anything in gen_usr_ld_script.
+
+* x-modular (20 Jul 2006) - from 20060704
+
+  03 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix font postinst creation, migrate it to x-modular.eclass.
+
+  30 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo version.
+
+  25 Sep 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix double #!/bin/sh in font postinst.
+  Workaround for find <...> -exec <...> segfaulting in UPDATEclip.
+
+  29 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Small SRC_URI fix so we can run local fetches.
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump eclasses, same CLIP changes + remove new man/man-db RDEPEND.
+
+  29 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Update : use deb.eclass to generate maintainer scripts.
+
+  14 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove bash-isms, simplify find commands in fonts' postinst scripts,
+  so they are compatible with busybox utilities.
+  
+  11 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Add a pkg_predeb hook, to generate a postinst script for font packages.
+  That script calls ttfmkdir/mkfontscale, mkfontsdir, and fc-cache as
+  needed for a new font install.
+ 
+  28 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  As to aforementionned fonts issue, we now have a working, if 
+  not proper/clean, solution, which calls the build host's ttfmkdir,
+  mkfontsdir, mkfontscale,etc through a XBDIR variable, currently 
+  defaulting to just "/usr".
+  And yes, my changelog entries are waaay too pedantic...
+
+  27 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Added aforementionned CPREFIX support. 
+  TODO: proper fonts postinst handling ?
+  
+  20 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Added clip-domains IUSE support. If clip-domains is in IUSE and
+  USE, ${FILESDIR}/${P}-clip-domains.patch will be applied after every 
+  gentoo patch. TODO: CPREFIX support ?
+
+* xorg-2 (07 Jul 2010) - from 20100704
+
+  07 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130730 version.
+
+  08 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130225 version.
+
+  07 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20110620 version.
+
+  07 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import. Same changes as x-modular.
+
+*vim (05 Dec 2007)
+
+  05 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20130611 version.
+
+  21 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Fix quoted CPREFIX in features.h
+
+  30 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Re-add missing view.
+
+  28 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Uptade to current gentoo.
+
+  19 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to current gentoo eclass.
+  Add fixes for CPREFIX and clip-deps for proper incorporation
+  in CLIP.
+
+  05 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Remove dependency on eselect-vi when USE clip is set.
+
+  07 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Do not remove view/ex symlinks if USE clip is set : CLIP doesn't use 
+  eselect.
+
+* vim (20 Sep 2013)
+
+  20 Sep 2013; Mickaël Salaün <clipos@ssi.gouv.fr>:
+  Add vi, ex and view symlinks for clip.
+
+
+* virtuoso (21 Jun 2010) - from 20100512
+
+  30 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20120927 version.
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import - shared state dir if use clip.
+
+* waf-utils (19 Jul 2011) - from 20110301
+
+  24 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Bump to 20121206 version.
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>:
+  Initial import - CPREFIX fixes.

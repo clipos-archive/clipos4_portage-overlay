@@ -1,0 +1,85 @@
+# CLIP ChangeLog for media-libs/freetype
+
+*freetype-2.5.5 (08 Jan 2015)
+
+  20 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +freetype-2.5.5.ebuild, -freetype-2.5.3-r1.ebuild:
+  Bump to latest.
+
+*freetype-2.5.3-r1 (21 May 2014)
+
+  21 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.5.3-r1.ebuild, -freetype-2.4.11-r2.ebuild,
+  -files/freetype-2.4.11-auto-hinter_compile_fix.patch,
+  -files/freetype-2.4.11-locale.patch:
+  Bump to latest.
+
+*freetype-2.4.11-r2 (18 Dec 2013)
+
+  18 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.11-r2.ebuild, -freetype-2.4.11.ebuild,
+  +files/freetype-2.4.11-auto-hinter_compile_fix.patch,
+  +files/freetype-2.4.11-locale.patch,
+  +files/freetype-2.4.11-sizeof-types.patch:
+  Bump to latest stable from gentoo, adds multilib awareness.
+
+*freetype-2.4.11 (24 Jan 2013)
+
+  24 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.11.ebuild, -freetype-2.4.10-r1.ebuild:
+  Security bump to latest.
+
+*freetype-2.4.10-r1 (13 Dec 2012)
+
+  13 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.10-r1.ebuild, -freetype-2.4.9-r1.ebuild,
+  -files/freetype-2.4.9-type1-incremental.patch:
+  Bump to latest.
+
+*freetype-2.4.9-r1 (22 Mar 2012)
+
+  22 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.9-r1.ebuild, -freetype-2.4.8.ebuild,
+  +files/freetype-2.4.9-type1-incremental.patch:
+  Bump to latest.
+
+*freetype-2.4.8 (18 Nov 2011)
+
+  18 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.8.ebuild, -freetype-2.4.7.ebuild:
+  Bump to latest, CVE-2011-3439.
+
+*freetype-2.4.7 (19 Oct 2011)
+
+  19 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.7.ebuild, -freetype-2.4.6.ebuild:
+  Bump to latest, CVE-2011-3256.
+
+*freetype-2.4.6 (08 Aug 2011)
+
+  08 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.6.ebuild, -freetype-2.4.3-r2.ebuild,
+  -files/freetype-2.4.3-CVE-2010-3814.patch,
+  -files/freetype-2.4.3-SA41738.patch:
+  Security bump, CVE-2011-0226.
+
+*freetype-2.4.3-r2 (19 Nov 2010)
+
+  19 Nov 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.3-r2.ebuild, -freetype-2.4.3-r1.ebuild,
+  +files/freetype-2.4.3-CVE-2010-3814.patch:
+  Security bump.
+
+*freetype-2.4.3-r1 (25 Oct 2010)
+
+  25 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freetype-2.4.3-r1.ebuild, -freetype-2.4.2.ebuild,
+  +files/freetype-2.4.3-SA41738.patch:
+  Bump to latest, security bug #342121.
+
+*freetype-2.4.2 (10 Aug 2010)
+
+  10 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  freetype-2.4.2.ebuild:
+  Initial overlay import - fix zlib dependency.
+

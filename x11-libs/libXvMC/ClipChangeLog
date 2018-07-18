@@ -1,0 +1,19 @@
+# CLIP ChangeLog for x11-libs/libXvMC
+
+*libXvMC-1.0.8 (25 Jun 2013)
+
+  25 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXvMC-1.0.8.ebuild, -libXvMC-1.0.7-r1.ebuild:
+  Bump to latest.
+
+*libXvMC-1.0.7-r1 (05 Jun 2013)
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXvMC-1.0.7-r1.ebuild, -libXvMC-1.0.5.ebuild:
+  Bump to latest.
+
+*libXvMC-1.0.5 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  libXvMC-1.0.5.ebuild:
+  Initial import. Remove PDEPEND for IUSE clip.

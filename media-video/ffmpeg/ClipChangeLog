@@ -1,0 +1,257 @@
+# CLIP ChangeLog for media-libs/ffmpeg
+
+*ffmpeg-2.8.6-r5 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +ffmpeg-2.8.6-r5.ebuild, -ffmpeg-2.8.6-r4.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*ffmpeg-2.8.6-r4 (19 Jul 2017)
+
+  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +ffmpeg-2.8.6-r4.ebuild, -ffmpeg-2.8.6-r3.ebuild:
+  Remove zlib and bzip2 from out of clip-deps part
+
+*ffmpeg-2.8.6-r3 (31 May 2017)
+
+  31 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +ffmpeg-2.8.6-r3.ebuild, -ffmpeg-2.8.6-r2.ebuild:
+  Force rebuild againt the new version of libvpx.
+
+*ffmpeg-2.8.6-r2 (06 Oct 2016)
+
+  06 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +ffmpeg-2.8.6-r2.ebuild, -ffmpeg-2.8.6-r1.ebuild:
+  Rebuild for libvpx.so.2
+
+*ffmpeg-2.8.6-r1 (23 Mar 2016)
+
+  23 Mar 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ffmpeg-2.8.6-r1.ebuild, -ffmpeg-2.8.6.ebuild:
+  Adapt upstream to CLIP.
+
+*ffmpeg-2.8.6 (23 Mar 2016)
+
+  23 Mar 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ffmpeg-2.8.6.ebuild, -ffmpeg-2.2.7-r3.ebuild:
+  Update from upstream (chromium update in 47 requires ffmpeg >= 2.7.2).
+
+*ffmpeg-2.2.7-r3 (15 Jan 2016)
+
+  15 Jan 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ffmpeg-2.2.7-r3.ebuild, -ffmpeg-2.2.7-r2.ebuild:
+  Update libsdl dependency.
+
+*ffmpeg-2.2.7-r2 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ffmpeg-2.2.7-r2.ebuild, -ffmpeg-2.2.7-r1.ebuild:
+  Update linux-headers dependency.
+
+*ffmpeg-2.2.7-r1 (22 Sep 2015)
+
+  22 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ffmpeg-2.2.7-r1.ebuild, -ffmpeg-2.2.7.ebuild:
+  Update dependency to linux-headers when compiling for clip-devstation.
+
+  17 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  ffmpeg-2.2.7.ebuild:
+  Don't try to handle MULTILIB_WRAPPED_HEADERS in the ebuild, this is done at
+  the eclass layer.
+
+*ffmpeg-2.2.7 (28 Aug 2014)
+
+  28 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +ffmpeg-2.2.7.ebuild, -ffmpeg-2.2.4.ebuild:
+  Bump to latest.
+
+  03 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  ffmpeg-2.2.4.ebuild:
+  Remove pax-marking of TEXTRELs, since I intend to remove 
+  it altogether from the kernel.
+
+*ffmpeg-2.2.4 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-2.2.4.ebuild, -ffmpeg-1.2.5.ebuild,
+  +files/ladspadl.patch:
+  Bump to latest, switch to ffmpeg-2. Add pax-marking of 
+  TEXTREL libs.
+
+*ffmpeg-1.2.5 (24 Jan 2014)
+
+  24 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-1.2.5.ebuild, -ffmpeg-1.2.4.ebuild:
+  Bump to latest.
+
+  13 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  ffmpeg-1.2.4.ebuild:
+  clip-deps fix for libiconv.
+
+*ffmpeg-1.2.4 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-1.2.4.ebuild, -ffmpeg-1.0.7-r1.ebuild:
+  Bump to latest. Enable ffmpeg to connect to the network, 
+  while we're at it.
+
+*ffmpeg-1.0.7-r1 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-1.0.7-r1.ebuild, -ffmpeg-1.0.7.ebuild:
+  Force rebuild.
+
+*ffmpeg-1.0.7 (22 Jul 2013)
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-1.0.7.ebuild, -ffmpeg-0.10.7.ebuild:
+  Bump to latest, switch to 1.0 branch.
+
+*ffmpeg-0.10.7 (07 May 2013)
+
+  07 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.7.ebuild, -ffmpeg-0.10.6.ebuild:
+  Bump to latest.
+
+*ffmpeg-0.10.6 (27 Dec 2012)
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.6.ebuild, -ffmpeg-0.10.4-r1.ebuild,
+  +files/flashtest.patch:
+  Bump to latest.
+
+*ffmpeg-0.10.4-r1 (05 Oct 2012)
+
+  05 Oct 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.4-r1.ebuild, -ffmpeg-0.10.4.ebuild:
+  When using v4l, don't RDEPEND on kernel headers on CLIP.
+
+*ffmpeg-0.10.4 (23 Jul 2012)
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.4.ebuild, -ffmpeg-0.10.3.ebuild:
+  Bump to latest.
+
+*ffmpeg-0.10.3 (03 Jul 2012)
+
+  03 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.3.ebuild, -ffmpeg-0.10.2.ebuild,
+  +files/freiordl.patch:
+  Bump to latest.
+
+*ffmpeg-0.10.2 (06 Apr 2012)
+
+  06 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.2.ebuild, -ffmpeg-0.10.ebuild:
+  Bump to latest.
+
+  06 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  ffmpeg-0.10.ebuild:
+  Remove TEXTREL exceptions, since there seems to be no TEXTRELs
+  in this release.
+
+  06 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  ffmpeg-0.10.ebuild:
+  Fix speex dependency.
+
+*ffmpeg-0.10 (01 Feb 2012)
+
+  01 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.10.ebuild, -ffmpeg-0.7.11.ebuild,
+  -files/ffmpeg-0.7.6-fix_ppc64_32ul.patch:
+  Security bump to latest, for a change.
+
+*ffmpeg-0.7.11 (13 Jan 2012)
+
+  13 Jan 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.7.11.ebuild, -ffmpeg-0.7.8.ebuild:
+  Security bump to latest, again again.
+
+*ffmpeg-0.7.8 (28 Nov 2011)
+
+  28 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.7.8.ebuild, -ffmpeg-0.7.7.ebuild:
+  Security bump to latest, again.
+
+*ffmpeg-0.7.7 (08 Nov 2011)
+
+  08 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.7.7.ebuild, -ffmpeg-0.7.6.ebuild:
+  Security bump to latest.
+
+*ffmpeg-0.7.6 (25 Oct 2011)
+
+  25 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.7.6.ebuild, -ffmpeg-0.7.5.ebuild,
+  +files/ffmpeg-0.7.6-fix_ppc64_32ul.patch:
+  Bump to latest.
+
+*ffmpeg-0.7.5 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.7.5.ebuild, -ffmpeg-0.7.3.ebuild:
+  Security bump to latest.
+
+*ffmpeg-0.7.3 (18 Aug 2011)
+
+  18 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.7.3.ebuild, -ffmpeg-0.6.3.ebuild:
+  Bump to latest.
+
+*ffmpeg-0.6.3 (02 May 2011)
+
+  02 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.6.3.ebuild, -ffmpeg-0.6.1.ebuild,
+  -files/ffmpeg.git-13184036a6b1b1d4b61c91118c0896e9ad4634c3.patch,
+  -files/ffmpeg.git-3dde66752d59dfdd0f3727efd66e7202b3c75078.patch:
+  Security bump to latest.
+
+*ffmpeg-0.6.1 (02 Mar 2011)
+
+  02 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.6.1.ebuild, -ffmpeg-0.6.ebuild,
+  +files/ffmpeg.git-13184036a6b1b1d4b61c91118c0896e9ad4634c3.patch,
+  +files/ffmpeg.git-3dde66752d59dfdd0f3727efd66e7202b3c75078.patch:
+  Bump to latest, fixes CVE-2010-3429.
+  Add git patches for CVE-2010-4705 and CVE-2011-0480.
+  Do not use hardcoded-tables by default - they don't seem to build
+  anyway...
+
+*ffmpeg-0.6 (30 Jun 2010)
+
+  30 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.6.ebuild, -ffmpeg-0.5_p22846.ebuild:
+  Bump to latest, add PAX_ELFRELOCS flags.
+
+*ffmpeg-0.5_p22846 (04 May 2010)
+
+  04 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.5_p22846.ebuild, -ffmpeg-0.5_p20373-r1.ebuild:
+  Bump to latest snapshot and re-enable static libs to try
+  to fix some issues with _p20373.
+  Deactivate PAX_MPROTECT on ffmpeg, since libswscale is 
+  full of TEXTRELs.
+
+*ffmpeg-0.5_p20373-r1 (03 May 2010)
+
+  03 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.5_p20373-r1.ebuild, -ffmpeg-0.5_p20373.ebuild:
+  Bump to force rebuild with newer faad. Sorry.
+
+*ffmpeg-0.5_p20373 (29 Apr 2010)
+
+  29 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.5_p20373.ebuild, -ffmpeg-0.5-r2.ebuild:
+  Bump to latest gentoo stable, remove static libs on CLIP.
+
+*ffmpeg-0.5-r2 (20 May 2009)
+
+  20 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ffmpeg-0.5-r2.ebuild, -ffmpeg-0.5-r1.ebuild:
+  Fix core-deps on alsa-lib.
+
+*ffmpeg-0.5-r1 (18 May 2009)
+
+  18 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  ffmpeg-0.5-r1.ebuild:
+  Initial import. CPREFIX / clip-deps fixes. Revert EAPI=1.

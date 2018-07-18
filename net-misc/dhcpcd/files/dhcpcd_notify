@@ -1,0 +1,37 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+IFNAME="${1}"
+[[ -z "${IFNAME}" ]] && IFNAME="<inconnu>"
+
+XDIALOG_Y=18
+XDIALOG_X=60
+XDIALOG_TITLE="Alerte dhcp sur ${IFNAME}"
+XDIALOG_MSG="Le renouvellement du bail DHCP a echoué sur l'interface ${IFNAME}.\nUn redémarrage peut s'avérer nécessaire pour restaurer la connexion au réseau."
+XDIALOG_HELP="CLIP n'a pas pu accepter la nouvelle adresse proposée par le serveur DHCP distant, car elle aurait nécessité un changement d'adresse non sécurisé.\n\nUne nouvelle adresse pourra être obtenue de manière sécurisée au redémarrage du poste.\n\nUn paramétrage du serveur DHCP de manière a ne pas forcer un changement d'adresse périodique peut s'averer nécessaire si le problème se reproduit trop fréquemment."
+XDIALOG_OK="Accepter"
+
+CURRENT_USER="$(last -f /var/run/utmp | awk '$2 == ":0" {print $1}' | head -n 1)"
+
+if [[ -n "${CURRENT_USER}" ]]; then
+	CURRENT_UID="$(id -u "${CURRENT_USER}")"
+
+	AUTHORITY="/home/user/.Xauthority"
+
+	vsctl user enter -u "${CURRENT_UID}" -- /usr/local/bin/xdialog.sh "${AUTHORITY}" \
+		--title "${XDIALOG_TITLE}" --time-stamp --wrap --fill \
+		--ok-label "${XDIALOG_OK}" \
+		--help "${XDIALOG_HELP}" --msgbox "${XDIALOG_MSG}" ${XDIALOG_Y} ${XDIALOG_X}
+else
+	AUTHORITY="$(ls -1t /var/run/authdir/authfiles/* 2>/dev/null | head -n 1)"
+	export XAUTHORITY="${AUTHORITY}"
+	export DISPLAY=":0"
+	export LANG="fr_FR"
+	export LC_ALL="fr_FR"
+
+	/usr/local/bin/Xdialog \
+		--title "${XDIALOG_TITLE}" --time-stamp --wrap --fill \
+		--ok-label "${XDIALOG_OK}" \
+		--help "${XDIALOG_HELP}" --msgbox "${XDIALOG_MSG}" ${XDIALOG_Y} ${XDIALOG_X}
+fi

@@ -1,0 +1,30 @@
+diff -pruN stunnel-4.31.orig/src/stunnel.c stunnel-4.31/src/stunnel.c
+--- stunnel-4.31.orig/src/stunnel.c	2011-07-08 16:21:59.000000000 +0200
++++ stunnel-4.31/src/stunnel.c	2011-07-08 16:22:58.000000000 +0200
+@@ -128,12 +128,6 @@ void main_initialize(char *arg1, char *a
+     drop_privileges();
+ #endif /* standard Unix */
+ 
+-    /* log_open() must be be called after drop_privileges()
+-     * or logfile rotation won't be possible */
+-    /* log_open() must be be called before daemonize()
+-     * since daemonize() invalidates stderr */
+-    log_open();
+-    
+     if (global_options.option.ident_server && (fd_ident==0)) {
+         if ((fd_ident=create_ident_socket())>0) {
+             s_poll_add( &fds, fd_ident, 1, 0);
+@@ -146,6 +140,13 @@ void main_initialize(char *arg1, char *a
+     if(service_options.next) { /* there are service sections -> daemon mode */
+         if(!(global_options.option.foreground))
+             daemonize();
++#endif
++    /* log_open() must be be called after drop_privileges()
++     * or logfile rotation won't be possible */
++    /* log_open() must be be called before daemonize()
++     * since daemonize() invalidates stderr */
++    log_open();
++#if !defined(USE_WIN32) && !defined(__vms) && !defined(USE_OS2)
+         /* create_pid() must be called after drop_privileges()
+          * or it won't be possible to remove the file on exit */
+         /* create_pid() must be called after daemonize()

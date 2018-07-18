@@ -1,0 +1,197 @@
+Index: chromium-55.0.2883.75/chrome/browser/media/webrtc/webrtc_log_uploader.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/chrome/browser/media/webrtc/webrtc_log_uploader.cc
++++ chromium-55.0.2883.75/chrome/browser/media/webrtc/webrtc_log_uploader.cc
+@@ -176,6 +176,7 @@ void WebRtcLogUploader::PrepareMultipart
+ 
+ void WebRtcLogUploader::UploadStoredLog(
+     const WebRtcLogUploadDoneData& upload_data) {
++#if 0
+   DCHECK(file_thread_checker_.CalledOnValidThread());
+   DCHECK(!upload_data.local_log_id.empty());
+   DCHECK(!upload_data.log_path.empty());
+@@ -222,6 +223,7 @@ void WebRtcLogUploader::UploadStoredLog(
+ 
+   PrepareMultipartPostData(compressed_log, std::move(meta_data),
+                            upload_data_with_rtp);
++#endif
+ }
+ 
+ void WebRtcLogUploader::LoggingStoppedDoStore(
+@@ -436,6 +438,7 @@ void WebRtcLogUploader::ResizeForNextOut
+ void WebRtcLogUploader::UploadCompressedLog(
+     const WebRtcLogUploadDoneData& upload_done_data,
+     std::unique_ptr<std::string> post_data) {
++#if 0
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+ 
+   DecreaseLogCount();
+@@ -454,6 +457,7 @@ void WebRtcLogUploader::UploadCompressed
+       base::Bind(&WebRtcLogUploader::SetRequestContextOnUIThread,
+           base::Unretained(this), base::Unretained(url_fetcher.release()),
+           upload_done_data));
++#endif
+ }
+ 
+ void WebRtcLogUploader::SetRequestContextOnUIThread(
+@@ -467,9 +471,11 @@ void WebRtcLogUploader::SetRequestContex
+ 
+ void WebRtcLogUploader::StartAndTrackRequestContext(
+     net::URLFetcher* url_fetcher, const WebRtcLogUploadDoneData& data) {
++#if 0
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
+   url_fetcher->Start();
+   upload_done_data_[url_fetcher] = data;
++#endif
+ }
+ 
+ void WebRtcLogUploader::DecreaseLogCount() {
+Index: chromium-55.0.2883.75/components/crash/content/app/breakpad_linux.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/components/crash/content/app/breakpad_linux.cc
++++ chromium-55.0.2883.75/components/crash/content/app/breakpad_linux.cc
+@@ -1144,7 +1144,9 @@ void ExecUploadProcessOrTerminate(const
+                                   const char* mime_boundary,
+                                   const char* exe_buf,
+                                   google_breakpad::PageAllocator* allocator) {
+-#if defined(OS_CHROMEOS)
++#if 0
++
++// #if defined(OS_CHROMEOS)
+   // CrOS uses crash_reporter instead of wget to report crashes,
+   // it needs to know where the crash dump lives and the pid and uid of the
+   // crashing process.
+@@ -1199,7 +1201,7 @@ void ExecUploadProcessOrTerminate(const
+   };
+   static const char msg[] = "Cannot upload crash dump: cannot exec "
+                             "/sbin/crash_reporter\n";
+-#else
++// #else
+   // Compress |dumpfile| with gzip.
+   const pid_t gzip_child = sys_fork();
+   if (gzip_child < 0) {
+@@ -1284,10 +1286,11 @@ void ExecUploadProcessOrTerminate(const
+   };
+   static const char msg[] = "Cannot upload crash dump: cannot exec "
+                             "/usr/bin/wget\n";
+-#endif
++// #endif
+   execve(args[0], const_cast<char**>(args), environ);
+   WriteLog(msg, sizeof(msg) - 1);
+   sys__exit(1);
++#endif
+ }
+ 
+ // Runs in the helper process to wait for the upload process running
+@@ -1823,7 +1826,9 @@ void InitCrashReporter(const std::string
+   static_assert(crash_keys::kChunkMaxLength == 63, "kChunkMaxLength mismatch");
+   static_assert(crash_keys::kSmallSize <= crash_keys::kChunkMaxLength,
+                 "crash key chunk size too small");
+-#if defined(OS_ANDROID)
++#if 0
++
++// #if defined(OS_ANDROID)
+   // This will guarantee that the BuildInfo has been initialized and subsequent
+   // calls will not require memory allocation.
+   base::android::BuildInfo::GetInstance();
+@@ -1832,7 +1837,7 @@ void InitCrashReporter(const std::string
+   // that if conventional minidump crash reporting is enabled below, it takes
+   // precedence (i.e. its handler is run first) over the microdump handler.
+   InitMicrodumpCrashHandlerIfNecessary(process_type);
+-#endif
++// #endif
+   // Determine the process type and take appropriate action.
+   const base::CommandLine& parsed_command_line =
+       *base::CommandLine::ForCurrentProcess();
+@@ -1856,11 +1861,11 @@ void InitCrashReporter(const std::string
+     InitCrashKeys();
+     EnableCrashDumping(GetCrashReporterClient()->IsRunningUnattended());
+   } else if (GetCrashReporterClient()->EnableBreakpadForProcess(process_type)) {
+-#if defined(OS_ANDROID)
++// #if defined(OS_ANDROID)
+     NOTREACHED() << "Breakpad initialized with InitCrashReporter() instead of "
+       "InitNonBrowserCrashReporter in " << process_type << " process.";
+     return;
+-#else
++// #else
+     // We might be chrooted in a zygote or renderer process so we cannot call
+     // GetCollectStatsConsent because that needs access the the user's home
+     // dir. Instead, we set a command line flag for these processes.
+@@ -1874,10 +1879,11 @@ void InitCrashReporter(const std::string
+     SetClientIdFromCommandLine(parsed_command_line);
+     EnableNonBrowserCrashDumping();
+     VLOG(1) << "Non Browser crash dumping enabled for: " << process_type;
+-#endif  // #if defined(OS_ANDROID)
++// #endif  // #if defined(OS_ANDROID)
+   }
+ 
+   PostEnableBreakpadInitialization();
++#endif
+ }
+ 
+ #if defined(OS_ANDROID)
+Index: chromium-55.0.2883.75/components/feedback/feedback_uploader_chrome.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/components/feedback/feedback_uploader_chrome.cc
++++ chromium-55.0.2883.75/components/feedback/feedback_uploader_chrome.cc
+@@ -44,6 +44,7 @@ FeedbackUploaderChrome::FeedbackUploader
+ }
+ 
+ void FeedbackUploaderChrome::DispatchReport(const std::string& data) {
++#if 0
+   GURL post_url(url_);
+ 
+   // Note: FeedbackUploaderDelegate deletes itself and the fetcher.
+@@ -69,6 +70,7 @@ void FeedbackUploaderChrome::DispatchRep
+   fetcher->SetLoadFlags(net::LOAD_DO_NOT_SAVE_COOKIES |
+                         net::LOAD_DO_NOT_SEND_COOKIES);
+   fetcher->Start();
++#endif
+ }
+ 
+ }  // namespace feedback
+Index: chromium-55.0.2883.75/components/metrics/metrics_service.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/components/metrics/metrics_service.cc
++++ chromium-55.0.2883.75/components/metrics/metrics_service.cc
+@@ -317,9 +317,11 @@ void MetricsService::InitializeMetricsRe
+ }
+ 
+ void MetricsService::Start() {
++#if 0
+   HandleIdleSinceLastTransmission(false);
+   EnableRecording();
+   EnableReporting();
++#endif
+ }
+ 
+ void MetricsService::StartRecordingForTests() {
+@@ -335,10 +337,12 @@ void MetricsService::Stop() {
+ }
+ 
+ void MetricsService::EnableReporting() {
++#if 0
+   if (reporting_active_)
+     return;
+   reporting_active_ = true;
+   StartSchedulerIfNecessary();
++#endif
+ }
+ 
+ void MetricsService::DisableReporting() {
+@@ -362,6 +366,7 @@ bool MetricsService::WasLastShutdownClea
+ }
+ 
+ void MetricsService::EnableRecording() {
++#if 0
+   DCHECK(IsSingleThreaded());
+ 
+   if (recording_state_ == ACTIVE)
+@@ -380,6 +385,7 @@ void MetricsService::EnableRecording() {
+   action_callback_ = base::Bind(&MetricsService::OnUserAction,
+                                 base::Unretained(this));
+   base::AddActionCallback(action_callback_);
++#endif
+ }
+ 
+ void MetricsService::DisableRecording() {

@@ -1,0 +1,31 @@
+# CLIP ChangeLog for sys-apps/keyutils
+
+*keyutils-1.5.9-r4 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +keyutils-1.5.9-r4.ebuild, -keyutils-1.5.9-r3.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*keyutils-1.5.9-r3 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +keyutils-1.5.9-r3.ebuild, -keyutils-1.5.9-r2.ebuild:
+  Update linux-headers dependency.
+
+*keyutils-1.5.9-r2 (22 Sep 2015)
+
+  22 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +keyutils-1.5.9-r2.ebuild, -keyutils-1.5.9-r1.ebuild:
+  Update dependency to linux-headers when compiling for clip-devstation.
+
+*keyutils-1.5.9-r1 (30 Dec 2014)
+
+  30 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +keyutils-1.5.9-r1.ebuild, -keyutils-1.5.5.ebuild:
+  Bump to latest stable.
+
+*keyutils-1.5.5 (08 Feb 2013)
+
+  08 Feb 2013; Thomas Calderon <clipos@ssi.gouv.fr>
+  +keyutils-1.5.5.ebuild:
+  Initial import.

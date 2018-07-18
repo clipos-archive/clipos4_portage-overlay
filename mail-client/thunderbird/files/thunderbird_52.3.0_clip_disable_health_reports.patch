@@ -1,0 +1,209 @@
+Index: thunderbird-52.3.0/mozilla/old-configure
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/old-configure
++++ thunderbird-52.3.0/mozilla/old-configure
+@@ -18874,17 +18874,17 @@ EOF
+     fi
+ fi
+ 
+-if test -n "$MOZ_TELEMETRY_REPORTING" || test -n "$MOZ_SERVICES_HEALTHREPORT" || test -n "$MOZ_CRASHREPORTER"; then
+-  MOZ_DATA_REPORTING=1
+-  cat >> confdefs.pytmp <<\EOF
+-    (''' MOZ_DATA_REPORTING ''', ' 1 ')
+-EOF
+-cat >> confdefs.h <<\EOF
+-#define MOZ_DATA_REPORTING 1
+-EOF
+-
+-  
+-fi
++# if test -n "$MOZ_TELEMETRY_REPORTING" || test -n "$MOZ_SERVICES_HEALTHREPORT" || test -n "$MOZ_CRASHREPORTER"; then
++#   MOZ_DATA_REPORTING=1
++#   cat >> confdefs.pytmp <<\EOF
++#     (''' MOZ_DATA_REPORTING ''', ' 1 ')
++# EOF
++# cat >> confdefs.h <<\EOF
++# #define MOZ_DATA_REPORTING 1
++# EOF
++#
++#
++# fi
+ 
+ 
+ 
+Index: thunderbird-52.3.0/mozilla/old-configure.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/old-configure.in
++++ thunderbird-52.3.0/mozilla/old-configure.in
+@@ -5533,11 +5533,11 @@ fi
+ dnl If we have any service that uploads data (and requires data submission
+ dnl policy alert), set MOZ_DATA_REPORTING.
+ dnl We need SUBST for build system and DEFINE for xul preprocessor.
+-if test -n "$MOZ_TELEMETRY_REPORTING" || test -n "$MOZ_SERVICES_HEALTHREPORT" || test -n "$MOZ_CRASHREPORTER"; then
+-  MOZ_DATA_REPORTING=1
+-  AC_DEFINE(MOZ_DATA_REPORTING)
+-  AC_SUBST(MOZ_DATA_REPORTING)
+-fi
++dnl if test -n "$MOZ_TELEMETRY_REPORTING" || test -n "$MOZ_SERVICES_HEALTHREPORT" || test -n "$MOZ_CRASHREPORTER"; then
++dnl   MOZ_DATA_REPORTING=1
++dnl   AC_DEFINE(MOZ_DATA_REPORTING)
++dnl   AC_SUBST(MOZ_DATA_REPORTING)
++dnl fi
+ 
+ dnl win32 options
+ AC_SUBST(WIN32_REDIST_DIR)
+Index: thunderbird-52.3.0/mozilla/embedding/ios/moz.configure
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/embedding/ios/moz.configure
++++ thunderbird-52.3.0/mozilla/embedding/ios/moz.configure
+@@ -5,5 +5,5 @@
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ imply_option('MOZ_PLACES', True)
+-imply_option('MOZ_SERVICES_HEALTHREPORT', True)
++# imply_option('MOZ_SERVICES_HEALTHREPORT', True)
+ imply_option('MOZ_SERVICES_SYNC', True)
+Index: thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/python/mozbuild/mozbuild/mozinfo.py
++++ thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+@@ -84,7 +84,8 @@ def build_dict(config, env=os.environ):
+     d['pgo'] = substs.get('MOZ_PGO') == '1'
+     d['crashreporter'] = bool(substs.get('MOZ_CRASHREPORTER'))
+     d['datareporting'] = bool(substs.get('MOZ_DATA_REPORTING'))
+-    d['healthreport'] = substs.get('MOZ_SERVICES_HEALTHREPORT') == '1'
++    # d['healthreport'] = substs.get('MOZ_SERVICES_HEALTHREPORT') == '1'
++    d['healthreport'] = False
+     d['sync'] = substs.get('MOZ_SERVICES_SYNC') == '1'
+     d['asan'] = substs.get('MOZ_ASAN') == '1'
+     d['tsan'] = substs.get('MOZ_TSAN') == '1'
+Index: thunderbird-52.3.0/mozilla/toolkit/modules/AppConstants.jsm
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/modules/AppConstants.jsm
++++ thunderbird-52.3.0/mozilla/toolkit/modules/AppConstants.jsm
+@@ -62,7 +62,8 @@ this.AppConstants = Object.freeze({
+ 
+   MOZ_SERVICES_HEALTHREPORT:
+ #ifdef MOZ_SERVICES_HEALTHREPORT
+-  true,
++#  true,
++  false,
+ #else
+   false,
+ #endif
+Index: thunderbird-52.3.0/mozilla/browser/components/about/AboutRedirector.cpp
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/components/about/AboutRedirector.cpp
++++ thunderbird-52.3.0/mozilla/browser/components/about/AboutRedirector.cpp
+@@ -93,10 +93,6 @@ static RedirEntry kRedirMap[] = {
+     nsIAboutModule::ALLOW_SCRIPT },
+   { "downloads", "chrome://browser/content/downloads/contentAreaDownloadsView.xul",
+     nsIAboutModule::ALLOW_SCRIPT },
+-#ifdef MOZ_SERVICES_HEALTHREPORT
+-  { "healthreport", "chrome://browser/content/abouthealthreport/abouthealth.xhtml",
+-    nsIAboutModule::ALLOW_SCRIPT },
+-#endif
+   { "accounts", "chrome://browser/content/aboutaccounts/aboutaccounts.xhtml",
+     nsIAboutModule::ALLOW_SCRIPT },
+   { "reader", "chrome://global/content/reader/aboutReader.html",
+Index: thunderbird-52.3.0/mozilla/browser/components/build/nsModule.cpp
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/components/build/nsModule.cpp
++++ thunderbird-52.3.0/mozilla/browser/components/build/nsModule.cpp
+@@ -103,9 +103,6 @@ static const mozilla::Module::ContractID
+     { NS_ABOUT_MODULE_CONTRACTID_PREFIX "preferences", &kNS_BROWSER_ABOUT_REDIRECTOR_CID },
+     { NS_ABOUT_MODULE_CONTRACTID_PREFIX "downloads", &kNS_BROWSER_ABOUT_REDIRECTOR_CID },
+     { NS_ABOUT_MODULE_CONTRACTID_PREFIX "accounts", &kNS_BROWSER_ABOUT_REDIRECTOR_CID },
+-#ifdef MOZ_SERVICES_HEALTHREPORT
+-    { NS_ABOUT_MODULE_CONTRACTID_PREFIX "healthreport", &kNS_BROWSER_ABOUT_REDIRECTOR_CID },
+-#endif
+     { NS_ABOUT_MODULE_CONTRACTID_PREFIX "reader", &kNS_BROWSER_ABOUT_REDIRECTOR_CID },
+ #if defined(XP_WIN)
+     { NS_IEHISTORYENUMERATOR_CONTRACTID, &kNS_WINIEHISTORYENUMERATOR_CID },
+Index: thunderbird-52.3.0/mozilla/browser/installer/package-manifest.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/installer/package-manifest.in
++++ thunderbird-52.3.0/mozilla/browser/installer/package-manifest.in
+@@ -490,10 +490,6 @@
+ @RESPATH@/components/nsINIProcessor.js
+ @RESPATH@/components/nsPrompter.manifest
+ @RESPATH@/components/nsPrompter.js
+-#ifdef MOZ_SERVICES_HEALTHREPORT
+-@RESPATH@/browser/components/SelfSupportService.manifest
+-@RESPATH@/browser/components/SelfSupportService.js
+-#endif
+ @RESPATH@/components/SyncComponents.manifest
+ @RESPATH@/components/Weave.js
+ @RESPATH@/components/FxAccountsComponents.manifest
+Index: thunderbird-52.3.0/mozilla/browser/locales/jar.mn
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/locales/jar.mn
++++ thunderbird-52.3.0/mozilla/browser/locales/jar.mn
+@@ -14,9 +14,6 @@
+     locale/browser/aboutRobots.dtd                 (%chrome/browser/aboutRobots.dtd)
+     locale/browser/aboutHome.dtd                   (%chrome/browser/aboutHome.dtd)
+     locale/browser/accounts.properties             (%chrome/browser/accounts.properties)
+-#ifdef MOZ_SERVICES_HEALTHREPORT
+-    locale/browser/aboutHealthReport.dtd           (%chrome/browser/aboutHealthReport.dtd)
+-#endif
+     locale/browser/aboutSearchReset.dtd            (%chrome/browser/aboutSearchReset.dtd)
+     locale/browser/aboutSessionRestore.dtd         (%chrome/browser/aboutSessionRestore.dtd)
+     locale/browser/aboutTabCrashed.dtd             (%chrome/browser/aboutTabCrashed.dtd)
+Index: thunderbird-52.3.0/mozilla/browser/base/jar.mn
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/base/jar.mn
++++ thunderbird-52.3.0/mozilla/browser/base/jar.mn
+@@ -46,11 +46,6 @@ browser.jar:
+ 
+         content/browser/aboutNetError.xhtml            (content/aboutNetError.xhtml)
+ 
+-#ifdef MOZ_SERVICES_HEALTHREPORT
+-        content/browser/abouthealthreport/abouthealth.xhtml   (content/abouthealthreport/abouthealth.xhtml)
+-        content/browser/abouthealthreport/abouthealth.js      (content/abouthealthreport/abouthealth.js)
+-        content/browser/abouthealthreport/abouthealth.css     (content/abouthealthreport/abouthealth.css)
+-#endif
+         content/browser/aboutaccounts/aboutaccounts.xhtml                     (content/aboutaccounts/aboutaccounts.xhtml)
+         content/browser/aboutaccounts/aboutaccounts.js                        (content/aboutaccounts/aboutaccounts.js)
+         content/browser/aboutaccounts/aboutaccounts.css                       (content/aboutaccounts/aboutaccounts.css)
+Index: thunderbird-52.3.0/mozilla/modules/libpref/greprefs.js
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/modules/libpref/greprefs.js
++++ thunderbird-52.3.0/mozilla/modules/libpref/greprefs.js
+@@ -3,10 +3,3 @@
+ #ifdef MOZ_DATA_REPORTING
+ #include ../../toolkit/components/telemetry/datareporting-prefs.js
+ #endif
+-#ifdef MOZ_SERVICES_HEALTHREPORT
+-#if MOZ_WIDGET_TOOLKIT == android
+-#include ../../mobile/android/chrome/content/healthreport-prefs.js
+-#else
+-#include ../../toolkit/components/telemetry/healthreport-prefs.js
+-#endif
+-#endif
+Index: thunderbird-52.3.0/mozilla/toolkit/components/telemetry/healthreport-prefs.js
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/components/telemetry/healthreport-prefs.js
++++ thunderbird-52.3.0/mozilla/toolkit/components/telemetry/healthreport-prefs.js
+@@ -2,9 +2,9 @@
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+-pref("datareporting.healthreport.infoURL", "https://www.mozilla.org/legal/privacy/firefox.html#health-report");
++// pref("datareporting.healthreport.infoURL", "https://www.mozilla.org/legal/privacy/firefox.html#health-report");
+ 
+ // Health Report is enabled by default on all channels.
+-pref("datareporting.healthreport.uploadEnabled", true);
++// pref("datareporting.healthreport.uploadEnabled", true);
+ 
+-pref("datareporting.healthreport.about.reportUrl", "https://fhr.cdn.mozilla.net/%LOCALE%/v4/");
++// pref("datareporting.healthreport.about.reportUrl", "https://fhr.cdn.mozilla.net/%LOCALE%/v4/");
+Index: thunderbird-52.3.0/mozilla/mobile/android/chrome/content/healthreport-prefs.js
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/mobile/android/chrome/content/healthreport-prefs.js
++++ thunderbird-52.3.0/mozilla/mobile/android/chrome/content/healthreport-prefs.js
+@@ -3,4 +3,4 @@
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+-pref("datareporting.healthreport.about.reportUrl", "https://fhr.cdn.mozilla.net/%LOCALE%/mobile/");
++// pref("datareporting.healthreport.about.reportUrl", "https://fhr.cdn.mozilla.net/%LOCALE%/mobile/");

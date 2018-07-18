@@ -1,0 +1,241 @@
+--- ./symbols/us.orig	2013-08-28 15:59:39.000000000 +0200
++++ ./symbols/us	2014-01-27 10:18:07.000000000 +0100
+@@ -1539,3 +1539,196 @@ partial alphanumeric_keys
+ 	xkb_symbols "sun_type6" {
+ 	include "sun_vndr/us(sun_type6)"
+ };
++
++
++// Dvorak-french, by Vincent Strubel <clipos@ssi.gouv.fr>
++// English dvorak, with French characters (é, ê, ç, ...) mapped on
++// ISOLevel3_shift
++partial alphanumeric_keys
++xkb_symbols "dvorak-strub" {
++
++    name[Group1]= "Dvorak (Strubel)";
++
++    // Alphanumeric section
++
++    key <TLDE> { [       grave,	asciitilde, dead_grave, dead_tilde	] };
++
++    key <AE01> { [	    1,	exclam ], [  onesuperior,   exclamdown	]	};
++    key <AE02> { [	    2,	at ], [ twosuperior, onehalf		]	};
++    key <AE03> { [	    3,	numbersign ], [ threesuperior, sterling 	]	};
++    key <AE04> { [	    4,	dollar ], [ EuroSign, sterling		]	};
++    key <AE05> { [	    5,	percent ], [ plusminus, degree		]	};
++    key <AE06> { [	    6,	asciicircum ], [ dead_circumflex, NoSymbol	]	};
++    key <AE07> { [	    7,	ampersand ], [ trademark, NoSymbol		]	};
++    key <AE08> { [	    8,	asterisk ], [ oneeighth, threeeighth	]	};
++    key <AE09> { [	    9,	parenleft ], [  dead_circumflex, dead_grave ]	};
++    key <AE10> { [	    0,	parenright ], [ ae, AE			]	};
++    key <AE11> { [ bracketleft,	braceleft ], [ degree, oe		]	};
++    key <AE12> { [ bracketright, braceright ], [  dead_tilde, OE	] };
++
++    key <AD01> { [  apostrophe,	quotedbl ], [ dead_acute, dead_diaeresis	] };
++    key <AD02> { [	comma,	less ], [   dead_cedilla, dead_caron	] };
++    key <AD03> { [      period,	greater ], [ dead_abovedot, periodcentered	] };
++    key <AD04> { [	    p,	P ], [ dead_belowdot, dead_doubleacute	]	};
++    key <AD05> { [	    y,	Y ], [ currency, yen		]	};
++    key <AD06> { [	    f,	F ], [ multiply, division		]	};
++    key <AD07> { [	    g,	G		]	};
++    key <AD08> { [	    c,	C		], [ ccedilla, copyright ]	};
++    key <AD09> { [	    r,	R		], [ registered, cent ]	};
++    key <AD10> { [	    l,	L ], [ lstroke, Lstroke		]	};
++    key <AD11> { [	slash,	question	], [ questiondown, questiondown ]	};
++    key <AD12> { [	equal,	plus		]	};
++
++    key <AC01> { [	    a,	A 		], [ agrave, acircumflex ]	};
++    key <AC02> { [	    o,	O		], [ ograve, ocircumflex ]	};
++    key <AC03> { [	    e,	E 		], [ eacute, egrave ]	};
++    key <AC04> { [	    u,	U 		], [ ugrave, ucircumflex ]	};
++    key <AC05> { [	    i,	I 		], [ idiaeresis, icircumflex	]	};
++    key <AC06> { [	    d,	D		]	};
++    key <AC07> { [	    h,	H		], [  eth, ETH ] };
++    key <AC08> { [	    t,	T		]	};
++    key <AC09> { [	    n,	N		], [ numbersign, notsign ]	};
++    key <AC10> { [	    s,	S ], [ section, ssharp		]	};
++    key <AC11> { [	minus,	underscore	]	};
++
++    key <LSGT>  { [             less,          greate], [  lessthanequal,      greaterthanequal ] }; 
++
++    key <AB01> { [   semicolon,	colon], [ guillemotleft, guillemotright ] };
++    key <AB02> { [	    q,	Q		], [ ecircumflex , ecircumflex]	};
++    key <AB03> { [	    j,	J		], [ udiaeresis, VoidSymbol ]	};
++    key <AB04> { [	    k,	K		], [ dead_ogonek, dead_doubleacute ]	};
++    key <AB05> { [	    x,	X		], [ nobreakspace, macron ]	};
++    key <AB06> { [	    b,	B		], [ odiaeresis,            Odiaeresis ]	};
++    key <AB07> { [	    m,	M 		], [ mu,  macron ]	};
++    key <AB08> { [	    w,	W 		], [ idiaeresis,            Idiaeresis ] };
++    key <AB09> { [	    v,	V 		], [ udiaeresis,            Udiaeresis ] };
++    key <AB10> { [	    z,	Z		]	};
++    key <LWIN> {	[  Mode_switch,	Mode_switch	]	};
++    //key <LMTA> {	[  Meta_L,		]	};
++    key <LFSH> {	[  Shift_L		]	};
++    key <LCTL> {	[  Control_L		]	};
++    key <LALT> {        [  Alt_L, 	Meta_L ]	};
++    key <RWIN> {	[  Alt_R,	Meta_R	]	};
++    key <RMTA> {	[  Meta_R		]	};
++    key <RTSH> {	[  Shift_R		]	};
++    key <RCTL> {	[  Control_R		]	};
++    key <RALT> {	[  Mode_switch, Mode_switch ]	};
++    //modifier_map Shift	{ Shift_L,   Shift_R   };
++    //modifier_map Lock	{ Caps_Lock	       };
++    //modifier_map Control{ Control_L, Control_R };
++    //modifier_map Mod1	{ Meta_L, Meta_R       };
++    //modifier_map Mod2   { Alt_L, Alt_R         };
++    //modifier_map Mod3	{ Mode_switch	       };
++};
++
++partial alphanumeric_keys
++xkb_symbols "qwerty-plut" { 
++    include "pc+us(altgr-intl)+pc(pc105)+inet(evdev)"
++    include "level3(ralt_switch)"
++    include "capslock(hyper)"
++    include "compose(menu)"
++    include "nbsp(level3)"
++    include "inet(acpi_common)"
++    
++    name[Group1]= "Qwerty (Plût)";
++
++    // On ajoute les touches manquantes pour les accents graves et circonflexes
++    key.type[group1] = "EIGHT_LEVEL";
++    
++    // Niveau 5
++    key <CAPS> { [ ISO_Level5_Shift ] };
++    modifier_map Mod3 { ISO_Level5_Shift };
++    
++    // Various math symbols
++    key <TLDE> { [ NoSymbol, NoSymbol, dead_grave, dead_tilde,
++     approximate, similarequal, U2248, U2249 ] }; // ∼ ≃ ≈ ≉
++    key <AE01> { [ NoSymbol, NoSymbol, onesuperior, exclamdown ] };
++    key <AE02> { [ NoSymbol, NoSymbol, twosuperior, NoSymbol ] };
++    key <AE03> { [ NoSymbol, NoSymbol, threesuperior, dead_macron ] };
++    key <AE04> { [ NoSymbol, NoSymbol, currency, sterling ] };
++    key <AE05> { [ NoSymbol, NoSymbol, EuroSign, dead_cedilla ] };
++    key <AE06> { [ NoSymbol, NoSymbol, dead_circumflex, onequarter ] };
++    key <AE07> { [ NoSymbol, NoSymbol, NoSymbol, onehalf ] };
++    key <AE08> { [ NoSymbol, NoSymbol, infinity, threequarters,
++      NoSymbol, U22C6, NoSymbol, NoSymbol] }; // () ⋆
++    key <AE09> { [ NoSymbol, NoSymbol, NoSymbol, dead_breve ] };
++    key <AE10> { [ NoSymbol, NoSymbol, degree, division,
++      emptyset, NoSymbol, NoSymbol, NoSymbol ] };
++    key <AE11> { [ NoSymbol, NoSymbol, endash, emdash ] };
++    key <AE12> { [ NoSymbol, NoSymbol, notequal, plusminus,
++      U2261, ifonlyif, U2262, U2213 ] }; // ≡ ⇆ ≢ ∓
++    
++    key <LatQ> { [ NoSymbol, NoSymbol, adiaeresis, Adiaeresis,
++      Greek_psi, Greek_PSI, NoSymbol, U211A ] }; // ℚ
++    key <LatW> { [ NoSymbol, NoSymbol, aring, Aring,
++      Greek_omega, Greek_OMEGA, U2227, U22C0 ] };
++    key <LatE> { [ NoSymbol, NoSymbol, eacute, Eacute,
++      Greek_epsilon, Greek_EPSILON, U2208, U2203 ] };
++    key <LatR> { [ NoSymbol, NoSymbol, ediaeresis, Ediaeresis,
++      Greek_rho, Greek_RHO, radical, U211D ] }; // ℝ
++    key <LatT> { [ NoSymbol, NoSymbol, ecircumflex, Ecircumflex, // þ
++      Greek_tau, Greek_TAU, U22BA, trademark ] };
++    key <LatY> { [ NoSymbol, NoSymbol, udiaeresis, Udiaeresis,
++      Greek_eta, Greek_ETA, yen, NoSymbol ] }; // ¥ ()
++    key <LatU> { [ NoSymbol, NoSymbol, uacute, Uacute,
++      Greek_upsilon, Greek_UPSILON, union, U22C3 ] }; // ∪ ⋃
++    key <LatI> { [ NoSymbol, NoSymbol, iacute, Iacute,
++      Greek_iota, Greek_IOTA, idotless, integral ] };
++    key <LatO> { [ NoSymbol, NoSymbol, oacute, Oacute,
++      Greek_omicron, Greek_OMICRON, jot, U2218, circle ] }; // ∘ ○
++    key <LatP> { [ NoSymbol, NoSymbol, odiaeresis, Odiaeresis,
++      Greek_pi, Greek_PI, U2118, U220F ] }; // ℘ ∏
++    key <AD11> { [ NoSymbol, NoSymbol, guillemotleft, leftdoublequotemark,
++      leftsinglequotemark, leftanglebracket ] };
++    key <AD12> { [ NoSymbol, NoSymbol, guillemotright, rightdoublequotemark,
++      rightsinglequotemark, rightanglebracket ] };
++    
++    key <LatA> { [ NoSymbol, NoSymbol, aacute, Aacute,
++      Greek_alpha, Greek_ALPHA, NoSymbol, U2200 ] }; // () ∀
++    key <LatS> { [ NoSymbol, NoSymbol, ssharp, U017F, // § → ſ
++      Greek_sigma, Greek_SIGMA, NoSymbol, U2211 ] }; // () ∑
++    key <LatD> { [ NoSymbol, NoSymbol, agrave, Agrave, // (ð)
++      Greek_delta, Greek_DELTA, partialderivative, nabla ] };
++    key <LatF> { [ NoSymbol, NoSymbol, egrave, Egrave, // (vide)
++      Greek_phi, Greek_PHI, U2209, U2204 ] }; // ∉ ∄
++    key <LatG> { [ NoSymbol, NoSymbol, ugrave, Ugrave, // (vide)
++      Greek_gamma, Greek_GAMMA, U2A3F, U2210 ] }; // ⨿ ∐
++    key <LatH> { [ NoSymbol, NoSymbol, ucircumflex, Ucircumflex, // (vide)
++      Greek_theta, Greek_THETA, U2294, U2A06 ] }; // ⊔ ⨆
++    key <LatJ> { [ NoSymbol, NoSymbol, idiaeresis, Idiaeresis,
++      Greek_finalsmallsigma, NoSymbol, U0237, downarrow ] }; // ȷ ()
++    key <LatK> { [ NoSymbol, NoSymbol, oe, OE,
++      Greek_kappa, Greek_KAPPA, NoSymbol, uparrow ] };
++    key <LatL> { [ NoSymbol, NoSymbol, oslash, Oslash,
++      Greek_lambda, Greek_LAMBDA, NoSymbol, U27C2 ] }; // ⟂
++    key <AC10> { [ NoSymbol, NoSymbol, emptyset, dead_diaeresis ] };
++    key <AC11> { [ NoSymbol, NoSymbol, dead_acute, dead_doubleacute ] };
++    key <AC12> { [ NoSymbol, NoSymbol, paragraph, section,
++     U2216, U2223, U2225, NoSymbol, U2224 ] }; // ∖ ∣ ∥ ∤
++    
++    key <LatZ> { [ NoSymbol, NoSymbol, ae, AE,
++      Greek_zeta, Greek_ZETA, NoSymbol, U2124 ] }; // ℤ
++    key <LatX> { [ NoSymbol, NoSymbol, acircumflex, Acircumflex, //
++      Greek_xi, Greek_XI, multiply, musicalsharp ] };
++    key <LatC> { [ NoSymbol, NoSymbol, ccedilla, Ccedilla, //
++      Greek_chi, Greek_CHI, includedin, U2102 ] }; // ⊂ ℂ
++    key <LatV> { [ NoSymbol, NoSymbol, icircumflex, Icircumflex,  // (exit ®)
++      U03D6, NoSymbol, logicalor, U22C1 ] }; // ∨⋁
++    key <LatB> { [ NoSymbol, NoSymbol, ocircumflex, Ocircumflex,
++      Greek_beta, Greek_BETA, musicalflat, U266E ] }; // ♭♮
++    key <LatN> { [ NoSymbol, NoSymbol, ntilde, Ntilde,
++      Greek_nu, Greek_NU, intersection, U22C2 ] }; // ∩⋂
++    key <LatM> { [ NoSymbol, NoSymbol, mu, NoSymbol,
++      Greek_mu, Greek_MU, NoSymbol, NoSymbol ] };
++    key <AB08> { [ NoSymbol, NoSymbol, lessthanequal, dead_caron,
++      leftarrow, U21D0, U219A, U21CD] }; // ← ⇐ ↚ ⇍
++    key <AB09> { [ NoSymbol, NoSymbol, greaterthanequal, dead_circumflex,
++      rightarrow, implies, U219B, U21CF ] }; // → ⇒ ↛ ⇏
++    key <AB10> { [ NoSymbol, NoSymbol, multiply, questiondown,
++      periodcentered, emptyset, NoSymbol, NoSymbol] };
++    
++    // Soft hyphen
++    key <SPCE> { [ NoSymbol, NoSymbol, NoSymbol, hyphen,
++      U2423, NoSymbol, NoSymbol, NoSymbol ] };
++};
++
+--- ./rules/base.xml.in.orig	2014-01-27 10:00:37.000000000 +0100
++++ ./rules/base.xml.in	2014-01-27 10:19:15.000000000 +0100
+@@ -1440,6 +1440,18 @@
+             <_description>English (Workman, international with dead keys)</_description>
+            </configItem>
+          </variant>
++        <variant>
++          <configItem>
++            <name>dvorak-strub</name>
++            <_description>Dvorak (Strubel)</_description>
++          </configItem>
++        </variant>
++        <variant>
++          <configItem>
++            <name>qwerty-plut</name>
++            <_description>Qwerty (Plut)</_description>
++          </configItem>
++        </variant>
+       </variantList>
+     </layout>
+     <layout>
+--- ./rules/evdev.xml.in.orig	2014-01-27 10:00:46.000000000 +0100
++++ ./rules/evdev.xml.in	2014-01-27 10:19:08.000000000 +0100
+@@ -1440,6 +1440,18 @@
+             <_description>English (Workman, international with dead keys)</_description>
+            </configItem>
+          </variant>
++        <variant>
++          <configItem>
++            <name>dvorak-strub</name>
++            <_description>Dvorak (Strubel)</_description>
++          </configItem>
++        </variant>
++        <variant>
++          <configItem>
++            <name>qwerty-plut</name>
++            <_description>Qwerty (Plut)</_description>
++          </configItem>
++        </variant>
+       </variantList>
+     </layout>
+     <layout>

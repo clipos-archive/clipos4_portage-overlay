@@ -1,0 +1,14 @@
+Index: thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/python/mozbuild/mozbuild/mozinfo.py
++++ thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+@@ -84,7 +84,8 @@ def build_dict(config, env=os.environ):
+     d['pgo'] = substs.get('MOZ_PGO') == '1'
+     # d['crashreporter'] = bool(substs.get('MOZ_CRASHREPORTER'))
+     d['crashreporter'] = False
+-    d['datareporting'] = bool(substs.get('MOZ_DATA_REPORTING'))
++    # d['datareporting'] = bool(substs.get('MOZ_DATA_REPORTING'))
++    d['datareporting'] = False
+     # d['healthreport'] = substs.get('MOZ_SERVICES_HEALTHREPORT') == '1'
+     d['healthreport'] = False
+     d['sync'] = substs.get('MOZ_SERVICES_SYNC') == '1'

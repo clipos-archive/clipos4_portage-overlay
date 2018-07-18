@@ -1,0 +1,20 @@
+# CLIP ChangeLog for kde-misc/kde-gtk-config
+
+*kde-gtk-config-2.2.1-r1 (16 Jun 2016)
+
+  16 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +kde-gtk-config-2.2.1-r1.ebuild, -kde-gtk-config-2.2.1.ebuild:
+  Force rebuild to update kde-l10n dependency to kde4-l10n.
+
+*kde-gtk-config-2.2.1 (15 Jan 2014)
+
+  15 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kde-gtk-config-2.2.1.ebuild, -kde-gtk-config-2.1.1.ebuild,
+  -files/kde-gtk-config-2.1.1-clip-cprefix.patch:
+  Bump to latest. Remove now useless patch.
+
+*kde-gtk-config-2.1.1 (17 Dec 2012)
+
+  17 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  kde-gtk-config-2.1.1.ebuild, +files/kde-gtk-config-2.1.1-clip-cprefix.patch:
+  Initial import. CPREFIX and clip-deps fixes.

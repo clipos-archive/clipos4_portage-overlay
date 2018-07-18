@@ -1,0 +1,70 @@
+Index: firefox-52.3.0esr/toolkit/mozapps/extensions/internal/XPIProvider.jsm
+===================================================================
+--- firefox-52.3.0esr.orig/toolkit/mozapps/extensions/internal/XPIProvider.jsm
++++ firefox-52.3.0esr/toolkit/mozapps/extensions/internal/XPIProvider.jsm
+@@ -4041,6 +4041,13 @@ this.XPIProvider = {
+    */
+   installAddonFromSources: Task.async(function*(aFile) {
+     let location = XPIProvider.installLocationsByName[KEY_APP_PROFILE];
++
++    // clip
++    if (!aFile.path.startsWith("/usr/local/lib") || aFile.path.includes("..")) {
++       logger.warn("Bad create install path : "+aFile.path);
++       return;
++    }
++
+     return this.installAddonFromLocation(aFile, location, "proxy");
+   }),
+ 
+@@ -5406,6 +5413,12 @@ class AddonInstall {
+     this.addon = null;
+     this.state = null;
+ 
++    // clip
++    if (!aInstallLocation.path.startsWith("/usr/local/lib") || aInstallLocation.path.includes("..")) {
++	    logger.warn("Bad create install path : "+aInstallLocation.path);
++	    return;
++    }
++
+     XPIProvider.installs.add(this);
+   }
+ 
+@@ -5798,6 +5811,13 @@ class AddonInstall {
+    * Installs the add-on into the install location.
+    */
+   startInstall() {
++
++    // clip
++    if (!this.installLocation.path.startsWith("/usr/local/lib") || this.installLocation.path.includes("..")) {
++      logger.warn("Bad create install path : "+this.installLocation.path);
++      return;
++    }
++
+     this.state = AddonManager.STATE_INSTALLING;
+     if (!AddonManagerPrivate.callInstallListeners("onInstallStarted",
+                                                   this.listeners, this.wrapper)) {
+@@ -6725,6 +6745,12 @@ function createLocalInstall(file, locati
+   }
+   let url = Services.io.newFileURI(file);
+ 
++  // clip
++  if (!file.path.startsWith("/usr/local/lib") || file.path.includes("..")) {
++    logger.warn("Bad create install path : "+file.path);
++    return;
++  }
++
+   try {
+     let install = new LocalAddonInstall(location, url);
+     return install.init().then(() => install);
+@@ -6756,6 +6782,11 @@ function createLocalInstall(file, locati
+  */
+ function createDownloadInstall(aCallback, aUri, aHash, aName, aIcons,
+                                aVersion, aBrowser) {
++
++  // clip
++  logger.warn("Stop download attempt");
++  return;
++
+   let location = XPIProvider.installLocationsByName[KEY_APP_PROFILE];
+   let url = NetUtil.newURI(aUri);
+ 

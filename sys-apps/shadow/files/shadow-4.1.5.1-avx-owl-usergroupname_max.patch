@@ -1,0 +1,74 @@
+Index: shadow-4.1.5.1/lib/getdef.c
+===================================================================
+--- shadow-4.1.5.1.orig/lib/getdef.c
++++ shadow-4.1.5.1/lib/getdef.c
+@@ -64,6 +64,7 @@ static struct itemdef def_table[] = {
+ 	{"FAKE_SHELL", NULL},
+ 	{"GID_MAX", NULL},
+ 	{"GID_MIN", NULL},
++	{"GROUPNAME_MAX", NULL},
+ 	{"HUSHLOGIN_FILE", NULL},
+ 	{"KILLCHAR", NULL},
+ 	{"LOGIN_RETRIES", NULL},
+@@ -95,6 +96,7 @@ static struct itemdef def_table[] = {
+ 	{"UMASK", NULL},
+ 	{"USERDEL_CMD", NULL},
+ 	{"USERGROUPS_ENAB", NULL},
++	{"USERNAME_MAX", NULL},
+ 	{"CRYPT_PREFIX", NULL},
+ 	{"CRYPT_ROUNDS", NULL},
+ #ifndef USE_PAM
+Index: shadow-4.1.5.1/libmisc/chkname.c
+===================================================================
+--- shadow-4.1.5.1.orig/libmisc/chkname.c
++++ shadow-4.1.5.1/libmisc/chkname.c
+@@ -43,6 +43,7 @@
+ #ident "$Id: chkname.c 2828 2009-04-28 19:14:05Z nekral-guest $"
+ 
+ #include <ctype.h>
++#include "getdef.h"
+ #include "defines.h"
+ #include "chkname.h"
+ 
+@@ -71,13 +72,23 @@ static bool is_valid_name (const char *n
+ 	return true;
+ }
+ 
++
++static unsigned int min (unsigned int a, unsigned int b)
++{
++       return a < b ? a : b;
++}
++
++
+ bool is_valid_user_name (const char *name)
+ {
++	unsigned int max_len;
++
+ 	/*
+ 	 * User names are limited by whatever utmp can
+ 	 * handle.
+ 	 */
+-	if (strlen (name) > USER_NAME_MAX_LENGTH) {
++	max_len = min (getdef_unum ("USERNAME_MAX", 8), USER_NAME_MAX_LENGTH);
++	if (strlen (name) > max_len) {
+ 		return false;
+ 	}
+ 
+@@ -86,12 +97,14 @@ bool is_valid_user_name (const char *nam
+ 
+ bool is_valid_group_name (const char *name)
+ {
++	unsigned int max_len;
++
+ 	/*
+ 	 * Arbitrary limit for group names.
+ 	 * HP-UX 10 limits to 16 characters
+ 	 */
+-	if (   (GROUP_NAME_MAX_LENGTH > 0)
+-	    && (strlen (name) > GROUP_NAME_MAX_LENGTH)) {
++	max_len = min (getdef_unum ("GROUPNAME_MAX", 16), GROUP_NAME_MAX_LENGTH);
++	if((GROUP_NAME_MAX_LENGTH > 0) && (strlen (name) > max_len)) {
+ 		return false;
+ 	}
+ 

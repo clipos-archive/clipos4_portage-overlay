@@ -1,0 +1,209 @@
+--- ./src/umount_davfs.c.orig	2012-07-19 13:32:12.000000000 +0200
++++ ./src/umount_davfs.c	2013-04-15 19:16:26.000000000 +0200
+@@ -138,7 +138,7 @@ main(int argc, char *argv[])
+     char *pidfile = ne_concat(DAV_SYS_RUN, "/", mp, ".pid", NULL);
+     free(mp);
+ 
+-    char *umount_command = ne_concat("umount -i '", mpoint, "'", NULL);
++    char *umount_command = ne_concat("fusermount -u ", mpoint, NULL);
+ 
+     char *pid = NULL;
+     FILE *file = fopen(pidfile, "r");
+@@ -152,7 +152,7 @@ main(int argc, char *argv[])
+     }
+     fclose(file);
+ 
+-    char *ps_command = ne_concat("ps -p ", pid, NULL);
++    char *ps_command = ne_concat("cat /proc/", pid, "/cmdline", NULL);
+     FILE *ps_in = popen(ps_command, "r");
+     if (!ps_in) {
+         error(0, 0,
+@@ -167,7 +167,7 @@ main(int argc, char *argv[])
+     size_t n = 0;
+     char *ps_line = NULL;
+     while (!found && getline(&ps_line, &n, ps_in) > 0)
+-        found = (strstr(ps_line, pid) && strstr(ps_line, PROGRAM_NAME));
++        found = strstr(ps_line, PROGRAM_NAME);
+     pclose(ps_in);
+ 
+     if (!found) {
+@@ -202,7 +202,7 @@ main(int argc, char *argv[])
+ 
+         found = 0;
+         while (!found && getline(&ps_line, &n, ps_in) > 0)
+-            found = (strstr(ps_line, pid) && strstr(ps_line, PROGRAM_NAME));
++            found = (strstr(ps_line, PROGRAM_NAME));
+ 
+         pclose(ps_in);
+     }
+--- ./src/mount_davfs.c.orig	2012-07-19 13:35:11.000000000 +0200
++++ ./src/mount_davfs.c	2013-04-15 19:19:09.000000000 +0200
+@@ -89,6 +89,7 @@
+ #define bindtextdomain(Domainname, Dirname)
+ #endif
+ 
++#define CLIP_MTAB "/tmp/mtab"
+ 
+ /* Private global variables */
+ /*==========================*/
+@@ -221,6 +222,7 @@ usage(void);
+ static char *
+ user_input(const char *prompt);
+ 
++#define seteuid(id) do {} while (0)
+ 
+ /* Public functions */
+ /*==================*/
+@@ -236,6 +238,7 @@ main(int argc, char *argv[])
+ 
+     dav_args *args = parse_commandline(argc, argv);
+ 
++    /*
+     if (geteuid() != 0)
+         error(EXIT_FAILURE, errno, _("program is not setuid root"));
+     if (seteuid(getuid()) != 0)
+@@ -243,6 +246,7 @@ main(int argc, char *argv[])
+ 
+     if (getuid() != 0)
+         check_fstab(args);
++    */
+ 
+     parse_config(argv, args);
+ 
+@@ -325,12 +329,14 @@ main(int argc, char *argv[])
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "Releasing root privileges");
+     uid_t daemon_id = geteuid();
+     seteuid(0);
++    /*
+     ret = setuid(daemon_id);
+     if (ret) {
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_ERR),
+                _("can't release root privileges"));
+         kill(getppid(), SIGHUP);
+     }
++    */
+ 
+     time_t idle_time = args->delay_upload;
+     if (!idle_time)
+@@ -427,6 +433,7 @@ dav_user_input_hidden(const char *prompt
+ static void
+ change_persona(dav_args *args)
+ {
++#if 0
+     struct group *grp = getgrnam(args->dav_group);
+     if (!grp)
+         error(EXIT_FAILURE, errno, _("group %s does not exist"),
+@@ -450,6 +457,7 @@ change_persona(dav_args *args)
+     if (args->debug & DAV_DBG_CONFIG)
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
+                "changing persona: euid %i, gid %i", geteuid(), getgid());
++#endif
+ }
+ 
+ 
+@@ -466,11 +474,15 @@ check_dirs(dav_args *args)
+ {
+     struct stat st;
+ 
++    /*
+     if (access(DAV_MOUNTS, R_OK) == 0) {
+         mounts = DAV_MOUNTS;
+     } else {
+         mounts = _PATH_MOUNTED;
+     }
++    */
++    mounts = CLIP_MTAB;
++
+     if (args->debug & DAV_DBG_CONFIG)
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "mounts in: %s", mounts);
+ 
+@@ -490,6 +502,7 @@ check_dirs(dav_args *args)
+             error(EXIT_FAILURE, errno,
+                   _("can't change mode of directory %s"), DAV_SYS_RUN);
+     }
++    /*
+     struct group *grp = getgrnam(args->dav_group);
+     if (!grp)
+         error(EXIT_FAILURE, errno, _("group %s does not exist"),
+@@ -500,6 +513,7 @@ check_dirs(dav_args *args)
+                   _("can't change group of directory %s"), DAV_SYS_RUN);
+     }
+     seteuid(getuid());
++    */
+ 
+     if (getuid() != 0) {
+ 
+@@ -573,6 +587,7 @@ check_dirs(dav_args *args)
+                       _("can't change mode of directory %s"),
+                       args->sys_cache);
+         }
++	/*
+         struct group *grp = getgrnam(args->dav_group);
+         if (!grp)
+             error(EXIT_FAILURE, errno, _("group %s does not exist"),
+@@ -583,6 +598,7 @@ check_dirs(dav_args *args)
+                       _("can't change group of directory %s"),
+                       args->sys_cache);
+         }
++	*/
+         seteuid(getuid());
+ 
+     } else {
+@@ -629,7 +645,9 @@ check_dirs(dav_args *args)
+ static char *
+ check_double_mounts(dav_args *args)
+ {
+-    FILE *mtab = setmntent(mounts, "r");
++    /* CLIP : open as 'a+' here rather than 'r' 
++     * to allow creation if file does not exist */
++    FILE *mtab = setmntent(mounts, "a+");
+     if (!mtab)
+         error(EXIT_FAILURE, errno, _("can't open file %s"), mounts);
+     struct mntent *mt = getmntent(mtab);
+@@ -823,6 +841,7 @@ check_permissions(dav_args *args)
+     if (args->debug & DAV_DBG_CONFIG)
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "gid ok");
+ 
++#if 0
+     struct passwd *pw;
+     pw = getpwuid(getuid());
+     if (!pw)
+@@ -857,6 +876,7 @@ check_permissions(dav_args *args)
+     if (args->debug & DAV_DBG_CONFIG)
+         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
+                "memeber of group %s", args->dav_group);
++#endif
+ }
+ 
+ 
+@@ -1104,7 +1124,10 @@ parse_config(char *argv[], dav_args *arg
+                   args->clicert);
+     }
+ 
++    /*
+     if (getuid() == 0 && !args->p_host) {
++    */
++    if (!args->p_host) {
+         proxy_from_env(args);
+         read_no_proxy_list(args);
+     }
+@@ -1279,7 +1302,7 @@ write_mtab_entry(const dav_args *args)
+     uid_t orig = geteuid();
+     seteuid(0);
+     int ret;
+-    FILE *mtab = setmntent(_PATH_MOUNTED, "a");
++    FILE *mtab = setmntent(CLIP_MTAB, "a");
+     if (mtab) {
+         ret = addmntent(mtab, &mntent);
+         endmntent(mtab);
+@@ -2314,8 +2337,10 @@ read_secrets(dav_args *args, const char
+                _("opening %s failed"), filename);
+         return;
+     }
++#if 0
+     if (st.st_uid != geteuid())
+         error(EXIT_FAILURE, 0, _("file %s has wrong owner"), filename);
++#endif
+     if ((st.st_mode &
+           (S_IXUSR | S_IRWXG | S_IRWXO | S_ISUID | S_ISGID | S_ISVTX)) != 0)
+         error(EXIT_FAILURE, 0, _("file %s has wrong permissions"), filename);

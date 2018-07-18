@@ -1,0 +1,97 @@
+--- a/include/fuse.h
++++ b/include/fuse.h
+@@ -37,6 +37,8 @@
+ extern "C" {
+ #endif
+ 
++extern int fuse_clip_mtab_open(const char *mode);
++
+ /* ----------------------------------------------------------- *
+  * Basic FUSE API					       *
+  * ----------------------------------------------------------- */
+--- a/lib/fuse.c
++++ b/lib/fuse.c
+@@ -4891,3 +4891,16 @@ struct fuse *fuse_new_compat25(int fd, s
+ }
+ 
+ FUSE_SYMVER(".symver fuse_new_compat25,fuse_new@FUSE_2.5");
++
++
++FILE *fuse_clip_mtab_file = NULL;
++
++int fuse_clip_mtab_open(const char *mode)
++{
++	/* FIXME: Lock the mtab access to avoid race condition */
++	fuse_clip_mtab_file = fopen(_PATH_MOUNTED, mode);
++	if (!fuse_clip_mtab_file) {
++		return 1;
++	}
++	return 0;
++}
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -201,6 +201,7 @@ FUSE_2.9 {
+ FUSE_2.9.1 {
+ 	global:
+ 		fuse_fs_fallocate;
++		fuse_clip_mtab_open;
+ 
+ 	local:
+ 		*;
+--- a/lib/mount_util.c
++++ b/lib/mount_util.c
+@@ -24,6 +24,11 @@
+ #include <sys/mount.h>
+ #include <sys/param.h>
+ 
++/* fuse_clip_mtab_file: */
++#include "fuse_misc.h"
++
++FILE *fuse_clip_mtab_file;
++
+ #ifdef __NetBSD__
+ #define umount2(mnt, flags) unmount(mnt, (flags == 2) ? MNT_FORCE : 0)
+ #define mtab_needs_update(mnt) 0
+@@ -73,6 +78,28 @@ static int mtab_needs_update(const char
+ }
+ #endif /* __NetBSD__ */
+ 
++/* Get (previously open) mtab file */
++static FILE *clip_get_mtab(const char *mode)
++{
++	FILE *mtab;
++	if (fuse_clip_mtab_file) {
++		mtab = fuse_clip_mtab_file;
++	} else {
++		mtab = fopen(_PATH_MOUNTED, mode);
++	}
++	return mtab;
++}
++
++static void clip_close_mtab(FILE *mtab)
++{
++	if (mtab) {
++		if (mtab == fuse_clip_mtab_file) {
++			fuse_clip_mtab_file = 0;
++		}
++		endmntent(mtab);
++	}
++}
++
+ static int add_mount(const char *progname, const char *fsname,
+ 		       const char *mnt, const char *type, const char *opts)
+ {
+--- a/lib/fuse_misc.h
++++ b/lib/fuse_misc.h
+@@ -55,3 +55,11 @@ static inline void fuse_mutex_init(pthre
+ #define ST_ATIM_NSEC_SET(stbuf, val) do { } while (0)
+ #define ST_MTIM_NSEC_SET(stbuf, val) do { } while (0)
+ #endif
++
++
++/* CLIP - Open mtab before dropping set-GID */
++#include <stdio.h>
++extern FILE *fuse_clip_mtab_file;
++
++#undef _PATH_MOUNTED
++#define _PATH_MOUNTED "/tmp/mtab"

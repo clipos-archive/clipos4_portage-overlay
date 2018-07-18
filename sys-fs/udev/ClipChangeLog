@@ -1,0 +1,50 @@
+# CLIP ChangeLog for sys-fs/udev
+
+*udev-208-r4 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +udev-208-r4.ebuild, -udev-208-r3.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*udev-208-r3 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +udev-208-r3.ebuild, -udev-208-r2.ebuild:
+  Update dependency to virtual/os-headers.
+
+*udev-208-r2 (28 Sep 2015)
+
+  28 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +udev-208-r2.ebuild, -udev-208-r1.ebuild:
+  Update dependency on linux-headers when compiling for clip-devstation.
+
+  25 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  udev-208-r1.ebuild:
+  Don't build binaries on clip.
+
+*udev-208-r1 (13 Jan 2015)
+
+  13 Jan 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  -udev-208.ebuild, +udev-208-r1.ebuild:
+  RBump to latest.
+
+*udev-208 (07 Jan 2014)
+
+  07 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +udev-208.ebuild, -udev-164-r4.ebuild,
+  -files/*:
+  Bump to latest.
+
+*udev-164-r4 (05 Apr 2013)
+
+  05 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +udev-164-r4.ebuild, -udev-164-r3.ebuild:
+  CPREFIX / install fixes to enable generating a libs-only package
+  for CLIP.
+
+*udev-164-r3 (19 Dec 2012)
+
+  19 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +udev-164-r3.ebuild, -udev-164-r2.ebuild,
+  +files/0001-fix-build-with-glibc-2.16.patch:
+  Fix build with glibc 2.16 by including the file defining PRIO_PROCESS etc.

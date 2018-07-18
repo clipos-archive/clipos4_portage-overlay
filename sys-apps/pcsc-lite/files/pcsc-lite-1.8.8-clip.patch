@@ -1,0 +1,166 @@
+diff -Naur pcsc-lite-1.8.6/src/debuglog.c pcsc-lite-1.8.6-clip/src/debuglog.c
+--- pcsc-lite-1.8.6/src/debuglog.c	2012-08-25 14:29:44.000000000 +0000
++++ pcsc-lite-1.8.6-clip/src/debuglog.c	2012-10-03 11:25:13.806023889 +0000
+@@ -112,7 +112,7 @@
+ static void log_line(const int priority, const char *DebugBuffer)
+ {
+ 	if (DEBUGLOG_SYSLOG_DEBUG == LogMsgType)
+-		syslog(LOG_INFO, "%s", DebugBuffer);
++		syslog(LOG_INFO|LOG_DAEMON, "%s", DebugBuffer);
+ 	else
+ 	{
+ 		static struct timeval last_time = { 0, 0 };
+@@ -331,7 +331,7 @@
+ 	va_end(argptr);
+ 
+ 	if (DEBUGLOG_SYSLOG_DEBUG == LogMsgType)
+-		syslog(LOG_INFO, "%s", DebugBuffer);
++		syslog(LOG_INFO|LOG_DAEMON, "%s", DebugBuffer);
+ 	else
+ 		puts(DebugBuffer);
+ } /* debug_msg */
+diff -Naur pcsc-lite-1.8.6/src/hotplug_libusb.c pcsc-lite-1.8.6-clip/src/hotplug_libusb.c
+--- pcsc-lite-1.8.6/src/hotplug_libusb.c	2012-10-01 14:54:31.000000000 +0000
++++ pcsc-lite-1.8.6-clip/src/hotplug_libusb.c	2012-10-04 10:13:31.688227747 +0000
+@@ -425,12 +425,16 @@
+ 				break;
+ 			}
+ 
++
++	HPForceReaderPolling = 0;
++
+ 	if (HPForceReaderPolling)
+ 	{
+ 		Log2(PCSC_LOG_INFO,
+ 				"Polling forced every %d second(s)", HPForceReaderPolling);
+ 		do_polling = TRUE;
+ 	}
++	
+ 
+ 	if (do_polling)
+ 	{
+diff -Naur pcsc-lite-1.8.6/src/pcscdaemon.c pcsc-lite-1.8.6-clip/src/pcscdaemon.c
+--- pcsc-lite-1.8.6/src/pcscdaemon.c	2012-09-28 10:26:06.000000000 +0000
++++ pcsc-lite-1.8.6-clip/src/pcscdaemon.c	2012-10-04 13:44:52.528106819 +0000
+@@ -47,6 +47,27 @@
+ #include "powermgt_generic.h"
+ #include "utils.h"
+ 
++
++/* CLIP : vserver stuff */
++#include <limits.h>
++#include <signal.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++#include <fcntl.h>
++#include <clip/clip.h>
++#include <linux/capability.h>
++#include <clip/clip-vserver.h>
++
++static unsigned long g_xid = 0;
++/* /CLIP : vserver stuff */
++
++
++
++
++
++
++
+ #ifndef TRUE
+ #define TRUE 1
+ #define FALSE 0
+@@ -137,6 +158,26 @@
+ 	}
+ }
+ 
++
++
++static int
++drop_privs(void) {
++       if (g_xid) {
++               if(clip_enter_context(g_xid)) {
++                       Log2(PCSC_LOG_ERROR, "Failed to enter context %lu\n", g_xid);
++                       goto err;
++               }
++       }
++
++       return 0;
++err:
++       return -1;
++}
++
++
++
++
++
+ int main(int argc, char **argv)
+ {
+ 	int rv;
+@@ -168,10 +209,11 @@
+ 		{"max-card-handle-per-thread", 1, NULL, 's'},
+ 		{"max-card-handle-per-reader", 1, NULL, 'r'},
+ 		{"auto-exit", 0, NULL, 'x'},
++		{"context", 1, NULL, 'X'},
+ 		{NULL, 0, NULL, 0}
+ 	};
+ #endif
+-#define OPT_STRING "c:fTdhvaeCHt:r:s:x"
++#define OPT_STRING "c:fTdhvaeCHt:r:s:xX:"
+ 
+ 	newReaderConfig = NULL;
+ 	setToForeground = FALSE;
+@@ -304,6 +346,11 @@
+ 					TIME_BEFORE_SUICIDE);
+ 				break;
+ 
++			case 'X':
++				g_xid = atoi(optarg);
++				Log2(PCSC_LOG_INFO, "context set to %u", g_xid);
++				break;
++
+ 			default:
+ 				print_usage (argv[0]);
+ 				return EXIT_FAILURE;
+@@ -401,6 +448,9 @@
+ 	 * root ("/") */
+ 	(void)chdir("/");
+ 
++
++
++
+ 	/*
+ 	 * If this is set to one the user has asked it not to fork
+ 	 */
+@@ -525,6 +575,21 @@
+ 
+ 	Log1(PCSC_LOG_INFO, "pcsc-lite " VERSION " daemon ready.");
+ 
++
++	/* Jail proxy into a vserver.
++	 * Note : it would be better to jail sooner
++	 */
++	if(drop_privs()) {
++		Log1(PCSC_LOG_ERROR, "couldn't jail process\n");
++	        exit(1);
++	} else {
++		Log1(PCSC_LOG_INFO, "pcsc daemon started.");
++	}
++
++        /* end of jail proxy */
++
++
++
+ 	/*
+ 	 * Record our pid to make it easier
+ 	 * to kill the correct pcscd
+@@ -628,6 +693,9 @@
+ 		close(pipefd[1]);
+ 	}
+ 
++	/* end of jail proxy */
++
++
+ 	SVCServiceRunLoop();
+ 
+ 	Log1(PCSC_LOG_ERROR, "SVCServiceRunLoop returned");

@@ -1,0 +1,9 @@
+# CLIP ChangeLog for net-wireless/wireless-tools
+
+*wireless-tools-29-r1 (23 Jun 2010)
+
+  23 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +wireless-tools-29-r1.ebuild, -wireless-tools-29.ebuild:
+  Add missing veriexec entry for iwgetid.
+
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/usr/local/bin/notify-send -t 3000 -i security-high \
+	"Antivirus à jour" "Les signatures antivirales ont été mises à jour"

@@ -1,0 +1,240 @@
+# CLIP ChangeLog for x11-misc/xscreensaver
+
+*xscreensaver-5.36 (26 Oct 2017)
+
+  26 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +xscreensaver-5.36.ebuild, -xscreensaver-5.15-r10.ebuild:
+  Bump to latest stable with some adaptations to avoid compiling all the hacks
+  (i.e. the fancy screensaver animations) which are useless in the context of
+  CLIP.
+
+*xscreensaver-5.15-r10 (27 Jun 2014)
+
+  27 Jun 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r10.ebuild, -xscreensaver-5.15-r9.ebuild:
+  Fix for xscreensaver-settime.sh - user input was not parsed correctly
+  and caused the screen to lock out in a matter of seconds.
+
+*xscreensaver-5.15-r9 (18 Mar 2014)
+
+  18 Mar 2014; Hugo Chargois <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r9.ebuild, -xscreensaver-5.15-r8.ebuild,
+  +files/xscreensaver-5.15-clip-no-detect-overlap.patch:
+  Fix xscreensaver not blanking all the monitors when they overlap.
+  This is apparently a "feature", so the fix is simply to not
+  detect overlapping monitors.
+
+  02 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  xscreensaver-5.15-r8.ebuild:
+  Do not depend on appres, etc. on clip-devstation either.
+
+*xscreensaver-5.15-r8 (13 Mar 2013)
+
+  13 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r8.ebuild, -xscreensaver-5.15-r7.ebuild:
+  files/xscreensaver-settime.sh:
+  Fix initial timeout value, which was set to 0 following previous
+  revision.
+
+*xscreensaver-5.15-r7 (25 Feb 2013)
+
+  25 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r7.ebuild, -xscreensaver-5.15-r6.ebuild,
+  -files/xscreensaver, files/xscreensaver-settime.sh:
+  Revert to a simple, per-user setting for lock delay - the 
+  admin/user separation generally leaves users puzzled.
+
+*xscreensaver-5.15-r6 (23 Jan 2013)
+
+  23 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r6.ebuild, -xscreensaver-5.15-r5.ebuild,
+  files/XScreenSaver:
+  Disable captureStderr to avoid troubling end-users with cryptic
+  messages.
+
+*xscreensaver-5.15-r5 (14 Nov 2012)
+
+  14 Nov 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r5.ebuild, -xscreensaver-5.15-r4.ebuild,
+  +files/xscreensaver-5.15-clip-event-lock.patch:
+  Fix locked flag when lock command failed.
+
+*xscreensaver-5.15-r4 (13 Nov 2012)
+
+  13 Nov 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r4.ebuild, -xscreensaver-5.15-r3.ebuild,
+  +files/xscreensaver-5.15-clip-esc-menu.patch:
+  Hack to deal with menu focus.
+
+*xscreensaver-5.15-r3 (28 Sep 2012)
+
+  28 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r3.ebuild, -xscreensaver-5.15-r2.ebuild,
+  files/xscreensaver-5.10-clip-fr.patch:
+  Convert patch to ISO-8859 encoding, as this is the default
+  encoding in CLIP core.
+
+*xscreensaver-5.15-r2 (13 Jul 2012)
+
+  13 Jul 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r2.ebuild, -xscreensaver-5.15-r1.ebuild,
+  +files/xscreensaver-lock.sh:
+  Add a wrapper to force screen locking.
+
+*xscreensaver-5.15-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15-r1.ebuild, -xscreensaver-5.15.ebuild:
+  Force rebuild
+
+*xscreensaver-5.15 (10 Jan 2012)
+
+  10 Jan 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.15.ebuild, -xscreensaver-5.10-r6.ebuild,
+  +files/xscreensaver-5.15-gentoo.patch,
+  +files/xscreensaver-5.05-interix.patch,
+  -files/xscreensaver-5.10-gentoo.patch,
+  -files/xscreensaver-5.10-xfce.patch,
+  files/xscreensaver-settime.sh:
+  Bump to latest. Fix cancel behavior in xscreensaver-settime.sh.
+
+*xscreensaver-5.10-r6 (07 Sep 2011)
+
+  07 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.10-r6.ebuild, -xscreensaver-5.10-r5.ebuild,
+  files/XscreenSaver, +files/logo-180.xpm, +files/logo-50.xpm:
+  Change the graphic theme. I know changing the pixmaps would 
+  not please upstream, but we've all got to deal with our users...
+
+*xscreensaver-5.10-r5 (18 Jul 2011)
+
+  18 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.10-r5.ebuild, -xscreensaver-5.10-r4.ebuild,
+  files/xscreensaver-settime.sh:
+  Add patch by Florent Chabaud for DPMS settings.
+
+  28 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  xscreensaver-5.10-r4.ebuild, 
+  +files/xscreensaver-5.10-clip-prefix.patch:
+  Fix locale install path.
+
+*xscreensaver-5.10-r4 (27 Oct 2010)
+
+  27 Oct 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  xscreensaver-5.10-r4.ebuild:
+  Add --disable-root-passwd to configure in order not to
+  try to authenticate user as root.
+
+*xscreensaver-5.10-r3 (25 Jan 2010)
+
+  25 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  xscreensaver-5.10-r3.ebuild:
+  Add missing xset dependency.
+
+*xscreensaver-5.10-r3 (25 Jan 2010)
+
+  25 Jan 2010; Florent Chabaud <clipos@ssi.gouv.fr>
+  +xscreensaver-5.10-r3.ebuild, -xscreensaver-5.10-r2.ebuild:
+  Reallumage d'un ecran LCD. Ticket #95 du reseau de test
+
+  22 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  xscreensaver-5.10-r2.ebuild, +files/xscreensaver:
+  Add default config file for admin screensaver timeout.
+
+*xscreensaver-5.10-r2 (20 Jan 2010)
+
+  20 Jan 2010; Florent Chabaud <clipos@ssi.gouv.fr>
+  +xscreensaver-5.10-r2.ebuild, -xscreensaver-5.10-r1.ebuild:
+  Configuration du verrouillage. Ticket #203 du reseau de test
+
+*xscreensaver-5.10-r1 (19 Jan 2010)
+
+  19 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.10-r1.ebuild, -xscreensaver-5.10.ebuild,
+  +files/xscreensaver-5.10-clip-exthelper.patch,
+  files/xscreensaver-settime.sh:
+  Revert change to settime.sh - we still need to ignore errors
+  there. Patch to disable 'passwd' authentication (requires
+  suid) when external helper is passed.
+
+*xscreensaver-5.10 (19 Jan 2010)
+
+  19 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.10.ebuild, -xscreensaver-5.03-r7.ebuild,
+  -files/desktop_entries/screensaver-properties.desktop,
+  -files/no_intltool.patch, -files/xscreensaver-5.02-gentoo.patch,
+  -files/xscreensaver-5.03-nsfw.patch, +files/xscreensaver-5.10-gentoo.patch,
+  -files/xscreensaver-5.03-clip-fr.patch, +files/xscreensaver-5.10-clip-fr.patch,
+  +files/xscreensaver-5.10-xfce.patch, files/XScreenSaver,
+  files/xscreensaver-settime.sh:
+  Bump to latest. Add lock grace period of 10s. 
+
+*xscreensaver-5.03-r7 (03 Sep 2009)
+
+  03 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r7.ebuild, -xscreensaver-5.03-r6.ebuild,
+  files/xscreensaver-settime.sh, +files/no_intltool.patch:
+  Use auto sizes for Xdialog. Add patch for compilation with
+  updated intltool from gentoo bug #240958.
+
+*xscreensaver-5.03-r6 (09 Jun 2009)
+
+  09 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r6.ebuild, -xscreensaver-5.03-r5.ebuild,
+  +files/xscreensaver-settime.sh:
+  Add utility script to modify the xscreensaver timeout in a
+  given USER session.
+
+*xscreensaver-5.03-r5 (28 Mar 2008)
+
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r5.ebuild, -xscreensaver-5.03-r4.ebuild,
+  Add IUSE core-deps to remove dependency on jpeg.
+
+*xscreensaver-5.03-r4 (14 Feb 2008)
+
+  14 Feb 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r4.ebuild, -xscreensaver-5.03-r3.ebuild,
+  +files/xscreensaver-5.03-clip-allow-adm-lock.patch:
+  Remove hardcoded checks for 'adm' username (or 'sys', or 'operator')
+  that disable locking. These are not priviledged accounts on CLIP, and
+  'adm' is typically used for an ADMIN account.
+
+*xscreensaver-5.03-r3 (16 Jan 2008)
+
+  16 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r3.ebuild, -xscreensaver-5.03-r2.ebuild:
+  Remove dependency on glib through IUSE clip-deps.
+
+*xscreensaver-5.03-r2 (15 Nov 2007)
+
+  15 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r2.ebuild:
+  Add IUSE clip-deps to remove dependency on zlib.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  -xscreensaver-5.03.ebuild:
+  Remove stale ebuild.
+
+*xscreensaver-5.03-r1 (26 Oct 2007)
+
+  26 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xscreensaver-5.03-r1.ebuild, files/XscreenSaver:
+  App-defaults file adapted to lock the session after 5 minutes of
+  inactivity by default.
+
+*xscreensaver-5.03 (12 Oct 2007)
+
+  12 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  xscreensaver-5.03.ebuild, +files/XscreenSaver, 
+  +files/xscreensaver-5.03-clip-fr.patch:
+  Initial CLIP import. CPREFIX fixes. Add IUSE clip that:
+    - removes all animated screensavers
+    - removes the 'demo' GUI
+    - removes the associated dependencies
+    - turns the 'lock' GUI hardcoded strings to French
+    - installs a custom app-defaults file with more localized
+      stuff
+    - removes some unsupported X11 extensions from the configuration,
+      and compiles in support for external password checkers so that
+      we can use app-clip/xscreensaver-pwcheck.

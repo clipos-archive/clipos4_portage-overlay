@@ -1,0 +1,204 @@
+--- ./embed.h.orig	2013-12-23 12:56:35.598663992 +0100
++++ ./embed.h	2013-12-23 12:56:44.990663662 +0100
+@@ -1452,7 +1452,7 @@
+ #define my_exit_jump()		S_my_exit_jump(aTHX)
+ #define nuke_stacks()		S_nuke_stacks(aTHX)
+ #define open_script(a,b,c)	S_open_script(aTHX_ a,b,c)
+-#define parse_body(a,b)		S_parse_body(aTHX_ a,b)
++#define parse_body(a,b, c)	S_parse_body(aTHX_ a,b,c)
+ #define run_body(a)		S_run_body(aTHX_ a)
+ #define usage()			S_usage(aTHX)
+ #  endif
+--- ./miniperlmain.c.orig	2013-12-23 12:54:54.514667544 +0100
++++ ./miniperlmain.c	2013-12-23 12:54:56.483667475 +0100
+@@ -114,7 +114,9 @@ main(int argc, char **argv, char **env)
+ 	PL_perl_destruct_level = 0;
+     }
+     PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+-    exitstatus = perl_parse(my_perl, xs_init, argc, argv, (char **)NULL);
++#define PERL_STDIN_ON 1
++#define PERL_STDIN_OFF 0
++    exitstatus = perl_parse(my_perl, xs_init, argc, argv, (char **)NULL, PERL_STDIN_ON);
+     if (!exitstatus)
+         perl_run(my_perl);
+ 
+--- ./pp_ctl.c.orig	2013-12-23 12:54:54.514667544 +0100
++++ ./pp_ctl.c	2013-12-23 12:54:56.483667475 +0100
+@@ -3784,7 +3784,9 @@ S_check_type_and_open(pTHX_ SV *name)
+ #if !defined(PERLIO_IS_STDIO) && !defined(USE_SFIO)
+     return PerlIO_openn(aTHX_ ":", PERL_SCRIPT_MODE, -1, 0, 0, NULL, 1, &name);
+ #else
+-    return PerlIO_open(p, PERL_SCRIPT_MODE);
++/* CLIP */
++    return PerlIO_open_exec(name);
++/* CLIP */
+ #endif
+ }
+ 
+--- ./Makefile.SH.orig	2013-12-23 12:54:54.512667544 +0100
++++ ./Makefile.SH	2013-12-23 12:54:56.481667475 +0100
+@@ -669,6 +669,7 @@ miniperlmain$(OBJ_EXT): miniperlmain.c p
+ 
+ perlmain.c: $(MINIPERL_EXE) lib/ExtUtils/Miniperl.pm
+ 	$(MINIPERL) -Ilib -MExtUtils::Miniperl -e 'writemain(@ARGV)' DynaLoader $(static_ext) > perlmain.c
++	sed -ie 's/PERL_STDIN_ON)/PERL_STDIN_OFF)/' perlmain.c
+ 
+ perlmain$(OBJ_EXT): perlmain.c
+ 	$(CCCMD) $(PLDLFLAGS) $*.c
+--- ./proto.h.orig	2013-12-23 12:54:54.511667545 +0100
++++ ./proto.h	2013-12-23 12:54:56.480667475 +0100
+@@ -3033,8 +3033,10 @@ PERL_CALLCONV void	perl_free(PerlInterpr
+ #define PERL_ARGS_ASSERT_PERL_FREE	\
+ 	assert(my_perl)
+ 
+-PERL_CALLCONV int	perl_parse(PerlInterpreter *my_perl, XSINIT_t xsinit, int argc, char** argv, char** env)
++/* CLIP */
++PERL_CALLCONV int	perl_parse(PerlInterpreter* interp, XSINIT_t xsinit, int argc, char** argv, char** env, int stdin_p)
+ 			__attribute__nonnull__(1);
++/* /CLIP */
+ #define PERL_ARGS_ASSERT_PERL_PARSE	\
+ 	assert(my_perl)
+ 
+@@ -5983,7 +5985,9 @@ STATIC PerlIO *	S_open_script(pTHX_ cons
+ #define PERL_ARGS_ASSERT_OPEN_SCRIPT	\
+ 	assert(scriptname); assert(suidscript)
+ 
+-STATIC void*	S_parse_body(pTHX_ char **env, XSINIT_t xsinit);
++/* CLIP */
++STATIC void*	S_parse_body(pTHX_ char **env, XSINIT_t xsinit, int stdin_p);
++/* /CLIP */
+ STATIC void	S_run_body(pTHX_ I32 oldscope)
+ 			__attribute__noreturn__;
+ 
+--- ./perl.c.orig	2013-12-23 12:54:54.508667545 +0100
++++ ./perl.c	2013-12-23 12:57:50.590661356 +0100
+@@ -1478,7 +1478,7 @@ Tells a Perl interpreter to parse a Perl
+ 	}
+ 
+ int
+-perl_parse(pTHXx_ XSINIT_t xsinit, int argc, char **argv, char **env)
++perl_parse(pTHXx_ XSINIT_t xsinit, int argc, char **argv, char **env, int stdin_p)
+ {
+     dVAR;
+     I32 oldscope;
+@@ -1630,7 +1630,7 @@ perl_parse(pTHXx_ XSINIT_t xsinit, int a
+     JMPENV_PUSH(ret);
+     switch (ret) {
+     case 0:
+-	parse_body(env,xsinit);
++	parse_body(env, xsinit, stdin_p);
+ 	if (PL_unitcheckav) {
+ 	    call_list(oldscope, PL_unitcheckav);
+ 	}
+@@ -1785,7 +1785,7 @@ S_Internals_V(pTHX_ CV *cv)
+     (INCPUSH_ADD_VERSIONED_SUB_DIRS|INCPUSH_ADD_ARCHONLY_SUB_DIRS)
+ 
+ STATIC void *
+-S_parse_body(pTHX_ char **env, XSINIT_t xsinit)
++S_parse_body(pTHX_ char **env, XSINIT_t xsinit, int stdin_p)
+ {
+     dVAR;
+     PerlIO *rsfp;
+@@ -1863,6 +1863,12 @@ S_parse_body(pTHX_ char **env, XSINIT_t
+ 	    PL_minus_E = TRUE;
+ 	    /* FALL THROUGH */
+ 	case 'e':
++	    /* CLIP */
++	    if (!stdin_p) {
++		    Perl_croak(aTHX_ "-e not supported");
++		    break;
++	    }
++	    /* /CLIP */
+ 	    forbid_setid('e', FALSE);
+ 	    if (!PL_e_script) {
+ 		PL_e_script = newSVpvs("");
+@@ -2057,6 +2063,8 @@ S_parse_body(pTHX_ char **env, XSINIT_t
+ 	argc++,argv--;
+ 	scriptname = BIT_BUCKET;	/* don't look for script or read stdin */
+     }
++/* CLIP */
++#if 0
+     else if (scriptname == NULL) {
+ #ifdef MSDOS
+ 	if ( PerlLIO_isatty(PerlIO_fileno(PerlIO_stdin())) )
+@@ -2064,6 +2072,7 @@ S_parse_body(pTHX_ char **env, XSINIT_t
+ #endif
+ 	scriptname = "-";
+     }
++#endif
+ 
+     assert (!PL_tainted);
+     init_perllib();
+@@ -3709,7 +3718,9 @@ S_open_script(pTHX_ const char *scriptna
+ #endif
+ 	}
+ #endif
+-	rsfp = PerlIO_open(scriptname,PERL_SCRIPT_MODE);
++	/* CLIP */
++	rsfp = PerlIO_open_exec(scriptname);
++	/* /CLIP */
+ #ifdef FAKE_BIT_BUCKET
+ 	if (memEQ(scriptname, FAKE_BIT_BUCKET_PREFIX,
+ 		  sizeof(FAKE_BIT_BUCKET_PREFIX) - 1)
+@@ -3908,6 +3919,9 @@ Perl_init_dbargs(pTHX)
+ void
+ Perl_init_debugger(pTHX)
+ {
++    /* CLIP */
++    Perl_croak(aTHX_ "Debugging not allowed under CLIP, you sneaky bastards :)");
++#if 0
+     dVAR;
+     HV * const ostash = PL_curstash;
+ 
+@@ -3928,6 +3942,8 @@ Perl_init_debugger(pTHX)
+ 	sv_setiv(PL_DBsignal, 0);
+     SvREFCNT_dec(PL_curstash);
+     PL_curstash = ostash;
++#endif
++    /* /CLIP */
+ }
+ 
+ #ifndef STRESS_REALLOC
+--- ./perlio.c.orig	2013-12-23 12:54:54.507667545 +0100
++++ ./perlio.c	2013-12-23 12:54:56.475667476 +0100
+@@ -4907,6 +4907,26 @@ PerlIO_open(const char *path, const char
+     return PerlIO_openn(aTHX_ NULL, mode, -1, 0, 0, NULL, 1, &name);
+ }
+ 
++/* CLIP */
++#ifndef O_MAYEXEC
++#define O_MAYEXEC 00000040
++#endif
++#undef PerlIO_open_exec
++PerlIO *
++PerlIO_open_exec(const char *path)
++{
++    dTHX;
++    char mode[3] = { IoTYPE_NUMERIC, 'r', '\0' };
++    SV *name = sv_2mortal(newSVpvn(path, strlen(path)));
++    PerlIO *p = PerlIO_openn(aTHX_ NULL, mode, -1, 
++			    O_RDONLY|O_MAYEXEC, 0, NULL, 1, &name);
++    if (!p)
++	    Perl_warn(aTHX_ "Can't open %s for execution: %s\n",
++			    path, Strerror(errno));
++    return p;
++}
++/* /CLIP */
++
+ #undef Perlio_reopen
+ PerlIO *
+ PerlIO_reopen(const char *path, const char *mode, PerlIO *f)
+--- ./perlio.h.orig	2013-12-23 12:54:54.505667545 +0100
++++ ./perlio.h	2013-12-23 12:54:56.474667476 +0100
+@@ -232,6 +232,11 @@ PERL_EXPORT_C int PerlIO_puts(PerlIO *,
+ #ifndef PerlIO_open
+ PERL_EXPORT_C PerlIO *PerlIO_open(const char *, const char *);
+ #endif
++/* CLIP */
++#ifndef PerlIO_open_exec
++PERL_EXPORT_C PerlIO *PerlIO_open_exec(const char *);
++#endif
++/* /CLIP */
+ #ifndef PerlIO_openn
+ PERL_EXPORT_C PerlIO *PerlIO_openn(pTHX_ const char *layers, const char *mode,
+ 				   int fd, int imode, int perm, PerlIO *old,

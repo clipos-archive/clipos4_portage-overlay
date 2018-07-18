@@ -1,0 +1,98 @@
+diff --git a/src/Makefile.am b/src/Makefile.am
+index f26f11a..11ee467 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -22,7 +22,7 @@ man_MANS	 = ntfs-3g.8 ntfs-3g.probe.8 \
+ 		ntfs-3g.usermap.8 \
+ 		ntfs-3g.secaudit.8
+ 
+-ntfs_3g_LDADD    = $(FUSE_LIBS) $(top_builddir)/libntfs-3g/libntfs-3g.la
++ntfs_3g_LDADD    = $(FUSE_LIBS) $(top_builddir)/libntfs-3g/libntfs-3g.la -lclipvserver
+ if REALLYSTATIC
+ ntfs_3g_LDFLAGS  = $(AM_LDFLAGS) -all-static
+ endif
+diff --git a/src/ntfs-3g.c b/src/ntfs-3g.c
+index d615e6d..94913df 100644
+--- a/src/ntfs-3g.c
++++ b/src/ntfs-3g.c
+@@ -3733,6 +3733,18 @@ int main(int argc, char *argv[])
+ 		err = NTFS_VOLUME_SYNTAX_ERROR;
+ 		goto err_out;
+ 	}
++	if (opts.xid) {
++		unsigned int i;
++		for (i = 3; i < 1024; i++) {
++			(void)close(i);
++		}
++
++		if (clip_enter_namespace(opts.xid)) {
++			fprintf(stderr, "Failed to enter namespace %lu\n", opts.xid);
++			err = NTFS_VOLUME_SYNTAX_ERROR;
++			goto err_out;
++		}
++	}
+ 	if (!ntfs_check_if_mounted(opts.device,&existing_mount)
+ 	    && (existing_mount & NTFS_MF_MOUNTED)
+ 		/* accept multiple read-only mounts */
+@@ -3906,6 +3918,14 @@ int main(int argc, char *argv[])
+ 	}
+ 	
+ 	ctx->mounted = TRUE;
++	if (opts.xid) {
++		if (clip_enter_context_nons(opts.xid)) {
++			fprintf(stderr, "Failed to enter context %lu\n", opts.xid);
++			err = NTFS_VOLUME_SYNTAX_ERROR;
++			goto err_out;
++		}
++	}
++
+ 
+ #if defined(linux) || defined(__uClinux__)
+ 	if (S_ISBLK(sbuf.st_mode) && (fstype == FSTYPE_FUSE))
+diff --git a/src/ntfs-3g_common.c b/src/ntfs-3g_common.c
+index ca805d6..1f7ec27 100644
+--- a/src/ntfs-3g_common.c
++++ b/src/ntfs-3g_common.c
+@@ -555,6 +555,7 @@ int ntfs_parse_options(struct ntfs_options *popts, void (*usage)(void),
+ 
+ 	static const char *sopt = "-o:hnvV";
+ 	static const struct option lopt[] = {
++		{ "xid",	 required_argument,	NULL, 'x' },
+ 		{ "options",	 required_argument,	NULL, 'o' },
+ 		{ "help",	 no_argument,		NULL, 'h' },
+ 		{ "no-mtab",	 no_argument,		NULL, 'n' },
+@@ -599,6 +600,14 @@ int ntfs_parse_options(struct ntfs_options *popts, void (*usage)(void),
+ 			if (ntfs_strappend(&popts->options, optarg))
+ 				return -1;
+ 			break;
++		case 'x':
++			popts->xid = strtoul(optarg, NULL, 0);
++			if (!popts->xid) {
++				ntfs_log_error("%s: xid must be a non-null number\n",
++							EXEC_NAME);
++				return -1;
++			}
++			break;
+ 		case 'h':
+ 			usage();
+ 			exit(9);
+diff --git a/src/ntfs-3g_common.h b/src/ntfs-3g_common.h
+index e68c699..30a20d2 100644
+--- a/src/ntfs-3g_common.h
++++ b/src/ntfs-3g_common.h
+@@ -24,12 +24,15 @@
+ #define _NTFS_3G_COMMON_H
+ 
+ #include "inode.h"
++#include <clip/clip-vserver.h>
++
+ 
+ struct ntfs_options {
+         char    *mnt_point;     /* Mount point */    
+         char    *options;       /* Mount options */  
+         char    *device;        /* Device to mount */
+ 	char	*arg_device;	/* Device requested in argv */
++	xid_t	xid;
+ } ;
+ 
+ typedef enum {

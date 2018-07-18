@@ -1,0 +1,12 @@
+echo ""
+echo "==== CLIP LiveCD ===="
+echo ""
+mmc rescan
+echo "Chargement..."
+fatload mmc 0 0x1200000 vmlinuz-clip
+fatload mmc 0 0x2000000 initrd.img
+echo ""
+echo "Demarrage..."
+setenv bootargs "console=ttyS0,115200 earlyprintk=serial,0xf1012000,115200 root=/dev/ram0 cdroot nofb"
+bootm 0x1200000 0x2000000
+

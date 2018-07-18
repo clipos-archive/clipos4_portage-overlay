@@ -1,0 +1,18 @@
+Only send session resquest to destination port 137, 138, 139.
+
+Index: samba-3.6.24/source3/libsmb/cliconnect.c
+===================================================================
+--- samba-3.6.24.orig/source3/libsmb/cliconnect.c
++++ samba-3.6.24/source3/libsmb/cliconnect.c
+@@ -2842,8 +2842,9 @@ bool cli_session_request(struct cli_stat
+ 	int namelen = 0;
+ 	char *tmp;
+ 
+-	/* 445 doesn't have session request */
+-	if (cli->port == 445)
++	/* Non-netbios dest port (like 445) must not send session request.
++	 * They send a negotiate protocol request instead */
++	if (cli->port != 137 && cli->port != 138 && cli->port != 139)
+ 		return True;
+ 
+ 	memcpy(&(cli->calling), calling, sizeof(*calling));

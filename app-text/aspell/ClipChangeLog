@@ -1,0 +1,49 @@
+# CLIP Changelog for app-text/aspell
+
+*aspell-0.60.6.1 (31 Dec 2012)
+
+  31 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +aspell-0.60.6.1.ebuild, -aspell-0.60.5-r1.ebuild,
+  +files/aspell-0.60.5-solaris.patch,
+  +files/aspell-0.60.6-darwin-bundles.patch,
+  -files/aspell-0.60.3-templateinstantiations.patch,
+  -files/aspell-0.60.5-gcc-4.3.patch:
+  Bump to latest.
+
+  08 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  aspell-0.60.5-r1.ebuild:
+  Add missing IUSE.
+
+*aspell-0.60.5-r1 (02 Apr 2008)
+
+  02 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +aspell-0.60.5-r1.ebuild, -aspell-0.60.5.ebuild:
+  Change the version specification for the aspell-en conflict :
+  !aspell-en-0.5* doesn't work too well with gencontrol.pl at the
+  moment, !<aspell-en-0.6 is ok...
+
+*aspell-0.60.5-r5 (04 Mar 2008)
+
+  04 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +aspell-0.60.5.ebuild, -aspell-0.50.5-r5.ebuild,
+  +files/aspell-0.60.3-templateinstantiations.patch,
+  +files/aspell-0.60.5-nls.patch, +files/aspell-0.60.5-gcc-4.3.patch,
+  -files/digest-aspell-0.50.5-r5, -files/aspell-0.50.5-charcount.patch,
+  -files/aspell-quotechar-fix.patch:
+  Bump to 0.60, needed by kdelibs-3.5.9. Same changes as before.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  -aspell-0.50.5-r4.ebuild:
+  Remove stale ebuild.
+
+*aspell-0.50.5-r5 (12 Jul 2007)
+
+  12 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  aspell-0.50.5-r5.ebuild:
+  Add IUSE clip-deps to remove dependency on ncurses.
+
+*aspell-0.50.5-r4 (16 Jan 2007)
+
+  8 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  aspell-0.50.5-r4.ebuild:
+  Initial CLIP import, fix for CPREFIX.

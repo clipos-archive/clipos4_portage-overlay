@@ -1,0 +1,72 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+save_previous_versions() {
+	local num="${1}"
+
+	[[ -f "/boot/extlinux_${num}.conf" ]] || return
+
+	local vernew=
+	local verold=
+
+	vernew="$(grep -o 'CLIP, version courante (.*)' "/boot/extlinux_${num}.conf")"
+	verold="$(grep -o 'CLIP, version precedente (.*)' "/boot/extlinux_${num}.conf")"
+
+	[[ -n "${vernew}" ]] && echo "${vernew}" > "/tmp/extlinux.vernew.${num}"
+	[[ -n "${verold}" ]] && echo "${verold}" > "/tmp/extlinux.verold.${num}"
+}
+
+[[ -f "/boot/extlinux_5.conf" ]] && save_previous_versions 5
+[[ -f "/boot/extlinux_10.conf" ]] && save_previous_versions 10
+
+[[ -e "/boot/vmlinuz-clip" ]] || exit 0
+[[ -e "/boot/vmlinuz-clip-old" ]] || exit 0
+[[ -e "/boot/initrd-clip.img" ]] || exit 0
+[[ -e "/boot/initrd-clip-old.img" ]] || exit 0
+[[ -e "/boot/extlinux.conf" ]] || exit 0
+
+CURRENTDEV=
+if [[ -L "/boot/extlinux.conf" ]]; then
+    CURRENTDEV="$(readlink "/boot/extlinux.conf")"
+else
+		local _cur="$(cat "/boot/extlinux.conf")"
+		CURRENTFILE=${_cur#include }
+fi
+CURRENTDEV="${CURRENTDEV#extlinux_}"
+CURRENTDEV="${CURRENTDEV%.conf}"
+
+error() {
+	echo "! ${1} !" >&2
+	exit 1
+}
+
+echo "* Current boot device number : ${CURRENTDEV} *"
+
+
+case ${CURRENTDEV} in
+	5)
+		FSUF=""
+		TSUF="-old"
+		;;
+	10)	
+		FSUF="-old"
+		TSUF=""
+		;;
+	*)
+		error "Unsupported root device number : ${CURRENTDEV}"
+		;;
+esac
+
+if [[ ! -e "/boot/vmlinuz-clip.5" ]]; then
+	cp "/boot/vmlinuz-clip${FSUF}" "/boot/vmlinuz-clip.5" || error "Failed to copy vmlinuz 5"
+	cp "/boot/initrd-clip${FSUF}.img" "/boot/initrd-clip.img.5" || error "Failed to copy initrd 5"
+	echo "* vmlinuz 5 copied from vmlinuz-clip${FSUF} *"
+fi
+
+if [[ ! -e "/boot/vmlinuz-clip.10" ]]; then
+	cp "/boot/vmlinuz-clip${TSUF}" "/boot/vmlinuz-clip.10" || error "Failed to copy vmlinuz 10"
+	cp "/boot/initrd-clip${TSUF}.img" "/boot/initrd-clip.img.10" || error "Failed to copy initrd 10"
+	echo "* vmlinuz 10 copied from vmlinuz-clip${TSUF} *"
+fi
+

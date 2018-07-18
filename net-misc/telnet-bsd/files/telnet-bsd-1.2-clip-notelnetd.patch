@@ -1,0 +1,25 @@
+From d98f6620ceb9a1eac45cc49b02032ef2760502c5 Mon Sep 17 00:00:00 2001
+From: Tony Cheneau <clipos@ssi.gouv.fr>
+Date: Thu, 27 Feb 2014 09:16:32 +0000
+Subject: [PATCH] Disable telnetd
+
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index d02b78a..4773d0f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -3,7 +3,7 @@
+ #
+ AUTOMAKE_OPTIONS = 1.8 gnits dist-bzip2
+ #
+-SUBDIRS = m4 telnet telnetd
++SUBDIRS = m4 telnet 
+ 
+ CLEANFILES = *~
+ 
+-- 
+1.8.3.2
+

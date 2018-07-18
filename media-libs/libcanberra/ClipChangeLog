@@ -1,0 +1,30 @@
+# CLIP ChangeLog for dev-libs/libcanberra
+
+*libcanberra-0.30-r6 (10 Jul 2017)
+
+  10 Jul 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +libcanberra-0.30-r6.ebuild, -libcanberra-0.30-r5.ebuild:
+  Remove dependency on libltdl (clip-core package).
+
+*libcanberra-0.28-r5 (02 Apr 2012)
+
+  13 Oct 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  libcanberra-0.28-r5.ebuild:
+  Make gstreamer dependency slotted to 0.10.
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libcanberra-0.28-r5.ebuild, -libcanberra-0.26.ebuild,
+  +files/libcanberra-0.28-underlinking.patch,
+  +files/libcanberra-0.28-workaround-hang.patch,
+  +files/gconf-2.m4:
+  Bump to latest.
+
+  05 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  libcanberra-0.26.ebuild:
+  Remove dependency on libtool for core-deps.
+
+*libcanberra-0.26 (12 Jul 2011)
+
+  12 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  libcanberra-0.26.ebuild:
+  Initial import. CPREFIX / clip-deps fixes.

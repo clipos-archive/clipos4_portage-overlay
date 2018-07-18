@@ -1,0 +1,42 @@
+# CLIP ChangeLog for media-libs/gegl
+
+*gegl-0.2.0-r2 (30 Oct 2013)
+
+  30 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gegl-0.2.0-r2.ebuild, -gegl-0.2.0.ebuild,
+  +files/gegl-0.2.0-cve-2012-4433-1e92e523.patch,
+  +files/gegl-0.2.0-cve-2012-4433-4757cdf7.patch,
+  +files/gegl-0.2.0-g_log_domain.patch,
+  +files/gegl-0.2.0-introspection-version.patch:
+  Force rebuild and sync up with upstream.
+
+*gegl-0.2.0 (23 Jul 2012)
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gegl-0.2.0.ebuild, -gegl-0.1.2.ebuild,
+  +files/gegl-0.2.0-ffmpeg-0.11.diff,
+  -files/gegl-0.1.2-buffer-overflow.patch,
+  -files/gegl-0.1.2-backtrace.patch:
+  Bump to latest.
+
+*gegl-0.1.2 (04 Jan 2011)
+
+  04 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gegl-0.1.2.ebuild, -gegl-0.0.22-r1.ebuild,
+  +files/gegl-0.1.2-buffer-overflow.patch,
+  +files/gegl-0.1.2-backtrace.patch,
+  -files/gegl-0.0.22-locale_h.diff,
+  -files/replace-imgconvert-by-swsscale.patch:
+  Bump to latest.
+
+*gegl-0.0.22-r1 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gegl-0.0.22-r1.ebuild, -gegl-0.0.22.ebuild:
+  Fix glib depend.
+
+*gegl-0.0.22 (13 Jul 2009)
+
+  13 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  gegl-0.0.22.ebuild:
+  Initial import. clip-deps fixes.

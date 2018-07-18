@@ -1,0 +1,77 @@
+# CLIP ChangeLog for x11-libs/libX11
+
+*libX11-1.6.5 (11 Oct 2017)
+
+  11 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +libX11-1.6.5.ebuild, -libX11-1.6.2.ebuild:
+  Bump to latest stable.
+
+*libX11-1.6.2 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.6.2.ebuild, -libX11-1.6.0.ebuild:
+  Bump to latest, make multilib-aware.
+
+*libX11-1.6.0 (05 Jun 2013)
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.6.0.ebuild, -libX11-1.5.0.ebuild:
+  Bump to latest.
+
+*libX11-1.5.0 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.5.0.ebuild, -libX11-1.4.4.ebuild:
+  Bump to latest.
+
+  11 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  libX11-1.4.4.ebuild:
+  Add missing util-macros build dependency.
+
+*libX11-1.4.4 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.4.4.ebuild, -libX11-1.4.3.ebuild:
+  Bump to latest.
+
+*libX11-1.4.3 (24 Jun 2011)
+
+  24 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.4.3.ebuild, -libX11-1.3.3.ebuild,
+  files/libX11-1.1.4-aix-pthread.patch
+  files/libX11-1.1.5-winnt-private.patch
+  files/libX11-1.1.5-solaris.patch:
+  Bump to latest.
+
+*libX11-1.3.3 (16 Mar 2010)
+
+  16 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.3.3.ebuild, -libX11-1.2.2.ebuild:
+  Bump.
+
+*libX11-1.2.2 (09 Mar 2010)
+
+  09 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.2.2.ebuild, -libX11-1.1.5.ebuild,
+  -files/libX11-1.1.2-XimGetWindowEventmask-fix.patch,
+  -files/libX11-1.1.2-XGetMotionEvents-order-fix.patch,
+  -files/libX11-1.1.3-xcb-locking.patch:
+  Bump to latest gentoo stable.
+
+*libX11-1.1.5 (02 Sep 2009)
+
+  02 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.1.5.ebuild, -libX11-1.1.3.ebuild:
+  Bump to latest gentoo stable.
+
+* libX11-1.1.3 (24 Jan 2008)
+
+  24 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libX11-1.1.3.ebuild, -libX11-1.0.3.ebuild:
+  Bump to 7.3. Same Changeset.
+
+* libX11-1.0.3 (22 Mar 2007)
+
+  22 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  libX11-1.0.3.ebuild:
+  Initial CLIP import. Fix RDEPENDs on x11-protos.

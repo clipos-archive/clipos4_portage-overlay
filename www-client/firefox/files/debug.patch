@@ -1,0 +1,14 @@
+Index: firefox-52.5.2esr/dom/canvas/WebGLShaderValidator.cpp
+===================================================================
+--- firefox-52.5.2esr.orig/dom/canvas/WebGLShaderValidator.cpp
++++ firefox-52.5.2esr/dom/canvas/WebGLShaderValidator.cpp
+@@ -114,7 +114,8 @@ ShaderOutput(gl::GLContext* gl)
+         case 440: return SH_GLSL_440_CORE_OUTPUT;
+         case 450: return SH_GLSL_450_CORE_OUTPUT;
+         default:
+-            MOZ_ASSERT("GFX: Unexpected GLSL version.");
++            // MOZ_ASSERT("GFX: Unexpected GLSL version.");
++	    MOZ_ASSERT(false);
+         }
+     }
+ 

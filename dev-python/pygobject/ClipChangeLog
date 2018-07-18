@@ -1,0 +1,74 @@
+# CLIP ChangeLog for dev-python/pygobject
+
+*pygobject-2.28.6-r57 (17 Apr 2015)
+
+  17 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r57.ebuild, -pygobject-2.28.6-r56.ebuild:
+  Sync to latest.
+  Don't depend on python-exec on CLIP.
+
+*pygobject-3.10.2 (17 Mar 2014)
+
+  17 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygobject-3.10.2.ebuild:
+  Initial import of version 3.
+
+*pygobject-2.28.6-r56 (05 Mar 2014)
+
+  05 Mar 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r56.ebuild, -pygobject-2.28.6-r55.ebuild:
+  Bump to latest, fix python-xklavier FTBFS.
+
+*pygobject-2.28.6-r55 (13 Jan 2014)
+
+  13 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r55.ebuild, -pygobject-2.28.6-r54.ebuild:
+  Force rebuild - libffi revdep.
+
+*pygobject-2.28.6-r54 (25 Jul 2013)
+
+  25 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r54.ebuild, -pygobject-2.28.6-r53.ebuild:
+  clip-deps fix vs libffi.
+
+*pygobject-2.28.6-r53 (25 Jul 2013)
+
+  25 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r53.ebuild, -pygobject-2.28.6-r52.ebuild,
+  +files/pygobject-2.90.1-make_check.patch,
+  +files/pygobject-2.28.6-disable-failing-tests.patch,
+  +files/pygobject-2.28.6-tests-no-introspection.patch:
+  Force rebuild, migrate to python-r1. Simple clip-deps fix now,
+  the rest is handled by the eclass.
+
+*pygobject-2.28.6-r52 (31 Jan 2013)
+
+  31 Jan 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r52.ebuild, -pygobject-2.28.6-r1.ebuild:
+  Bump to latest.
+  Run symlink part in pkg_predeb so symlinks are actually present in the system.
+  
+*pygobject-2.28.6-r1 (20 Feb 2012)
+
+  20 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6-r1.ebuild, -pygobject-2.28.6.ebuild:
+  Remove dependency on libffi, migrating to core packages.
+
+*pygobject-2.28.6 (19 Jul 2011)
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygobject-2.28.6.ebuild, -pygobject-2.18.0.ebuild,
+  -files/pygobject-2.15.4-fix-codegen-location.patch,
+  -files/pygobject-2.18.0-automake111.patch,
+  -files/pygobject-2.18.0-make_check.patch,
+  +files/pygobject-2.28.3-disable-failing-tests.patch,
+  +files/pygobject-2.28.3-fix-codegen-location.patch,
+  +files/pygobject-2.28.3-make_check.patch,
+  +files/pygobject-2.28.3-support_multiple_python_versions.patch:
+  Bump to latest.
+
+*pygobject-2.18.0 (24 Mar 2010)
+
+  24 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  pygobject-2.18.0.ebuild:
+  Initial overlay import. CPREFIX fixes + add optimizing predeb call.

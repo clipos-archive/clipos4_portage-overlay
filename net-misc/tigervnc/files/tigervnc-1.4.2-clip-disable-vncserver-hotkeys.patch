@@ -1,0 +1,26 @@
+Disable menu/hotkey support in the vnc server
+
+This avoid issues with Alt+Gr handling.
+
+Distributed under the terms of the GNU General Public License v2
+
+diff --git a/unix/xserver/hw/vnc/Input.cc b/unix/xserver/hw/vnc/Input.cc
+index 3aae5db..7468382 100644
+--- a/unix/xserver/hw/vnc/Input.cc
++++ b/unix/xserver/hw/vnc/Input.cc
+@@ -626,6 +626,7 @@ void InputDevice::keyEvent(rdr::U32 keysym, bool down)
+ 			pressKey(keyboardDev, *iter, false, "temp shift");
+ 	}
+ 
++#if 0
+ 	/* Need a fake press or release of level three shift? */
+ 	if (!(state & level_three_mask) && (new_state & level_three_mask)) {
+ 		level_three_press = pressLevelThree();
+@@ -647,6 +648,7 @@ void InputDevice::keyEvent(rdr::U32 keysym, bool down)
+ 		for (iter = level_three_release.begin();iter != level_three_release.end();++iter)
+ 			pressKey(keyboardDev, *iter, false, "temp level 3 shift");
+ 	}
++#endif
+ 
+ 	/* Now press the actual key */
+ 	pressKey(keyboardDev, keycode, true, "keycode");

@@ -1,0 +1,13 @@
+Index: git-2.0.4/perl/Makefile.PL
+===================================================================
+--- git-2.0.4.orig/perl/Makefile.PL
++++ git-2.0.4/perl/Makefile.PL
+@@ -16,7 +16,7 @@ GetOptions("localedir=s" => \$localedir)
+ sub MY::postamble {
+ 	return <<'MAKE_FRAG';
+ instlibdir:
+-	@echo '$(INSTALLSITELIB)'
++	@echo '$(INSTALLVENDORLIB)'
+ instvendorlibdir:
+ 	@echo '$(INSTALLVENDORLIB)'
+ 

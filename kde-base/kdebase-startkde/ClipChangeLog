@@ -1,0 +1,187 @@
+# CLIP ChangeLog for kde-base/kdebase-startkde
+
+*kdebase-startkde-4.11.9 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.11.9.ebuild, -kdebase-startkde-4.11.7.ebuild:
+
+*kdebase-startkde-4.11.7 (13 Mar 2014)
+
+  13 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.11.7.ebuild, -kdebase-startkde-4.9.5.ebuild:
+  Bump to latest.
+
+*kdebase-startkde-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.9.5.ebuild, -kdebase-startkde-4.9.4.ebuild:
+  Bump to latest.
+
+*kdebase-startkde-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.9.4.ebuild, -kdebase-startkde-4.7.3-r1.ebuild,
+  files/clip-startkde4.patch:
+  Bump to latest.
+
+*kdebase-startkde-4.7.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.7.3-r1.ebuild, -kdebase-startkde-4.7.3.ebuild:
+  Force rebuild.
+
+*kdebase-startkde-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.7.3.ebuild, -kdebase-startkde-4.7.1-r1.ebuild:
+  Bump to latest.
+
+*kdebase-startkde-4.7.1-r1 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.7.1-r1.ebuild, -kdebase-startkde-4.7.1.ebuild,
+  files/clip-startkde4.patch:
+  Fix 'sh: Bad number' warning (use of an uninitialized config var).
+
+*kdebase-startkde-4.7.1 (13 Sep 2011)
+
+  13 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.7.1.ebuild, -kdebase-startkde-4.5.5.ebuild,
+  -files/gentoo-startkde4-2.patch, +files/KDE-4, +files/gentoo-startkde4-4.patch:
+  Bump to latest.
+
+*kdebase-startkde-4.5.5 (10 Jan 2011)
+
+  10 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.5.5.ebuild, -kdebase-startkde-4.5.4.ebuild:
+  Bump to latest.
+
+*kdebase-startkde-4.5.4 (20 Dec 2010)
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.5.4.ebuild, -kdebase-startkde-4.4.4.ebuild:
+  Bump to latest.
+
+*kdebase-startkde-4.4.4 (30 Jun 2010)
+
+  30 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.4.4.ebuild:
+  Add newest (~x86).
+
+*kdebase-startkde-4.3.5-r3 (12 Feb 2010)
+*kdebase-startkde-3.5.10-r5 (12 Feb 2010)
+
+  12 Feb 2010; Olivier Levillain <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.5-r3.ebuild, -kdebase-startkde-4.3.5-r2.ebuild,
+  +kdebase-startkde-3.5.10-r6.ebuild, -kdebase-startkde-3.5.10-r5.ebuild,
+  Uncommented ssh and gpg agent launches in kde startup scripts.
+
+*kdebase-startkde-4.3.5-r2 (11 Feb 2010)
+
+  11 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.5-r2.ebuild, -kdebase-startkde-4.3.5-r1.ebuild,
+  files/clip-startkde4.patch:
+  Fix startup scripts location - should be /usr/local/etc/kde/startup, not
+  /usr/local/kde/startup.
+
+*kdebase-startkde-4.3.5-r1 (08 Feb 2010)
+
+  08 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.5-r1.ebuild, -kdebase-startkde-4.3.5.ebuild,
+  files/clip-startkde4.patch:
+  Do not mask out KDE3 paths from XDG_DATA_DIRS, otherwise kbuildsyscoca
+  from KDE3 will not pick up its kcm modules.
+  Properly define ksplash theme vars.
+
+*kdebase-startkde-4.3.5 (04 Feb 2010)
+
+  04 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.5.ebuild, -kdebase-startkde-4.3.4-r1.ebuild,
+  -files/gentoo-startkde4-1.patch, +gentoo-startkde4-2.patch,
+  files/clip-startkde4.patch:
+  Bump to latest.
+
+*kdebase-startkde-4.3.4-r1 (04 Jan 2010)
+
+  04 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.4-r1.ebuild, -kdebase-startkde-4.3.4.ebuild:
+  Include kdebase-{runtime,workspace,apps} in dependencies.
+
+*kdebase-startkde-4.3.4 (15 Dec 2009)
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.4.ebuild, -kdebase-startkde-4.3.3.ebuild:
+  Bump.
+
+*kdebase-startkde-4.3.3 (13 Nov 2009)
+
+  13 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-4.3.3.ebuild, +files/clip-startkde4.patch:
+  Initial import of 4.3.3 branch in ~x86.
+
+*kdebase-startkde-3.5.10-r5 (13 Oct 2009)
+
+  13 Oct 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-3.5.10-r5.ebuild, -kdebase-startkde-3.5.10.ebuild,
+  +files/kdebase-startkde-3.5-gentoo.patch,
+  +files/kdebase-startkde-3.5-gentoo-noclip.patch:
+  Merge updates from gentoo.
+
+*kdebase-startkde-3.5.10 (07 Apr 2009)
+
+  07 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-3.5.10.ebuild, -kdebase-startkde-3.5.9-r1.ebuild,
+  -files/kdebase-startkde-3.5.9-r1-clip.patch,
+  +files/kdebase-startkde-3.5.10-clip.patch:
+  Bump to latest.
+
+*kdebase-startkde-3.5.9-r1 (18 Apr 2008)
+
+  18 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-3.5.9-r1.ebuild, -kdebase-startkde-3.5.9.ebuild,
+  files/kdebase-startkde-3.5.9-clip.patch:
+  Export XDG_*_DIRS in startkde to be able to set up custom menues.
+
+  05 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  kdebase-startkde-3.5.9.ebuild, files/kdebase-startkde-3.5.9-clip.patch:
+  Fixes for MAYEXEC-aware /bin/sh: do not source .kde/../startupconfig in
+  startkde, make KDEDIR/{env,shutdown}/* executable.
+
+*kdebase-startkde-3.5.9 (03 Mar 2008)
+
+  03 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  -kdebase-startkde-3.5.5-r1.ebuild, -files/kdebase-startkde-3.5.5-r1-clip.patch:
+  +kdebase-startkde-3.5.9.ebuild, +files/kdebase-startkde-3.5.9-clip.patch:
+  Bump to 3.5.9. Same CLIP changes.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 3.5.5-r1.
+
+*kdebase-startkde-3.5.5-r1 (15 Oct 2007)
+
+  15 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kdebase-startkde-3.5.5-r1.ebuild, +files/kdebase-startkde-3.5.5-r1-clip.patch:
+  Fix shutdown script invokation.
+
+  18 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  kdebase-startkde-3.5.5.ebuild, +files/kdebase-startkde-3.5.5-clip.patch:
+  Simplified kde startup script. Properly deactivate initial personnalization,
+  user font dirs, and sourcing of user scripts. Also fix xdg.sh env script
+  for CPREFIX.
+
+  12 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  kdebase-startkde-3.5.5.ebuild:
+  Add IUSE clip. If set, remove kpersonalizer call from startkde
+  sequence. Remove kpersonalizer dependency as well.
+
+*kdebase-startkde-3.5.5 (21 Mar 2007)
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  kdebase-startkde-3.5.5.ebuild:
+  Bump.
+
+*kdebase-startkde-3.5.2 (16 Jan 2007)
+
+  16 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  kdebase-startkde-3.5.2.ebuild:
+  Initial import. Fix for CPREFIX.

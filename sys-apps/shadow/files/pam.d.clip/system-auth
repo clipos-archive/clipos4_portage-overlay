@@ -1,0 +1,16 @@
+#%PAM-1.0
+
+auth       required	pam_env.so
+
+auth       [success=ok default=1]	pam_wheel.so group=pkauth use_login trust
+auth       [success=1 default=die]	pam_pkcs11.so
+auth       [success=ok default=die]	pam_tcb.so shadow fork prefix=$2a$ count=8
+
+account    required	pam_tcb.so shadow fork
+
+password   required	pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3
+password   required	pam_tcb.so prefix=$2a$ shadow use_authtok write_to=tcb fork count=8
+
+session    required	pam_limits.so
+session    required	pam_tcb.so
+session    optional	pam_umask.so umask=0077

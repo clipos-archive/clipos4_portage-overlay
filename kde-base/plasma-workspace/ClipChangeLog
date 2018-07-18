@@ -1,0 +1,8 @@
+# ClipChangeLog for kde-base/plasma-workspace
+
+*plasma-workspace-4.11.19-r1 (07 Oct 2016)
+
+  07 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +plasma-workspace-4.11.19-r1.ebuild, -plasma-workspace-4.11.19.ebuild:
+  Add back patch to remove session hanlding in kickoff (KDE menu). This patch
+  was missed by mistake during the KDE update.

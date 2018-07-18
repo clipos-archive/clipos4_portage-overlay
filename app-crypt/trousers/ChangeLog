@@ -1,0 +1,11 @@
+# ChangeLog for app-crypt/trousers
+
+*trousers-0.3.10-r2 (21 Dec 2016)
+
+  21 Dec 2016; Thomas Letan <clipos@ssi.gouv.fr>
+  +trousers-0.3.10-r2.ebuild, +files/tcsd.service,
+  +files/trousers-0.3.5-nouseradd.patch, +files/trousers-0.3.14-libressl.patch,
+  +files/trousers-0.3.13-nouseradd.patch, +files/61-trousers.rules,
+  +files/tcsd.initd, +files/trousers-0.3.13-build.patch, +files/tcsd.confd,
+  +trousers-0.3.10-r2.ebuild, +Manifest, +metadata.xml, +ChangeLog:
+  Initial import of trousers with some CLIP-specific modifications.

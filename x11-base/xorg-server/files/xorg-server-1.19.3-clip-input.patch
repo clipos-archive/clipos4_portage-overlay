@@ -1,0 +1,651 @@
+diff --git a/config/Makefile.am b/config/Makefile.am
+index 0e20e8b..2ef2b29 100644
+--- a/config/Makefile.am
++++ b/config/Makefile.am
+@@ -30,6 +30,12 @@ libconfig_la_LIBADD += $(HAL_LIBS)
+ 
+ else
+ 
++if CONFIG_CLIP
++AM_CFLAGS += $(CLIP_CFLAGS)
++libconfig_la_SOURCES += clip.c
++libconfig_la_LIBADD = $(CLIP_LIBS)
++endif # CONFIG_CLIP
++
+ if CONFIG_WSCONS
+ libconfig_la_SOURCES += wscons.c
+ endif # CONFIG_WSCONS
+diff --git a/config/clip.c b/config/clip.c
+new file mode 100644
+index 0000000..b60330f
+--- /dev/null
++++ b/config/clip.c
+@@ -0,0 +1,452 @@
++ /*
++  * Xorg input device configuration backend for CLIP.
++  * Copyright © 2010-2011 ANSSI
++  * Author: Vincent Strubel <clipos@ssi.gouv.fr>
++  *
++  * Largely based on the udev backend, by Julien Cristau, which
++  * carries the following notice.
++  *
++  * Copyright © 2009 Julien Cristau
++  *
++  * Permission is hereby granted, free of charge, to any person obtaining a
++  * copy of this software and associated documentation files (the "Software"),
++  * to deal in the Software without restriction, including without limitation
++  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++  * and/or sell copies of the Software, and to permit persons to whom the
++  * Software is furnished to do so, subject to the following conditions:
++  *
++  * The above copyright notice and this permission notice (including the next
++  * paragraph) shall be included in all copies or substantial portions of the
++  * Software.
++  *
++  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++  * DEALINGS IN THE SOFTWARE.
++  *
++  */
++ 
++ #ifdef HAVE_DIX_CONFIG_H
++ #include <dix-config.h>
++ #endif
++ 
++ #include <sys/types.h>
++ #include <sys/stat.h>
++ #include <sys/socket.h>
++ #include <sys/un.h>
++ #include <errno.h>
++ #include <string.h>
++ #include <unistd.h>
++ #include <fcntl.h>
++ 
++ #include "input.h"
++ #include "optionstr.h"
++ #include "inputstr.h"
++ #include "hotplug.h"
++ #include "config-backends.h"
++ #include "os.h"
++ #include "globals.h"
++ 
++ #define CLIP_XKB_PROP_KEY "xkb"
++ 
++ #define CLIP_INPUT_SOCKPATH "/var/run/inputdev"
++ 
++ #define CLIP_INPUT_KBD      	0x01
++ #define CLIP_INPUT_MOUSE    	0x02
++ #define CLIP_INPUT_TOUCHPAD 	0x04
++ #define CLIP_INPUT_TABLET   	0x08
++ #define CLIP_INPUT_TOUCHSCREEN  0x10
++ 
++ #define CLIP_INPUT_ADD      0x01
++ #define CLIP_INPUT_REMOVE   0x02
++ 
++ #define PATH_LEN    256
++ 
++ typedef struct __attribute__((packed)) {
++     int version;        /* Should be 0x1 for now */
++     int flags;          /* Device type */
++     int action;         /* CLIP_INPUT_ADD or CLIP_INPUT_REMOVE */
++     char devnode[PATH_LEN];  /* Full path, starting with "/dev/" */
++     char syspath[PATH_LEN];  /* Full path, starting with "/sys/" */
++ } clip_device_t;
++ 
++ static int monitor_fd;
++ 
++ static int
++ get_devname(const char *syspath, char *buf, size_t len)
++ {
++     char npath[PATH_LEN];
++     ssize_t rlen;
++     int fd;
++ 
++     if (snprintf(npath, PATH_LEN, "%s/name", syspath) >= PATH_LEN) {
++         LogMessage(X_WARNING, "config/clip: path too long %s\n", syspath);
++         return -1;
++     }
++ 
++     fd = open(npath, O_RDONLY);
++     if (fd < 0) {
++         LogMessage(X_WARNING, "config/clip: failed to open %s: %s\n", 
++                                                     npath, strerror(errno));
++         return -1;
++     }
++ 
++     memset(buf, '\0', len);
++ 
++   again:
++     rlen = read(fd, buf, len);
++     if (rlen < 0) {
++         if (errno == EINTR)
++             goto again;
++         LogMessage(X_WARNING, "config/clip: failed to read %s: %s\n", 
++                                                     npath, strerror(errno));
++         close(fd);
++         return -1;
++     }
++     close(fd);
++     if (!rlen) {
++         LogMessage(X_WARNING, "config/clip: empty device name in %s\n", npath);
++         return -1;
++     }
++     if (rlen == len) 
++         LogMessage(X_WARNING, "config/clip: truncated name for %s\n", npath);
++ 
++     if (buf[rlen - 1] == '\n')
++         buf[rlen - 1] = '\0';
++ 
++     return 0;
++ }
++ 
++ static void
++ device_added(clip_device_t *device)
++ {
++     char *path;
++     char devname[PATH_LEN];
++     const char *name = NULL;
++     char *config_info = NULL;
++     const char *syspath;
++     InputOption *options = NULL;
++     InputAttributes attrs = {};
++     DeviceIntPtr dev = NULL;
++     int rc;
++     /* Hardcoded for now */
++     const char *dev_seat = "seat0";
++ 
++     path = device->devnode;
++ 
++     syspath = device->syspath;
++ 
++     if (!path || !syspath)
++         return;
++ 
++     options = input_option_new(NULL, "_source", "server/clip");
++     if (!options)
++         return;
++ 
++     if (!get_devname(syspath, devname, sizeof(devname))) {
++         name = devname;
++     } else {
++         name = strrchr(path, '/');
++         if (name)
++             name++;
++         if (!name || !(*name))
++             name = "(clip-input)";
++     }
++ 
++     if (SeatId && strcmp(dev_seat, SeatId)) {
++         LogMessage(X_WARNING, "config/clip: ignoring device %s : "
++                               "wrong seat (%s).\n", name, SeatId);
++         return;
++     }
++ 
++     /*
++     if (!SeatId && strcmp(dev_seat, "seat0"))
++         return;
++     */
++ 
++     options = input_option_new(options, "name", name);
++     options = input_option_new(options, "path", path);
++     options = input_option_new(options, "device", path);
++     attrs.device = strdup(path);
++     attrs.product = strdup(name);
++ 
++     if (asprintf(&config_info, "clip:%s", syspath) == -1) {
++         config_info = NULL;
++         goto unwind;
++     }
++ 
++     if (device_is_duplicate(config_info)) {
++         LogMessage(X_WARNING, "config/clip: device %s already added. "
++                               "Ignoring.\n", name);
++         goto unwind;
++     }
++ 
++     if (device->flags & CLIP_INPUT_KBD)
++         attrs.flags |= ATTR_KEYBOARD;
++     else if (device->flags & CLIP_INPUT_MOUSE)
++         attrs.flags |= ATTR_POINTER;
++     else if (device->flags & CLIP_INPUT_TOUCHPAD)
++         attrs.flags |= ATTR_TOUCHPAD;
++     else if (device->flags & CLIP_INPUT_TABLET)
++         attrs.flags |= ATTR_TABLET;
++     else if (device->flags & CLIP_INPUT_TOUCHSCREEN)
++         attrs.flags |= ATTR_TOUCHSCREEN;
++     else
++         LogMessage(X_WARNING, "config/clip: not a supported device (%s)!\n", path);
++ 
++     options = input_option_new(options, "config_info", config_info);
++    
++     /* Default setting needed for non-seat0 seats */
++     if (ServerIsNotSeat0())
++         options = input_option_new(options, "GrabDevice", "on");
++ 
++     LogMessage(X_INFO, "config/clip: adding input device %s (%s)\n",
++                name, path);
++     rc = NewInputDeviceRequest(options, &attrs, &dev);
++     if (rc != Success)
++         goto unwind;
++ 
++  unwind:
++     free(config_info);
++     input_option_free_list(&options);
++ 
++     free(attrs.tags);
++     free(attrs.product);
++     if (attrs.tags) {
++         char **tag = attrs.tags;
++         while (*tag) {
++             free(*tag);
++             tag++;
++         }
++         free(attrs.tags);
++     }
++ 
++     return;
++ }
++ 
++ static void
++ device_removed(clip_device_t *device)
++ {
++     char *value;
++     const char *syspath = device->syspath;
++ 
++     if (asprintf(&value, "clip:%s", syspath) == -1)
++         return;
++ 
++     remove_devices("clip", value);
++ 
++     free(value);
++ }
++ 
++ /*
++  * Function called whenever there is something to read on the 
++  * monitor_fd socket
++  *
++  */
++ static void
++ socket_handler(int mymonitor_fd, int ready,void *data)
++ {
++     clip_device_t clip_device;
++     struct sockaddr_un addr;
++     socklen_t len = sizeof(addr);
++     ssize_t ret;
++     int fd = -1;
++ 
++     if (ready < 0)
++         return;
++ 
++     memset(&clip_device, 0, sizeof(clip_device));
++     fd = accept(mymonitor_fd, (struct sockaddr *)&addr, &len);
++ 	    if (fd < 0) {
++ 		    LogMessage(X_WARNING, "config/clip: accept error %s\n", 
++ 				    strerror(errno));
++ 		    return;
++ 	    }
++     for (;;) {
++ 	    ret = read(fd, &clip_device, sizeof(clip_device));
++ 	    if (ret < 0) {
++ 		    if (errno == EINTR)
++ 			    continue;
++ 		    LogMessage(X_WARNING, "config/clip: read error %s\n", 
++ 				    strerror(errno));
++ 		    goto out_close;
++ 	    }
++ 	    if (ret != sizeof(clip_device)) {
++ 		    LogMessage(X_WARNING, "config/clip: truncated read\n");
++ 		    goto out_close;
++ 	    }
++ 	    break;
++     }
++     if (clip_device.version != 0x1) {
++ 	    LogMessage(X_WARNING, "config/clip: unsupported version 0x%x\n",
++ 			    clip_device.version);
++ 	    goto out_close;
++     }
++ 
++     if (clip_device.action == CLIP_INPUT_ADD) {
++ 	    device_added(&clip_device);
++     } else if (clip_device.action == CLIP_INPUT_REMOVE) {
++ 	    device_removed(&clip_device);
++     }
++ 
++ out_close:
++     if (fd != -1) 
++         close(fd);
++ }
++ 
++ /* Initial devices */
++ static void
++ init_one_device(const char *devpath, int flags)
++ {
++     clip_device_t dev;
++     char tmp[PATH_LEN];
++     size_t len;
++     ssize_t rlen;
++ 
++     memset(&dev, 0, sizeof(dev));
++ 
++     len = snprintf(tmp, PATH_LEN, "%s-syspath", devpath);
++     if (len >= PATH_LEN) {
++         LogMessage(X_WARNING, "config/clip: path too long %s\n", devpath);
++         return;
++     }
++ 
++     /* Length OK if snprintf succeeded */
++     strcpy(dev.devnode, devpath);
++     rlen = readlink(tmp, dev.syspath, PATH_LEN);
++     if (rlen < 0) {
++         LogMessage(X_WARNING, "config/clip: readlink %s error %s\n", 
++                                 tmp, strerror(errno));
++         return;
++     }
++     if (rlen == PATH_LEN) {
++         LogMessage(X_WARNING, "config/clip: truncated readlink %s\n", 
++                                 dev.syspath);
++         return;
++     }
++         
++     dev.version = 0x01;
++     dev.flags = flags;
++     dev.action = CLIP_INPUT_ADD;
++     device_added(&dev);
++ }
++ 
++ /* List devices */
++ static void
++ enumerate_init_devices(void)
++ {
++     char tmp[PATH_LEN];
++     int i;
++     struct stat buf;
++     
++     LogMessage(X_INFO, "conf/clip: enumerating devices\n");
++     /* Note: let keyboard0 be hardcoded in xorg.conf for now - 
++      * the assumption being that there is always at least one
++      * keyboard...
++      */
++     for (i = 1; i < 5; i++) {
++         snprintf(tmp, PATH_LEN, "/dev/input/keyboard%d", i);
++         if (stat(tmp, &buf))
++             continue;
++         if (!S_ISCHR(buf.st_mode))
++             continue;
++         LogMessage(X_INFO, "conf/clip: adding initial device %s\n", tmp);
++         init_one_device(tmp, CLIP_INPUT_KBD);
++     }
++     for (i = 0; i < 5; i++) {
++         snprintf(tmp, PATH_LEN, "/dev/input/mouse%d", i);
++         if (stat(tmp, &buf))
++             continue;
++         if (!S_ISCHR(buf.st_mode))
++             continue;
++         LogMessage(X_INFO, "conf/clip: adding initial device %s\n", tmp);
++         init_one_device(tmp, CLIP_INPUT_MOUSE);
++     }
++     for (i = 0; i < 3; i++) {
++         snprintf(tmp, PATH_LEN, "/dev/input/touchpad%d", i);
++         if (stat(tmp, &buf))
++             continue;
++         if (!S_ISCHR(buf.st_mode))
++             continue;
++         LogMessage(X_INFO, "conf/clip: adding initial device %s\n", tmp);
++         init_one_device(tmp, CLIP_INPUT_TOUCHPAD);
++     }
++     for (i = 0; i < 3; i++) {
++         snprintf(tmp, PATH_LEN, "/dev/input/touchscreen%d", i);
++         if (stat(tmp, &buf))
++             continue;
++         if (!S_ISCHR(buf.st_mode))
++             continue;
++         LogMessage(X_INFO, "conf/clip: adding initial device %s\n", tmp);
++         init_one_device(tmp, CLIP_INPUT_TOUCHSCREEN);
++     }
++     for (i = 0; i < 3; i++) {
++         snprintf(tmp, PATH_LEN, "/dev/input/tablet%d", i);
++         if (stat(tmp, &buf))
++             continue;
++         if (!S_ISCHR(buf.st_mode))
++             continue;
++         LogMessage(X_INFO, "conf/clip: adding initial device %s\n", tmp);
++         init_one_device(tmp, CLIP_INPUT_TABLET);
++     }
++ }
++ 
++ int
++ config_clip_init(void)
++ {
++     struct sockaddr_un addr;
++     mode_t omode;
++     int s, ret;
++ 
++     LogMessage(X_INFO, "conf/clip: initializing\n");
++ 
++     memset(&addr, 0, sizeof(addr));
++     if (sizeof(CLIP_INPUT_SOCKPATH) >= sizeof(addr.sun_path)) {
++         ErrorF("config/clip : sock path is too long\n");
++         return 0;
++     }
++ 
++     (void)strcpy(addr.sun_path, CLIP_INPUT_SOCKPATH);
++     addr.sun_family = AF_UNIX;
++ 
++     s = socket(PF_UNIX, SOCK_STREAM, 0);
++     if (s < 0) {
++         ErrorF("config/clip : socket() failed: %s\n", strerror(errno));
++         return 0;
++     }
++ 
++     (void)unlink(CLIP_INPUT_SOCKPATH);
++     omode = umask(0077);
++     ret = bind(s, (struct sockaddr *)&addr, sizeof(addr));
++     (void)umask(omode);
++     if (ret < 0) {
++         ErrorF("config/clip : bind() failed: %s\n", strerror(errno));
++         return 0;
++     }
++     ret = listen(s, 0);
++     if (ret < 0) {
++         ErrorF("config/clip : listen() failed: %s\n", strerror(errno));
++         return 0;
++     }
++         
++     enumerate_init_devices();
++ 
++     monitor_fd = s;
++     SetNotifyFd(monitor_fd, socket_handler, X_NOTIFY_READ,NULL);
++ 
++     return 1;
++ }
++ 
++ void
++ config_clip_fini(void)
++ {
++     if (!monitor_fd)
++         return;
++ 
++     (void)unlink(CLIP_INPUT_SOCKPATH);
++     RemoveNotifyFd(monitor_fd);
++ }
++
+diff --git a/config/config-backends.h b/config/config-backends.h
+index 5f07557..0c1bf4b 100644
+--- a/config/config-backends.h
++++ b/config/config-backends.h
+@@ -44,3 +44,9 @@ void config_hal_fini(void);
+ int config_wscons_init(void);
+ void config_wscons_fini(void);
+ #endif
++
++#ifdef CONFIG_CLIP
++int config_clip_init(void);
++void config_clip_fini(void);
++#endif
++
+diff --git a/config/config.c b/config/config.c
+index b5d634b..89fcaad 100644
+--- a/config/config.c
++++ b/config/config.c
+@@ -46,6 +46,10 @@ config_pre_init(void)
+ void
+ config_init(void)
+ {
++#ifdef CONFIG_CLIP
++    if (!config_clip_init())
++        ErrorF("[config] failed to initialise clip backend\n");
++#endif
+ #ifdef CONFIG_UDEV
+     if (!config_udev_init())
+         ErrorF("[config] failed to initialise udev\n");
+@@ -61,6 +65,9 @@ config_init(void)
+ void
+ config_fini(void)
+ {
++#ifdef CONFIG_CLIP
++    config_clip_fini();
++#endif
+ #if defined(CONFIG_UDEV)
+     config_udev_fini();
+ #elif defined(CONFIG_HAL)
+diff --git a/configure.ac b/configure.ac
+index 2f48b90..df83c11 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -600,6 +600,7 @@ AC_ARG_ENABLE(tslib,          AS_HELP_STRING([--enable-tslib], [Build kdrive tsl
+ AC_ARG_ENABLE(dbe,            AS_HELP_STRING([--disable-dbe], [Build DBE extension (default: enabled)]), [DBE=$enableval], [DBE=yes])
+ AC_ARG_ENABLE(xf86bigfont,    AS_HELP_STRING([--enable-xf86bigfont], [Build XF86 Big Font extension (default: disabled)]), [XF86BIGFONT=$enableval], [XF86BIGFONT=no])
+ AC_ARG_ENABLE(dpms,           AS_HELP_STRING([--disable-dpms], [Build DPMS extension (default: enabled)]), [DPMSExtension=$enableval], [DPMSExtension=yes])
++AC_ARG_ENABLE(config-clip,     AS_HELP_STRING([--enable-config-clip], [Build CLIP input backend (default: no)]), [CONFIG_CLIP=$enableval], [CONFIG_CLIP=no])
+ AC_ARG_ENABLE(config-udev,    AS_HELP_STRING([--enable-config-udev], [Build udev support (default: auto)]), [CONFIG_UDEV=$enableval], [CONFIG_UDEV=auto])
+ AC_ARG_ENABLE(config-udev-kms,    AS_HELP_STRING([--enable-config-udev-kms], [Build udev kms support (default: auto)]), [CONFIG_UDEV_KMS=$enableval], [CONFIG_UDEV_KMS=auto])
+ AC_ARG_ENABLE(config-hal,     AS_HELP_STRING([--disable-config-hal], [Build HAL support (default: auto)]), [CONFIG_HAL=$enableval], [CONFIG_HAL=auto])
+@@ -898,6 +899,12 @@ if test "x$CONFIG_HAL" = xyes; then
+ fi
+ AM_CONDITIONAL(CONFIG_HAL, [test "x$CONFIG_HAL" = xyes])
+ 
++dnl CLIP
++if test "x$CONFIG_CLIP" = xyes; then
++	AC_DEFINE(CONFIG_CLIP, 1, [Use the CLIP hotplug API])
++fi
++AM_CONDITIONAL(CONFIG_CLIP, [test "x$CONFIG_CLIP" = xyes])
++
+ if test "x$SYSTEMD_LOGIND" = xauto; then
+         if test "x$HAVE_DBUS" = xyes -a "x$CONFIG_UDEV" = xyes ; then
+                 SYSTEMD_LOGIND=yes
+diff --git a/hw/kdrive/src/kinput.c b/hw/kdrive/src/kinput.c
+index a539ca5..dce0715 100644
+--- a/hw/kdrive/src/kinput.c
++++ b/hw/kdrive/src/kinput.c
+@@ -2185,6 +2185,15 @@ NewInputDeviceRequest(InputOption *options, InputAttributes * attrs,
+             return BadValue;
+         }
+ #endif
++#ifdef CONFIG_CLIP
++        else if (strcmp(option->key, "_source") == 0 &&
++                 strcmp(option->value, "server/clip") == 0)
++        {
++            ErrorF("Ignoring device from clip.\n");
++            return BadValue;
++        }
++#endif
++
+     }
+ 
+     if (!ki && !pi) {
+diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
+index d42572f..54b0c84 100644
+--- a/hw/xfree86/common/xf86Config.c
++++ b/hw/xfree86/common/xf86Config.c
+@@ -1362,13 +1362,15 @@ checkCoreInputDevices(serverLayoutPtr servlayoutp, Bool implicitLayout)
+     }
+ 
+     if (!xf86Info.forceInputDevices && !(foundPointer && foundKeyboard)) {
+-#if defined(CONFIG_HAL) || defined(CONFIG_UDEV) || defined(CONFIG_WSCONS)
++#if defined(CONFIG_HAL) || defined(CONFIG_UDEV) || defined(CONFIG_CLIP) || defined(CONFIG_WSCONS)
+         const char *config_backend;
+ 
+ #if defined(CONFIG_HAL)
+         config_backend = "HAL";
+ #elif defined(CONFIG_UDEV)
+         config_backend = "udev";
++#elif defined(CONFIG_CLIP)
++	config_backend = "clip";
+ #else
+         config_backend = "wscons";
+ #endif
+diff --git a/hw/xfree86/common/xf86Globals.c b/hw/xfree86/common/xf86Globals.c
+index 93a35b8..8a56948 100644
+--- a/hw/xfree86/common/xf86Globals.c
++++ b/hw/xfree86/common/xf86Globals.c
+@@ -122,7 +122,7 @@ xf86InfoRec xf86Info = {
+     .pmFlag = TRUE,
+     .disableRandR = FALSE,
+     .randRFrom = X_DEFAULT,
+-#if defined(CONFIG_HAL) || defined(CONFIG_UDEV) || defined(CONFIG_WSCONS)
++#if defined(CONFIG_HAL) || defined(CONFIG_UDEV) || defined(CONFIG_CLIP) || defined(CONFIG_WSCONS)
+     .forceInputDevices = FALSE,
+     .autoAddDevices = TRUE,
+     .autoEnableDevices = TRUE,
+diff --git a/hw/xfree86/common/xf86Xinput.c b/hw/xfree86/common/xf86Xinput.c
+index 1fb5b16..280ee12 100644
+--- a/hw/xfree86/common/xf86Xinput.c
++++ b/hw/xfree86/common/xf86Xinput.c
+@@ -992,6 +992,7 @@ NewInputDeviceRequest(InputOption *options, InputAttributes * attrs,
+         if (strcmp(key, "_source") == 0 &&
+             (strcmp(value, "server/hal") == 0 ||
+              strcmp(value, "server/udev") == 0 ||
++ 	     strcmp(value, "server/clip") == 0 ||
+              strcmp(value, "server/wscons") == 0)) {
+             is_auto = 1;
+             if (!xf86Info.autoAddDevices) {
+diff --git a/include/dix-config.h.in b/include/dix-config.h.in
+index b0eb696..b88ac1d 100644
+--- a/include/dix-config.h.in
++++ b/include/dix-config.h.in
+@@ -439,6 +439,9 @@
+ /* Enable systemd-logind integration */
+ #undef SYSTEMD_LOGIND 1
+ 
++/* Support CLIP hotplug */
++#undef CONFIG_CLIP
++
+ /* Have a monotonic clock from clock_gettime() */
+ #undef MONOTONIC_CLOCK
+ 
+diff --git a/include/do-not-use-config.h.in b/include/do-not-use-config.h.in
+index 100ed71..24cc503 100644
+--- a/include/do-not-use-config.h.in
++++ b/include/do-not-use-config.h.in
+@@ -39,6 +39,9 @@
+ /* Use the HAL hotplug API */
+ #undef CONFIG_HAL
+ 
++/* Use the CLIP hotplug API */
++#undef CONFIG_CLIP
++
+ /* Use libudev for input hotplug */
+ #undef CONFIG_UDEV
+ 
+Index: xorg-server-1.19.3/hw/xfree86/drivers/modesetting/Makefile.am
+===================================================================
+--- xorg-server-1.19.3.orig/hw/xfree86/drivers/modesetting/Makefile.am
++++ xorg-server-1.19.3/hw/xfree86/drivers/modesetting/Makefile.am
+@@ -39,7 +39,11 @@ AM_CPPFLAGS = \
+ 
+ modesetting_drv_la_LTLIBRARIES = modesetting_drv.la
+ modesetting_drv_la_LDFLAGS = -module -avoid-version
+-modesetting_drv_la_LIBADD = $(UDEV_LIBS) $(DRM_LIBS)
++
++modesetting_drv_la_LIBADD = $(DRM_LIBS)
++if CONFIG_UDEV
++modesetting_drv_la_LIBADD += $(UDEV_LIBS) 
++endif
+ modesetting_drv_ladir = @moduledir@/drivers
+ 
+ modesetting_drv_la_SOURCES = \
+

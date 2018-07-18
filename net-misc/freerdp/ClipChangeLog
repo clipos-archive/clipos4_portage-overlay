@@ -1,0 +1,80 @@
+# CLIP Changelog for net-misc/freerdp
+
+*freerdp-1.2.1_pre20160624 (24 Jun 2016)
+
+  24 Jun 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +freerdp-1.2.1_pre20160624.ebuild,
+  -freerdp-1.2.1_pre20150326.ebuild:
+  Bump to latest version (no new version on gentoo). Disable smartcard patches
+  in order to compile.
+
+*freerdp-1.2.1_pre20150326 (28 Oct 2015)
+
+  28 Oct 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +freerdp-1.2.1_pre20150326.ebuild,
+  files/dvcsocket/client/CMakeLists.txt,
+  files/dvcsocket/client/dvcsocket_main.h,
+  -freerdp-1.0.99_pre20140505-r2.ebuild:
+  Bump to stable gentoo rev. Rework smartcard patches in order to compile.
+
+*freerdp-1.0.99_pre20140505-r2 (30 Dec 2014)
+
+  30 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freerdp-1.0.99_pre20140505-r2.ebuild, -freerdp-1.0.99_pre20140505-r1.ebuild:
+  +files/freerdp-1.1-CVE-2014-0250.patch,
+  +files/freerdp-1.1.0_beta1-avx.patch,
+  +files/freerdp-1.1.0_beta1_p20130710-cmake.patch,
+  +files/freerdp-1.1.0_beta1_p20130710-ffmpeg.patch,
+  +files/freerdp-1.1.0_beta1_p20130710-uclibc.patch:
+  Merge patches from latest stable gentoo rev.
+
+*freerdp-1.0.99_pre20140505-r1 (09 Jul 2014)
+
+  09 Jul 2014; Marion Daubignard <clipos@ssi.gouv.fr>
+  +freerdp-1.0.99_pre20140505-r1.ebuild, -freerdp-1.0.99_pre20140505.ebuild:
+  Extension to enable smartcard redirection over FreeRDP.
+  Adding the support for a Dynamic Virtual Channel of our own (named dvcsocket)
+  and two related patches correcting problems from last snapshot of stabel
+  1.1.0; namely 
+  to fix an invalid free and make sure that the plugins close is compliant with MS
+  spec (commits 
+  -https://github.com/FreeRDP/FreeRDP/commit/1404532d702ccd4f84dbf0ae7c10860b517c64cd
+  - https://github.com/FreeRDP/FreeRDP/commit/0729f3b7803970f17d0495a1e1535f0e78133987)
+
+*freerdp-1.0.99_pre20140505(05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freerdp-1.0.99_pre20140505.ebuild, -freerdp-1.0.99_pre20130710.ebuild:
+  Bump to a newer snapshot from stable-1.1 branch.
+
+*freerdp-1.0.99_pre20130710 (28 Aug 2013)
+
+  28 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freerdp-1.0.99_pre20130710.ebuild, -freerdp-1.0.99_pre20130605.ebuild:
+  Bump to latest snapshot.
+
+*freerdp-1.0.99_pre20130605 (24 Jun 2013)
+
+  24 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freerdp-1.0.99_pre20130605.ebuild, -freerdp-1.0.99_pre20121004-r1.ebuild:
+  Bump to latest snapshot - gentoo has it as 1.1.0_beta1_p20130605.
+
+*freerdp-1.0.99_pre20121004-r1 (11 Dec 2012)
+
+  11 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freerdp-1.0.99_pre20121004-r1.ebuild, -freerdp-0.8.2-r1.ebuild,
+  +files/freerdp-1.1.0_pre20121004-argb.patch,
+  +files/freerdp-1.1.0_pre20121004-debug.patch:
+  Bump to latest snapshot. N.B. : our 0.99 is in fact gentoo's 1.1.0...
+
+*freerdp-0.8.2-r1 (02 Apr 2012)
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +freerdp-0.8.2-r1.ebuild, -freerdp-0.8.2.ebuild:
+  Force rebuild
+
+*freerdp-0.8.2 (30 Dec 2011)
+
+  30 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  freerdp-0.8.2.ebuild:
+  Initial import - clip-deps fixes.

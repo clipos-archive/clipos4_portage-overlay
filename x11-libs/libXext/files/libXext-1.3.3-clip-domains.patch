@@ -1,0 +1,60 @@
+--- ./include/X11/extensions/security.h.orig	2010-03-16 17:26:20.000000000 +0100
++++ ./include/X11/extensions/security.h	2010-03-16 17:26:41.000000000 +0100
+@@ -36,6 +36,14 @@ from The Open Group.
+ 
+ _XFUNCPROTOBEGIN
+ 
++/* CLIP_RM */
++Status XSecurityQueryTrustLevel(
++    Display *dpy,
++    Window w,
++    unsigned int *trust_level_return);
++/* CLIP_RM */
++
++
+ Status XSecurityQueryExtension (
+     Display *dpy,
+     int *major_version_return,
+--- ./src/XSecurity.c.orig	2009-10-16 23:26:30.000000000 +0200
++++ ./src/XSecurity.c	2010-03-16 17:25:46.000000000 +0100
+@@ -309,3 +309,40 @@ XSecurityRevokeAuthorization(
+     SyncHandle ();
+     return 1;
+ } /* XSecurityRevokeAuthorization */
++
++/* CLIP */
++Status
++XSecurityQueryTrustLevel(
++    Display *dpy,
++    Window w,
++    unsigned int *trust_level_return)
++{
++    XExtDisplayInfo *info = find_display (dpy);
++    xSecurityQueryTrustLevelReply rep;
++    register xSecurityQueryTrustLevelReq *req;
++    Window w_return;
++
++    if (!XextHasExtension (info))
++        return (Status)0; /* failure */
++
++    LockDisplay (dpy);
++    SecurityGetReq (SecurityQueryTrustLevel, req, info);
++    req->window = w;
++
++    if (!_XReply (dpy, (xReply *) &rep, 0, xTrue)) {
++	UnlockDisplay (dpy);
++	SyncHandle ();
++	return (Status)0; /* failure */
++    }
++    *trust_level_return = rep.trustLevel;
++    w_return = rep.window;
++    UnlockDisplay (dpy);
++
++    SyncHandle ();
++
++    if (w_return != w)
++        return (Status)0; /* failure */
++    else
++        return (Status)1; /* success */
++} /* XSecurityQueryTrustLevel */
++/* /CLIP */

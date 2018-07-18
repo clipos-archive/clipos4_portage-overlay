@@ -1,0 +1,14 @@
+--- a/driver/xscreensaver.c
++++ b/driver/xscreensaver.c
+@@ -2071,10 +2071,7 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
+ 	  sprintf (buf, "LOCK ClientMessage received; %s", response);
+ 	  clientmessage_response (si, window, False, buf, response);
+ 
+-          /* Note that this leaves things in a slightly inconsistent state:
+-             we are blanked but not locked.  And blanking might actually
+-             fail if we can't get the grab. */
+-	  set_locked_p (si, True);
++	  si->emergency_lock_p = True;
+ 
+            /* Have to set the time or xscreensaver-command doesn't
+               report the LOCK state change. */

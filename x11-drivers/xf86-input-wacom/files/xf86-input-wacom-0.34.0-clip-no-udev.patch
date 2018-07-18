@@ -1,0 +1,54 @@
+--- configure.ac.orig	2017-10-23 16:09:30.402533238 +0200
++++ configure.ac	2017-10-23 16:10:22.042534560 +0200
+@@ -57,9 +57,6 @@
+ # Obtain compiler/linker options for the xsetwacom tool
+ PKG_CHECK_MODULES(X11, x11 xi xrandr xinerama $XPROTOS)
+ 
+-# Obtain compiler/linker options for libudev used by ISDV4 code
+-PKG_CHECK_MODULES(UDEV, libudev)
+-
+ # X Server SDK location is required to install wacom header files
+ # This location is also relayed in the xorg-wacom.pc file
+ sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
+--- src/wcmISDV4.c.orig	2017-10-23 16:09:42.114533538 +0200
++++ src/wcmISDV4.c	2017-10-23 16:13:25.570539259 +0200
+@@ -28,7 +28,9 @@
+ #include "isdv4.h"
+ #include <unistd.h>
+ #include <fcntl.h>
++#if 0
+ #include <libudev.h>
++#endif
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ 
+@@ -968,6 +970,7 @@
+ 	return TRUE;
+ }
+ 
++#if 0
+ /**
+  * Return the content of id file from sysfs:  /sys/.../device/id
+  *
+@@ -1017,6 +1020,7 @@
+ 
+ 	return ret;
+ }
++#endif
+ 
+ /**
+  * Query the device's fd for the key bits and the tablet ID. Returns the ID
+@@ -1049,11 +1053,13 @@
+ 	/* Change to generic protocol to match USB MT format */
+ 	common->wcmProtocolLevel = WCM_PROTOCOL_GENERIC;
+ 
++	#if 0
+ 	if (!get_keys_vendor_tablet_id(pInfo->name, common)) {
+ 		char buf[15] = {0};
+ 		if (get_sysfs_id(pInfo, buf, sizeof(buf)))
+ 			get_keys_vendor_tablet_id(buf, common);
+ 	}
++	#endif
+ 
+ 	return common->tablet_id;
+ }

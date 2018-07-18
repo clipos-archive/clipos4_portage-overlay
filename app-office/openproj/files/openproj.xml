@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/vnd.ms-project">
+    <sub-class-of type="application/x-ole-storage"/>
+    <comment>MS Project file</comment>
+    <comment xml:lang="fr">Fichier MS Project</comment>
+    <icon name="ms-project.png"/>
+    <glob pattern="*.mpp"/>
+    <glob pattern="*.MPP"/>
+  </mime-type>
+  <mime-type type="application/vnd.ms-project-xml">
+    <sub-class-of type="application/xml"/>
+    <comment>MS Project XML file</comment>
+    <comment xml:lang="fr">Fichier XML MS Project</comment>
+    <icon name="ms-project.png"/>
+    <glob pattern="*.mpx"/>
+    <glob pattern="*.MPX"/>
+    <glob pattern="*.mpp.xml"/>
+    <glob pattern="*.MPP.XML"/>
+    <glob pattern="*.mpx.xml"/>
+    <glob pattern="*.MPX.XML"/>
+  </mime-type>
+
+</mime-info>

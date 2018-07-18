@@ -1,0 +1,28 @@
+# CLIP ChangeLog for media-libs/libsndfile
+
+*libsndfile-1.0.25-r2 (11 Mar 2016)
+
+  11 Mar 2016; Philippe Trebuchet <clipos@ssi.gouv.fr>
+  +libsndfile-1.0.25-r2.ebuild, -libsndfile-1.0.25-r1.ebuild,
+  +files/CVE-2015-7805.patch:
+  Fix CVE-2015-7805
+
+*libsndfile-1.0.25-r1 (20 Jun 2014)
+
+  20 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libsndfile-1.0.25-r1.ebuild, -libsndfile-1.0.20-r1.ebuild,
+  -files/libsndfile-1.0.17-autotools.patch,
+  -files/libsndfile-1.0.17-dontbuild-tests-examples.patch,
+  -files/libsndfile-1.0.17-flac-buffer-overflow.patch,
+  -files/libsndfile-1.0.17-ogg.patch,
+  -files/libsndfile-1.0.18-less_strict_tests.patch,
+  -files/libsndfile-1.0.18-m4macro.patch,
+  -files/libsndfile-1.0.19-automagic_jack.patch,
+  +files/libsndfile-1.0.25-make.patch:
+  Bump to latest.
+
+*libsndfile-1.0.20-r1 (20 Oct 2009)
+
+  20 Oct 2009; Mickaël Salaün <clipos@ssi.gouv.fr>
+  libsndfile-1.0.20.ebuild:
+  Initial import. CPREFIX fixes.

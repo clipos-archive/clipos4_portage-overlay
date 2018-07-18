@@ -1,0 +1,72 @@
+diff --git a/driver/Makefile.in b/driver/Makefile.in
+index 318ca40..fe7b1e1 100644
+--- a/driver/Makefile.in
++++ b/driver/Makefile.in
+@@ -204,7 +204,7 @@ PDF2JPEG_LIBS	= -framework Cocoa
+ 
+ SAVER_LIBS	= $(LIBS) $(X_LIBS) $(XMU_LIBS) @SAVER_LIBS@ \
+ 		  $(XDPMS_LIBS) $(XINERAMA_LIBS) $(GL_LIBS) $(X_PRE_LIBS) \
+-		  -lXt -lX11 -lXext $(X_EXTRA_LIBS) \
++		  -lXt -lX11 -lXext -lXtst $(X_EXTRA_LIBS) \
+ 		  $(PASSWD_LIBS)
+ 
+ CMD_LIBS	= $(LIBS) $(X_LIBS) \
+diff --git a/driver/windows.c b/driver/windows.c
+index 1a9701a..c0cf0ff 100644
+--- a/driver/windows.c
++++ b/driver/windows.c
+@@ -58,6 +58,8 @@ typedef long PROP32;
+ # include <X11/extensions/Xinerama.h>
+ #endif /* HAVE_XINERAMA */
+ 
++#include <X11/extensions/XTest.h>
++
+ /* This file doesn't need the Xt headers, so stub these types out... */
+ #undef XtPointer
+ #define XtAppContext void*
+@@ -226,6 +228,24 @@ nuke_focus (saver_info *si, int screen_no)
+ }
+ 
+ 
++/* Ugly hack to deal with ugly X11 protocol used to create application menu
++ */
++static void
++nuke_menu (saver_info *si, int screen_no)
++{
++  saver_preferences *p = &si->prefs;
++  if (p->verbose_p)
++    {
++         fprintf (stderr, "%s: %d: trying to escape from menu\n", blurb(),
++                         screen_no);
++    }
++  /* Send Escape key... */
++  XTestFakeKeyEvent (si->dpy, 9, True, CurrentTime);
++  XTestFakeKeyEvent (si->dpy, 9, False, CurrentTime);
++  XSync (si->dpy, False);
++}
++
++
+ static void
+ ungrab_keyboard_and_mouse (saver_info *si)
+ {
+@@ -242,6 +262,7 @@ grab_keyboard_and_mouse (saver_info *si, Window window, Cursor cursor,
+   int i;
+   int retries = 4;
+   Bool focus_fuckus = False;
++  Bool menu_fuckus = False;
+ 
+  AGAIN:
+ 
+@@ -267,6 +288,12 @@ grab_keyboard_and_mouse (saver_info *si, Window window, Cursor cursor,
+           nuke_focus (si, screen_no);
+           goto AGAIN;
+         }
++      if (! menu_fuckus)
++        {
++          menu_fuckus = True;
++          nuke_menu (si, screen_no);
++          goto AGAIN;
++        }
+     }
+ 
+   for (i = 0; i < retries; i++)

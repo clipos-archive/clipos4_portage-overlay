@@ -1,0 +1,16 @@
+diff -Naur libetpan-1.0.orig/src/data-types/mailstream_ssl.c libetpan-1.0/src/data-types/mailstream_ssl.c
+--- libetpan-1.0.orig/src/data-types/mailstream_ssl.c	2009-12-19 01:57:31.000000000 +0100
++++ libetpan-1.0/src/data-types/mailstream_ssl.c	2014-02-06 19:58:42.134390601 +0100
+@@ -309,7 +309,11 @@
+   tmp_ctx = SSL_CTX_new(method);
+   if (tmp_ctx == NULL)
+     goto err;
+-  
++ 
++  // CLIP : only propose "strong" ciphersuites
++  if(!SSL_CTX_set_cipher_list(tmp_ctx,"HIGH:!SRP:!CAMELLIA:!PSK:!SSLv2:!MD5:!aNULL:!eNULL:!3DES:!kECDH:!DSS:@STRENGTH:-kRSA:RC4-SHA:AES256-SHA"))
++    goto err;
++ 
+   if (callback != NULL) {
+     ssl_context = mailstream_ssl_context_new(tmp_ctx, fd);
+     callback(ssl_context, cb_data);

@@ -1,0 +1,33 @@
+# CLIP ChangeLog for net-print/foo2zjs
+
+*foo2zjs-20131225 (06 Jan 2014)
+
+  06 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +foo2zjs-20131225.ebuild, -foo2zjs-20090529-r1.ebuild,
+  +files/foo2zjs-CLIP-Makefile.patch,
+  -files/foo2zjs-20090529-CLIP-Makefile.patch:
+  Bump to latest snapshot (unversioned, yay), update ebuild 
+  based on gentoo's live ebuild. Support cups-filters as an
+  alternative to foomatic-filters.
+
+  25 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  -foo2zjs-20090529.ebuild:
+  Remove old. Fix manifest.
+
+*foo2zjs-20090529-r1 (24 Aug 2009)
+  24 Aug 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  +foo2zjs-20090529-r1.ebuild:
+  Simplified ebuild because firmwares are not loaded in RM jails anymore
+
+*foo2zjs-20090529 (26 Jun 2009)
+
+  20 Aug 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  +files/usbprinters-common.sh:
+  Reorganized the structure for the printer firmware loading basic functions (usbprinters-common.sh).
+  The new structure allows the functions to be shared by the hotplug scripts and the init scripts (usbprinters.initd.clip).
+  Modified the content of printermodels to allows firmware files to be found when loaded outside RMH (i.e. hotplug loading).
+        
+  26 Jun 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  +foo2zjs-20090529.ebuild, +files/usbprinters.initd.clip, +files/printermodels,
+  +files/foo2zjs-20090529-CLIP-Makefile.patch:
+  Added foo2zjs in order to support USB printers that require firmwares

@@ -1,0 +1,32 @@
+# CLIP ChangeLog for dev-libs/zziplib
+
+*zziplib-0.13.60-r4 (10 Jun 2014)
+
+  10 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +zziplib-0.13.60-r4.ebuild, -zziplib-0.13.60-r3.ebuild:
+  Force rebuild.
+
+*zziplib-0.13.60-r3 (01 Aug 2013)
+
+  01 Aug 2013; ANSSI <clipos@ssi.gouv.fr>
+  +zziplib-0.13.60-r3.ebuild, -zziplib-0.13.60-r2.ebuild:
+  Fixed misplaced pkgconfig files.
+
+*zziplib-0.13.60-r2 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +zziplib-0.13.60-r2.ebuild, -zziplib-0.13.60-r1.ebuild:
+  Force rebuild.
+
+*zziplib-0.13.60-r1 (21 Dec 2011)
+
+  21 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +zziplib-0.13.60-r1.ebuild, -zziplib-0.13.59-r1.ebuild,
+  +files/zziplib-0.13.60-ldflags.patch:
+  Bump to latest.
+
+* zziplib-0.13.59-r1 (27 Jul 2010)
+
+  27 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  zziplib-0.13.59-r1.ebuild:
+  Initial import - clip-deps fix.

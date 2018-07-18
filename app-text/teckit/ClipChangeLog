@@ -1,0 +1,13 @@
+# CLIP ChangeLog for app-text/teckit
+
+*teckit-2.5.1-r1 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +teckit-2.5.1-r1.ebuild, -teckit-2.5.1.ebuild:
+  Force rebuild
+
+*teckit-2.5.1 (20 Dec 2011)
+
+  20 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  teckit-2.5.1.ebuild:
+  Initial import - clip-deps fixes.

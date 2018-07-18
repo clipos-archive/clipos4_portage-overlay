@@ -1,0 +1,31 @@
+# CLIP ChangeLog for www-misc/htdig
+
+*htdig-3.2.0_beta6-r4 (13 Nov 2015)
+
+  13 Nov 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +htdig-3.2.0_beta6-r4.ebuild, -htdig-3.1.99_beta6-r5.ebuild:
+  Update only the version number of the ebuild file to satisfy kdelibs
+  dependencies (the distfile is the same : 3.2.0_beta6).
+
+*htdig-3.1.99_beta6-r5 (02 Jan 2013)
+
+  02 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +htdig-3.1.99_beta6-r5.ebuild, -htdig-3.1.99_beta6-r4.ebuild:
+  Force rebuild against newer openssl.
+
+*htdig-3.1.99_beta6-r4 (15 Apr 2008)
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +htdig-3.1.99_beta6-r4.ebuild, -htdig-3.1.99_beta6-r3.ebuild:
+  Set htdig base to /var/shared/www (/var/shared will be shared 
+  between update and user).
+
+*htdig-3.1.99_beta6-r3 (04 Mar 2008)
+
+  04 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  htdig-3.1.99_beta6-r3.ebuild:
+  Initial overlay import, based on gentoo's 3.2.0_beta6-r3 (with
+  a different version number to work properly with debian's version
+  management). CPREFIX fixes. Add IUSE clip to move the htdig base 
+  from /var/www (which is not shared between UPDATE and USER in CLIP)
+  to /usr/local/www.

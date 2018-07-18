@@ -1,0 +1,498 @@
+# CLIP ChangeLog for net-misc/openssh
+
+*openssh-7.5_p1-r5 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +openssh-7.5_p1-r5.ebuild, -openssh-7.5_p1-r4.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*openssh-7.5_p1-r4 (28 Nov 2017)
+
+  28 Nov 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +openssh-7.5_p1-r4.ebuild, -openssh-7.5_p1-r3.ebuild:
+  Force rebuild with RGS compliant crypto parameter
+
+*openssh-7.5_p1-r3 (20 Nov 2017)
+
+  20 Nov 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +openssh-7.5_p1-r3.ebuild, -openssh-7.5_p1-r2.ebuild:
+  Refresh configuration to remove deprecated options and improve crypto
+  parameters
+
+*openssh-7.5_p1-r2 (18 Sep 2017)
+
+  18 Sep 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +openssh-7.5_p1-r2.ebuild, -openssh-7.5_p1-r1.ebuild:
+  Rbump to fix sshd init script which had /sbin/openrc-run as shebang. This
+  binary superseding /sbin/runscript does not exist in CLIP due to OpenRC being
+  too old.
+
+*openssh-7.5_p1-r1 (07 Sep 2017)
+
+  07 Sep 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +openssh-7.5_p1-r1.ebuild, -openssh-7.2_p2-r2.ebuild:
+  Update to 7.5_p1-r1.
+
+*openssh-7.2_p2-r2 (02 Sep 2016)
+
+  02 Sep 2016; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openssh-7.2_p2-r2.ebuild, -openssh-7.2_p2-r1.ebuild:
+  Rbump to add a clean delta between CLIP 4.4.2 and 4.4.3, needed for
+  virtual/os-headers hard dependencies.
+
+*openssh-7.2_p2-r1 (02 Sep 2016)
+
+  02 Sep 2016; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openssh-7.2_p2-r1.ebuild, -openssh-7.2_p2.ebuild:
+  Rbump to fix the version delta between CLIP 4.4.2 and 4.4.3 - Re-enhance
+  pre-auth process sandboxing.
+
+*openssh-7.2_p2 (20 May 2016)
+
+  20 May 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +openssh-7.2_p2.ebuild, -openssh-7.1_p1-r5.ebuild:
+  Update to 7.2_p2.
+
+*openssh-7.1_p1-r5 (13 Jan 2016)
+
+  13 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +openssh-7.1_p1-r5.ebuild, -openssh-7.1_p1-r4.ebuild,
+  +files/openssh-disable-roaming.patch:
+  Disable roaming in client code (CVE-2016-0777, CVE-2016-0778).
+
+*openssh-7.1_p1-r4 (04 Jan 2016)
+
+  04 Jan 2016; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openssh-7.1_p1-r4.ebuild, -openssh-7.1_p1-r3.ebuild,
+  files/clip/sshd_config.admin, files/clip/sshd_config.audit:
+  Enhance pre-auth process sandboxing.
+
+*openssh-7.1_p1-r3 (30 Dec 2015)
+
+  30 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-7.1_p1-r3.ebuild, -openssh-7.1_p1-r2.ebuild:
+  Restore os-headers/linux-headers changes specific to 4.4.3.
+
+*openssh-7.1_p1-r2 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-7.1_p1-r2.ebuild, -openssh-6.7_p1-r4.ebuild,
+  -files/openssh-6.7_p1-sctp-x509-glue.patch,
+  -files/openssh-6.7_p1-sshd-gssapi-multihomed.patch,
+  -files/openssh-6.7_p1-x509-glue.patch,
+  +files/openssh-6.9_p1-x509-warnings.patch,
+  +files/openssh-7.0_p1-sctp-x509-glue.patch,
+  +files/openssh-7.1_p1-hpn-x509-glue.patch,
+  +files/openssh-6.8_p1-ssl-engine-configure.patch:
+  Security bump to latest (CVE-2015-5352, CVE-2015-5600, 
+  CVE-2015-65{63..65}).
+  Temporarily undo virtual/os-headers change so this is 
+  mergeable in 4.4.2, will reintroduce it after a rbump
+  in 4.4.3.
+
+*openssh-6.7_p1-r4 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +openssh-6.7_p1-r4.ebuild, -openssh-6.7_p1-r3.ebuild:
+  Update dependency to virtual/os-headers.
+
+*openssh-6.7_p1-r3 (28 Sep 2015)
+
+  28 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +openssh-6.7_p1-r3.ebuild, -openssh-6.7_p1-r2.ebuild:
+  Update dependency on linux-headers when compiling for clip-devstation.
+
+*openssh-6.7_p1-r2 (24 Aug 2015)
+
+  24 Aug 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +openssh-6.7_p1-r2.ebuild, -openssh-6.7_p1-r1.ebuild,
+  files/clip/sshd_config.admin,
+  files/clip/sshd_config.audit:
+  Set MaxStartups value to 20 for admin and audit jails (this enable multiple
+  concurrent connections).
+
+*openssh-6.7_p1-r1 (30 Dec 2014)
+
+  30 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-6.7_p1-r1.ebuild, -openssh-6.7_p1.ebuild:
+  -files/openssh-6.6_p1-x509-glue.patch,
+  -files/openssh-6.6_p1-x509-hpn14v4-glue-p2.patch,
+  +files/openssh-6.7_p1-sctp-x509-glue.patch,
+  +files/openssh-6.7_p1-x509-glue.patch:
+  Restore X509 support.
+
+*openssh-6.7_p1 (30 Dec 2014)
+
+  30 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-6.7_p1.ebuild, -openssh-6.6_p1-r1.ebuild,
+  -files/openssh-5.9_p1-sshd-gssapi-multihomed.patch,
+  -files/openssh-6.5_p1-hpn-cipher-align.patch,
+  -files/openssh-6.6_p1-openssl-ignore-status.patch,
+  +files/openssh-6.7_p1-openssl-ignore-status.patch,
+  +files/openssh-6.7_p1-sshd-gssapi-multihomed.patch:
+  Security bump to latest.
+
+*openssh-6.6_p1-r1 (12 May 2014)
+
+  12 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-6.6_p1-r1.ebuild, -openssh-6.4_p1-r1.ebuild,
+  -files/openssh-6.4_p1-x509-glue.patch,
+  +files/openssh-6.5_p1-hpn-cipher-align.patch,
+  +files/openssh-6.6_p1-openssl-ignore-status.patch,
+  +files/openssh-6.6_p1-x509-hpn14v4-glue-p2.patch,
+  +files/openssh-6.6_p1-x509-glue.patch:
+  Bump to latest.
+
+*openssh-6.4_p1-r1 (14 Jan 2014)
+
+  14 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-6.4_p1-r1.ebuild, -openssh-5.9_p1-r13.ebuild,
+  -files/openssh-5.6_p1-hpn-progressmeter.patch,
+  -files/openssh-5.8_p1-x509-hpn-glue.patch,
+  -files/openssh-5.9_p1-drop-openssl-check.patch,
+  -files/openssh-5.9_p1-x509-glue.patch,
+  -files/sshd.rc6.3, +files/sshd.rc6.4,
+  +files/openssh-6.3_p1-x509-hpn14v2-glue.patch,
+  +files/openssh-6.4_p1-x509-glue.patch:
+  Bump to latest stable.
+
+*openssh-5.9_p1-r13 (02 Jan 2014)
+
+  02 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r13.ebuild, -openssh-5.9_p1-r12.ebuild:
+  Err, actually, don't run ssh-update-known-hosts in postinst,
+  this results in an empty known_hosts since UPDATE does
+  not see /etc/jails.
+
+*openssh-5.9_p1-r12 (02 Jan 2014)
+
+  02 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r12.ebuild, -openssh-5.9_p1-r11.ebuild:
+  Install ssh_config.rm, not ssh_conf (hardcoded crypto), in
+  RM client packages.
+
+*openssh-5.9_p1-r11 (02 Jan 2014)
+
+  02 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r11.ebuild, -openssh-5.9_p1-r10.ebuild,
+  +files/ssh-update-known-hosts:
+  Add a script to update /mounts/user_root/etc/known_hosts
+  based on the contents of /etc/jails/*/ssh. Call it after
+  generating host keys in postinst for packages built with
+  USE server.
+
+*openssh-5.9_p1-r10 (24 Dec 2013)
+
+  24 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r10.ebuild, -openssh-5.9_p1-r9.ebuild,
+  files/clip/sshd_config.admin, files/clip/sshd_config.audit:
+  Change ebuild to be used separately for client and server 
+  configurations, so that we can now build for CLIP : 
+   - openssh (client only)
+   - openssh-admin (admin server only), with DEB_NAME_SUFFIX
+     and CLIP_VROOTS chosen accordingly
+   - openssh-audit (audit server only)
+  The main advantage is that we can now build other openssh-<>
+  servers for other jails which might need remote access.
+
+*openssh-5.9_p1-r9 (28 May 2013)
+
+  28 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r9.ebuild, -openssh-5.9_p1-r8.ebuild,
+  +files/clip/sshd_config.audit,
+  +files/clip/sshd_config.admin,
+  +files/clip/ssh_config:
+  Change admin/audit Cipher to aes256-ctr instead of cbc.
+
+*openssh-5.9_p1-r8 (11 Feb 2013)
+
+  11 Feb 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r8.ebuild, -openssh-5.9_p1-r7.ebuild:
+  xauth path is autodetected at configure time so don't try to fix it in
+  pathnames.h, but pass the correct path to configure.
+
+*openssh-5.9_p1-r7 (04 Feb 2013)
+
+  04 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r7.ebuild, -openssh-5.9_p1-r6.ebuild:
+  Fix host key permissions fix - UPDATE's sh did not expand
+  the previous glob properly.
+
+*openssh-5.9_p1-r6 (07 Jan 2013)
+
+  07 Jan 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r6.ebuild, -openssh-5.9_p1-r5.ebuild:
+  Fix host key permissions.
+
+*openssh-5.9_p1-r5 (26 Apr 2012)
+
+  26 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r5.ebuild, -openssh-5.9_p1-r4.ebuild:
+  Fix unsupported ssh-keygen parameter ('-d') in postinst. Generate
+  host ecdsa keys, while we're at it.
+
+  18 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-5.9_p1-r4.ebuild, file/clip/sshd_config.{audit,admin}:
+  Use .ssh-remote/ rather than .ssh-admin/.
+
+*openssh-5.9_p1-r4 (17 Apr 2012)
+
+  17 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.9_p1-r4.ebuild, -openssh-5.8_p1-r2.ebuild,
+  +files/sshd.service, +files/openssh-5.9_p1-x509-glue.patch,
+  +files/openssh-5.9_p1-drop-openssl-check.patch,
+  +files/sshd_at.service, +files/sshd.socket,
+  +files/sshd.rc6.3, +files/openssh-5.9_p1-sshd-gssapi-multihomed.patch,
+  -files/openssh-5.8_p1-selinux.patch, -files/sshd.rc6,
+  -files/sshd.rc6.2, -files/openssh-5.2p1-ldap-stdargs.diff,
+  files/clip/ssh_config, files/clip/sshd_config.admin,
+  files/clip/sshd_config.audit:
+  Bump to latest. Use .ssh-admin/authorized_keys as an alternate
+  authorized keys file, editable by admin/audit. Switch to HMAC-SHA2.
+
+*openssh-5.8_p1-r2 (11 May 2011)
+
+  11 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.8_p1-r2.ebuild, -openssh-5.8_p1-r1.ebuild,
+  +files/clip/ssh_config.rm:
+  Add a ssh_config file in RM packages, to define the proper
+  xauth location. Add CLSM_PRIV_NETSERVER to ssh binary in RM,
+  to support SSH tunneling.
+
+*openssh-5.8_p1-r1 (15 Apr 2011)
+
+  15 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.8_p1-r1.ebuild, -openssh-5.1_p1-r6.ebuild,
+  +files/openssh-5.6_p1-hpn-progressmeter.patch,
+  +files/openssh-5.8_p1-x509-hpn-glue.patch,
+  +files/openssh-5.8_p1-selinux.patch,
+  +files/sshd.rc6.2, +files/openssh-5.2p1-ldap-stdargs.diff,
+  -files/openssh-5.1_p1-better-ssp-check.patch,
+  -files/openssh-4.7p1-selinux.diff,
+  -files/openssh-5.1_p1-escaped-banner.patch,
+  -files/openssh-4.7_p1-logfailed.patch,
+  -files/openssh-5.1_p1-null-banner.patch,
+  -files/openssh-3.9_p1-opensc.patch,
+  -files/openssh-5.1_p1-ldap-hpn-glue.patch,
+  -files/openssh-5.1_p1-x509-headers.patch,
+  -files/openssh-5.1_p1-x509-hpn-glue.patch:
+  Bump to latest.
+
+  25 Nov 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-5.1_p1-r6.ebuild:
+  Remove dependency on pambase on clip-devstation.
+
+  20 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-5.1_p1-r6.ebuild:
+  Added DESCRIPTION_FR.
+
+*openssh-5.1_p1-r6 (24 Jun 2009)
+
+  24 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.1_p1-r6.ebuild, -openssh-5.1_p1-r5.ebuild,
+  files/clip/ssh_config, files/clip/sshd_config.admin, 
+  files/clip/sshd_config.audit:
+  Send and accept the following env vars: QTDIR, LANG, LC_ALL.
+
+*openssh-5.1_p1-r5 (11 Jun 2009)
+
+  11 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.1_p1-r5.ebuild, -openssh-5.1_p1-r4.ebuild:
+  Add CLSM_PRIV_NETLINK to ssh / sshd in CLIP jails (ADMIN/AUDIT/USER).
+
+*openssh-5.1_p1-r4 (23 Apr 2009)
+
+  23 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.1_p1-r4.ebuild, -openssh-5.1_p1-r3.ebuild,
+  files/clip/banner.{audit,admin}, files/clip/sshd_config.{audit,admin},
+  +files/clip/ssh_config:
+  Change ADMIN / AUDIT configs and config paths, activate X11 Forwarding
+  to those jails, and define XauthLocation for client, to enable X11
+  forwarding access to ADMIN / AUDIT.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-5.1_p1-r3.ebuild:
+  Switch to verictl2.eclass.
+
+*openssh-5.1_p1-r3 (10 Mar 2009)
+
+  10 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.1_p1-r3.ebuild, -openssh-5.1_p1-r2.ebuild:
+  Remove sshd server in RM ADMIN. Only the ssh client is now
+  installed in RM jails.
+
+*openssh-5.1_p1-r2 (03 Mar 2009)
+
+  03 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-5.1_p1-r2.ebuild, -openssh-4.7_p1-r11.ebuild:
+  +files/openssh-5.1_p1-better-ssp-check.patch,
+  +files/sshd.pam_include.2, +files/openssh-5.1_p1-escaped-banner.patch,
+  +files/openssh-5.1_p1-null-banner.patch, +files/openssh-5.1_p1-ldap-hpn-glue.patch,
+  +files/openssh-5.1_p1-x509-headers.patch, +files/openssh-5.1_p1-x509-hpn-glue.patch,
+  -files/sshd.pam_include.1, -files/openssh-4.7_p1-CVE-2008-1483.patch,
+  -files/openssh-4.7_p1-lpk-64bit.patch, -files/openssh-4.7_p1-packet-size.patch,
+  -files/openssh-4.7_p1-x509-hpn-glue.patch, -files/openssh-4.3_p1-chroot.patch,
+  -files/openssh-4.4_p1-ldap-hpn-glue.patch, -files/openssh-4.7_p1-ForceCommand.patch:
+  Bump to latest stable. Same changeset. Fixes CVE-2008-5161.
+
+*openssh-4.7_p1-r11 (03 Oct 2008)
+
+  03 Oct 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.7_p1-r11.ebuild, -openssh-4.7_p1-r10.ebuild:
+  Give ssh CLSM_PRIV_NETLINK.
+
+*openssh-4.7_p1-r10 (01 Oct 2008)
+
+  01 Oct 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.7_p1-r10.ebuild, -openssh-4.7_p1-r9.ebuild,
+  +files/openssh-4.7_p1-logfailed.patch:
+  Log failed logins from the start (rather than logging only repeated 
+  failed logins).
+
+*openssh-4.7_p1-r9 (18 Jul 2008)
+
+  18 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.7_p1-r9.ebuild, -openssh-4.7_p1-r8.ebuild:
+  Remove CAP_SETUID from sshd veriexec entry in RM.
+
+*openssh-4.7_p1-r8 (16 Jul 2008)
+
+  16 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.7_p1-r8.ebuild, -openssh-4.7_p1-r7.ebuild:
+  clip-deps should remove dependency on zlib, not just core-deps.
+
+*openssh-4.7_p1-r7 (07 Jul 2008)
+
+  07 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.7_p1-r7.ebuild, -openssh-4.7_p1-r6.ebuild:
+  files/clip/sshd_config.audit, files/clip/sshd_config.admin:
+  Small fixes for config files. Fixed ciphers and MACs definitions.
+  Switch to CCSD hashes for veriexec.
+
+*openssh-4.7_p1-r6 (23 Jun 2008)
+
+  23 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.7_p1-r6.ebuild, -openssh-4.3_p2-r9.ebuild:
+  +files/sshd.pam_include.1, +files/openssh-4.7_p1-packet-size.patch,
+  +files/openssh-4.7_p1-CVE-2008-1483.patch, +files/openssh-4.7p1-selinux.diff,
+  +files/openssh-4.7_p1-x509-hpn-glue.patch, +files/openssh-4.7_p1-GSSAPI-dns.patch,
+  +files/openssh-4.4_p1-ldap-hpn-glue.patch, +files/openssh-4.7_p1-lpk-64bit.patch,
+  +files/openssh-4.7_p1-ForceCommand.patch, -files/openssh-4.3_p2-securid-updates.patch,
+  -files/sshd.pam_include, -files/openssh-4.3_p2-identical-simple-dos-2.patch,
+  -files/openssh-4.2_p1-sftplogging-1.4-gentoo.patch.bz2,
+  -files/sshd_config, -files/openssh-4.0_p1-smartcard-ldap-happy.patch,
+  -files/digest-openssh-4.3_p2-r9, -files/openssh-4.3_p2-securid-hpn-glue.patch,
+  -files/openssh-4.3_p1-krb5-typos.patch, -files/openssh-4.3_p2-opensc-libs.patch,
+  -files/openssh-4.3_p2-configure.patch, -files/openssh-4.3_p2-selinux.patch.glue,
+  -files/openssh-4.3_p2-x509-hpn-glue.patch, -files/openssh-4.3_p2-ldap-updates.patch,
+  -files/openssh-4.3_p2-selinux.patch,
+  -files/sshd.pam, files/sshd.rc6:
+  Bump to latest gentoo stable to fix GLSA-20080403.
+
+*openssh-4.3_p2-r9 (21 Nov 2007)
+
+  21 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.3_p2-r9.ebuild, -openssh-4.3_p2-r9.ebuild,
+  files/clip/sshd_config.{admin,audit}:
+  Change authorized users to _admin and _audit in sshd configs.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 4.3_p2-r8.
+
+*openssh-4.3_p2-r8 (23 Aug 2007)
+
+  23 Aug 2007; EADS D&S <clipos@ssi.gouv.fr>
+  +openssh-4.3_p2-r8.ebuild: 
+  Use clip-deps for dependance towards pam.
+  Initialize /etc/ssh/ssh_known_hosts.
+
+*openssh-4.3_p2-r7 (10 Jul 2007)
+
+  10 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.3_p2-r7.ebuild:
+  Add IUSE core-deps and clip-deps to remove RDEPENDS on zlib
+  (all clip) and openssl (clip core).
+
+*openssh-4.3_p2-r6 (25 Jun 2007)
+
+  25 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.3_p2-r6.ebuild, +files/clip/banner.admin, 
+  +files/clip/banner.audit, +files/clip/sshd_config.admin,
+  +files/clip/sshd_config.audit:
+  Add support for audit/admin jails in clip, remove IUSE clip-ssh,
+  create a postinst script to generate host keys when needed.
+
+  27 Oct 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r5.ebuild:
+  29 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r5.ebuild:
+  Add CLSM_PRIV_NETSERVER to sshd, and CLSM_PRIV_NETCLIENT to ssh.
+
+  31 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r5.ebuild:
+  Add verictl support, give CAP_SYS_CHROOT+CAP_NET_BIND_SERVICE 
+  + CAP_SETUID (useless ATM) to sshd, forced, non inheritable, 
+  root only.
+
+*openssh-4.3_p2-r5 (27 Oct 2006)
+
+  27 Oct 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r5.ebuild:
+  Bump from gentoo, fixes GLSA 200609-17.
+
+*openssh-4.3_p2-r3 (25 Sep 2006)
+
+  25 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r3.ebuild:
+  Bump from gentoo : compiles with USE=static with newer openssl,
+  fixes a few minor issues.
+
+  21 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r1.ebuild
+  +files/sshd_config:
+  Create - in a very ugly fashion - a confdir in admin view when
+  use clip-ssh. Copy our own sshd_config in it.
+
+  28 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.3_p2-r1.ebuild:
+  OK, having both clip-ssh and clip-sshd as USE flags is broken,
+  since we would need to install the package twice in the update
+  view. Modified so that clip-ssh does not remove sshd, but simply
+  moves it to /admin_root/sbin (regardless of CPREFIX). Thus we 
+  only need that package in the update view.
+  Note: left clip-sshd USE flag as is, for now.
+  TODO : explode config files beetween /usr/local/etc and 
+  admin_root/something ? Is this at all feasible ?
+
+*openssh-4.3_p2-r1 (27 Jul 2006)
+
+  27 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.3_p2-r1.ebuild:
+  Version bump from gentoo. Clip patch does the same as previous 
+  one, plus removing the enewuser calls in postinst(). We also
+  disable sys-apps/shadow dependency when USE clip is set. TODO:
+  make sure it does not break anything.
+
+*openssh-4.2_p1-r2 (18 Jul 2006)
+
+  18 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +openssh-4.2_p1-r2.ebuild:
+  CLIP version bump. Move from clip-usrsep to CPREFIX. And there
+  was much rejoicing...
+  
+  28 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.2_p1-r1.ebuild:
+  Add support for clip-usrsep USE flag.
+
+  24 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.2_p1-r1.ebuild:
+  USE flags consistency : clip_ssh? -> clip-ssh?
+
+*openssh-4.2_p1-r1 (21 Apr 2006)
+
+  21 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  openssh-4.2_p1-r1.ebuild:
+  Initial CLIP import. Add clip_sshd and clip_ssh USE flags to install
+  only sshd and only ssh respectively.
+
+

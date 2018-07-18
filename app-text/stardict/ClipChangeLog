@@ -1,0 +1,32 @@
+# CLIP ChangeLog for app-text/stardict
+
+  14 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  stardict-3.0.3-r2.ebuild, +files/stardict-3.0.3-gmodule.patch:
+  Fix linking to -lgmodule-2.0.
+
+*stardict-3.0.3-r2 (13 Apr 2012)
+
+  13 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +stardict-3.0.3-r2.ebuild, -stardict-3.0.1-r2.ebuild,
+  -files/stardict-3.0.1-gucharmap2.patch,
+  -files/stardict-3.0.1-transparent_trayicon.patch,
+  -files/stardict-3.0.1-changelog-minor-typo-fixes.patch,
+  -files/stardict-3.0.1-gcc43.patch,
+  -files/stardict-3.0.1-gconf-m4.diff,
+  -files/stardict-3.0.1-gcc44.patch,
+  -files/stardict-3.0.1-configure.in-EST.diff,
+  +files/stardict-3.0.3-correct-glib-include.patch,
+  +files/stardict-3.0.3-compositelookup_cpp.patch,
+  +files/stardict-3.0.3-entry.patch,
+  +files/stardict-3.0.3-zlib-1.2.5.2.patch,
+  +files/stardict-3.0.3-overflow.patch,
+  +files/stardict-3.0.3-gcc46.patch:
+  Bump to latest.
+
+*stardict-3.0.1-r2 (25 Jan 2011)
+
+  25 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  stardict-3.0.1-r2.ebuild:
+  Initial import. CPREFIX / clip-deps fixes + disable some plugins 
+  and add a few default dictionaries on CLIP (free dicts from Babylon).
+  Disable net dict by default + add veriexec entry for net access.

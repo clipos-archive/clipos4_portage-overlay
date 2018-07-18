@@ -1,0 +1,6 @@
+@clip32@/usr/lib		/usr/lib		none	bind,ro,nosuid,nodev,noatime
+@clip64@/usr/lib64		/usr/lib64		none	bind,ro,nosuid,nodev,noatime
+/dev/bus/usb		/dev/bus/usb		none	bind,rw,nosuid,noexec,noatime
+/var/run/pcscd		/var/run/pcscd		none	bind,rw,nosuid,nodev,noexec,noatime
+/var/run/smartcard	/var/run/smartcard	none	bind,rw,nosuid,nodev,noexec,noatime
+/sys			/sys			none	bind,ro,nosuid,nodev,noexec,noatime

@@ -1,0 +1,11 @@
+--- ./lib/syslog-ng.h.orig	2014-01-08 16:46:27.000000000 +0100
++++ ./lib/syslog-ng.h	2014-01-08 17:04:00.000000000 +0100
+@@ -48,7 +48,7 @@
+ #define PATH_SYSLOGNG           PATH_LIBEXECDIR "/syslog-ng"
+ #endif
+ 
+-#define PATH_PERSIST_CONFIG     PATH_LOCALSTATEDIR "/syslog-ng.persist"
++#define PATH_PERSIST_CONFIG     "/var/run/syslog-ng.persist"
+ #define PATH_QDISK              PATH_LOCALSTATEDIR
+ #define PATH_PATTERNDB_FILE     PATH_LOCALSTATEDIR "/patterndb.xml"
+ #define PATH_XSDDIR             PATH_DATADIR "/xsd"

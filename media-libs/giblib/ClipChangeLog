@@ -1,0 +1,8 @@
+# CLIP ChangeLog for media-libs/giblib
+
+*giblib-1.2.4-r1 (04 Mar 2013)
+
+  04 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  giblib-1.2.4-r1.ebuild:
+  Initial import - clip-deps fix.
+

@@ -1,0 +1,141 @@
+#!/sbin/runscript
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+source /lib/rc/net/common
+source /lib/clip/misc.sub
+
+JAIL="${RC_SVCNAME#*.}"
+if [ "${JAIL}" == "${RC_SVCNAME}" ]; then
+	JAIL=""
+fi
+
+STUNNEL_CONF="/vservers/${JAIL}/user_priv/var/run/stunnel.conf"
+STUNNEL_STAMP="/tmp/var/run/stunnel.pid"
+STUNNEL_EXIT_PIPE="/tmp/var/run/stunnel.exit"
+STUNNEL_TUNNELS="${CONFLINK}/${JAIL}/tls_tunnels"
+
+depend() {
+	need clip_servers ipsec
+	provide netservice
+	if [ -z "${JAIL}" ]; then
+		need stunnel.*
+	fi
+}
+
+config_not_empty() {
+	# Not having any tunnel configured will make stunnel crash
+	# if it is started.
+	# We can't just test that file exists and has a size > 0
+	# because it may contain only whitespace.
+	if [[ ! -e "${STUNNEL_TUNNELS}" ]]; then
+		einfo "No TLS tunnels configuration file for jail ${JAIL}"
+		return 1
+	else
+		# Count of non-empty lines
+		nlines=$(grep -vE "^[[:space:]]*$" "${STUNNEL_TUNNELS}" | wc -l)
+		if [ "$nlines" == 0 ]; then
+			einfo "No TLS tunnels configured in config file for jail ${JAIL}"
+			return 1
+		fi
+	fi
+	return 0
+}
+
+config_exists() {
+	source /lib/clip/import.sub
+	source /etc/conf.d/jail-net
+	jailvar="${JAIL^^}"
+	jailvar="${jailvar/_/}_LOCAL_ADDR"
+	local_addr="${!jailvar:-127.0.0.1}"
+
+	config_not_empty || return 1
+}
+
+output_config() {
+	if $(/vservers/${JAIL}/update_priv/usr_local/bin/stunnel -help 2>&1 | grep -q exit_pipe); then
+		local exit_method="exit_pipe = ${STUNNEL_EXIT_PIPE}"
+	else
+		local exit_method="pid = ${STUNNEL_STAMP}"
+	fi
+	local conf_file="${STUNNEL_TUNNELS}"
+	local output_file="${STUNNEL_CONF}"
+	if [[ -e "${output_file}" && ! -f "${output_file}" ]]; then
+		eerror "${output_file} is not a regular file, aborting"
+		return 1
+	fi
+	source /etc/stunnel/stunnel.conf.skel
+	chmod 0444 -- "${output_file}"
+}
+
+start() {
+	if [ -z "${JAIL}" ]; then
+		return 0
+	fi
+
+	ebegin "Configuring stunnel for jail ${JAIL}"
+	if config_exists; then
+		output_config
+		eend $?
+
+		local uid="$(current_uid)"
+		if [ -n "${uid}" ]; then
+			stunnel_term
+			ebegin "Starting stunnel in jail ${JAIL}"
+			vsctl "${JAIL}" enter -c /user -u "${uid}" -i /dev/full -o /dev/null -- /usr/local/bin/clip-user-data-update-scripts/stunnel
+			eend $?
+		fi
+	else
+		eend 0 "No configuration found, stunnel will not be launched in ${JAIL}"
+	fi
+}
+
+stunnel_term() {
+	local user="$(current_user | head -c 8)"
+	local uid=$(current_uid)
+	local gid=$(current_gid)
+
+    # for new stunnel, starting 5.35-r2
+    # CAP_NET_BIND_SERVICE capabilty on the service prevents us to kill it
+	if [[ -n "${user}" ]] && vsctl ${JAIL} enter -u $uid -g $gid -c /user -i /dev/full -o /dev/null -- /bin/test -p "${STUNNEL_EXIT_PIPE}"; then
+		ebegin "Stopping stunnel in jail ${JAIL}"
+		vsctl ${JAIL} enter -u $uid -g $gid -c /user <<-- >/dev/null 2>&1
+set -e
+/bin/echo 1 > "${STUNNEL_EXIT_PIPE}"
+/bin/rm -f -- "${STUNNEL_EXIT_PIPE}"
+-
+		eend $?
+	fi
+
+    # for older stunnel version
+     if [[ -n "${user}" ]] && vsctl ${JAIL} enter -c /user -i /dev/full -o /dev/null -- /bin/test -f "${STUNNEL_STAMP}"; then
+		ebegin "Stopping stunnel in jail ${JAIL}"
+		vsctl ${JAIL} enter -c /user <<-- >/dev/null 2>&1
+set -e
+pid="\$(/bin/head -c 5 "${STUNNEL_STAMP}" | /bin/tr -cd '0-9')"
+/bin/ps -o pid,user | /bin/grep -qe "^ *\${pid} *${user} *\\\$" && /bin/kill -TERM "\${pid}"
+/bin/rm -f -- "${STUNNEL_STAMP}"
+-
+		eend $?
+	fi
+}
+
+stop() {
+	if [ -z "${JAIL}" ]; then
+		return 0
+	fi
+
+	stunnel_term
+
+	if [[ -e "${STUNNEL_CONF}" ]]; then
+		ebegin "Removing stunnel configuration in jail ${JAIL}"
+		rm -f "${STUNNEL_CONF}" 2>/dev/null
+		eend $?
+	fi
+}
+
+restart() {
+	svc_stop
+	sleep 1
+	svc_start
+}

@@ -1,0 +1,12 @@
+echo ""
+echo "==== CLIP version courante ===="
+echo ""
+@UBOOT_PREPARE@
+echo "Chargement..."
+ext2load @EXT2LOAD_DEVICE@ @LOADADDR_VMLINUZ@ vmlinuz-clip.5 
+ext2load @EXT2LOAD_DEVICE@ @LOADADDR_INITRD@ initrd-clip.img.5
+echo ""
+echo "Demarrage..."
+setenv bootargs "console=@CONSOLE@ quiet root=/dev/@ROOT_DEV@5 @BOOTARGS@"
+bootm @LOADADDR_VMLINUZ@ @LOADADDR_INITRD@
+

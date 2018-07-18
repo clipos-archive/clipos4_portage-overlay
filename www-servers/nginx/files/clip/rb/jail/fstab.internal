@@ -1,0 +1,2 @@
+/	/	none	bind,ro,noatime,noexec,nosuid
+tmp	/tmp	tmpfs	rw,size=10m,mode=1777,noatime,nodev,noexec,nosuid

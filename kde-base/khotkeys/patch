@@ -1,0 +1,24 @@
+diff -ru /tmp/work/khotkeys-4.11.19/CMakeLists.txt /dev/shm/portage/kde-base/./khotkeys-4.11.19/work/khotkeys-4.11.19/CMakeLists.txt
+--- /tmp/work/khotkeys-4.11.19/CMakeLists.txt	2016-02-23 15:12:59.727644562 +0100
++++ /dev/shm/portage/kde-base/./khotkeys-4.11.19/work/khotkeys-4.11.19/CMakeLists.txt	2016-02-23 15:13:01.803644528 +0100
+@@ -198,7 +198,7 @@
+   configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
+   configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
+   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
+-    set(EXPORT_XCURSOR_PATH "XCURSOR_PATH=${CMAKE_INSTALL_PREFIX}/share/icons:$XCURSOR_PATH\":~/.icons:/usr/local/share/icons:/usr/local/share/pixmaps:/usr/X11R6/lib/X11/icons\"; export XCURSOR_PATH")
++    set(EXPORT_XCURSOR_PATH "XCURSOR_PATH=${CMAKE_INSTALL_PREFIX}/share/icons:$XCURSOR_PATH\":~/.icons:/usr/share/icons:/usr/share/pixmaps:/usr/X11R6/lib/X11/icons\"; export XCURSOR_PATH")
+   endif(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
+ #DONOTINSTALL   configure_file(startkde.cmake ${CMAKE_CURRENT_BINARY_DIR}/startkde  @ONLY)
+ endif(NOT WIN32)
+diff -ru /tmp/work/khotkeys-4.11.19/startkde.cmake /dev/shm/portage/kde-base/./khotkeys-4.11.19/work/khotkeys-4.11.19/startkde.cmake
+--- /tmp/work/khotkeys-4.11.19/startkde.cmake	2016-02-23 15:12:59.727644562 +0100
++++ /dev/shm/portage/kde-base/./khotkeys-4.11.19/work/khotkeys-4.11.19/startkde.cmake	2015-05-07 20:13:26.000000000 +0200
+@@ -262,7 +262,7 @@
+ # to set it to a list of paths *not* including the KDE prefix if it's not /usr or
+ # /usr/local.
+ if test -z "$XDG_DATA_DIRS"; then
+-    XDG_DATA_DIRS="@SHARE_INSTALL_PREFIX@:/usr/local/share:/usr/local/share"
++    XDG_DATA_DIRS="@SHARE_INSTALL_PREFIX@:/usr/share:/usr/local/share"
+ else
+     XDG_DATA_DIRS="@SHARE_INSTALL_PREFIX@:$XDG_DATA_DIRS"
+ fi

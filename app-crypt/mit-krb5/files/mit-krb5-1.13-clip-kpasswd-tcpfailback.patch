@@ -1,0 +1,24 @@
+--- ./src/lib/krb5/os/changepw.c.orig	2014-12-30 15:18:47.000000000 +0100
++++ ./src/lib/krb5/os/changepw.c	2014-12-30 15:19:19.000000000 +0100
+@@ -265,11 +265,16 @@ change_set_password(krb5_context context
+                          &sl, strategy, &callback_info, &chpw_rep,
+                          ss2sa(&remote_addr), &addrlen, NULL, NULL, NULL);
+         if (code) {
+-            /*
+-             * Here we may want to switch to TCP on some errors.
+-             * right?
+-             */
+-            break;
++            if (no_udp) {
++                /* we already failed back to TCP, nothing left to try */
++                break;
++            } else {
++               /*
++                * Here we switch to TCP on some errors.
++                */
++               no_udp = 1;
++               continue;
++            }
+         }
+ 
+         code = krb5int_rd_chpw_rep(callback_ctx.context,

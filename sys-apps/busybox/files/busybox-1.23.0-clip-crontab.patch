@@ -1,0 +1,11 @@
+--- miscutils/crond.c.orig	2015-01-29 12:17:27.820070547 +0100
++++ miscutils/crond.c	2015-01-29 12:17:53.771374112 +0100
+@@ -72,7 +72,7 @@
+ 
+ 
+ #define CRON_DIR        CONFIG_FEATURE_CROND_DIR
+-#define CRONTABS        CONFIG_FEATURE_CROND_DIR "/crontabs"
++#define CRONTABS        "/etc/cron/crontab"
+ #ifndef SENDMAIL
+ # define SENDMAIL       "sendmail"
+ #endif

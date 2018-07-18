@@ -1,0 +1,150 @@
+--- ./main.c.orig	2014-01-29 15:42:12.000000000 +0100
++++ ./main.c	2014-01-29 16:20:20.000000000 +0100
+@@ -3,6 +3,39 @@
+ #include <signal.h>
+ #include <syslog.h>
+ 
++#ifdef UNPRIVILEGED
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <pwd.h>
++#include <syslog.h>
++
++#include "error.h"
++#include "kernel.h"
++
++#define DEVICE "/dev/random"
++#define PATH "/var/empty/timer_entropyd"
++
++static void drop_privs()
++{
++	struct passwd *pw = getpwnam("nobody");
++	if (!pw)
++		error_exit("user \"nobody\" unknown");
++	
++	openlog("timer_entropyd", LOG_PID|LOG_NDELAY, LOG_DAEMON);
++
++	if (chdir(PATH))
++		error_exit("failed to chdir to "PATH);
++	if (chroot(PATH))
++		error_exit("failed to chroot to "PATH);
++
++	if (setgid(pw->pw_gid) || setuid(pw->pw_uid))
++		error_exit("failed to drop privs");
++}
++
++#endif
++
+ double get_ts(void)
+ {
+         struct timeval ts;
+@@ -24,7 +57,7 @@ double gen_entropy_data(void)
+ 	 * not too small so that there's room for noise
+ 	 * not too large so that we don't sleep unnecessary
+ 	 */
+-	usleep(100);
++	usleep(500);
+ 
+ 	return get_ts() - start;
+ }
+@@ -33,19 +66,31 @@ int main(int argc, char *argv[])
+ {
+ 	unsigned char bytes[2500];
+ 	unsigned char byte;
+-	int bits = 0, index = 0;
++	unsigned int bits = 0, index = 0, count = 0;
+ 
+-	printf("timer_entropyd v" VERSION ", (C) 2009-2012 by folkert@vanheusden.com\n\n");
+ 
++#ifdef _DEBUG
++	printf("timer_entropyd v" VERSION ", (C) 2009-2012 by folkert@vanheusden.com\n\n");
++#else
+ 	if (daemon(-1, -1) == -1)
+ 		error_exit("failed to become daemon process");
++#endif
+ 
+ 	if (kernel_rng_open())
+ 		error_exit("failed to open RANDOM device");
+ 
++#ifdef UNPRIVILEGED
++	drop_privs();
++#endif
++
+ 	for(;;)
+ 	{
+-		kernel_rng_poll();
++		/* Force-feed 2 first runs whatever the current kernel entropy 
++		 * count, then only run if the entropy count is lover than the 
++		 * minimal threshold.
++		 */
++		if (count > 2)
++			kernel_rng_poll();
+ 
+ 		double t1 = gen_entropy_data(), t2 = gen_entropy_data();
+ 
+@@ -77,6 +122,7 @@ int main(int argc, char *argv[])
+ 				printf("added %d bits of entropy data\n", cur_n_bits);
+ #endif
+ 
++				++count;
+ 				index = 0;
+ 			}
+ 		}
+--- ./kernel.c.orig	2012-03-18 01:50:10.000000000 +0100
++++ ./kernel.c	2014-01-29 15:50:13.000000000 +0100
+@@ -15,7 +15,7 @@
+ 
+ #define DEV_RANDOM	"/dev/random"
+ 
+-int fd;
++static int fd;
+ 
+ int kernel_rng_open()
+ {
+@@ -39,6 +39,33 @@ void kernel_rng_poll()
+ 		error_exit("select() bang");
+ }
+ 
++#ifdef UNPRIVILEGED
++
++int kernel_rng_add_entropy(unsigned char *data, int n, int n_bits __attribute__((unused)))
++{
++	unsigned const char *ptr = data;
++	ssize_t wret;
++
++	for (;;) {
++		wret = write(fd, ptr, n);
++		if (wret == -1) {
++			if (errno == EINTR)
++				continue;
++			error_exit("Failed to write to %s", DEV_RANDOM);
++		}
++		if (!wret)
++			error_exit("Truncated write ?");
++		ptr += wret;
++		n -= wret;
++		if (!n)
++			break;
++	}
++
++	return 0;
++}
++
++#else
++
+ int kernel_rng_add_entropy(unsigned char *data, int n, int n_bits)
+ {
+         struct rand_pool_info *output;
+@@ -62,7 +89,10 @@ int kernel_rng_add_entropy(unsigned char
+ 	return errno;
+ }
+ 
++#endif
++
+ void kernel_rng_close()
+ {
+ 	close(fd);
+ }
++

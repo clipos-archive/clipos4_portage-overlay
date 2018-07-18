@@ -1,0 +1,24 @@
+--- miscsplashutils-0.1.8/fbtruetype/ttf.c
++++ miscsplashutils-0.1.8/fbtruetype/ttf.c
+@@ -13,8 +13,8 @@
+ #include <ft2build.h>
+ #include FT_FREETYPE_H
+ /* #include <freetype/freetype.h> */
+-#include <freetype/ftoutln.h>
+-#include <freetype/ttnameid.h>
++#include FT_OUTLINE_H
++#include FT_TRUETYPE_IDS_H
+ 
+ #include "ttf.h"
+ 
+--- miscsplashutils-0.1.8/fbtruetype/Makefile.orig	2014-05-21 19:40:47.746770600 +0200
++++ miscsplashutils-0.1.8/fbtruetype/Makefile	2014-05-21 19:41:51.018768376 +0200
+@@ -23,7 +23,7 @@ PROGRAMS = fbtruetype fbtruetype.static
+ OBJECTS  = fbtruetype.o messages.o console.o ttf.o luxisri.o
+ 
+ LDFLAGS  += -L$(LIBDIR)
+-LIBSS    = $(LIBDIR)/libfreetype.a $(LIBDIR)/libz.a $(LIBDIR)/libbz2.a -lm
++LIBSS    = $(LIBDIR)/libfreetype.a $(LIBDIR)/libpng.a $(LIBDIR)/libz.a $(LIBDIR)/libbz2.a  -lm
+ LIBSD    = -lfreetype -lm
+ 
+ CFLAGS   += -I/usr/include/freetype2

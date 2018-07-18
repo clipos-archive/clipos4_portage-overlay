@@ -1,0 +1,89 @@
+# CLIP ChangeLog for sys-apps/coreutils
+
+*coreutils-8.20-r2 (13 Feb 2013)
+
+  13 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +coreutils-8.20-r2.ebuild, -coreutils-8.20-r1.ebuild:
+  Re-add missing inherit verictl2.
+
+  19 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  -coreutils-8.5-r1.ebuild, -files/gnulib-futimens-rename.patch, 
+  -files/130_all_coreutils-gnulibs-regex-symbol-hiding.patch:
+  Remove old.
+
+*coreutils-8.20-r1 (19 Dec 2012)
+
+  19 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +coreutils-8.20-r1.ebuild, -coreutils-8.20.ebuild:
+  Include CLIP specific changes.
+
+*coreutils-8.5-r1 (27 Jul 2010)
+
+  27 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +coreutils-8.5-r1.ebuild, -coreutils-6.10-r3.ebuild:
+  Bump to latest.
+
+*coreutils-6.10-r3 (20 Aug 2009)
+
+  20 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +coreutils-6.10-r3.ebuild, -coreutils-6.10-r2.ebuild:
+  Bump coreutils so that the last MKNOD addition gets pushed
+  to the clients.
+
+  20 Aug 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  coreutils-6.10-r2.ebuild:
+  Added MKNOD capability to /bin/mknod (required for USB printer hotplug support)
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  coreutils-6.10-r2.ebuild:
+  Switch to verictl2.eclass.
+
+*coreutils-6.10-r2 (12 Jun 2008)
+
+  12 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +coreutils-6.10-r2.ebuild, -coreutils-6.9-r2.ebuild:
+  Bump to latest stable version. Note: re-introduces conflict
+  against mktemp.
+
+*coreutils-6.9-r2 (11 Jun 2008)
+
+  11 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +coreutils-6.9-r2.ebuild, -coreutils-6.9-r1.ebuild:
+  Switch to CCSD veriexec hashes.
+
+*coreutils-6.9-r1 (23 Jan 2008)
+
+  23 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +coreutils-6.9-r1.ebuild, -coreutils-6.7-r2.ebuild,
+  +files/gnulib-futimens-rename.patch:
+  Bump to 6.9, since 6.7 doesn't build with glibc-2.6. Changeset
+  remains the same.
+  
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 6.7-r2.
+
+*coreutils-6.7-r2 (09 Oct 2007)
+
+  09 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  coreutils-6.7-r2.ebuild:
+  Create a copy of /bin/date in the ADMINclip root, and give it a 
+  forced CAP_SYS_TIME (for everyone, but the file itself is made 
+  executable only by root and group admin), when USE clip-core 
+  is set.
+
+*coreutils-6.7-r1 (05 Apr 2007)
+
+  05 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  coreutils-6.7-r1.ebuild:
+  Bump from upstream.
+  
+  30 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  coreutils-5.94-r1.ebuild:
+  Add CAP_SYS_DATE for /bin/date.
+  
+*coreutils-5.94-r1 (12 Jan 2007)
+
+  12 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  coreutils-5.94-r1.ebuild:
+  Initial clip import, added verictl support, authorize CAP_SYS_CHROOT
+  for /bin/chroot.

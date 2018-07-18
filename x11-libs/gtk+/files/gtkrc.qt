@@ -1,0 +1,10 @@
+include "/usr/local/share/themes/QtCurve/gtk-2.0/gtkrc"
+
+style "user-font"
+{
+	font_name="Bitstream Vera Sans 10"
+}
+widget_class "*" style "user-font"
+
+gtk-theme-name="QtCurve"
+gtk-font-name="Bitstream Vera Sans 10"

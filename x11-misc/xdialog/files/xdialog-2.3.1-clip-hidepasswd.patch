@@ -1,0 +1,39 @@
+--- src/interface.c.orig	2007-10-31 16:46:28.000000000 +0100
++++ src/interface.c	2007-10-31 17:05:40.000000000 +0100
+@@ -1133,7 +1133,11 @@
+ {
+ 	GtkEntry *entry;
+ 	GtkWidget *button_ok = NULL;
++/* CLIP */
++#if 0
+ 	GtkWidget *hide_button;
++#endif
++/* /CLIP */
+ 	gchar deftext[MAX_INPUT_DEFAULT_LENGTH];
+ 
+ 	open_window();
+@@ -1194,6 +1198,8 @@
+ 	} else
+ 		Xdialog.widget3 = NULL;
+ 
++/* CLIP */
++#if 0
+ 	if ((Xdialog.passwd > 0 && Xdialog.passwd < 10) ||
+             (Xdialog.passwd > 10 && Xdialog.passwd <= entries + 10)) {
+ 		hide_button = gtk_check_button_new_with_label(HIDE_TYPING);
+@@ -1203,6 +1209,15 @@
+ 				   GTK_SIGNAL_FUNC(hide_passwords), NULL);
+ 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(hide_button), TRUE);
+ 	}
++#else
++	if ((Xdialog.passwd < 10 && Xdialog.passwd >= entries) || Xdialog.passwd == 11)
++		gtk_entry_set_visibility(GTK_ENTRY(Xdialog.widget1), 0);
++	if (entries > 1 && ((Xdialog.passwd < 10 && Xdialog.passwd >= entries-1) || Xdialog.passwd == 12))
++		gtk_entry_set_visibility(GTK_ENTRY(Xdialog.widget2), 0);
++	if (entries > 2 && ((Xdialog.passwd < 10 && Xdialog.passwd > 0) || Xdialog.passwd == 13))
++		gtk_entry_set_visibility(GTK_ENTRY(Xdialog.widget3), 0);	
++#endif
++/* /CLIP */
+ 
+ 	if (Xdialog.buttons) {
+ 		button_ok = set_all_buttons(FALSE, TRUE);

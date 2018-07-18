@@ -1,0 +1,465 @@
+--- ./src/main.c.orig	2012-10-08 15:56:37.000000000 +0200
++++ ./src/main.c	2012-10-08 15:57:09.000000000 +0200
+@@ -237,7 +237,7 @@ void highlight_gdk_color(const GdkColor
+ /* Profile format version */
+ #define PROFILE_VERSION 0
+ 
+-int profile_read_only, keyboard_only = FALSE;
++int profile_read_only, keyboard_only = FALSE, keyboard_default = FALSE;
+ 
+ static GIOChannel *channel;
+ static char profile_buf[4096], *profile_end = NULL, profile_swap,
+@@ -656,6 +656,8 @@ static GOptionEntry command_line_opts[]
+           "Reserve space when docking, see manpage", NULL },
+         { "keyboard-only", 0, 0, G_OPTION_ARG_NONE, &keyboard_only,
+           "Show on-screen keyboard only", NULL },
++        { "keyboard-default", 0, 0, G_OPTION_ARG_NONE, &keyboard_default,
++          "Show on-screen keyboard by default", NULL },
+         { "profile", 0, 0, G_OPTION_ARG_STRING, &force_profile,
+           "Full path to profile file to load", "profile" },
+         { "read-only", 0, 0, G_OPTION_ARG_NONE, &force_read_only,
+--- ./src/window.c.orig	2012-10-08 15:44:04.000000000 +0200
++++ ./src/window.c	2012-10-08 16:22:06.000000000 +0200
+@@ -53,7 +53,8 @@ int status_icon_create(void);
+ int status_icon_embedded(void);
+ 
+ /* main.c */
+-extern int keyboard_only;
++extern int keyboard_only, keyboard_default;
++extern int samples_loaded(void);
+ 
+ /* keywidget.c */
+ void key_widget_resize(KeyWidget *key_widget);
+@@ -97,13 +98,13 @@ static void toggle_button_labels(int on)
+ 
+         if (labels_off && on) {
+                 gtk_button_set_label(GTK_BUTTON(train_button), "Train");
+-                gtk_button_set_label(GTK_BUTTON(setup_button), "Setup");
++                //gtk_button_set_label(GTK_BUTTON(setup_button), "Setup");
+                 gtk_button_set_label(GTK_BUTTON(clear_button), "Clear");
+                 gtk_button_set_label(GTK_BUTTON(insert_button), "Insert");
+                 gtk_button_set_label(GTK_BUTTON(keys_button), "Keys");
+         } else if (!labels_off && !on) {
+                 gtk_button_set_label(GTK_BUTTON(train_button), "");
+-                gtk_button_set_label(GTK_BUTTON(setup_button), "");
++                //gtk_button_set_label(GTK_BUTTON(setup_button), "");
+                 gtk_button_set_label(GTK_BUTTON(keys_button), "");
+                 gtk_button_set_label(GTK_BUTTON(clear_button), "");
+                 gtk_button_set_label(GTK_BUTTON(insert_button), "");
+@@ -438,7 +439,7 @@ static GtkWidget *create_blocks_combo(vo
+         /* Wrap ComboBox in an EventBox for tooltips */
+         event_box = gtk_event_box_new();
+         gtk_tooltips_set_tip(tooltips, event_box,
+-                             "Select Unicode block to train", NULL);
++                             "Utiliser le bloc unicode pour l'apprentissage", NULL);
+         gtk_container_add(GTK_CONTAINER(event_box), blocks_combo);
+ 
+         return event_box;
+@@ -586,11 +587,11 @@ void window_create(void)
+         gtk_label_set_line_wrap(GTK_LABEL(train_label), TRUE);
+         gtk_label_set_justify(GTK_LABEL(train_label), GTK_JUSTIFY_FILL);
+         gtk_label_set_markup(GTK_LABEL(train_label),
+-                             "<b>Training Mode:</b> Carefully draw each "
+-                             "character in its cell. Multiple "
+-                             "samples will be stored for each character. "
+-                             "If you make a mistake, reset by "
+-                             "pressing on the cell with the pen eraser.");
++			     "<b>Mode apprentissage :<b> dessinez chaque "
++			     "lettre dans sa cellule. Des échantillons "
++			     "multiples sont enregistrés pour chaque lettre. "
++			     "En cas d'erreur, réinitialisez la cellule en "
++			     "cliquant dessus avec la gomme.");
+         gtk_widget_show(train_label);
+ 
+         /* Training info label colored box */
+@@ -621,7 +622,7 @@ void window_create(void)
+         bottom_box = gtk_hbox_new(FALSE, 0);
+ 
+         /* Train button */
+-        train_button = gtk_toggle_button_new_with_label("Train");
++        train_button = gtk_toggle_button_new_with_label("Apprentissage");
+         gtk_button_set_focus_on_click(GTK_BUTTON(train_button), FALSE);
+         gtk_button_set_image(GTK_BUTTON(train_button),
+                              gtk_image_new_from_stock(GTK_STOCK_MEDIA_RECORD,
+@@ -630,11 +631,12 @@ void window_create(void)
+         gtk_box_pack_start(GTK_BOX(bottom_box), train_button, FALSE, FALSE, 0);
+         g_signal_connect(G_OBJECT(train_button), "toggled",
+                          G_CALLBACK(train_button_toggled), 0);
+-        gtk_tooltips_set_tip(tooltips, train_button, "Toggle training mode",
++        gtk_tooltips_set_tip(tooltips, train_button, "Mode apprentissage",
+                              NULL);
+ 
++#if 0
+         /* Setup button */
+-        setup_button = gtk_button_new_with_label("Setup");
++        setup_button = gtk_button_new_with_label("Configuration");
+         gtk_button_set_focus_on_click(GTK_BUTTON(setup_button), FALSE);
+         gtk_button_set_image(GTK_BUTTON(setup_button),
+                              gtk_image_new_from_stock(GTK_STOCK_PREFERENCES,
+@@ -643,8 +645,9 @@ void window_create(void)
+         gtk_box_pack_start(GTK_BOX(bottom_box), setup_button, FALSE, FALSE, 0);
+         g_signal_connect(G_OBJECT(setup_button), "clicked",
+                          G_CALLBACK(options_dialog_open), 0);
+-        gtk_tooltips_set_tip(tooltips, setup_button, "Edit program options",
++        gtk_tooltips_set_tip(tooltips, setup_button, "Configurer les options",
+                              NULL);
++#endif
+ 
+         /* Expanding box to keep things tidy */
+         widget = gtk_vbox_new(FALSE, 0);
+@@ -656,7 +659,7 @@ void window_create(void)
+         gtk_widget_set_no_show_all(blocks_combo, TRUE);
+ 
+         /* Clear button */
+-        clear_button = gtk_button_new_with_label("Clear");
++        clear_button = gtk_button_new_with_label("Effacer");
+         gtk_button_set_focus_on_click(GTK_BUTTON(clear_button), FALSE);
+         image = gtk_image_new_from_stock(GTK_STOCK_CLEAR, GTK_ICON_SIZE_BUTTON);
+         gtk_button_set_image(GTK_BUTTON(clear_button), image);
+@@ -664,11 +667,11 @@ void window_create(void)
+         gtk_box_pack_start(GTK_BOX(bottom_box), clear_button, FALSE, FALSE, 0);
+         g_signal_connect(G_OBJECT(clear_button), "clicked",
+                          G_CALLBACK(cell_widget_clear), 0);
+-        gtk_tooltips_set_tip(tooltips, clear_button, "Clear current input",
++        gtk_tooltips_set_tip(tooltips, clear_button, "Effacer la saisie courante",
+                              NULL);
+ 
+         /* Keys button */
+-        keys_button = gtk_toggle_button_new_with_label("Keys");
++        keys_button = gtk_toggle_button_new_with_label("Clavier");
+         gtk_button_set_focus_on_click(GTK_BUTTON(keys_button), FALSE);
+         image = gtk_image_new_from_icon_name("keyboard", GTK_ICON_SIZE_BUTTON);
+         gtk_button_set_image(GTK_BUTTON(keys_button), image);
+@@ -677,11 +680,11 @@ void window_create(void)
+         g_signal_connect(G_OBJECT(keys_button), "toggled",
+                          G_CALLBACK(keys_button_toggled), 0);
+         gtk_tooltips_set_tip(tooltips, keys_button,
+-                             "Switch between on-screen keyboard and "
+-                             "handwriting input", NULL);
++			     "Activer le clavier ou la saisie à main levée", 
++			     NULL);
+ 
+         /* Insert button */
+-        insert_button = gtk_button_new_with_label("Enter");
++        insert_button = gtk_button_new_with_label("Entrée");
+         gtk_button_set_focus_on_click(GTK_BUTTON(insert_button), FALSE);
+         gtk_button_set_image(GTK_BUTTON(insert_button),
+                              gtk_image_new_from_stock(GTK_STOCK_OK,
+@@ -691,7 +694,7 @@ void window_create(void)
+         g_signal_connect(G_OBJECT(insert_button), "clicked",
+                          G_CALLBACK(insert_button_clicked), 0);
+         gtk_tooltips_set_tip(tooltips, insert_button,
+-                             "Insert input or press Enter key", NULL);
++                             "Insérer la saisie ou 'Entrée'", NULL);
+ 
+         /* Back buffer button */
+         buffer_button = gtk_toggle_button_new();
+@@ -702,7 +705,7 @@ void window_create(void)
+         g_signal_connect(G_OBJECT(buffer_button), "pressed",
+                          G_CALLBACK(buffer_button_pressed), NULL);
+         gtk_tooltips_set_tip(tooltips, buffer_button,
+-                             "Recall previously entered input", NULL);
++                             "Rétablir la saisie précédente", NULL);
+         gtk_widget_set_sensitive(buffer_button, FALSE);
+ 
+         /* Pack the regular bottom box */
+@@ -721,7 +724,7 @@ void window_create(void)
+                 /* Embedding in a screensaver won't let us popup new windows */
+                 gtk_widget_hide(buffer_button);
+                 gtk_widget_hide(train_button);
+-                gtk_widget_hide(setup_button);
++                //gtk_widget_hide(setup_button);
+ 
+                 /* If we are embedded we need to print the plug's window XID */
+                 g_signal_connect_after(G_OBJECT(window), "realize",
+@@ -779,6 +782,10 @@ void window_create(void)
+                 window_shown = TRUE;
+         if (window_shown || !status_icon_embedded())
+                 gtk_widget_show(window);
++
++	if (keyboard_default && samples_loaded()) 
++		gtk_toggle_button_set_active(
++			(GtkToggleButton *)keys_button, TRUE);
+ }
+ 
+ void window_sync(void)
+@@ -990,6 +997,7 @@ void unicode_block_toggle(int block, int
+         Start-up message dialog
+ */
+ 
++#if 0
+ #define WELCOME_MSG "You are either starting " PACKAGE_NAME " for the first " \
+                     "time or have not yet created any training samples.\n\n" \
+                     PACKAGE_NAME " requires accurate training samples of " \
+@@ -997,6 +1005,14 @@ void unicode_block_toggle(int block, int
+                     PACKAGE_NAME " will now enter training mode. " \
+                     "Carefully draw each character in its cell and then " \
+                     "press the 'Train' button."
++#else
++#define WELCOME_MSG "Vous exécutez " PACKAGE_NAME " pour la première fois " \
++		    "ou n'avez pas encore exécuté la phase d'apprentissage.\n\n" \
++		    PACKAGE_NAME " a besoin d'un apprentissage de votre " \
++		    "écriture pour la reconnaitre correctement.\n\n" \
++		    "Dessinez avec attention chaque lettre dans sa cellule " \
++		    "puis cliquez sur le bouton 'Apprentissage'."
++#endif
+ 
+ void startup_splash_show(void)
+ {
+--- ./src/keywidget.c.orig	2012-10-08 14:35:56.000000000 +0200
++++ ./src/keywidget.c	2012-10-08 16:04:26.000000000 +0200
+@@ -664,14 +664,15 @@ KeyWidget *key_widget_new_small(GtkWidge
+         key = add_key(key_widget, XK_BackSpace, "BkSp", 1, 0, 2, 1);
+         set_flags(key, KEY_ARROW, 180);
+         add_key(key_widget, XK_Tab, "Tab", 0, 0, 1, 1);
+-        add_key(key_widget, XK_Delete, "Del", 3, 0, 1, 1);
++        add_key(key_widget, XK_Delete, "Sup", 3, 0, 1, 1);
+ 
+         /* 2nd row */
+         add_key(key_widget, XK_Home, "Hme", 0, 1, 1, 1);
+         key = add_key(key_widget, XK_Up, "", 1, 1, 1, 1);
+         set_flags(key, KEY_ARROW, 90);
+-        add_key(key_widget, XK_End, "End", 2, 1, 1, 1);
+-        add_key(key_widget, XK_Page_Up, "PUp", 3, 1, 1, 1);
++        add_key(key_widget, XK_End, "Fin", 2, 1, 1, 1);
++        key = add_key(key_widget, XK_Page_Up, "", 3, 1, 1, 1);
++        set_flags(key, KEY_ARROW, 90);
+ 
+         /* 3rd row */
+         key = add_key(key_widget, XK_Left, "", 0, 2, 1, 1);
+@@ -680,7 +681,8 @@ KeyWidget *key_widget_new_small(GtkWidge
+         set_flags(key, KEY_ARROW, 270);
+         key = add_key(key_widget, XK_Right, "", 2, 2, 1, 1);
+         set_flags(key, KEY_ARROW, 0);
+-        add_key(key_widget, XK_Page_Down, "PDn", 3, 2, 1, 1);
++        key = add_key(key_widget, XK_Page_Down, "", 3, 2, 1, 1);
++        set_flags(key, KEY_ARROW, 270);
+ 
+         /* Add some event hooks */
+         g_signal_connect(G_OBJECT(drawing_area), "style-set",
+@@ -723,35 +725,35 @@ KeyWidget *key_widget_new_full(void)
+         add_key(key_widget, XK_F11, "F11", 26, 0, 2, 2);
+         add_key(key_widget, XK_F12, "F12", 28, 0, 2, 2);
+ 
+-        add_key(key_widget, XK_Print, "PSc", 31, 0, 2, 2);
+-        add_key(key_widget, XK_Scroll_Lock, "SLk", 33, 0, 2, 2);
+-        add_key(key_widget, XK_Pause, "Brk", 35, 0, 2, 2);
++        add_key(key_widget, XK_Print, "Imp", 31, 0, 2, 2);
++        add_key(key_widget, XK_Scroll_Lock, "Arr", 33, 0, 2, 2);
++        add_key(key_widget, XK_Pause, "Pse", 35, 0, 2, 2);
+ 
+         /* 2nd row */
+-        key = add_key(key_widget, XK_grave, "`", 0, 3, 2, 2);
++        key = add_key(key_widget, XK_twosuperior, "2", 0, 3, 2, 2);
+         set_shifted(key, XK_asciitilde, "~");
+-        key = add_key(key_widget, XK_1, "1", 2, 3, 2, 2);
+-        set_shifted(key, XK_exclam, "!");
+-        key = add_key(key_widget, XK_2, "2", 4, 3, 2, 2);
+-        set_shifted(key, XK_at, "@");
+-        key = add_key(key_widget, XK_3, "3", 6, 3, 2, 2);
+-        set_shifted(key, XK_numbersign, "#");
+-        key = add_key(key_widget, XK_4, "4", 8, 3, 2, 2);
+-        set_shifted(key, XK_dollar, "$");
+-        key = add_key(key_widget, XK_5, "5", 10, 3, 2, 2);
+-        set_shifted(key, XK_percent, "%");
+-        key = add_key(key_widget, XK_6, "6", 12, 3, 2, 2);
+-        set_shifted(key, XK_asciicircum, "^");
+-        key = add_key(key_widget, XK_7, "7", 14, 3, 2, 2);
+-        set_shifted(key, XK_ampersand, "&");
+-        key = add_key(key_widget, XK_8, "8", 16, 3, 2, 2);
+-        set_shifted(key, XK_asterisk, "*");
+-        key = add_key(key_widget, XK_9, "9", 18, 3, 2, 2);
+-        set_shifted(key, XK_parenleft, "(");
+-        key = add_key(key_widget, XK_0, "0", 20, 3, 2, 2);
+-        set_shifted(key, XK_parenright, ")");
+-        key = add_key(key_widget, XK_minus, "-", 22, 3, 2, 2);
+-        set_shifted(key, XK_underscore, "_");
++        key = add_key(key_widget, XK_ampersand, "&", 2, 3, 2, 2);
++        set_shifted(key, XK_1, "1");
++        key = add_key(key_widget, XK_eacute, "é", 4, 3, 2, 2);
++        set_shifted(key, XK_2, "2");
++        key = add_key(key_widget, XK_quotedbl, "\"", 6, 3, 2, 2);
++        set_shifted(key, XK_3, "3");
++        key = add_key(key_widget, XK_apostrophe, "'", 8, 3, 2, 2);
++        set_shifted(key, XK_4, "4");
++        key = add_key(key_widget, XK_parenleft, "(", 10, 3, 2, 2);
++        set_shifted(key, XK_5, "5");
++        key = add_key(key_widget, XK_minus, "-", 12, 3, 2, 2);
++        set_shifted(key, XK_6, "6");
++        key = add_key(key_widget, XK_egrave, "è", 14, 3, 2, 2);
++        set_shifted(key, XK_7, "7");
++        key = add_key(key_widget, XK_underscore, "_", 16, 3, 2, 2);
++        set_shifted(key, XK_8, "8");
++        key = add_key(key_widget, XK_ccedilla, "ç", 18, 3, 2, 2);
++        set_shifted(key, XK_9, "9");
++        key = add_key(key_widget, XK_agrave, "à", 20, 3, 2, 2);
++        set_shifted(key, XK_0, "0");
++        key = add_key(key_widget, XK_parenright, ")", 22, 3, 2, 2);
++        set_shifted(key, XK_degree, "°");
+         key = add_key(key_widget, XK_equal, "=", 24, 3, 2, 2);
+         set_shifted(key, XK_plus, "+");
+         key = add_key(key_widget, XK_BackSpace, "BkSp", 26, 3, 4, 2);
+@@ -759,9 +761,10 @@ KeyWidget *key_widget_new_full(void)
+ 
+         add_key(key_widget, XK_Insert, "Ins", 31, 3, 2, 2);
+         add_key(key_widget, XK_Home, "Hm", 33, 3, 2, 2);
+-        add_key(key_widget, XK_Page_Up, "PU", 35, 3, 2, 2);
++        key = add_key(key_widget, XK_Page_Up, "", 35, 3, 2, 2);
++        set_flags(key, KEY_ARROW, 90);
+ 
+-        key = add_key(key_widget, XK_Num_Lock, "NL", 38, 3, 2, 2);
++        key = add_key(key_widget, XK_Num_Lock, "VN", 38, 3, 2, 2);
+         set_flags(key, KEY_NUM_LOCK, 0);
+         add_key(key_widget, XK_KP_Divide, "/", 40, 3, 2, 2);
+         add_key(key_widget, XK_KP_Multiply, "*", 42, 3, 2, 2);
+@@ -769,10 +772,10 @@ KeyWidget *key_widget_new_full(void)
+ 
+         /* 3rd row */
+         add_key(key_widget, XK_Tab, "Tab", 0, 5, 3, 2);
+-        key = add_key(key_widget, XK_q, "q", 3, 5, 2, 2);
+-        set_shifted(key, XK_Q, "Q");
+-        key = add_key(key_widget, XK_w, "w", 5, 5, 2, 2);
+-        set_shifted(key, XK_W, "W");
++        key = add_key(key_widget, XK_a, "a", 3, 5, 2, 2);
++        set_shifted(key, XK_A, "A");
++        key = add_key(key_widget, XK_z, "z", 5, 5, 2, 2);
++        set_shifted(key, XK_Z, "Z");
+         key = add_key(key_widget, XK_e, "e", 7, 5, 2, 2);
+         set_shifted(key, XK_E, "E");
+         key = add_key(key_widget, XK_r, "r", 9, 5, 2, 2);
+@@ -789,16 +792,17 @@ KeyWidget *key_widget_new_full(void)
+         set_shifted(key, XK_O, "O");
+         key = add_key(key_widget, XK_p, "p", 21, 5, 2, 2);
+         set_shifted(key, XK_P, "P");
+-        key = add_key(key_widget, XK_bracketleft, "[", 23, 5, 2, 2);
+-        set_shifted(key, XK_braceleft, "{");
+-        key = add_key(key_widget, XK_bracketright, "]", 25, 5, 2, 2);
+-        set_shifted(key, XK_braceright, "}");
+-        key = add_key(key_widget, XK_backslash, "\\", 27, 5, 3, 2);
+-        set_shifted(key, XK_bar, "|");
+-
+-        add_key(key_widget, XK_Delete, "Del", 31, 5, 2, 2);
+-        add_key(key_widget, XK_End, "End", 33, 5, 2, 2);
+-        add_key(key_widget, XK_Page_Down, "PD", 35, 5, 2, 2);
++        key = add_key(key_widget, XK_dead_circumflex, "^", 23, 5, 2, 2);
++        set_shifted(key, XK_dead_diaeresis, "¨");
++        key = add_key(key_widget, XK_dollar, "$", 25, 5, 2, 2);
++        set_shifted(key, XK_sterling, "£");
++        key = add_key(key_widget, XK_asterisk, "*", 27, 5, 3, 2);
++        set_shifted(key, XK_mu, "µ"); 
++
++        add_key(key_widget, XK_Delete, "Sup", 31, 5, 2, 2);
++        add_key(key_widget, XK_End, "Fin", 33, 5, 2, 2);
++        key = add_key(key_widget, XK_Page_Down, "", 35, 5, 2, 2);
++        set_flags(key, KEY_ARROW, 270);
+ 
+         key = add_key(key_widget, XK_KP_7, "7", 38, 5, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE, 0);
+@@ -808,14 +812,14 @@ KeyWidget *key_widget_new_full(void)
+         set_shifted(key, XK_KP_Up, "");
+         key = add_key(key_widget, XK_KP_9, "9", 42, 5, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE, 0);
+-        set_shifted(key, XK_KP_Page_Up, "PU");
++        set_shifted(key, XK_KP_Page_Up, "");
+         add_key(key_widget, XK_KP_Add, "+", 44, 5, 2, 4);
+ 
+         /* 4th row */
+         key = add_key(key_widget, XK_Caps_Lock, "CpLk", 0, 7, 4, 2);
+         set_flags(key, KEY_CAPS_LOCK, 0);
+-        key = add_key(key_widget, XK_a, "a", 4, 7, 2, 2);
+-        set_shifted(key, XK_A, "A");
++        key = add_key(key_widget, XK_q, "q", 4, 7, 2, 2);
++        set_shifted(key, XK_Q, "Q");
+         key = add_key(key_widget, XK_s, "s", 6, 7, 2, 2);
+         set_shifted(key, XK_S, "S");
+         key = add_key(key_widget, XK_d, "d", 8, 7, 2, 2);
+@@ -832,11 +836,11 @@ KeyWidget *key_widget_new_full(void)
+         set_shifted(key, XK_K, "K");
+         key = add_key(key_widget, XK_l, "l", 20, 7, 2, 2);
+         set_shifted(key, XK_L, "L");
+-        key = add_key(key_widget, XK_semicolon, ";", 22, 7, 2, 2);
+-        set_shifted(key, XK_colon, ":");
+-        key = add_key(key_widget, XK_apostrophe, "'", 24, 7, 2, 2);
+-        set_shifted(key, XK_quotedbl, "\"");
+-        add_key(key_widget, XK_Return, "Enter", 26, 7, 4, 2);
++        key = add_key(key_widget, XK_m, "m", 22, 7, 2, 2);
++        set_shifted(key, XK_M, "M");
++        key = add_key(key_widget, XK_ugrave, "ù", 24, 7, 2, 2);
++        set_shifted(key, XK_percent, "%");
++        add_key(key_widget, XK_Return, "Entrée", 26, 7, 4, 2);
+ 
+         key = add_key(key_widget, XK_KP_4, "4", 38, 7, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE | KEY_ICON_SHIFT | KEY_ARROW, 180);
+@@ -849,29 +853,31 @@ KeyWidget *key_widget_new_full(void)
+         set_shifted(key, XK_KP_Right, "");
+ 
+         /* 5th row */
+-        key = add_key(key_widget, XK_Shift_L, "Shift", 0, 9, 5, 2);
++        key = add_key(key_widget, XK_Shift_L, "Shift", 0, 9, 4, 2);
+         set_flags(key, KEY_STICKY|KEY_SHIFT, 0);
+-        key = add_key(key_widget, XK_z, "z", 5, 9, 2, 2);
+-        set_shifted(key, XK_Z, "Z");
+-        key = add_key(key_widget, XK_x, "x", 7, 9, 2, 2);
++        key = add_key(key_widget, XK_less, "<", 4, 9, 2, 2);
++        set_shifted(key, XK_greater, ">");
++        key = add_key(key_widget, XK_w, "w", 6, 9, 2, 2);
++        set_shifted(key, XK_W, "W");
++        key = add_key(key_widget, XK_x, "x", 8, 9, 2, 2);
+         set_shifted(key, XK_X, "X");
+-        key = add_key(key_widget, XK_c, "c", 9, 9, 2, 2);
++        key = add_key(key_widget, XK_c, "c", 10, 9, 2, 2);
+         set_shifted(key, XK_C, "C");
+-        key = add_key(key_widget, XK_v, "v", 11, 9, 2, 2);
++        key = add_key(key_widget, XK_v, "v", 12, 9, 2, 2);
+         set_shifted(key, XK_V, "V");
+-        key = add_key(key_widget, XK_b, "b", 13, 9, 2, 2);
++        key = add_key(key_widget, XK_b, "b", 14, 9, 2, 2);
+         set_shifted(key, XK_B, "B");
+-        key = add_key(key_widget, XK_n, "n", 15, 9, 2, 2);
++        key = add_key(key_widget, XK_n, "n", 16, 9, 2, 2);
+         set_shifted(key, XK_N, "N");
+-        key = add_key(key_widget, XK_m, "m", 17, 9, 2, 2);
+-        set_shifted(key, XK_M, "M");
+-        key = add_key(key_widget, XK_comma, ",", 19, 9, 2, 2);
+-        set_shifted(key, XK_less, "<");
+-        key = add_key(key_widget, XK_period, ".", 21, 9, 2, 2);
+-        set_shifted(key, XK_greater, ">");
+-        key = add_key(key_widget, XK_slash, "/", 23, 9, 2, 2);
++        key = add_key(key_widget, XK_comma, ",", 18, 9, 2, 2);
+         set_shifted(key, XK_question, "?");
+-        key = add_key(key_widget, XK_Shift_R, "Shift", 25, 9, 5, 2);
++        key = add_key(key_widget, XK_semicolon, ";", 20, 9, 2, 2);
++        set_shifted(key, XK_period, ".");
++        key = add_key(key_widget, XK_colon, ":", 22, 9, 2, 2);
++        set_shifted(key, XK_slash, "/");
++        key = add_key(key_widget, XK_exclam, "!", 24, 9, 2, 2);
++        set_shifted(key, XK_section, "§"); 
++        key = add_key(key_widget, XK_Shift_R, "Shift", 26, 9, 4, 2);
+         set_flags(key, KEY_STICKY|KEY_SHIFT, 0);
+ 
+         key = add_key(key_widget, XK_Up, "", 33, 9, 2, 2);
+@@ -879,13 +885,13 @@ KeyWidget *key_widget_new_full(void)
+ 
+         key = add_key(key_widget, XK_KP_1, "1", 38, 9, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE, 0);
+-        set_shifted(key, XK_KP_End, "End");
++        set_shifted(key, XK_KP_End, "Fin");
+         key = add_key(key_widget, XK_KP_2, "2", 40, 9, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE | KEY_ICON_SHIFT | KEY_ARROW, 270);
+         set_shifted(key, XK_KP_Down, "");
+         key = add_key(key_widget, XK_KP_3, "3", 42, 9, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE, 0);
+-        set_shifted(key, XK_KP_Page_Down, "PD");
++        set_shifted(key, XK_KP_Page_Down, "B");
+         add_key(key_widget, XK_KP_Enter, "Ent", 44, 9, 2, 4);
+ 
+         /* 6th row */
+@@ -914,7 +920,7 @@ KeyWidget *key_widget_new_full(void)
+         set_shifted(key, XK_KP_Insert, "Ins");
+         key = add_key(key_widget, XK_KP_Decimal, ".", 42, 11, 2, 2);
+         set_flags(key, KEY_NUM_LOCKABLE, 0);
+-        set_shifted(key, XK_KP_Delete, "Del");
++        set_shifted(key, XK_KP_Delete, "Sup");
+ 
+         /* Setup drawing area events */
+         g_signal_connect(G_OBJECT(drawing_area), "expose_event",

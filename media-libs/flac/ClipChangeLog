@@ -1,0 +1,31 @@
+# CLIP ChangeLog for media-libs/flag
+
+*flac-1.3.0 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +flac-1.3.0.ebuild, -flac-1.2.1-r5.ebuild,
+  -files/flac-1.2.1-asm.patch,
+  -files/flac-1.2.1-asneeded.patch,
+  -files/flac-1.2.1-cflags.patch,
+  -files/flac-1.2.1-dontbuild-examples.patch,
+  -files/flac-1.2.1-dontbuild-tests.patch,
+  -files/flac-1.2.1-gcc-4.3-includes.patch,
+  -files/flac-1.2.1-ogg-m4.patch,
+  +files/flac-1.3.0-asneeded.patch,
+  +files/flac-1.3.0-dontbuild-examples.patch,
+  +files/flac-1.3.0-dontbuild-tests.patch:
+  Bump to latest.
+
+*flac-1.2.1-r5 (06 Feb 2014)
+
+  06 Feb 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  -flac-1.2.1-r1.ebuild, +flac-1.2.1-r5.ebuild,
+  +files/flac-1.2.1-dontbuild-examples.patch,
+  +files/flac-1.2.1-dontbuild-tests.patch, +files/flac-1.2.1-ogg-m4.patch:
+  Update to lastest 1.2.1 revision for multilib support, stabilize.
+
+*flac-1.2.1-r1 (18 May 2009)
+
+  18 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  flac-1.2.1-r1.ebuild:
+  Initial import. CPREFIX fixes + add gcc-4.3 patch from -r2.

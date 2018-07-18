@@ -1,0 +1,57 @@
+# CLIP ChangeLog for app-shells/bash
+
+*bash-4.2_p48 (24 Sep 2014)
+
+  26 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +bash-4.2_p48-r1.ebuild, files/bash-4.2-execute-job-control.patch,
+  +files/bash-4.2-no-readline.patch,
+  +files/bash-4.2-parallel-build.patch,
+  +files/bash-4.2-read-retry.patch,
+  +files/bash-4.2-speed-up-read-N.patch,
+  +files/bash-eol-pushback.patch,
+  -bash-4.1_p9-r3.ebuild,
+  -files/bash-4.1-CVE-2012-3410.patch,
+  -files/bash-4.1-fbsd-eaccess.patch,
+  -files/bash-4.1-parallel-build.patch:
+  Security bump to latest stable.
+
+*bash-4.1_p9-r3 (22 Sep 2014)
+
+  22 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +bash-4.1_p9-r3.ebuild, -bash-4.1_p9-r2.ebuild,
+  +files/funcdef-import-4.1.patch:
+  Add patch for CVE-2014-6271.
+
+*bash-4.1_p9-r2 (27 Jul 2012)
+
+  27 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bash-4.1_p9-r2.ebuild, -bash-4.1_p9-r1.ebuild,
+  +files/bash-4.1-CVE-2012-3410.patch:
+  Add patch for CVE-2012-3410.
+
+*bash-4.1_p9-r1 (22 Mar 2012)
+
+  22 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bash-4.1_p9-r1.ebuild, -bash-4.1_p9.ebuild:
+  Force rebuild.
+
+*bash-4.1_p9 (19 Jul 2011)
+
+  19 Jul 2011; ANSSI <clipos@ssi.gouv.fr>
+  +bash-4.1_p9.ebuild, -bash-3.2_p17-r1.build:
+  New major version of bash. Update O_MAYEXEC patch for bash4.
+
+*bash-3.2_p17-r1 (07 Mar 2008)
+
+  07 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +bash-3.2_p17-r1.ebuild, -bash-3.2_p17.ebuild,
+  +files/bash-3.2-open_mayexec.patch:
+  New patch to make bash use O_MAYEXEC when opening or sourcing
+  a command file, to check exec permission on the underlying mount.
+
+*bash-3.2_p17 (06 Dec 2007)
+
+  06 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  bash-3.2_p17:
+  Initial overlay import. Add IUSE clip to recreate a missing 
+  sh -> bash symlink.

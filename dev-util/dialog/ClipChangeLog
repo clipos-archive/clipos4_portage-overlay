@@ -1,0 +1,7 @@
+# CLIP ChangeLog for dev-util/dialog
+
+*dialog-1.1.20080819 (09 Mar 2009)
+
+  09 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  dialog-1.1.20080819.ebuild:
+  Initial import. Dependency fixes.

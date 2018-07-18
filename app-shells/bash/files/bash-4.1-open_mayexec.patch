@@ -1,0 +1,135 @@
+diff -ru bash-4.1.orig/builtins/evalfile.c bash-4.1/builtins/evalfile.c
+--- bash-4.1.orig/builtins/evalfile.c	2011-07-19 08:55:13.532001550 +0000
++++ bash-4.1/builtins/evalfile.c	2011-07-19 08:56:10.980001572 +0000
+@@ -55,6 +55,21 @@
+ extern int errno;
+ #endif
+ 
++#ifdef OPEN_MAYEXEC
++#include <syslog.h>
++#ifndef O_MAYEXEC
++#define O_MAYEXEC	00000040
++#endif
++static inline void
++handle_execperms_error(const char *fname)
++{
++	if (errno != EPERM && errno != EACCES)
++		return;
++	syslog(LOG_USER|LOG_ERR, "[%d] denied sourcing non-executable %s\n",
++		getpid(), fname);
++}	
++#endif
++
+ /* Flags for _evalfile() */
+ #define FEVAL_ENOENTOK		0x001
+ #define FEVAL_BUILTIN		0x002
+@@ -109,7 +124,13 @@
+ #  endif
+ #endif
+   
++#ifdef OPEN_MAYEXEC
++  fd = open (filename, O_RDONLY|O_MAYEXEC);
++  if (fd < 0)
++	  handle_execperms_error(filename);
++#else
+   fd = open (filename, O_RDONLY);
++#endif
+ 
+   if (fd < 0 || (fstat (fd, &finfo) == -1))
+     {
+diff -ru bash-4.1.orig/config.h.in bash-4.1/config.h.in
+--- bash-4.1.orig/config.h.in	2011-07-19 08:55:13.508001550 +0000
++++ bash-4.1/config.h.in	2011-07-19 08:56:10.980001572 +0000
+@@ -1103,6 +1103,9 @@
+ /* Define if you have the `__argz_stringify' function. */
+ #undef HAVE___ARGZ_STRINGIFY
+ 
++/* Define to support O_MAYEXEC */
++#undef OPEN_MAYEXEC
++
+ /* End additions for lib/intl */
+ 
+ #include "config-bot.h"
+diff -ru bash-4.1.orig/configure.in bash-4.1/configure.in
+--- bash-4.1.orig/configure.in	2011-07-19 08:55:13.508001550 +0000
++++ bash-4.1/configure.in	2011-07-19 08:56:10.980001572 +0000
+@@ -57,6 +57,7 @@
+ opt_afs=no
+ opt_curses=no
+ opt_with_installed_readline=no
++opt_mayexec=no
+ 
+ #htmldir=
+ 
+@@ -110,6 +111,7 @@
+ AC_ARG_WITH(installed-readline, AC_HELP_STRING([--with-installed-readline], [use a version of the readline library that is already installed]), opt_with_installed_readline=$withval)
+ AC_ARG_WITH(purecov, AC_HELP_STRING([--with-purecov], [configure to postprocess with pure coverage]), opt_purecov=$withval)
+ AC_ARG_WITH(purify, AC_HELP_STRING([--with-purify], [configure to postprocess with purify]), opt_purify=$withval)
++AC_ARG_WITH(mayexec, AC_HELP_STRING([--with-mayexec], [configure to use O_MAYEXEC flag when opening command files]), opt_mayexec=$withval)
+ 
+ if test "$opt_bash_malloc" = yes; then
+ 	MALLOC_TARGET=malloc
+@@ -147,6 +149,10 @@
+ 	prefer_curses=yes
+ fi
+ 
++if test "$opt_mayexec" = yes; then
++	AC_DEFINE(OPEN_MAYEXEC)
++fi
++
+ if test -z "${DEBUGGER_START_FILE}"; then
+ 	DEBUGGER_START_FILE='${datadir}/bashdb/bashdb-main.inc'
+ fi
+diff -ru bash-4.1.orig/shell.c bash-4.1/shell.c
+--- bash-4.1.orig/shell.c	2011-07-19 08:55:13.508001550 +0000
++++ bash-4.1/shell.c	2011-07-19 08:56:11.000001572 +0000
+@@ -95,6 +95,21 @@
+ extern char **environ;	/* used if no third argument to main() */
+ #endif
+ 
++#ifdef OPEN_MAYEXEC
++#include <syslog.h>
++#ifndef O_MAYEXEC
++#define O_MAYEXEC	00000040
++#endif
++static inline void
++handle_execperms_error(const char *fname)
++{
++	if (errno != EPERM && errno != EACCES)
++		return;
++	syslog(LOG_USER|LOG_ERR, "[%d] denied opening non-executable %s\n",
++		getpid(), fname);
++}	
++#endif
++
+ extern char *dist_version, *release_status;
+ extern int patch_level, build_version;
+ extern int shell_level;
+@@ -1390,7 +1405,13 @@
+ 
+   filename = savestring (script_name);
+ 
++#ifdef OPEN_MAYEXEC
++  fd = open (filename, O_RDONLY|O_MAYEXEC);
++  if (fd < 0)
++	  handle_execperms_error(filename);
++#else
+   fd = open (filename, O_RDONLY);
++#endif
+   if ((fd < 0) && (errno == ENOENT) && (absolute_program (filename) == 0))
+     {
+       e = errno;
+@@ -1401,7 +1422,13 @@
+ 	{
+ 	  free (filename);
+ 	  filename = path_filename;
++#ifdef OPEN_MAYEXEC
++	  fd = open (filename, O_RDONLY|O_MAYEXEC);
++	  if (fd < 0)
++		  handle_execperms_error(filename);
++#else
+ 	  fd = open (filename, O_RDONLY);
++#endif
+ 	}
+       else
+ 	errno = e;

@@ -1,0 +1,29 @@
+Index: shadow-4.1.5.1/lib/defines.h
+===================================================================
+--- shadow-4.1.5.1.orig/lib/defines.h
++++ shadow-4.1.5.1/lib/defines.h
+@@ -299,20 +299,20 @@ char *strchr (), *strrchr (), *strtok ()
+ 	(strncpy((A), (B), sizeof(A) - 1), (A)[sizeof(A) - 1] = '\0')
+ 
+ #ifndef PASSWD_FILE
+-#define PASSWD_FILE "/etc/passwd"
++#define PASSWD_FILE "/etc/core/passwd"
+ #endif
+ 
+ #ifndef GROUP_FILE
+-#define GROUP_FILE "/etc/group"
++#define GROUP_FILE "/etc/core/group"
+ #endif
+ 
+ #ifndef SHADOW_FILE
+-#define SHADOW_FILE "/etc/shadow"
++#define SHADOW_FILE "/etc/core/shadow"
+ #endif
+ 
+ #ifdef SHADOWGRP
+ #ifndef SGROUP_FILE
+-#define SGROUP_FILE "/etc/gshadow"
++#define SGROUP_FILE "/etc/core/gshadow"
+ #endif
+ #endif
+ 

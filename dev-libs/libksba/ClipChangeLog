@@ -1,0 +1,24 @@
+# CLIP ChangeLog for dev-libs/libksba
+
+  04 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  -libksba-1.0.3.ebuild:
+  Remove old.
+
+*libksba-1.2.0 (03 Mar 2009)
+
+  30 Oct 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +libksba-1.2.0.ebuild:
+  Bump to latest.
+
+*libksba-1.0.3 (03 Mar 2009)
+
+  03 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libksba-1.0.3.ebuild, -libksba-0.9.14-r1.ebuild:
+  Bump to latest stable, same changeset.
+
+*libksba-0.9.14-r1 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  libksba-0.9.14-r1.ebuild:
+  Initial overlay import from gentoo's -0.9.14. Add IUSE core-deps
+  to remove dependency on libgcrypt and libgpg-error.

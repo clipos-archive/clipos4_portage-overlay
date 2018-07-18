@@ -1,0 +1,13 @@
+Index: chromium-55.0.2883.75/base/process/process_metrics_posix.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/base/process/process_metrics_posix.cc
++++ chromium-55.0.2883.75/base/process/process_metrics_posix.cc
+@@ -26,7 +26,7 @@ int64_t TimeValToMicroseconds(const stru
+ ProcessMetrics::~ProcessMetrics() { }
+ 
+ #if defined(OS_LINUX)
+-static const rlim_t kSystemDefaultMaxFds = 8192;
++static const rlim_t kSystemDefaultMaxFds = 1024;
+ #elif defined(OS_MACOSX)
+ static const rlim_t kSystemDefaultMaxFds = 256;
+ #elif defined(OS_SOLARIS)

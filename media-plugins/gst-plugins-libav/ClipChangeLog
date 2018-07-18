@@ -1,0 +1,38 @@
+# CLIP ChangeLog for media-plugins/gst-plugins-libav
+
+*gst-plugins-libav-1.4.5-r2 (31 Dec 2015)
+
+  31 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-libav-1.4.5-r2.ebuild, -gst-plugins-libav-1.2.4.ebuild:
+  -files/gst-plugins-libav-1.2.4-ffmpeg2.patch,
+  -files/gst-plugins-libav-1.2.4-fix-memory-leak.patch,
+  +files/gst-plugins-libav-1.4.5-allocate-buffer.patch,
+  +files/gst-plugins-libav-1.4.5-fix-memleak.patch,
+  +files/gst-plugins-libav-1.4.5-h265-fixes.patch,
+  +files/gst-plugins-libav-1.4.5-libav9.patch,
+  +files/gst-plugins-libav-1.4.5-post-error.patch:
+  Bump to latest.
+
+*gst-plugins-libav-1.2.4 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-libav-1.2.4.ebuild, -gst-plugins-libav-1.2.0.ebuild,
+  +files/gst-plugins-libav-1.2.4-ffmpeg2.patch,
+  +files/gst-plugins-libav-1.2.4-fix-memory-leak.patch:
+  Bump to latest following ffmpeg bump.
+
+*gst-plugins-libav-1.2.0 (12 Nov 2013)
+
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-libav-1.2.0.ebuild, -gst-plugins-libav-1.0.99_pre20130128.ebuild,
+  -files/gst-plugins-libav-1.1.0_pre20130128-coma.patch,
+  -files/gst-plugins-libav-1.1.0_pre20130128-compat.patch,
+  -files/gst-plugins-libav-1.1.0_pre20130128-gbr-color.patch:
+  Bump to latest.
+
+*gst-plugins-libav-1.0.99_pre20130128 (18 Mar 2013)
+
+  18 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  gst-plugins-libav-1.0.99_pre20130128.ebuild:
+  Initial import, based on gentoo's 1.1.0_pre... Package name / origin
+  fix.

@@ -1,0 +1,1936 @@
+diff --git a/bin/dohtml.py b/bin/dohtml.py
+index 3af2705..7e63029 100755
+--- a/bin/dohtml.py
++++ b/bin/dohtml.py
+@@ -59,10 +59,18 @@ def install(basename, dirname, options, prefix=""):
+ 	if dirname:
+ 		fullpath = dirname + "/" + fullpath
+ 
++	# CLIP
++	if os.getenv("CPREFIX"):
++		mydir = os.getenv("CPREFIX") + "/share/doc/"
++		# strip leading '/'
++		mydir = mydir[1:];
++	else:
++		mydir = "usr/share/doc/"
++
+ 	if options.DOCDESTTREE:
+-		destdir = options.ED + "usr/share/doc/" + options.PF + "/" + options.DOCDESTTREE + "/" + options.doc_prefix + "/" + prefix
++		destdir = options.ED + mydir + options.PF + "/" + options.DOCDESTTREE + "/" + options.doc_prefix + "/" + prefix
+ 	else:
+-		destdir = options.ED + "usr/share/doc/" + options.PF + "/html/" + options.doc_prefix + "/" + prefix
++		destdir = options.ED + mydir + options.PF + "/html/" + options.doc_prefix + "/" + prefix
+ 
+ 	if not os.path.exists(fullpath):
+ 		sys.stderr.write("!!! dohtml: %s does not exist\n" % fullpath)
+diff --git a/bin/ebuild-helpers/doconfd b/bin/ebuild-helpers/doconfd
+index a3c09a5..ed508ae 100755
+--- a/bin/ebuild-helpers/doconfd
++++ b/bin/ebuild-helpers/doconfd
+@@ -10,5 +10,5 @@ fi
+ 
+ exec \
+ env \
+-INSDESTTREE="/etc/conf.d/" \
++INSDESTTREE="${CPREFIX}/etc/conf.d/" \
+ doins "$@"
+diff --git a/bin/ebuild-helpers/dodir b/bin/ebuild-helpers/dodir
+index e03ba9a..4b08051 100755
+--- a/bin/ebuild-helpers/dodir
++++ b/bin/ebuild-helpers/dodir
+@@ -8,7 +8,24 @@ if ! ___eapi_has_prefix_variables; then
+ 	ED=${D}
+ fi
+ 
+-install -d ${DIROPTIONS} "${@/#/${ED}/}"
+-ret=$?
++if [[ -n "${CPREFIX}" ]]; then
++	line=""
++	for _f in $@; do 
++		if [[ ${_f:0:1} == "/" ]]; then 
++			_f=${_f#/}
++			if [[ "${_f#var}" == "${_f}" && "${_f#${cPREFIX}}" == "${_f}" ]]; then
++				_f="${cPREFIX}/${_f#usr}"
++			fi
++			line="$line ${ED}$_f"
++		else 
++			line="$line $_f"
++		fi
++	done
++	install -d ${DIROPTIONS} $line
++	ret=$?
++else
++	install -d ${DIROPTIONS} "${@/#/${ED}/}"
++	ret=$?
++fi
+ [[ $ret -ne 0 ]] && __helpers_die "${0##*/} failed"
+ exit $ret
+diff --git a/bin/ebuild-helpers/dodoc b/bin/ebuild-helpers/dodoc
+index c551735..3285235 100755
+--- a/bin/ebuild-helpers/dodoc
++++ b/bin/ebuild-helpers/dodoc
+@@ -20,7 +20,7 @@ if ! ___eapi_has_prefix_variables; then
+ 	ED=${D}
+ fi
+ 
+-dir="${ED}usr/share/doc/${PF}/${_E_DOCDESTTREE_}"
++dir="${ED}${CPREFIX:-/usr}/share/doc/${PF}/${_E_DOCDESTTREE_}"
+ if [ ! -d "${dir}" ] ; then
+ 	install -d "${dir}"
+ fi
+diff --git a/bin/ebuild-helpers/doenvd b/bin/ebuild-helpers/doenvd
+index 9287933..c049aa5 100755
+--- a/bin/ebuild-helpers/doenvd
++++ b/bin/ebuild-helpers/doenvd
+@@ -10,5 +10,5 @@ fi
+ 
+ exec \
+ env \
+-INSDESTTREE="/etc/env.d/" \
++INSDESTTREE="${CPREFIX}/etc/env.d/" \
+ doins "$@"
+diff --git a/bin/ebuild-helpers/dohard b/bin/ebuild-helpers/dohard
+index e0a44fa..521aff7 100755
+--- a/bin/ebuild-helpers/dohard
++++ b/bin/ebuild-helpers/dohard
+@@ -18,7 +18,17 @@ if ! ___eapi_has_prefix_variables; then
+ 	ED=${D}
+ fi
+ 
+-destdir=${2%/*}
++target=$1
++linkname=$2
++if [[ -n "$CPREFIX" ]] ; then
++	if  [[ "${linkname#/var}" == "${linkname}" && "${linkname#${CPREFIX}}" == "${linkname}" ]]; then 
++		linkname="${CPREFIX}${linkname#/usr}"
++	fi
++	if  [[ "${target#/var}" == "${target}" && "${target#${CPREFIX}}" == "${target}" ]]; then 
++		target="${CPREFIX}${target#/usr}"
++	fi
++fi
++destdir=${linkname%/*}
+ [[ ! -d ${ED}${destdir} ]] && dodir "${destdir}"
+ 
+-exec ln -f "${ED}$1" "${ED}$2"
++exec ln -f "${ED}${target}" "${ED}${linkname}"
+diff --git a/bin/ebuild-helpers/doheader b/bin/ebuild-helpers/doheader
+index 3795365..d3563f5 100755
+--- a/bin/ebuild-helpers/doheader
++++ b/bin/ebuild-helpers/doheader
+@@ -15,5 +15,5 @@ fi
+ 
+ exec \
+ env \
+-INSDESTTREE="/usr/include/" \
++INSDESTTREE="${CPREFIX:-/usr}/include/" \
+ doins "$@"
+diff --git a/bin/ebuild-helpers/doinfo b/bin/ebuild-helpers/doinfo
+index 355047f..6410dce 100755
+--- a/bin/ebuild-helpers/doinfo
++++ b/bin/ebuild-helpers/doinfo
+@@ -13,11 +13,11 @@ if ! ___eapi_has_prefix_variables; then
+ 	ED=${D}
+ fi
+ 
+-if [[ ! -d ${ED}usr/share/info ]] ; then
+-	install -d "${ED}usr/share/info" || { __helpers_die "${0##*/}: failed to install ${ED}usr/share/info"; exit 1; }
++if [[ ! -d ${ED}${CPREFIX:-/usr}/share/info ]] ; then
++	install -d "${ED}${CPREFIX:-/usr}/share/info" || { helpers_die "${0##*/}: failed to install ${ED}${CPREFIX:-/usr}/share/info"; exit 1; }
+ fi
+ 
+-install -m0644 "$@" "${ED}usr/share/info"
++install -m0644 "$@" "${ED}${CPREFIX:-/usr}/share/info"
+ rval=$?
+ if [ $rval -ne 0 ] ; then
+ 	for x in "$@" ; do
+diff --git a/bin/ebuild-helpers/doinitd b/bin/ebuild-helpers/doinitd
+index 476b858..3c2e1e5 100755
+--- a/bin/ebuild-helpers/doinitd
++++ b/bin/ebuild-helpers/doinitd
+@@ -10,5 +10,5 @@ fi
+ 
+ exec \
+ env \
+-_E_EXEDESTTREE_="/etc/init.d/" \
++_E_EXEDESTTREE_="${CPREFIX}/etc/init.d/" \
+ doexe "$@"
+diff --git a/bin/ebuild-helpers/doins b/bin/ebuild-helpers/doins
+index 4679e83..65aff43 100755
+--- a/bin/ebuild-helpers/doins
++++ b/bin/ebuild-helpers/doins
+@@ -14,7 +14,7 @@ if [[ ${helper} == dodoc ]] ; then
+ 		exit 0
+ 	fi
+ 	export INSOPTIONS=-m0644
+-	export INSDESTTREE=usr/share/doc/${PF}/${_E_DOCDESTTREE_}
++	export INSDESTTREE=${CPREFIX:-/usr}/share/doc/${PF}/${_E_DOCDESTTREE_}
+ fi
+ 
+ if [ $# -lt 1 ] ; then
+diff --git a/bin/ebuild-helpers/doman b/bin/ebuild-helpers/doman
+index d680859..96fe64e 100755
+--- a/bin/ebuild-helpers/doman
++++ b/bin/ebuild-helpers/doman
+@@ -48,11 +48,12 @@ for x in "$@" ; do
+ 
+ 	if [[ ${mandir} == *man[0-9n] ]] ; then
+ 		if [[ -s ${x} ]] ; then
+-			if [[ ! -d ${ED}/usr/share/man/${mandir} ]] ; then
+-				install -d "${ED}/usr/share/man/${mandir}"
++			if [[ ! -d ${ED}${CPREFIX:-/usr}/share/man/${mandir} ]] ; then
++				install -d "${ED}${CPREFIX:-/usr}/share/man/${mandir}"
++
+ 			fi
+ 
+-			install -m0644 "${x}" "${ED}/usr/share/man/${mandir}/${name}"
++			install -m0644 "${x}" "${ED}${CPREFIX:-/usr}/share/man/${mandir}/${name}"
+ 			((ret|=$?))
+ 		elif [[ ! -e ${x} ]] ; then
+ 			echo "!!! ${0##*/}: $x does not exist" 1>&2
+diff --git a/bin/ebuild-helpers/dosed b/bin/ebuild-helpers/dosed
+index 7db0629..78bb052 100755
+--- a/bin/ebuild-helpers/dosed
++++ b/bin/ebuild-helpers/dosed
+@@ -23,6 +23,11 @@ file_found=0
+ mysed="s:${ED}::g"
+ 
+ for x in "$@" ; do
++	if [[ "${x#/}" != "${x}" && -n "${CPREFIX}" ]]; then
++		if [[ "${x#/var}" == "${x}" && "${x#${CPREFIX}}" == "${x}" ]]; then 
++			x="${CPREFIX}/${x#/usr}"
++		fi
++	fi
+ 	y=$ED${x#/}
+ 	if [ -e "${y}" ] ; then
+ 		if [ -f "${y}" ] ; then
+diff --git a/bin/ebuild-helpers/dosym b/bin/ebuild-helpers/dosym
+index 649b100..bb30ac8 100755
+--- a/bin/ebuild-helpers/dosym
++++ b/bin/ebuild-helpers/dosym
+@@ -19,12 +19,23 @@ if [[ ${2} == */ ]] || \
+ 	eqawarn "QA Notice: dosym target omits basename: '${2}'"
+ fi
+ 
+-destdir=${2%/*}
+-[[ ! -d ${ED}${destdir} ]] && dodir "${destdir}"
+-# when absolute, prefix with offset for Gentoo Prefix
++destdir="${2%/*}"
+ target="${1}"
++dest="${2}"
++if [[ -n "$CPREFIX" ]] ; then
++	# do not mangle relative path symlinks...
++	if [[ "${target:0:1}" == "/" ]] \
++		&& [[ "${target#/var}" == "${target}" && "${target#${CPREFIX}}" == "${target}" ]]; then 
++			target="${CPREFIX}${target#/usr}"
++	fi
++	if [[ "${dest#/var}" == "${dest}" && "${dest#${CPREFIX}}" == "${dest}" ]]; then
++		dest="${CPREFIX}/${dest#/usr}"
++	fi
++fi
++dodir "${destdir}"
++# when absolute, prefix with offset for Gentoo Prefix
+ [[ ${target:0:1} == "/" ]] && target="${EPREFIX}${target}"
+-ln -snf "${target}" "${ED}${2}"
++ln -snf "${target}" "${ED}${dest}"
+ 
+ ret=$?
+ [[ $ret -ne 0 ]] && __helpers_die "${0##*/} failed"
+diff --git a/bin/ebuild-helpers/fowners b/bin/ebuild-helpers/fowners
+index cee4108..34553a2 100755
+--- a/bin/ebuild-helpers/fowners
++++ b/bin/ebuild-helpers/fowners
+@@ -11,8 +11,29 @@ fi
+ # we can't prefix all arguments because
+ # chown takes random options
+ slash="/"
+-chown "${@/#${slash}/${ED}${slash}}"
+-ret=$?
++
++if [[ -n "${CPREFIX}" ]]; then
++	line="$1"
++	shift
++	for _f in $@; do 
++		if [[ ${_f#/} != ${_f} ]]; then 
++			if [[ "${_f#/var}" == "${_f}" && "${_f#${CPREFIX}}" == "${_f}" ]]; then 
++				_f=${_f#/}
++				_f="${CPREFIX}/${_f#usr}"
++				line="$line ${ED}$_f"
++			else 
++				line="$line ${ED}$_f"
++			fi
++		else
++			line="$line $_f"
++		fi
++	done
++	chown $line
++	ret=$?
++else 
++	chown "${@/#${slash}/${ED}${slash}}"
++	ret=$?
++fi
+ 
+ [[ $ret -ne 0 ]] && __helpers_die "${0##*/} failed"
+ exit $ret
+diff --git a/bin/ebuild-helpers/fperms b/bin/ebuild-helpers/fperms
+index d854ebb..5d33ac6 100755
+--- a/bin/ebuild-helpers/fperms
++++ b/bin/ebuild-helpers/fperms
+@@ -11,7 +11,24 @@ fi
+ # we can't prefix all arguments because
+ # chmod takes random options
+ slash="/"
+-chmod "${@/#${slash}/${ED}${slash}}"
+-ret=$?
++if [[ -n "${CPREFIX}" ]]; then
++	line="$1"
++	shift
++	for _f in $@; do 
++		if [[ ${_f:0:1} == "/" ]] \
++			&& [[ "${_f#/var}" == "${_f}" && "${_f#${CPREFIX}}" == "${_f}" ]]; then 
++				_f="${CPREFIX}${_f#/usr}"
++				line="$line ${ED}$_f"
++		else 
++			line="$line ${ED}$_f"
++		fi
++	done
++	chmod $line
++	ret=$?
++else 
++	chmod "${@/#${slash}/${ED}${slash}}"
++	ret=$?
++fi
++
+ [[ $ret -ne 0 ]] && __helpers_die "${0##*/} failed"
+ exit $ret
+diff --git a/bin/ebuild-helpers/prepalldocs b/bin/ebuild-helpers/prepalldocs
+index 3094661..0bc5b28 100755
+--- a/bin/ebuild-helpers/prepalldocs
++++ b/bin/ebuild-helpers/prepalldocs
+@@ -17,7 +17,7 @@ if ! ___eapi_has_prefix_variables; then
+ 	ED=${D}
+ fi
+ 
+-[[ -d ${ED}usr/share/doc ]] || exit 0
++[[ -d "${ED}${cPREFIX:-usr}/share/doc" ]] || exit 0
+ 
+-ecompressdir --ignore /usr/share/doc/${PF}/html
+-ecompressdir --queue /usr/share/doc
++ecompressdir --ignore "${CPREFIX:-/usr}"/share/doc/${PF}/html
++ecompressdir --queue "${CPREFIX:-/usr}"/share/doc
+diff --git a/bin/ebuild-helpers/prepallinfo b/bin/ebuild-helpers/prepallinfo
+index 1a20275..b878d78 100755
+--- a/bin/ebuild-helpers/prepallinfo
++++ b/bin/ebuild-helpers/prepallinfo
+@@ -8,6 +8,6 @@ if ! ___eapi_has_prefix_variables; then
+ 	ED=${D}
+ fi
+ 
+-[[ -d ${ED}usr/share/info ]] || exit 0
++[[ -d "${ED}${cPREFIX:-usr}/share/info" ]] || exit 0
+ 
+ exec prepinfo
+diff --git a/bin/ebuild-helpers/prepinfo b/bin/ebuild-helpers/prepinfo
+index 5afc18a..f044f1f 100755
+--- a/bin/ebuild-helpers/prepinfo
++++ b/bin/ebuild-helpers/prepinfo
+@@ -9,12 +9,19 @@ if ! ___eapi_has_prefix_variables; then
+ fi
+ 
+ if [[ -z $1 ]] ; then
+-	infodir="/usr/share/info"
++	infodir="${CPREFIX:-/usr}/share/info"
+ else
+-	if [[ -d ${ED}$1/share/info ]] ; then
+-		infodir="$1/share/info"
++	dir="${1}"
++	if [[ ${dir:0:1} == "/" ]] \
++				&& [[ "${dir#/var}" == "${_f}" ]] \
++				&& "${dir#${CPREFIX}}" == "${_f}" ]]; then 
++		dir="${CPREFIX}${dir#/usr}"
++	fi
++
++	if [[ -d ${ED}${dir}/share/info ]] ; then
++		infodir="${dir}/share/info"
+ 	else
+-		infodir="$1/info"
++		infodir="${dir}/info"
+ 	fi
+ fi
+ 
+diff --git a/bin/ebuild-helpers/preplib b/bin/ebuild-helpers/preplib
+index 764261d..b6883ed 100755
+--- a/bin/ebuild-helpers/preplib
++++ b/bin/ebuild-helpers/preplib
+@@ -22,9 +22,15 @@ if [ -z "${CONF_LIBDIR}" ]; then
+ fi
+ 
+ if [ -z "$1" ] ; then
+-	z="${ED}usr/${CONF_LIBDIR}"
++	z="${ED}${cPREFIX:-usr}/${CONF_LIBDIR}"
+ else
+-	z="${ED}$1/${CONF_LIBDIR}"
++	dir="${1}"
++	if [[ ${dir:0:1} == "/" ]] \
++				&& [[ "${dir#/var}" == "${_f}" ]] \
++				&& "${dir#${CPREFIX}}" == "${_f}" ]]; then 
++		dir="${CPREFIX}${dir#/usr}"
++	fi
++	z="${ED}${dir}/${CONF_LIBDIR}"
+ fi
+ 
+ if [ -d "${z}" ] ; then
+diff --git a/bin/ebuild-helpers/prepman b/bin/ebuild-helpers/prepman
+index 142d404..bb72c03 100755
+--- a/bin/ebuild-helpers/prepman
++++ b/bin/ebuild-helpers/prepman
+@@ -9,9 +9,15 @@ if ! ___eapi_has_prefix_variables; then
+ fi
+ 
+ if [[ -z $1 ]] ; then 
+-	mandir="${ED}usr/share/man"
++	mandir="${ED}${cPREFIX:-usr}/share/man"
+ else
+-	mandir="${ED}$1/man"
++	dir="${1}"
++	if [[ ${dir:0:1} == "/" ]] \
++				&& [[ "${dir#/var}" == "${_f}" ]] \
++				&& "${dir#${CPREFIX}}" == "${_f}" ]]; then 
++		dir="${CPREFIX}${dir#/usr}"
++	fi
++	mandir="${ED}${dir}/man"
+ fi
+ 
+ if [[ ! -d ${mandir} ]] ; then
+diff --git a/bin/ebuild-helpers/prepstrip b/bin/ebuild-helpers/prepstrip
+index 0d1ce5a..e5d54e6 100755
+--- a/bin/ebuild-helpers/prepstrip
++++ b/bin/ebuild-helpers/prepstrip
+@@ -116,7 +116,7 @@ save_elf_debug() {
+ 	# lookup to work correctly.
+ 	local x=$1
+ 	local splitdebug=$2
+-	local y=${ED}usr/lib/debug/${x:${#D}}.debug
++	local y=${ED}${cPREFIX:-usr}/lib/debug/${x:${#D}}.debug
+ 
+ 	# dont save debug info twice
+ 	[[ ${x} == *".debug" ]] && return 0
+@@ -148,7 +148,7 @@ save_elf_debug() {
+ 			| awk '$NF ~ /GNU/ { getline; printf $2$3$4$5; getline; print $2 }')
+ 	fi
+ 	if [[ -n ${buildid} ]] ; then
+-		local buildid_dir="${ED}usr/lib/debug/.build-id/${buildid:0:2}"
++		local buildid_dir="${ED}${cPREFIX:-usr}/lib/debug/.build-id/${buildid:0:2}"
+ 		local buildid_file="${buildid_dir}/${buildid:2}"
+ 		mkdir -p "${buildid_dir}"
+ 		ln -s "../../${x:${#D}}.debug" "${buildid_file}.debug"
+diff --git a/bin/ebuild.sh b/bin/ebuild.sh
+index d83789c..8841681 100755
+--- a/bin/ebuild.sh
++++ b/bin/ebuild.sh
+@@ -707,7 +707,7 @@ else
+ 	# declare them only after it has already run.
+ 	declare -r $PORTAGE_READONLY_METADATA $PORTAGE_READONLY_VARS
+ 	if ___eapi_has_prefix_variables; then
+-		declare -r ED EPREFIX EROOT
++		declare -r EPREFIX EROOT
+ 	fi
+ 
+ 	if [[ -n $EBUILD_SH_ARGS ]] ; then
+diff --git a/bin/misc-functions.sh b/bin/misc-functions.sh
+index db023e4..d4472bb 100755
+--- a/bin/misc-functions.sh
++++ b/bin/misc-functions.sh
+@@ -25,8 +25,8 @@ install_symlink_html_docs() {
+ 	if [ -n "${DOC_SYMLINKS_DIR}" ] ; then
+ 		local mydocdir docdir
+ 		for docdir in "${HTMLDOC_DIR:-does/not/exist}" "${PF}/html" "${PF}/HTML" "${P}/html" "${P}/HTML" ; do
+-			if [ -d "usr/share/doc/${docdir}" ] ; then
+-				mydocdir="/usr/share/doc/${docdir}"
++			if [ -d "${cPREFIX:-usr}/share/doc/${docdir}" ] ; then
++				mydocdir="${CPREFIX:-/usr}/share/doc/${docdir}"
+ 			fi
+ 		done
+ 		if [ -n "${mydocdir}" ] ; then
+@@ -626,18 +626,20 @@ install_qa_check() {
+ 	# http://bugs.gentoo.org/4411
+ 	abort="no"
+ 	local a s
+-	for a in "${ED}"usr/lib*/*.a ; do
+-		s=${a%.a}.so
+-		if [[ ! -e ${s} ]] ; then
+-			s=${s%usr/*}${s##*/usr/}
+-			if [[ -e ${s} ]] ; then
+-				__vecho -ne '\n'
+-				eqawarn "QA Notice: Missing gen_usr_ldscript for ${s##*/}"
+-	 			abort="yes"
++ 	if ! has nostatlib $FEATURES; then
++		for a in "${ED}"usr/lib*/*.a ; do
++			s=${a%.a}.so
++			if [[ ! -e ${s} ]] ; then
++				s=${s%usr/*}${s##*/usr/}
++				if [[ -e ${s} ]] ; then
++					__vecho -ne '\n'
++					eqawarn "QA Notice: Missing gen_usr_ldscript for ${s##*/}"
++					abort="yes"
++				fi
+ 			fi
+-		fi
+-	done
+-	[[ ${abort} == "yes" ]] && die "add those ldscripts"
++		done
++		[[ ${abort} == "yes" ]] && die "add those ldscripts"
++	fi
+ 
+ 	# Make sure people don't store libtool files or static libs in /lib
+ 	f=$(ls "${ED}"lib*/*.{a,la} 2>/dev/null)
+@@ -646,7 +648,9 @@ install_qa_check() {
+ 		eqawarn "QA Notice: Excessive files found in the / partition"
+ 		eqawarn "${f}"
+ 		__vecho -ne '\n'
+-		die "static archives (*.a) and libtool library files (*.la) do not belong in /"
++ 		# CLIP : we should not die here : this can be needed for e.g. RM's roots,
++ 		# and we will remove those static libs anyway in the preinst_mask pass
++		eqawarn "static archives (*.a) and libtool library files (*.la) do not belong in /"
+ 	fi
+ 
+ 	# Verify that the libtool files don't contain bogus $D entries.
+@@ -977,22 +981,40 @@ install_mask() {
+ 	local shopts=$-
+ 	set -o noglob
+ 	local no_inst
+-	for no_inst in ${install_mask}; do
+-		set +o noglob
+-		__quiet_mode || einfo "Removing ${no_inst}"
+-		# normal stuff
+-		rm -Rf "${root}"/${no_inst} >&/dev/null
++	if [ -z "${CLIP_VROOTS}" ]; then
++		for no_inst in ${install_mask}; do
++			set +o noglob
++			__quiet_mode || einfo "Removing ${no_inst}"
++			# normal stuff
++			rm -Rf "${root}"/${no_inst} >&/dev/null
++
++			# we also need to handle globs (*.a, *.h, etc)
++			find "${root}" \( -path "${no_inst}" -or -name "${no_inst}" \) \
++				-exec rm -fR {} \; >/dev/null 2>&1
++		done
++ 	else
++ 	    for vroot in ${CLIP_VROOTS}; do
++		__vecho ">>> Applying install_mask in virtual root ${vroot}"
++ 		for no_inst in ${install_mask}; do
++ 			set +o noglob
++ 			__quiet_mode || einfo "Removing ${no_inst}"
++ 			# normal stuff
++ 			rm -Rf "${root}/${vroot}"/${no_inst} >&/dev/null
++ 
++ 			# we also need to handle globs (*.a, *.h, etc)
++ 			find "${root}/${vroot}" \( -path "${no_inst}" -or -name "${no_inst}" \) \
++ 				-exec rm -fR {} \; >/dev/null 2>&1
++ 		done
++	    done
++ 	fi # CLIP_VROOTS
+ 
+-		# we also need to handle globs (*.a, *.h, etc)
+-		find "${root}" \( -path "${no_inst}" -or -name "${no_inst}" \) \
+-			-exec rm -fR {} \; >/dev/null 2>&1
+-	done
+ 	# set everything back the way we found it
+ 	set +o noglob
+ 	set -${shopts}
+ }
+ 
+ preinst_mask() {
++	local base="${CPREFIX:-/usr}"
+ 	if [ -z "${D}" ]; then
+ 		 eerror "${FUNCNAME}: D is unset"
+ 		 return 1
+@@ -1010,15 +1032,50 @@ preinst_mask() {
+ 	local f
+ 	for f in man info doc; do
+ 		if has no${f} $FEATURES; then
+-			INSTALL_MASK="${INSTALL_MASK} /usr/share/${f}"
++			INSTALL_MASK="${INSTALL_MASK} ${base}/share/${f}"
+ 		fi
+ 	done
+ 
++	# CLIP: teach gtk-stuff to behave properly as well...
++	if has nodoc $FEATURES; then
++		INSTALL_MASK="${INSTALL_MASK} ${base}/share/gtk-doc"
++	fi
++
++	# CLIP: remove includes
++	if [[ -n "${ROOT}" ]] && [[ "${ROOT}" != "/" ]] \
++		&& has noinclude $FEATURES; then
++		INSTALL_MASK="${INSTALL_MASK} ${base}/include"
++	fi
++	# CLIP: remove executables :)
++	if [[ -n "${ROOT}" ]] && [[ "${ROOT}" != "/" ]] \
++		&& has nobins $FEATURES; then
++		INSTALL_MASK="${INSTALL_MASK} ${base}/{,s}bin"
++	fi
++
++	# CLIP: remove gentoo-specific stuff when CPREFIX is set
++	if [[ -n "${CPREFIX}" ]] && [[ "${CPREFIX}" != "/usr" ]]; then
++		INSTALL_MASK="${INSTALL_MASK} ${CPREFIX}/etc/conf.d"
++		INSTALL_MASK="${INSTALL_MASK} ${CPREFIX}/etc/env.d"
++		INSTALL_MASK="${INSTALL_MASK} ${CPREFIX}/etc/revdep-rebuild"
++		INSTALL_MASK="${INSTALL_MASK} ${CPREFIX}/etc/init.d"
++	fi
++
+ 	install_mask "${ED}" "${INSTALL_MASK}"
+ 
++	# CLIP: remove static libs
++	if has nostatlib $FEATURES; then
++		einfo "Removing static libs"
++		local opts=""
++		[[ -z "${NOSTATLIB_KEEPLA}" ]] && opts='-or -name "*.la"'
++		find "${IMAGE}" -name "*.a" $opts | while read lib; do
++			echo "    ${lib#${IMAGE}}"
++			rm -f "${lib}"
++		done
++	fi
++
+ 	# remove share dir if unnessesary
+ 	if has nodoc $FEATURES || has noman $FEATURES || has noinfo $FEATURES; then
+-		rmdir "${ED}usr/share" &> /dev/null
++		rmdir "${ED}${base}/share" &> /dev/null
+ 	fi
+ }
+ 
+@@ -1198,6 +1255,413 @@ __dyn_package() {
+ 		die "Failed to create $PORTAGE_BUILDDIR/.packaged"
+ }
+ 
++# CLIP : initialize a maintainer script
++init_maintainer_script() {
++	local script="${1}"
++	[[ -z "${script}" ]] && die "No script name specified"
++	local fullpath="${D}/DEBIAN/${script}"
++	[[ -e "${fullpath}" && ! -f "${fullpath}" ]] && \
++		die "${fullpath} exists and is not a regular file"
++
++	[[ -f "${fullpath}" ]] && return
++	cat > "${fullpath}" <<EOF
++#!/bin/sh
++
++EOF
++	chmod +x "${fullpath}"
++}
++
++# CLIP : create verictl entries for all libs in a package,
++# Mark all libs as executable
++clip_do_libs() {
++	local vname="${PN}${DEB_NAME_SUFFIX}"
++	local vdir="${D}${CPREFIX}/etc/verictl.d"
++	local realdir="${CPREFIX}/etc/verictl.d"
++	local ctx="${VERIEXEC_LIB_CTX}"
++	[[ -z "${ctx}" ]] && ctx="-1"
++	
++	local algo="${VERICTL_HASH_ALG:-sha256}"
++	find . -type f -regex ".*\.so\(\.[0-9]+\)*" | while read lib; do
++		if [[ ! -x "${lib}" ]]; then
++			__vecho "Marking ${lib} executable"
++			chmod a+x "${lib}"
++		fi
++		if [[ -n "${VERICTL_DOSHLIBS}" ]] ; then
++			[[ -d "${vdir}" ]] || mkdir -m0700 -p "${vdir}"
++			local fp=""
++			if [[ "${algo}" == "ccsd" ]]; then
++				fp="$(ccsd-hash "${lib}")"
++			else
++				fp="$(cat "${lib}" | openssl dgst -${algo} | cut -d" " -f 2)"
++			fi
++			[[ -z "${fp}" ]] && die "Failed to hash library ${lib} (using ${algo})"
++			lib="${lib#.}"
++			echo "${lib} ${ctx} l - - - - ${algo} ${fp}" >> "${vdir}/${vname}"
++		fi
++	done
++
++	# The rest is verictl-specific
++	if [[ -z "${VERICTL_DOSHLIBS}" ]] ; then
++		return 0
++	fi
++	# Do not create maintainer scripts when there are no shlibs...
++ 	[[ -f "${vdir}/${vname}" ]] || return 0
++	
++	chmod 600 "${vdir}/${vname}"
++	
++	mkdir -p "DEBIAN"
++	init_maintainer_script "prerm"
++	init_maintainer_script "postinst"
++
++	if ! grep -q BOOTSTRAP_NOVERIEXEC "${D}/DEBIAN/prerm"; then
++		# Support BOOTSTRAP_NOVERIEXEC for debootstrap (workaround, should
++		# do better than that)
++		cat >>"${D}/DEBIAN/prerm" <<EOF
++if [[ "\${1}" == "remove" || "\${1}" == "upgrade" ]]; then
++	if test -c /dev/veriexec && test -z "\${BOOTSTRAP_NOVERIEXEC}"; then 
++		/sbin/verictl -f "${realdir}/${vname}" -u
++	fi
++fi
++
++EOF
++		cat >>"${D}/DEBIAN/postinst" <<EOF
++if [[ "\${1}" == "configure" || "\${1}" == "abort-remove" ]]; then
++	if test -c /dev/veriexec && test -z "\${BOOTSTRAP_NOVERIEXEC}" ; then 
++		/sbin/verictl -f "${realdir}/${vname}" -l
++	fi
++fi
++
++EOF
++	fi
++}
++
++# CLIP : Configuration files 
++
++clip_init_conf_files_prerm()
++{
++	cat >> "${D}/DEBIAN/prerm" <<EOF
++
++remove_conffile() {
++	local line="\${1}"
++	local file="\${2}"
++	local sline=\$(echo "\${line}" | /bin/sed -e 's:/:\\\\/:g')
++	/bin/sed -i -e "/^\${sline}$/d" "\${file}"
++}
++
++EOF
++}
++
++# Deal with cmp not being in the same place in CLIP core (/usr/bin/cmp)
++# and RM/UPDATEclip (/bin/cmp)
++clip_init_conf_files_postinst()
++{
++	cat >> "${D}/DEBIAN/postinst" <<EOF
++
++if test -f /bin/cmp; then
++	CMP=/bin/cmp
++else if test -f /usr/bin/cmp; then
++	CMP=/usr/bin/cmp
++fi
++fi
++
++EOF
++}
++	
++clip_update_conf_list() {
++	local file="${1}"
++	cat >> "${D}/DEBIAN/postinst" <<EOF
++if [[ "\${1}" == "configure" || "\${1}" == "abort-remove" ]]; then
++	/bin/echo "${file}" >> /etc/admin/clip_install/conffiles.list
++fi
++
++EOF
++
++	cat >> "${D}/DEBIAN/prerm" <<EOF
++if [[ "\${1}" == "remove" || "\${1}" == "upgrade" ]]; then
++	remove_conffile "${file}" /etc/admin/clip_install/conffiles.list
++fi
++
++EOF
++
++}
++
++clip_do_conf_file() {
++	local file="${1}"
++	local nocopy="${2}"
++	local instfile="`dirname "${file}"`/.`basename "${file}"`.confnew"
++
++	[[ -f "${D}/${file}" ]] && mv "${D}/${file}" "${D}/${instfile}"
++	
++	cat >> "${D}/DEBIAN/postinst" <<EOF
++if [[ "\${1}" == "configure" || "\${1}" == "abort-remove" ]]; then
++	if ! test -e "${file}"; then
++		/bin/echo " * Installing config file ${file}"
++		/bin/mv "${instfile}" "${file}"
++	else if [ -z "\${CMP}" ]; then 
++		/bin/echo " ! cmp not found" >&2
++		exit 1
++	else if \${CMP} "${instfile}" "${file}" 1>/dev/null ; then
++		/bin/rm -f "${instfile}"
++	else
++		/bin/echo " * Installing new copy of config file ${file}"
++	fi
++	fi
++	fi
++fi
++
++EOF
++
++	[[ -z "${nocopy}" ]] && clip_update_conf_list "${file}"
++	return 0
++}
++
++clip_conf_files() {
++	[[ -z "${CLIP_CONF_FILES}${CLIP_CONF_FILES_NOCOPY}${CLIP_CONF_FILES_VIRTUAL}" ]] && return 0
++
++	einfo "Doing config files..."
++
++	mkdir -p "${D}/DEBIAN"
++	init_maintainer_script "postinst"
++	init_maintainer_script "prerm"
++	clip_init_conf_files_prerm
++	clip_init_conf_files_postinst
++
++	if [ -z "${CLIP_VROOTS}" ]; then
++		for f in ${CLIP_CONF_FILES}; do
++			echo "        ${f}"
++			clip_do_conf_file "${f}" || die ""
++		done
++		for f in ${CLIP_CONF_FILES_NOCOPY}; do
++			echo "        ${f}"
++			clip_do_conf_file "${f}" "nocopy" || die ""
++		done
++		for f in ${CLIP_CONF_FILES_VIRTUAL}; do
++			echo "        ${f}"
++			clip_update_conf_list "${f}" || die ""
++		done
++	else
++		for v in ${CLIP_VROOTS}; do
++			for f in ${CLIP_CONF_FILES}; do
++				echo "        ${v}${f}"
++				clip_do_conf_file "${v}${f}" || die ""
++			done
++			for f in ${CLIP_CONF_FILES_NOCOPY}; do
++				echo "        ${v}${f}"
++				clip_do_conf_file "${v}${f}" "nocopy" || die ""
++			done
++			for f in ${CLIP_CONF_FILES_VIRTUAL}; do
++				echo "        ${v}${f}"
++				clip_update_conf_list "${v}${f}" || die ""
++			done
++		done
++	fi
++}
++
++# Add a glibc dependency for Required packages including ELF binaries
++clip_glibc_rdepend() {
++	[[ "${DEB_PRIORITY}" == "Required" ]] || return 0
++	[[ "${PN}" == "glibc" ]] && return 0
++	[[ "${PN}" == "timezone-data" ]] && return 0
++	[[ "${CATEGORY}" == "sys-kernel" ]] && return 0
++	[[ "${CATEGORY}" == "clip-conf" ]] && return 0
++
++
++	# Are there any binaries in $D ?
++	local bins="$(scanelf -R "${D}" 2>/dev/null | head -n 2)"
++	[[ -n "${bins}" ]] || return 0
++
++	local glibc="$(basename /var/db/pkg/sys-libs/glibc-*)"
++
++	[[ -n "${glibc}" ]] || die "Could not find glibc version for the build host"
++	glibc="${glibc%-r*}"
++	einfo "Adding glibc dependency : >=sys-libs/${glibc}"
++	echo -n " >=sys-libs/${glibc} " \
++		>> "${PORTAGE_BUILDDIR}/build-info/RDEPEND" \
++		|| die "Failed to add glibc dependency"
++}
++
++# Add a dependency on openrc for Required packages which include 
++# an init.d script (which will need rc-update)
++clip_rc_rdepend() {
++	[[ "${DEB_PRIORITY}" == "Required" ]] || return 0
++	[[ "${PN}" == "openrc" ]] && return 0
++	# baselayout-clip includes init.d scripts but does not run 
++	# openrc
++	[[ "${PN}" == "baselayout-clip" ]] && return 0
++
++	[[ -d "${D}/etc/init.d" ]] || return 0
++
++	einfo "Adding openrc dependency : sys-apps/openrc"
++	echo -n " sys-apps/openrc " \
++		>> "${PORTAGE_BUILDDIR}/build-info/RDEPEND" \
++		|| die "Failed to add openrc dependency"
++}
++
++# Add extra dependencies for clip packages as required to maintain
++# a sane installation order
++clip_extra_rdepend() {
++	clip_glibc_rdepend
++
++	clip_rc_rdepend
++}
++	
++
++# CLIP : create debian package
++__dyn_deb() {
++	# Note: we don't use ${D} since that is not what we want when -n $CLIP_VROOTS...
++	cd "${PORTAGE_BUILDDIR}/image"
++	if [ -n "${VERICTL_DOSHLIBS}" ] ; then
++		einfo "Creating verictl entries for libraries"
++	fi
++	if [[ -n "${DEB_SLOT_NAME_SUFFIX}" ]]; then
++		export DEB_NAME_SUFFIX=$(echo "${SLOT}" | sed -e 's|[\.:_]||g')
++	fi
++	clip_do_libs
++	IMAGE="${PORTAGE_BUILDDIR}/image" preinst_mask
++	
++	# We need to remember those to recreate them once we're done
++	cd "${PORTAGE_BUILDDIR}/image"
++	local keeplist=`find "." -type f -name .keep`
++	if [ -n "${keeplist}" ] ; then 
++		echo $keeplist | xargs rm -f 
++	fi
++
++	
++	local SIZE=`du -k -s .|cut -f 1`
++	local DATE=`date -R`
++	local BUILDER="${CLIP_BUILDER}"
++	[[ -z "${BUILDER}" ]] && BUILDER="`whoami`@`hostname`"
++	local extraconf=""
++	if test -n "${DEB_MAINTAINER}"; then
++		extraconf="${extraconf} -maintainer=${DEB_MAINTAINER}"
++	fi
++	if test -n "${DEB_PRIORITY}"; then
++		extraconf="${extraconf} -priority=${DEB_PRIORITY}"
++	fi
++	if test -n "${DEB_IMPACT}"; then
++		extraconf="${extraconf} -impact=${DEB_IMPACT}"
++	fi
++	if test -n "${DEB_URGENCY}"; then
++		extraconf="${extraconf} -urgency=${DEB_URGENCY}"
++	fi
++
++	mkdir -p "${PORTAGE_BUILDDIR}/image/DEBIAN"
++	# Do not overwrite existing scripts, if any
++	if [ -d "${FILESDIR}/_debian" ]; then
++		for script in "${FILESDIR}"/_debian/*; do
++			local scriptname=`basename "${script}"`
++			local scriptdest="${PORTAGE_BUILDDIR}"/image/DEBIAN/"${scriptname}"
++			if [ -e "${scriptdest}" ]; then
++				sed -e 's:#!/bin/.*sh::' "${script}" >> "${scriptdest}"
++			else
++				cp "${script}" "${scriptdest}"
++			fi
++		done
++	fi
++
++	clip_extra_rdepend
++
++	clip_conf_files
++
++	# Copy the ChangeLog and ClipChangeLog files
++	if [ -f "${FILESDIR}/../ChangeLog" ]; then
++		cp "${FILESDIR}/../ChangeLog" "${PORTAGE_BUILDDIR}/image/DEBIAN/changelog"
++	fi
++	if [ -f "${FILESDIR}/../ClipChangeLog" ]; then
++		cp "${FILESDIR}/../ClipChangeLog" "${PORTAGE_BUILDDIR}/image/DEBIAN/clipchangelog"
++	fi
++
++	
++	if [ "$(type -t pkg_predeb)" == "function" ]; then
++		einfo "Calling ebuild's pkg_predeb"
++		pkg_predeb
++	fi
++	
++	cd "${PORTAGE_BUILDDIR}/image"
++	ebegin "Generating sha256 checksums"
++	find . -type f -not -path "./DEBIAN/*" | while read -r f; do
++		echo "$(openssl dgst -sha256 < "${f}" | cut -d " " -f 2)  ${f#./}" \
++			>> DEBIAN/sha2sums
++	done
++	eend $?
++
++	ebegin "Generating contents"
++	find . -type f -not -path "./DEBIAN/*" -printf "/%P: file %U:%G - %m - %s\n" \
++		>> ./DEBIAN/contents
++	find . -type l -not -path "./DEBIAN/*" -printf "/%P: sym => %l\n" \
++		>> ./DEBIAN/contents
++	find . -not -path "./DEBIAN/*" -not -type f -not -type l -not -type d \
++		 | cut -d"/" -f2- | while read f ; do
++			echo -n "/" 
++			file "$f" 
++		done  >> ./DEBIAN/contents
++	eend $?
++	
++	cd "${PORTAGE_BUILDDIR}/build-info"
++	mkdir -p ../image/DEBIAN
++	export DEB_SUGGESTS
++	export CONF_DEPENDS
++	export DESCRIPTION_FR
++	export CATEGORY_FR
++	export DEB_JAILS
++	gencontrol.pl ../image/DEBIAN/control -date="$DATE" -size="$SIZE" \
++		-builder="$BUILDER" $extraconf\
++		|| die "Gencontrol failed"
++	cp USE ../image/DEBIAN/use || die "Failed to copy USE"
++
++	# get .deb name
++	PKGNAME=`grep "^Package:" ../image/DEBIAN/control | cut -d" " -f2`
++	PKGVERS=`grep "^Version:" ../image/DEBIAN/control | cut -d" " -f2`
++	PKGARCH=`grep "^Architecture:" ../image/DEBIAN/control | cut -d" " -f2`
++	DEBNAME="${PKGNAME}_${PKGVERS}_${PKGARCH}.deb"
++	local deb_dest="${DEBDIR}/${DEBNAME}"
++	export SANDBOX_ON="0"
++	cd ..
++	local compress="xz"
++	if [[ "${DEB_PRIORITY}" == "Required" ]]; then
++		# Legacy compression for *-core-conf packages (bootstrap from old version)
++		compress="gzip"
++	fi
++	dpkg-deb "-Z${compress}" --nocheck -b image "${DEBNAME}" 1>/dev/null 2>/dev/null || die "Failed to build debian package"
++	mv ${DEBNAME} ${deb_dest}
++	einfo "Built debian package ${deb_dest}"
++
++	# Don't leave any mess to merge()
++	rm image/DEBIAN/control
++	rm -fr image/DEBIAN
++	if [ -n "${keeplist}" ] ; then
++		cd image
++		echo ${keeplist} | xargs touch
++		cd ..
++	fi
++
++	if [[ -x "/usr/bin/clip-checkpkg" ]]; then
++		ebegin "Running CLIP QA checks"
++		clip-checkpkg ${deb_dest} 1>/dev/null 2>"${T}/checkpkg.log"
++		local ret=$?
++		eend $ret
++		if [[ $ret -ne 0 ]]; then
++			eqawarn "QA Notice: CLIP checks failed on binary package ${DEBNAME}"
++			eqawarn "QA check output :"
++			cat "${T}/checkpkg.log" | cut -d":" -f 2- | while read l; do
++				eqawarn "${l}"
++			done
++			has strict ${FEATURES} && die "Aborting due to QA Check failures"
++		fi
++	fi
++}
++
++# Smallish helper : reverse a list of arguments
++clip_rev() {
++	if [[ -n "${1}" ]]; then
++		local _head="${1}"
++		shift
++		local _tail="`clip_rev "$@"`"
++		[[ -n "${_tail}" ]] && _head="${_tail} ${_head}"
++		echo "${_head}"
++	fi
++}
++
+ __dyn_spec() {
+ 	local sources_dir=/usr/src/rpm/SOURCES
+ 	mkdir -p "${sources_dir}"
+diff --git a/bin/phase-functions.sh b/bin/phase-functions.sh
+index 714f7a6..e97dc75 100644
+--- a/bin/phase-functions.sh
++++ b/bin/phase-functions.sh
+@@ -11,7 +11,7 @@ PORTAGE_READONLY_METADATA="DEFINED_PHASES DEPEND DESCRIPTION
+ 	EAPI HDEPEND HOMEPAGE INHERITED IUSE REQUIRED_USE KEYWORDS LICENSE
+ 	PDEPEND PROVIDE RDEPEND REPOSITORY RESTRICT SLOT SRC_URI"
+ 
+-PORTAGE_READONLY_VARS="D EBUILD EBUILD_PHASE EBUILD_PHASE_FUNC \
++PORTAGE_READONLY_VARS="EBUILD EBUILD_PHASE EBUILD_PHASE_FUNC \
+ 	EBUILD_SH_ARGS ECLASSDIR EMERGE_FROM FILESDIR MERGE_TYPE \
+ 	PM_EBUILD_HOOK_DIR \
+ 	PORTAGE_ACTUAL_DISTDIR PORTAGE_ARCHLIST PORTAGE_BASHRC  \
+@@ -523,25 +523,59 @@ __dyn_install() {
+ 		die "The source directory '${S}' doesn't exist"
+ 	fi
+ 
+-	__vecho
+-	__vecho ">>> Install ${PF} into ${D} category ${CATEGORY}"
+-	#our custom version of libtool uses $S and $D to fix
+-	#invalid paths in .la files
+-	export S D
+-
+-	# Reset exeinto(), docinto(), insinto(), and into() state variables
+-	# in case the user is running the install phase multiple times
+-	# consecutively via the ebuild command.
+-	export DESTTREE=/usr
+-	export INSDESTTREE=""
+-	export _E_EXEDESTTREE_=""
+-	export _E_DOCDESTTREE_=""
+-
+-	__ebuild_phase src_install
+-	>> "$PORTAGE_BUILDDIR/.installed" || \
+-		die "Failed to create $PORTAGE_BUILDDIR/.installed"
+-	__vecho ">>> Completed installing ${PF} into ${D}"
+-	__vecho
++	if [[ -z "${CLIP_VROOTS}" ]]; then
++		__vecho
++		__vecho ">>> Install ${PF} into ${D} category ${CATEGORY}"
++		#our custom version of libtool uses $S and $D to fix
++		#invalid paths in .la files
++		export S D
++
++		# Reset exeinto(), docinto(), insinto(), and into() state variables
++		# in case the user is running the install phase multiple times
++		# consecutively via the ebuild command.
++		export DESTTREE=${CPREFIX:-/usr}
++		export INSDESTTREE=""
++		export _E_EXEDESTTREE_=""
++		export _E_DOCDESTTREE_=""
++
++		__ebuild_phase src_install
++		>> "$PORTAGE_BUILDDIR/.installed" || \
++			die "Failed to create $PORTAGE_BUILDDIR/.installed"
++		__vecho ">>> Completed installing ${PF} into ${D}"
++		__vecho
++ 	else
++ 		export S
++		# Reset exeinto(), docinto(), insinto(), and into() state variables
++		# in case the user is running the install phase multiple times
++		# consecutively via the ebuild command.
++ 		export DESTTREE="${CPREFIX:-/usr}"
++ 		export INSDESTTREE="${CPREFIX}"
++ 		export _E_EXEDESTTREE_="${CPREFIX}"
++ 		export _E_DOCDESTTREE_=""
++ 		local DBASE="${D}"
++ 		local EDBASE="${ED}"
++ 		__vecho 
++ 		__vecho ">>> Installing ${PF} in VROOTS: ${CLIP_VROOTS}."
++ 		for vroot in ${CLIP_VROOTS}; do
++ 			# src_install must be called from ${S},
++ 			# but nothing says it should end there...
++ 			cd "${S}"
++ 			# Now this is an ugly kludge if I ever saw one :)
++ 			vroot="${vroot/\"/}"
++ 			__vecho ">>>>> Install ${PF} into ${DBASE} with VROOT ${vroot}"
++ 			export D="${DBASE}${vroot}/"
++ 			export ED="${DBASE}${vroot}/"
++ 			mkdir -p "${DBASE}${vroot}"
++ 			__ebuild_phase src_install
++ 			__vecho ">>>>> Install complete for ${PF} in VROOT ${vroot}"
++			__vecho
++ 		done
++ 		export D="${DBASE}"
++ 		export ED="${EDBASE}"
++		>> "$PORTAGE_BUILDDIR/.installed" || \
++			die "Failed to create $PORTAGE_BUILDDIR/.installed"
++ 	fi # CLIP_VROOTS
++
+ 	__ebuild_phase post_src_install
+ 
+ 	cd "${PORTAGE_BUILDDIR}"/build-info
+@@ -560,6 +594,13 @@ __dyn_install() {
+ 			x=$(echo -n ${!f})
+ 			[[ -n $x ]] && echo "$x" > $f
+ 		done
++	else
++		# Needed on CLIP even for virtual packages
++		for f in CBUILD CHOST CTARGET \
++			EXTRA_ECONF EXTRA_EINSTALL EXTRA_MAKE ; do
++			x=$(echo -n ${!f})
++			[[ -n $x ]] && echo "$x" > $f
++		done		
+ 	fi
+ 	echo "${USE}"       > USE
+ 	echo "${EAPI:-0}"   > EAPI
+diff --git a/bin/phase-helpers.sh b/bin/phase-helpers.sh
+index 5055060..c3057b5 100644
+--- a/bin/phase-helpers.sh
++++ b/bin/phase-helpers.sh
+@@ -2,71 +2,94 @@
+ # Copyright 1999-2012 Gentoo Foundation
+ # Distributed under the terms of the GNU General Public License v2
+ 
+-export DESTTREE=/usr
+-export INSDESTTREE=""
+-export _E_EXEDESTTREE_=""
++export DESTTREE="${CPREFIX:-/usr}"
++export INSDESTTREE="${CPREFIX}"
++export _E_EXEDESTTREE_="${CPREFIX}"
+ export _E_DOCDESTTREE_=""
+ export INSOPTIONS="-m0644"
+ export EXEOPTIONS="-m0755"
+ export LIBOPTIONS="-m0644"
+ export DIROPTIONS="-m0755"
+ export MOPREFIX=${PN}
+-declare -a PORTAGE_DOCOMPRESS=( /usr/share/{doc,info,man} )
+-declare -a PORTAGE_DOCOMPRESS_SKIP=( /usr/share/doc/${PF}/html )
++declare -a PORTAGE_DOCOMPRESS=( ${CPREFIX:-/usr}/share/{doc,info,man} )
++declare -a PORTAGE_DOCOMPRESS_SKIP=( ${CPREFIX:-/usr}/share/doc/${PF}/html )
++
++if [[ -n "${CPREFIX}" ]]; then
++	export cPREFIX="${CPREFIX#/}"
++fi
++
++clip_prefix() {
++	local arg=$1
++	[[ -n "${arg}" ]] || return 0
++
++	if [[ -z "${CPREFIX}" || "${arg#/}" == "${arg}" ]]; then
++		echo -n "${arg}"
++		return 0;
++	fi
++	if [[ "${arg#/var}" != "${arg}" ]] ; then
++		echo -n "${arg}"
++		return 0
++	fi
++	if [[ "${arg#${CPREFIX}}" != "${arg}" ]]; then
++		echo -n "${arg}"
++		return 0
++	fi
++	echo -n "${CPREFIX}${arg#/usr}"
++}
+ 
+ into() {
+ 	if [ "$1" == "/" ]; then
+-		export DESTTREE=""
++		export DESTTREE="${CPREFIX}"
+ 	else
+-		export DESTTREE=$1
+-		if ! ___eapi_has_prefix_variables; then
+-			local ED=${D}
+-		fi
+-		if [ ! -d "${ED}${DESTTREE}" ]; then
+-			install -d "${ED}${DESTTREE}"
+-			local ret=$?
+-			if [[ $ret -ne 0 ]] ; then
+-				__helpers_die "${FUNCNAME[0]} failed"
+-				return $ret
+-			fi
++		export DESTTREE=$(clip_prefix "$1")
++	fi
++	if ! ___eapi_has_prefix_variables; then
++		local ED=${D}
++	fi
++	if [ ! -d "${ED}${DESTTREE}" ]; then
++		install -d "${ED}${DESTTREE}"
++		local ret=$?
++		if [[ $ret -ne 0 ]] ; then
++			__helpers_die "${FUNCNAME[0]} failed"
++			return $ret
+ 		fi
+ 	fi
+ }
+ 
+ insinto() {
+ 	if [ "$1" == "/" ]; then
+-		export INSDESTTREE=""
++		export INSDESTTREE="${CPREFIX}"
+ 	else
+-		export INSDESTTREE=$1
+-		if ! ___eapi_has_prefix_variables; then
+-			local ED=${D}
+-		fi
+-		if [ ! -d "${ED}${INSDESTTREE}" ]; then
+-			install -d "${ED}${INSDESTTREE}"
+-			local ret=$?
+-			if [[ $ret -ne 0 ]] ; then
+-				__helpers_die "${FUNCNAME[0]} failed"
+-				return $ret
+-			fi
++		export INSDESTTREE=$(clip_prefix "$1")
++	fi
++	if ! ___eapi_has_prefix_variables; then
++		local ED=${D}
++	fi
++	if [ ! -d "${ED}${INSDESTTREE}" ]; then
++		install -d "${ED}${INSDESTTREE}"
++		local ret=$?
++		if [[ $ret -ne 0 ]] ; then
++			__helpers_die "${FUNCNAME[0]} failed"
++			return $ret
+ 		fi
+ 	fi
+ }
+ 
+ exeinto() {
+ 	if [ "$1" == "/" ]; then
+-		export _E_EXEDESTTREE_=""
++		export _E_EXEDESTTREE_="${CPREFIX}"
+ 	else
+-		export _E_EXEDESTTREE_="$1"
+-		if ! ___eapi_has_prefix_variables; then
+-			local ED=${D}
+-		fi
+-		if [ ! -d "${ED}${_E_EXEDESTTREE_}" ]; then
+-			install -d "${ED}${_E_EXEDESTTREE_}"
+-			local ret=$?
+-			if [[ $ret -ne 0 ]] ; then
+-				__helpers_die "${FUNCNAME[0]} failed"
+-				return $ret
+-			fi
++		export _E_EXEDESTTREE_=$(clip_prefix "$1")
++	fi
++	if ! ___eapi_has_prefix_variables; then
++		local ED=${D}
++	fi
++	if [ ! -d "${ED}${_E_EXEDESTTREE_}" ]; then
++		install -d "${ED}${_E_EXEDESTTREE_}"
++		local ret=$?
++		if [[ $ret -ne 0 ]] ; then
++			__helpers_die "${FUNCNAME[0]} failed"
++			return $ret
+ 		fi
+ 	fi
+ }
+@@ -79,13 +102,13 @@ docinto() {
+ 		if ! ___eapi_has_prefix_variables; then
+ 			local ED=${D}
+ 		fi
+-		if [ ! -d "${ED}usr/share/doc/${PF}/${_E_DOCDESTTREE_}" ]; then
+-			install -d "${ED}usr/share/doc/${PF}/${_E_DOCDESTTREE_}"
+-			local ret=$?
+-			if [[ $ret -ne 0 ]] ; then
+-				__helpers_die "${FUNCNAME[0]} failed"
+-				return $ret
+-			fi
++	fi
++	if [ ! -d "${ED}${cPREFIX:-usr}/share/doc/${PF}/${_E_DOCDESTTREE_}" ]; then
++		install -d "${ED}${cPREFIX:-usr}/share/doc/${PF}/${_E_DOCDESTTREE_}"
++		local ret=$?
++		if [[ $ret -ne 0 ]] ; then
++			__helpers_die "${FUNCNAME[0]} failed"
++			return $ret
+ 		fi
+ 	fi
+ }
+@@ -148,9 +171,10 @@ keepdir() {
+ 	if ! ___eapi_has_prefix_variables; then
+ 		local ED=${D}
+ 	fi
++	# CLIP : do not version .keep files : we do not keep them anyway
+ 	if [ "$1" == "-R" ] || [ "$1" == "-r" ]; then
+ 		shift
+-		find "$@" -type d -printf "${ED}%p/.keep_${CATEGORY}_${PN}-${SLOT%/*}\n" \
++		find "$@" -type d -printf "${ED}%p/.keep\n" \
+ 			| tr "\n" "\0" | \
+ 			while read -r -d $'\0' ; do
+ 				>> "$REPLY" || \
+@@ -158,7 +182,8 @@ keepdir() {
+ 			done
+ 	else
+ 		for x in "$@"; do
+-			>> "${ED}${x}/.keep_${CATEGORY}_${PN}-${SLOT%/*}" || \
++ 			x=$(clip_prefix ${x})
++			>> "${ED}${x}/.keep" || \
+ 				die "Failed to create .keep in ${ED}${x}"
+ 		done
+ 	fi
+@@ -470,22 +495,25 @@ econf() {
+ 		if [[ -n ${CONF_LIBDIR} ]] && ! __hasgq --libdir=\* "$@" ; then
+ 			export CONF_PREFIX=$(__hasg --exec-prefix=\* "$@")
+ 			[[ -z ${CONF_PREFIX} ]] && CONF_PREFIX=$(__hasg --prefix=\* "$@")
+-			: ${CONF_PREFIX:=${EPREFIX}/usr}
++			[[ -z ${CONF_PREFIX} ]] && CONF_PREFIX="${CPREFIX:-/usr}"
+ 			CONF_PREFIX=${CONF_PREFIX#*=}
++			if [[ -n "${CPREFIX}" && "${CONF_PREFIX#${CPREFIX}}" == "${CONF_PREFIX}" && "${CONF_PREFIX#/var}" == "${CONF_PREFIX}" ]]; then
++				CONF_PREFIX="${CPREFIX}${CONF_PREFIX#/usr}"
++			fi
+ 			[[ ${CONF_PREFIX} != /* ]] && CONF_PREFIX="/${CONF_PREFIX}"
+ 			[[ ${CONF_LIBDIR} != /* ]] && CONF_LIBDIR="/${CONF_LIBDIR}"
+ 			set -- --libdir="$(__strip_duplicate_slashes "${CONF_PREFIX}${CONF_LIBDIR}")" "$@"
+ 		fi
+ 
+ 		set -- \
+-			--prefix="${EPREFIX}"/usr \
++			--prefix="${EPREFIX}${CPREFIX:-/usr}" \
+ 			${CBUILD:+--build=${CBUILD}} \
+ 			--host=${CHOST} \
+ 			${CTARGET:+--target=${CTARGET}} \
+-			--mandir="${EPREFIX}"/usr/share/man \
+-			--infodir="${EPREFIX}"/usr/share/info \
+-			--datadir="${EPREFIX}"/usr/share \
+-			--sysconfdir="${EPREFIX}"/etc \
++			--mandir="${EPREFIX}${CPREFIX:-/usr}"/share/man \
++			--infodir="${EPREFIX}${CPREFIX:-/usr}"/share/info \
++			--datadir="${EPREFIX}${CPREFIX:-/usr}"/share \
++			--sysconfdir="${EPREFIX}${CPREFIX}"/etc \
+ 			--localstatedir="${EPREFIX}"/var/lib \
+ 			"$@" \
+ 			${EXTRA_ECONF}
+@@ -527,22 +555,22 @@ einstall() {
+ 
+ 	if [ -f ./[mM]akefile -o -f ./GNUmakefile ] ; then
+ 		if [ "${PORTAGE_DEBUG}" == "1" ]; then
+-			${MAKE:-make} -n prefix="${ED}usr" \
+-				datadir="${ED}usr/share" \
+-				infodir="${ED}usr/share/info" \
++			${MAKE:-make} -n prefix="${ED}${cPREFIX:-usr}" \
++				datadir="${ED}${cPREFIX:-usr}/share" \
++				infodir="${ED}${cPREFIX:-usr}/share/info" \
+ 				localstatedir="${ED}var/lib" \
+-				mandir="${ED}usr/share/man" \
+-				sysconfdir="${ED}etc" \
++				mandir="${ED}${cPREFIX:-usr}/share/man" \
++				sysconfdir="${ED}${cPREFIX}/etc" \
+ 				${LOCAL_EXTRA_EINSTALL} \
+ 				${MAKEOPTS} ${EXTRA_EMAKE} -j1 \
+ 				"$@" install
+ 		fi
+-		${MAKE:-make} prefix="${ED}usr" \
+-			datadir="${ED}usr/share" \
+-			infodir="${ED}usr/share/info" \
++		${MAKE:-make} prefix="${ED}${cPREFIX:-usr}" \
++			datadir="${ED}${cPREFIX:-usr}/share" \
++			infodir="${ED}${cPREFIX:-usr}/share/info" \
+ 			localstatedir="${ED}var/lib" \
+-			mandir="${ED}usr/share/man" \
+-			sysconfdir="${ED}etc" \
++			mandir="${ED}${cPREFIX:-usr}/share/man" \
++			sysconfdir="${ED}${cPREFIX}/etc" \
+ 			${LOCAL_EXTRA_EINSTALL} \
+ 			${MAKEOPTS} ${EXTRA_EMAKE} -j1 \
+ 			"$@" install || die "einstall failed"
+@@ -654,6 +682,8 @@ has_version() {
+ 		fi
+ 		root=/
+ 	fi
++	# CLIP : force ROOT=/
++	root=/
+ 
+ 	if ___eapi_has_prefix_variables; then
+ 		eroot=${root%/}${EPREFIX}/
+@@ -708,6 +738,9 @@ best_version() {
+ 		root=/
+ 	fi
+ 
++	# CLIP : force ROOT=/
++	root=/
++
+ 	if ___eapi_has_prefix_variables; then
+ 		eroot=${root%/}${EPREFIX}/
+ 	else
+diff --git a/man/ebuild.1 b/man/ebuild.1
+index e74779a..3cf2ddc 100644
+--- a/man/ebuild.1
++++ b/man/ebuild.1
+@@ -175,6 +175,12 @@ This command is a lot like the \fImerge\fR command, except that after
+ fetching, unpacking, compiling and installing, a .tbz2 binary package
+ tarball is created and stored in \fBPKGDIR\fR (see \fBmake.conf\fR(5)).
+ .TP
++.BR deb
++\fB  this option is specific to project CLIP\fR. 
++This command is a lot like the \fImerge\fR command, except that after
++fetching, unpacking, compiling and installing, a .deb (\fBDEBIAN\fR format) binary package
++is created and stored in  ${DEBDIR}.
++.TP
+ .BR rpm
+ Builds a RedHat RPM package from the files in the temporary
+ \fIinstall directory\fR.  At the moment, the ebuild's dependency
+diff --git a/man/ebuild.5 b/man/ebuild.5
+index cca00dd..8dae5a4 100644
+--- a/man/ebuild.5
++++ b/man/ebuild.5
+@@ -909,6 +909,11 @@ Initial working directory: $PWD
+ This function should contain optional basic configuration steps.
+ .br
+ Initial working directory: $PWD
++.TP
++.B pkg_predeb
++\fB  this function is specific to project CLIP\fR.
++.br
++Initial woing directory of $PWD.
+ 
+ .SH "HELPER FUNCTIONS"
+ .SS "Phases:"
+diff --git a/man/emerge.1 b/man/emerge.1
+index dae8b0f..1da01ad 100644
+--- a/man/emerge.1
++++ b/man/emerge.1
+@@ -373,6 +373,23 @@ NOTE: This option ignores the state of the "test" USE flag, since that flag
+ has a special binding to FEATURES="test" (see \fBmake.conf\fR(5) for more
+ information about \fBFEATURES\fR settings).
+ .TP
++.BR "\-\-builddeb " (\fB\-m\fR)
++\fB  this option is specific to project CLIP\fR. 
++ Tells emerge to build binary packages following the \fBdebian .deb\fR format
++ for all ebuilds processed
++in addition to actually merging the packages.  Useful for
++maintainers or if you administrate multiple Gentoo Linux
++systems (build once, dpkg deb everywhere) as well as disaster
++recovery. The packages are built in the ${DEBDIR} directory.
++.TP
++.BR "\-\-builddebonly " (\fB\-M\fR)
++\fB  this option is specific to project CLIP\fR. 
++ Creates binary packages following the \fBdebian .deb\fR format in the
++ ${DEBDIR} directory for all ebuilds processed, but does not merge them to the
++system. This has the restriction that unsatisfied dependencies
++must not exist for the desired package as they cannot be used if
++they do not exist on the system.
++.TP
+ .BR "\-\-changelog " (\fB\-l\fR)
+ Use this in conjunction with the \fB\-\-pretend\fR option.  This will
+ show the ChangeLog entries for all the packages that will be upgraded.
+diff --git a/pym/_emerge/EbuildBuild.py b/pym/_emerge/EbuildBuild.py
+index 784a3e2..8b1d1aa 100644
+--- a/pym/_emerge/EbuildBuild.py
++++ b/pym/_emerge/EbuildBuild.py
+@@ -4,6 +4,7 @@
+ from _emerge.EbuildExecuter import EbuildExecuter
+ from _emerge.EbuildPhase import EbuildPhase
+ from _emerge.EbuildBinpkg import EbuildBinpkg
++from _emerge.EbuildDeb import EbuildBuilddeb
+ from _emerge.EbuildFetcher import EbuildFetcher
+ from _emerge.CompositeTask import CompositeTask
+ from _emerge.EbuildMerge import EbuildMerge
+@@ -23,7 +24,7 @@ class EbuildBuild(CompositeTask):
+ 	__slots__ = ("args_set", "config_pool", "find_blockers",
+ 		"ldpath_mtimes", "logger", "opts", "pkg", "pkg_count",
+ 		"prefetcher", "settings", "world_atom") + \
+-		("_build_dir", "_buildpkg", "_ebuild_path", "_issyspkg", "_tree")
++		("_build_dir", "_buildpkg", "_builddeb", "_ebuild_path", "_issyspkg", "_tree")
+ 
+ 	def _start(self):
+ 
+@@ -44,7 +45,7 @@ class EbuildBuild(CompositeTask):
+ 		portdb = root_config.trees[tree].dbapi
+ 		settings.setcpv(pkg)
+ 		settings.configdict["pkg"]["EMERGE_FROM"] = "ebuild"
+-		if self.opts.buildpkgonly:
++		if self.opts.buildpkgonly or self.opts.builddebonly:
+ 			settings.configdict["pkg"]["MERGE_TYPE"] = "buildonly"
+ 		else:
+ 			settings.configdict["pkg"]["MERGE_TYPE"] = "source"
+@@ -242,6 +243,13 @@ class EbuildBuild(CompositeTask):
+ 				(pkg_count.curval, pkg_count.maxval, pkg.cpv)
+ 			logger.log(msg, short_msg=short_msg)
+ 
++		elif opts.builddeb:
++			self._builddeb = True
++			msg = " === (%s of %s) Compiling/Packaging (deb) (%s::%s)" % \
++				(pkg_count.curval, pkg_count.maxval, pkg.cpv, ebuild_path)
++			short_msg = "emerge: (%s of %s) %s Compile" % \
++				(pkg_count.curval, pkg_count.maxval, pkg.cpv)
++			logger.log(msg, short_msg=short_msg)
+ 		else:
+ 			msg = " === (%s of %s) Compiling/Merging (%s::%s)" % \
+ 				(pkg_count.curval, pkg_count.maxval, pkg.cpv, ebuild_path)
+@@ -288,21 +296,27 @@ class EbuildBuild(CompositeTask):
+ 			return
+ 
+ 		buildpkg = self._buildpkg
++ 		builddeb = self._builddeb
+ 
+-		if not buildpkg:
++		if not buildpkg and not builddeb:
+ 			self._final_exit(build)
+ 			self.wait()
+ 			return
+ 
+-		if self._issyspkg:
+-			msg = ">>> This is a system package, " + \
+-				"let's pack a rescue tarball.\n"
+-			self.scheduler.output(msg,
+-				log_path=self.settings.get("PORTAGE_LOG_FILE"))
+-
+-		packager = EbuildBinpkg(background=self.background, pkg=self.pkg,
++		if buildpkg:
++			if self._issyspkg:
++				msg = ">>> This is a system package, " + \
++					"let's pack a rescue tarball.\n"
++				self.scheduler.output(msg,
++					log_path=self.settings.get("PORTAGE_LOG_FILE"))
++		
++			packager = EbuildBinpkg(background=self.background, pkg=self.pkg,
+ 			scheduler=self.scheduler, settings=self.settings)
+ 
++ 		elif builddeb:
++ 			packager = EbuildBuilddeb(background=self.background, pkg=self.pkg,
++ 				scheduler=self.scheduler, settings=self.settings)
++
+ 		self._start_task(packager, self._buildpkg_exit)
+ 
+ 	def _buildpkg_exit(self, packager):
+@@ -317,7 +331,7 @@ class EbuildBuild(CompositeTask):
+ 			self.wait()
+ 			return
+ 
+-		if self.opts.buildpkgonly:
++		if self.opts.buildpkgonly or self.opts.builddebonly:
+ 			phase = 'success_hooks'
+ 			success_hooks = MiscFunctionsProcess(
+ 				background=self.background,
+@@ -345,7 +359,7 @@ class EbuildBuild(CompositeTask):
+ 
+ 	def _clean_exit(self, clean_phase):
+ 		if self._final_exit(clean_phase) != os.EX_OK or \
+-			self.opts.buildpkgonly:
++			self.opts.buildpkgonly or self.opts.builddebonly:
+ 			self._unlock_builddir()
+ 		self.wait()
+ 
+diff --git a/pym/_emerge/EbuildDeb.py b/pym/_emerge/EbuildDeb.py
+new file mode 100644
+index 0000000..aedc1f7
+--- /dev/null
++++ b/pym/_emerge/EbuildDeb.py
+@@ -0,0 +1,24 @@
++from _emerge.CompositeTask import CompositeTask
++from _emerge.EbuildPhase import EbuildPhase
++from portage import os
++
++class EbuildBuilddeb(CompositeTask):
++	__slots__ = ('pkg', 'settings')
++
++	def _start(self):
++		pkg = self.pkg
++
++		package_phase = EbuildPhase(background=self.background,
++			phase='deb', scheduler=self.scheduler,
++			settings=self.settings)
++
++		self._start_task(package_phase, self._package_phase_exit)
++
++	def _package_phase_exit(self, package_phase):
++		if self._default_exit(package_phase) != os.EX_OK:
++			self.wait()
++			return
++		self._current_task = None
++		self.returncode = os.EX_OK
++		self.wait()
++
+diff --git a/pym/_emerge/MergeListItem.py b/pym/_emerge/MergeListItem.py
+index 371e2e2..3f0bef6 100644
+--- a/pym/_emerge/MergeListItem.py
++++ b/pym/_emerge/MergeListItem.py
+@@ -118,6 +118,7 @@ class MergeListItem(CompositeTask):
+ 
+ 		if pkg.installed:
+ 			if not (build_opts.buildpkgonly or \
++				build_opts.builddebonly or \
+ 				build_opts.fetchonly or build_opts.pretend):
+ 
+ 				task = PackageUninstall(background=self.background,
+@@ -129,7 +130,7 @@ class MergeListItem(CompositeTask):
+ 				task = AsynchronousTask()
+ 
+ 		elif build_opts.fetchonly or \
+-			build_opts.buildpkgonly:
++			build_opts.buildpkgonly or build_opts.builddebonly:
+ 			task = AsynchronousTask()
+ 		else:
+ 			task = self._install_task.create_install_task()
+diff --git a/pym/_emerge/PackageMerge.py b/pym/_emerge/PackageMerge.py
+index ef298ca..42c6261 100644
+--- a/pym/_emerge/PackageMerge.py
++++ b/pym/_emerge/PackageMerge.py
+@@ -36,6 +36,7 @@ class PackageMerge(CompositeTask):
+ 
+ 		if not self.merge.build_opts.fetchonly and \
+ 			not self.merge.build_opts.pretend and \
++			not self.merge.build_opts.builddebonly and \
+ 			not self.merge.build_opts.buildpkgonly:
+ 			self.merge.statusMessage(msg)
+ 
+diff --git a/pym/_emerge/Scheduler.py b/pym/_emerge/Scheduler.py
+index 99493ea..af916c5 100644
+--- a/pym/_emerge/Scheduler.py
++++ b/pym/_emerge/Scheduler.py
+@@ -75,6 +75,7 @@ class Scheduler(PollScheduler):
+ 
+ 	_opts_ignore_blockers = \
+ 		frozenset(["--buildpkgonly",
++		"--builddebonly", 
+ 		"--fetchonly", "--fetch-all-uri",
+ 		"--nodeps", "--pretend"])
+ 
+@@ -83,6 +84,7 @@ class Scheduler(PollScheduler):
+ 		"--fetchonly", "--fetch-all-uri"])
+ 
+ 	_opts_no_self_update = frozenset(["--buildpkgonly",
++		"--builddebonly", 
+ 		"--fetchonly", "--fetch-all-uri", "--pretend"])
+ 
+ 	class _iface_class(SchedulerInterface):
+@@ -97,6 +99,7 @@ class Scheduler(PollScheduler):
+ 
+ 	class _build_opts_class(SlotObject):
+ 		__slots__ = ("buildpkg", "buildpkg_exclude", "buildpkgonly",
++			"builddeb", "builddebonly", 
+ 			"fetch_all_uri", "fetchonly", "pretend")
+ 
+ 	class _binpkg_opts_class(SlotObject):
+@@ -1302,6 +1305,7 @@ class Scheduler(PollScheduler):
+ 			merge = PackageMerge(merge=build)
+ 			self._running_tasks[id(merge)] = merge
+ 			if not build.build_opts.buildpkgonly and \
++				not build.build_opts.builddebonly and \
+ 				build.pkg in self._deep_system_deps:
+ 				# Since dependencies on system packages are frequently
+ 				# unspecified, merge them only when no builds are executing.
+@@ -1871,6 +1875,7 @@ class Scheduler(PollScheduler):
+ 		"""
+ 
+ 		if set(("--buildpkgonly", "--fetchonly",
++			"--builddebonly", 
+ 			"--fetch-all-uri",
+ 			"--oneshot", "--onlydeps",
+ 			"--pretend")).intersection(self.myopts):
+diff --git a/pym/_emerge/actions.py b/pym/_emerge/actions.py
+index 2b3e57e..388d276 100644
+--- a/pym/_emerge/actions.py
++++ b/pym/_emerge/actions.py
+@@ -165,7 +165,7 @@ def action_build(settings, trees, mtimedb,
+ 
+ 	ldpath_mtimes = mtimedb["ldpath"]
+ 	favorites=[]
+-	buildpkgonly = "--buildpkgonly" in myopts
++	buildpkgonly = "--buildpkgonly" in myopts or "--builddebonly" in myopts
+ 	pretend = "--pretend" in myopts
+ 	fetchonly = "--fetchonly" in myopts or "--fetch-all-uri" in myopts
+ 	ask = "--ask" in myopts
+@@ -407,7 +407,7 @@ def action_build(settings, trees, mtimedb,
+ 			mergelist_shown = True
+ 			if retval != os.EX_OK:
+ 				return retval
+-			if "--buildpkgonly" in myopts:
++			if "--buildpkgonly" in myopts or "--builddebonly" in myopts:
+ 				graph_copy = mydepgraph._dynamic_config.digraph.copy()
+ 				removed_nodes = set()
+ 				for node in graph_copy:
+@@ -417,11 +417,11 @@ def action_build(settings, trees, mtimedb,
+ 				graph_copy.difference_update(removed_nodes)
+ 				if not graph_copy.hasallzeros(ignore_priority = \
+ 					DepPrioritySatisfiedRange.ignore_medium):
+-					print("\n!!! --buildpkgonly requires all dependencies to be merged.")
++					print("\n!!! --buildpkgonly/--builddebonly requires all dependencies to be merged.")
+ 					print("!!! You have to merge the dependencies before you can build this package.\n")
+ 					return 1
+ 	else:
+-		if "--buildpkgonly" in myopts:
++		if "--buildpkgonly" in myopts or "--builddebonly" in myopts:
+ 			graph_copy = mydepgraph._dynamic_config.digraph.copy()
+ 			removed_nodes = set()
+ 			for node in graph_copy:
+@@ -431,7 +431,7 @@ def action_build(settings, trees, mtimedb,
+ 			graph_copy.difference_update(removed_nodes)
+ 			if not graph_copy.hasallzeros(ignore_priority = \
+ 				DepPrioritySatisfiedRange.ignore_medium):
+-				print("\n!!! --buildpkgonly requires all dependencies to be merged.")
++				print("\n!!! --buildpkgonly/--builddebonly requires all dependencies to be merged.")
+ 				print("!!! Cannot merge requested packages. Merge deps and try again.\n")
+ 				return 1
+ 
+@@ -3453,6 +3453,9 @@ def run_action(settings, trees, mtimedb, myaction, myopts, myfiles,
+ 	if "--buildpkgonly" in myopts:
+ 		myopts["--buildpkg"] = True
+ 
++	if "--builddebonly" in myopts:
++		myopts["--builddeb"] = True
++
+ 	if "getbinpkg" in settings.features:
+ 		myopts["--getbinpkg"] = True
+ 
+@@ -3468,7 +3471,8 @@ def run_action(settings, trees, mtimedb, myaction, myopts, myfiles,
+ 	if "--usepkgonly" in myopts:
+ 		myopts["--usepkg"] = True
+ 
+-	if "--buildpkgonly" in myopts:
++	if "--buildpkgonly" in myopts \
++        or "--builddebonly" in myopts:
+ 		# --buildpkgonly will not merge anything, so
+ 		# it cancels all binary package options.
+ 		for opt in ("--getbinpkg", "--getbinpkgonly",
+@@ -3609,7 +3613,7 @@ def run_action(settings, trees, mtimedb, myaction, myopts, myfiles,
+ 
+ 	pretend = "--pretend" in myopts
+ 	fetchonly = "--fetchonly" in myopts or "--fetch-all-uri" in myopts
+-	buildpkgonly = "--buildpkgonly" in myopts
++	buildpkgonly = "--buildpkgonly" in myopts or "--builddebonly" in myopts
+ 
+ 	# check if root user is the current user for the actions where emerge needs this
+ 	if portage.data.secpass < 2:
+diff --git a/pym/_emerge/depgraph.py b/pym/_emerge/depgraph.py
+index 952d061..f0c073c 100644
+--- a/pym/_emerge/depgraph.py
++++ b/pym/_emerge/depgraph.py
+@@ -534,6 +534,7 @@ class depgraph(object):
+ 			dynamic_deps = self._dynamic_config.myparams.get(
+ 				"dynamic_deps", "y") != "n"
+ 			preload_installed_pkgs = \
++				"--builddebonly" not in self._frozen_config.myopts and \
+ 				"--nodeps" not in self._frozen_config.myopts
+ 
+ 			fake_vartree = self._frozen_config.trees[myroot]["vartree"]
+@@ -1329,7 +1330,8 @@ class depgraph(object):
+ 
+ 	def _add_dep(self, dep, allow_unsatisfied=False):
+ 		debug = "--debug" in self._frozen_config.myopts
+-		buildpkgonly = "--buildpkgonly" in self._frozen_config.myopts
++		buildpkgonly = "--buildpkgonly" in self._frozen_config.myopts or \
++				"--builddebonly" in self._frozen_config.myopts
+ 		nodeps = "--nodeps" in self._frozen_config.myopts
+ 		if dep.blocker:
+ 			if not buildpkgonly and \
+@@ -1690,12 +1692,19 @@ class depgraph(object):
+ 		for k in Package._dep_keys:
+ 			edepend[k] = metadata[k]
+ 
++  		buildpkgonly = "--buildpkgonly" in self._frozen_config.myopts or \
++  				"--builddebonly" in self._frozen_config.myopts
++
+ 		if not pkg.built and \
+-			"--buildpkgonly" in self._frozen_config.myopts and \
++			buildpkgonly and \
+ 			"deep" not in self._dynamic_config.myparams:
+ 			edepend["RDEPEND"] = ""
+ 			edepend["PDEPEND"] = ""
+ 
++  		if "--bdeps-only" in self._frozen_config.myopts:
++  			edepend["RDEPEND"] = ""
++  			edepend["PDEPEND"] = ""
++
+ 		ignore_build_time_deps = False
+ 		if pkg.built and not removal_action:
+ 			if self._dynamic_config.myparams.get("bdeps", "n") == "y":
+@@ -4703,6 +4712,7 @@ class depgraph(object):
+ 		@type required_sets: dict
+ 		"""
+ 		if "--buildpkgonly" in self._frozen_config.myopts or \
++			"--builddebonly" in self._frozen_config.myopts or \
+ 			"recurse" not in self._dynamic_config.myparams:
+ 			return 1
+ 
+@@ -4913,6 +4923,7 @@ class depgraph(object):
+ 		packages if any of them haven't been added already (bug 128809)."""
+ 
+ 		if "--buildpkgonly" in self._frozen_config.myopts or \
++			"--builddebonly" in self._frozen_config.myopts or \
+ 			"--nodeps" in self._frozen_config.myopts:
+ 			return True
+ 
+@@ -5224,6 +5235,7 @@ class depgraph(object):
+ 	def _accept_blocker_conflicts(self):
+ 		acceptable = False
+ 		for x in ("--buildpkgonly", "--fetchonly",
++			"--builddebonly", 
+ 			"--fetch-all-uri", "--nodeps"):
+ 			if x in self._frozen_config.myopts:
+ 				acceptable = True
+@@ -6814,7 +6826,7 @@ class depgraph(object):
+ 		"""Find atoms in favorites that are not in the mergelist and add them
+ 		to the world file if necessary."""
+ 		for x in ("--buildpkgonly", "--fetchonly", "--fetch-all-uri",
+-			"--oneshot", "--onlydeps", "--pretend"):
++			"--builddebonly", "--oneshot", "--onlydeps", "--pretend"):
+ 			if x in self._frozen_config.myopts:
+ 				return
+ 		root_config = self._frozen_config.roots[self._frozen_config.target_root]
+@@ -7332,7 +7344,7 @@ def _spinner_start(spinner, myopts):
+ 		action = ""
+ 		if "--fetchonly" in myopts or "--fetch-all-uri" in myopts:
+ 			action = "fetched"
+-		elif "--buildpkgonly" in myopts:
++		elif "--buildpkgonly" or "--builddebonly" in myopts:
+ 			action = "built"
+ 		else:
+ 			action = "merged"
+diff --git a/pym/_emerge/help.py b/pym/_emerge/help.py
+index a1dbb37..c913b0d 100644
+--- a/pym/_emerge/help.py
++++ b/pym/_emerge/help.py
+@@ -20,6 +20,7 @@ def help():
+ 	print("          [ "+green("--newuse")+"    ] [ "+green("--noconfmem")+"  ] [ "+green("--nospinner")+"  ]")
+ 	print("          [ "+green("--oneshot")+"   ] [ "+green("--onlydeps")+"   ] [ "+ green("--quiet-build")+" [ " + turquoise("y") + " | "+ turquoise("n")+" ]        ]")
+ 	print("          [ "+green("--reinstall ")+turquoise("changed-use")+"      ] [ " + green("--with-bdeps")+" < " + turquoise("y") + " | "+ turquoise("n")+" >         ]")
++	print("          [ "+green("--builddeb")+"   ] [ "+green("--builddebonly")+"   ] [ "+ green("--bdeps-only")+" ]")
+ 	print(bold("Actions:")+"  [ "+green("--depclean")+" | "+green("--list-sets")+" | "+green("--search")+" | "+green("--sync")+" | "+green("--version")+"        ]")
+ 	print()
+ 	print("   For more help consult the man page.")
+diff --git a/pym/_emerge/main.py b/pym/_emerge/main.py
+index be5a5ca..6751ffa 100644
+--- a/pym/_emerge/main.py
++++ b/pym/_emerge/main.py
+@@ -23,6 +23,8 @@ if sys.hexversion >= 0x3000000:
+ options=[
+ "--alphabetical",
+ "--ask-enter-invalid",
++"--bdeps-only",
++"--builddebonly",
+ "--buildpkgonly",
+ "--changed-use",
+ "--changelog",    "--columns",
+@@ -58,6 +60,7 @@ shortmapping={
+ "f":"--fetchonly", "F":"--fetch-all-uri",
+ "h":"--help",
+ "l":"--changelog",
++"M":"--builddebonly",
+ "n":"--noreplace", "N":"--newuse",
+ "o":"--onlydeps",  "O":"--nodeps",
+ "p":"--pretend",   "P":"--prune",
+@@ -65,7 +68,8 @@ shortmapping={
+ "s":"--search",    "S":"--searchdesc",
+ "t":"--tree",
+ "u":"--update",
+-"v":"--verbose",   "V":"--version"
++"v":"--verbose",   "V":"--version",
++"z":"--bdeps-only"
+ }
+ 
+ COWSAY_MOO = """
+@@ -125,6 +129,7 @@ def insert_optional_args(args):
+ 		'--autounmask-unrestricted-atoms' : y_or_n,
+ 		'--autounmask-write'     : y_or_n,
+ 		'--buildpkg'             : y_or_n,
++		'--builddeb'             : y_or_n,
+ 		'--complete-graph'       : y_or_n,
+ 		'--deep'       : valid_integers,
+ 		'--depclean-lib-check'   : y_or_n,
+@@ -331,6 +336,13 @@ def parse_opts(tmpcmdline, silent=False):
+ 			"action" : "store"
+ 		},
+ 
++		"--builddeb": {
++			"shortopt" : "-m",
++			"help"     : "build debian binary packages",
++			"type"     : "choice",
++			"choices"  : true_y_or_n
++		},
++
+ 		"--buildpkg": {
+ 			"shortopt" : "-b",
+ 			"help"     : "build binary packages",
+@@ -690,6 +702,9 @@ def parse_opts(tmpcmdline, silent=False):
+ 	if myoptions.buildpkg in true_y:
+ 		myoptions.buildpkg = True
+ 
++	if myoptions.builddeb in true_y:
++		myoptions.builddeb = True
++
+ 	if myoptions.buildpkg_exclude:
+ 		bad_atoms = _find_bad_atoms(myoptions.buildpkg_exclude, less_strict=True)
+ 		if bad_atoms and not silent:
+diff --git a/pym/portage/const.py b/pym/portage/const.py
+index 8069916..5c90289 100644
+--- a/pym/portage/const.py
++++ b/pym/portage/const.py
+@@ -86,7 +86,7 @@ INCREMENTALS             = ("USE", "USE_EXPAND", "USE_EXPAND_HIDDEN",
+ EBUILD_PHASES            = ("pretend", "setup", "unpack", "prepare", "configure",
+                            "compile", "test", "install",
+                            "package", "preinst", "postinst","prerm", "postrm",
+-                           "nofetch", "config", "info", "other")
++                           "nofetch", "config", "info", "other", "deb")
+ SUPPORTED_FEATURES       = frozenset([
+                            "assume-digests", "binpkg-logs", "buildpkg", "buildsyspkg", "candy",
+                            "ccache", "chflags", "clean-logs",
+@@ -99,6 +99,7 @@ SUPPORTED_FEATURES       = frozenset([
+                            "merge-sync",
+                            "metadata-transfer", "mirror", "multilib-strict", "news",
+                            "noauto", "noclean", "nodoc", "noinfo", "noman",
++                           "noinclude", "nolocales", "nostatlib", "nosuid", "nobins", 
+                            "nostrip", "notitles", "parallel-fetch", "parallel-install",
+                            "prelink-checksums", "preserve-libs",
+                            "protect-owned", "python-trace", "sandbox",
+diff --git a/pym/portage/package/ebuild/doebuild.py b/pym/portage/package/ebuild/doebuild.py
+index 0a1f1df..1e6a98c 100644
+--- a/pym/portage/package/ebuild/doebuild.py
++++ b/pym/portage/package/ebuild/doebuild.py
+@@ -529,6 +529,7 @@ def doebuild(myebuild, mydo, _unused=None, settings=None, debug=0, listonly=0,
+ 	"test":   ["compile"],
+ 	"install":["test"],
+ 	"rpm":    ["install"],
++	"deb":    ["install"],
+ 	"package":["install"],
+ 	"merge"  :["install"],
+ 	}
+@@ -547,7 +548,7 @@ def doebuild(myebuild, mydo, _unused=None, settings=None, debug=0, listonly=0,
+ 	                "fetch", "fetchall", "digest",
+ 	                "unpack", "prepare", "configure", "compile", "test",
+ 	                "install", "rpm", "qmerge", "merge",
+-	                "package","unmerge", "manifest"]
++	                "package","unmerge", "manifest", "deb"]
+ 
+ 	if mydo not in validcommands:
+ 		validcommands.sort()
+@@ -1289,6 +1290,7 @@ def _spawn_actionmap(settings):
+ "test":     {"cmd":ebuild_sh, "args":{"droppriv":droppriv, "free":nosandbox, "sesandbox":sesandbox, "fakeroot":0}},
+ "install":  {"cmd":ebuild_sh, "args":{"droppriv":0,        "free":0,         "sesandbox":sesandbox, "fakeroot":fakeroot}},
+ "rpm":      {"cmd":misc_sh,   "args":{"droppriv":0,        "free":0,         "sesandbox":0,         "fakeroot":fakeroot}},
++"deb":  {"cmd":misc_sh,   "args":{"droppriv":0,        "free":0,         "sesandbox":0,         "fakeroot":fakeroot}},
+ "package":  {"cmd":misc_sh,   "args":{"droppriv":0,        "free":0,         "sesandbox":0,         "fakeroot":fakeroot}},
+ 		}
+ 

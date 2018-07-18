@@ -1,0 +1,7 @@
+# CLIP ChangeLog for dev-util/desktop-file-util
+
+*desktop-file-utils-0.15-r1 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  desktop-file-utils-0.15-r1.ebuild:
+  Initial overlay import. clip-deps fix.

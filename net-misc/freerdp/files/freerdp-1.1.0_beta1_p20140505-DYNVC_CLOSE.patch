@@ -1,0 +1,44 @@
+From 0729f3b7803970f17d0495a1e1535f0e78133987 Mon Sep 17 00:00:00 2001
+From: Giacomo Rombaut <giacomo.rombaut@gmail.com>
+Date: Fri, 13 Sep 2013 15:22:10 +0200
+Subject: [PATCH] Respond to DYNVC_CLOSE like described in MS-RDPEDYC
+
+---
+ channels/drdynvc/client/drdynvc_main.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/channels/drdynvc/client/drdynvc_main.c b/channels/drdynvc/client/drdynvc_main.c
+index a605ba2..0560001 100644
+--- a/channels/drdynvc/client/drdynvc_main.c
++++ b/channels/drdynvc/client/drdynvc_main.c
+@@ -284,10 +284,27 @@ static int drdynvc_process_data(drdynvcPlugin* drdynvc, int Sp, int cbChId, wStr
+ static int drdynvc_process_close_request(drdynvcPlugin* drdynvc, int Sp, int cbChId, wStream* s)
+ {
+ 	UINT32 ChannelId;
++	wStream* data_out;
++	int value;
++	int error;
+ 
+ 	ChannelId = drdynvc_read_variable_uint(s, cbChId);
+ 	DEBUG_DVC("ChannelId=%d", ChannelId);
+ 	dvcman_close_channel(drdynvc->channel_mgr, ChannelId);
++	
++	data_out = Stream_New(NULL, 4);
++	value = (CLOSE_REQUEST_PDU << 4) | (cbChId & 0x02);
++	Stream_Write_UINT8(data_out, value);
++	drdynvc_write_variable_uint(data_out, ChannelId);
++	error = svc_plugin_send((rdpSvcPlugin*) drdynvc, data_out);
++	
++	if (error != CHANNEL_RC_OK)
++	{
++		DEBUG_WARN("VirtualChannelWrite failed %d", error);
++		return 1;
++	}
++	
++	drdynvc->channel_error = error;
+ 
+ 	return 0;
+ }
+-- 
+1.7.10.4
+

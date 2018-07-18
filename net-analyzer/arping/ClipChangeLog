@@ -1,0 +1,20 @@
+# CLIP ChangeLog for net-analyzer/arping
+
+*arping-2.06-r2 (13 Jul 2015)
+
+  13 Jul 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +arping-2.06-r2.ebuild, -arping-2.06-r1.ebuild:
+  Force rebuild against new libpcap.
+
+*arping-2.06-r1 (24 Jun 2010)
+
+  24 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +arping-2.06-r1.ebuild, -arping-2.06.ebuild:
+  Fix veriexec entry - add CAP_NET_RAW + CAP_NET_ADMIN (inheritable),
+  CLSM_PRIV_NETLINK, and restrict to root.
+
+*arping-2.06 (18 Jun 2010)
+
+  18 Jun 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  arping-2.06.ebuild:
+  Add verictl support.

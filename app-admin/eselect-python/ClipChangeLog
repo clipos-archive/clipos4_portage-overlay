@@ -1,0 +1,9 @@
+# CLIP ChangeLog for app-admin/eselect-python
+
+*eselect-python-20091230-r1 (21 Jun 2010)
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +eselect-python-20091230-r1.ebuild, -eselect-python-20091230.ebuild,
+  +files/eselect-python-20091230-clip-root.patch:
+  Fix ROOT usage for CLIP.
+

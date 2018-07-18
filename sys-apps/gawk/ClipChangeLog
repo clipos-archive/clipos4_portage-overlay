@@ -1,0 +1,7 @@
+# CLIP ChangeLog for sys-apps/gawk
+
+*gawk-4.0.2 (18 Dec 2013)
+
+  18 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  gawk-4.0.2.ebuild:
+  Initial overlay import - add IUSE clip to create awk symlink.

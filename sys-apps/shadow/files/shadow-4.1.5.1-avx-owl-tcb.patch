@@ -1,0 +1,1001 @@
+Index: shadow-4.1.5.1/lib/Makefile.am
+===================================================================
+--- shadow-4.1.5.1.orig/lib/Makefile.am
++++ shadow-4.1.5.1/lib/Makefile.am
+@@ -54,7 +54,7 @@ libshadow_la_SOURCES = \
+ 	utent.c
+ 
+ if WITH_TCB
+-libshadow_la_SOURCES += tcbfuncs.c tcbfuncs.h
++libshadow_la_SOURCES += pam_chpw.h pam_chpw.c tcbfuncs.c tcbfuncs.h
+ endif
+ 
+ # These files are unneeded for some reason, listed in
+Index: shadow-4.1.5.1/lib/commonio.c
+===================================================================
+--- shadow-4.1.5.1.orig/lib/commonio.c
++++ shadow-4.1.5.1/lib/commonio.c
+@@ -405,29 +405,20 @@ int commonio_lock (struct commonio_db *d
+ 	 * lockpw.c calls us and would cause infinite recursion!
+ 	 */
+ 
+-	/*
+-	 * Call lckpwdf() on the first lock.
+-	 * If it succeeds, call *_lock() only once
+-	 * (no retries, it should always succeed).
+-	 */
+-	if (0 == lock_count) {
+-		if (lckpwdf () == -1) {
+-			if (geteuid () != 0) {
+-				(void) fprintf (stderr,
+-				                "%s: Permission denied.\n",
+-				                Prog);
+-			}
+-			return 0;	/* failure */
++	if (lock_count == 0 && lckpwdf() == -1) {
++		if (geteuid () != 0) {
++			(void) fprintf (stderr,
++			                "%s: Permission denied.\n",
++			                Prog);
+ 		}
++		return 0;	/* failure */
+ 	}
+ 
+-	if (commonio_lock_nowait (db, true) != 0) {
+-		return 1;	/* success */
+-	}
+-
+-	ulckpwdf ();
+-	return 0;		/* failure */
++	lock_count++;
++	db->locked = 1;
++	return 1;		/* success */
+ #else				/* !HAVE_LCKPWDF */
++#error lckpwdf() is required
+ 	int i;
+ 
+ 	/*
+@@ -480,8 +471,6 @@ static void dec_lock_count (void)
+ 
+ int commonio_unlock (struct commonio_db *db)
+ {
+-	char lock[1024];
+-
+ 	if (db->isopen) {
+ 		db->readonly = true;
+ 		if (commonio_close (db) == 0) {
+@@ -497,8 +486,10 @@ int commonio_unlock (struct commonio_db
+ 		 * then call ulckpwdf() (if used) on last unlock.
+ 		 */
+ 		db->locked = false;
++#if 0
+ 		snprintf (lock, sizeof lock, "%s.lock", db->filename);
+ 		unlink (lock);
++#endif
+ 		dec_lock_count ();
+ 		return 1;
+ 	}
+Index: shadow-4.1.5.1/lib/pam_chpw.c
+===================================================================
+--- /dev/null
++++ shadow-4.1.5.1/lib/pam_chpw.c
+@@ -0,0 +1,39 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include <security/pam_userpass.h>
++
++int do_pam_chpass(const char *service, const char *user, const char *pass)
++{
++       pam_handle_t *pamh;
++       pam_userpass_t userpass;
++       struct pam_conv conv = {pam_userpass_conv, &userpass};
++       int status;
++
++       userpass.user = user;
++       userpass.pass = pass;
++
++       status = pam_start(service, user, &conv, &pamh);
++       if (status != PAM_SUCCESS) {
++               fprintf(stderr, "pam_start: Failed with code %d\n", status);
++               return 0;
++       }
++
++       status = pam_chauthtok(pamh, 0);
++       if (status != PAM_SUCCESS) {
++               fprintf(stderr, "pam_chauthtok: %s\n",
++                       pam_strerror(pamh, status));
++               pam_end(pamh, status);
++               return 0;
++       }
++
++       status = pam_end(pamh, status);
++       if (status != PAM_SUCCESS) {
++               fprintf(stderr, "pam_end: Failed with code %d\n", status);
++               return 0;
++       }
++
++       return 1;
++}
++
+Index: shadow-4.1.5.1/lib/pam_chpw.h
+===================================================================
+--- /dev/null
++++ shadow-4.1.5.1/lib/pam_chpw.h
+@@ -0,0 +1,7 @@
++#ifndef _PAM_CHPW_H
++#define _PAM_CHPW_H
++
++extern int do_pam_chpass(const char *service,
++       const char *user, const char *pass);
++
++#endif
+Index: shadow-4.1.5.1/lib/shadowio.c
+===================================================================
+--- shadow-4.1.5.1.orig/lib/shadowio.c
++++ shadow-4.1.5.1/lib/shadowio.c
+@@ -41,6 +41,7 @@
+ #include <stdio.h>
+ #include "commonio.h"
+ #include "shadowio.h"
++#include "getdef.h"
+ #ifdef WITH_TCB
+ #include <tcb.h>
+ #include "tcbfuncs.h"
+@@ -97,7 +98,7 @@ static struct commonio_ops shadow_ops =
+ 	NULL			/* close_hook */
+ };
+ 
+-static struct commonio_db shadow_db = {
++struct commonio_db shadow_db = {
+ 	SHADOW_FILE,		/* filename */
+ 	&shadow_ops,		/* ops */
+ 	NULL,			/* fp */
+@@ -125,6 +126,10 @@ int spw_setdbname (const char *filename)
+ 
+ bool spw_file_present (void)
+ {
++#ifdef WITH_TCB
++	if (getdef_bool("USE_TCB"))
++		return 1;
++#endif
+ 	return commonio_present (&shadow_db);
+ }
+ 
+Index: shadow-4.1.5.1/src/chpasswd.c
+===================================================================
+--- shadow-4.1.5.1.orig/src/chpasswd.c
++++ shadow-4.1.5.1/src/chpasswd.c
+@@ -37,11 +37,15 @@
+ #include <fcntl.h>
+ #include <getopt.h>
+ #include <pwd.h>
++#include "pam_chpw.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #ifdef USE_PAM
+ #include "pam_defs.h"
+ #endif				/* USE_PAM */
++#ifdef WITH_TCB
++#include "tcbfuncs.h"
++#endif
+ #include "defines.h"
+ #include "nscd.h"
+ #include "getdef.h"
+@@ -67,7 +71,6 @@ static /*@null@*//*@observer@*/const cha
+ static long sha_rounds = 5000;
+ #endif				/* USE_SHA_CRYPT */
+ 
+-static bool is_shadow_pwd;
+ static bool pw_locked = false;
+ static bool spw_locked = false;
+ 
+@@ -77,8 +80,6 @@ static /*@noreturn@*/void usage (int sta
+ static void process_flags (int argc, char **argv);
+ static void check_flags (void);
+ static void check_perms (void);
+-static void open_files (void);
+-static void close_files (void);
+ 
+ /*
+  * fail_exit - exit with a failure code after unlocking the files
+@@ -297,6 +298,8 @@ static void check_perms (void)
+ #endif				/* USE_PAM */
+ }
+ 
++
++#if 0
+ /*
+  * open_files - lock and open the password databases
+  */
+@@ -373,18 +376,119 @@ static void close_files (void)
+ 	pw_locked = false;
+ }
+ 
++#endif
++
++
++static int paste_pwd_shadow (char *name, char *pwd)
++{
++	const struct spwd *sp;
++	struct spwd newsp;
++	long now = time ((long *) 0) / (24L * 3600L);
++
++	if (!shadowtcb_set_user (name))
++		return 0;
++	if (!spw_lock ())
++	{
++		fprintf (stderr, "can't lock shadow file for %s\n", name);
++		return 0;
++	}
++	if (!spw_open (O_RDWR))
++	{
++		fprintf (stderr, "can't open shadow file for %s\n", name);
++		spw_unlock ();
++		return 0;
++	}
++	sp = spw_locate (name);
++	if (sp)
++	{
++		newsp = *sp;
++		newsp.sp_pwdp = pwd;
++		newsp.sp_lstchg = now;
++	}
++	else
++	{
++		fprintf (stderr, "can't locate shadow entry for %s\n", name);
++		return 0;
++	}
++	if (!spw_update (&newsp))
++	{
++		fprintf (stderr, "can't update shadow entry for %s\n", name);
++		return 0;
++	}
++	if (!spw_close ())
++	{
++		fprintf (stderr, "error updating shadow file\n");
++		return 0;
++	}
++	spw_unlock ();
++	return 1;
++}
++
++static int paste_pwd (char *name, char *pwd)
++{
++	const struct passwd *pw;
++	struct passwd newpw;
++#ifdef ATT_AGE
++	long now = time ((long *) 0) / (24L * 3600L);
++#endif
++	if (spw_file_present ())
++		return paste_pwd_shadow (name, pwd);
++
++	if (!pw_lock ())
++	{
++		fprintf (stderr, "can't lock password file\n");
++		return 0;
++	}
++	if (!pw_open (O_RDWR))
++	{
++		fprintf (stderr, "can't open password file\n");
++		return 0;
++	}
++
++	pw = pw_locate (name);
++	if (!pw)
++	{
++		fprintf (stderr, "unknown user %s\n", name);
++		return 0;
++	}
++	newpw = *pw;
++	newpw.pw_passwd = pwd;
++#ifdef ATT_AGE
++	if (newpw.pw_age[0])
++	{
++		strcpy (newage, newpw.pw_age);
++		strcpy (newage + 2, l64a (now / 7));
++		newpw.pw_age = newage;
++	}
++#endif
++
++	if (!pw_update (&newpw))
++	{
++		fprintf (stderr, "cannot update password entry\n");
++		return 0;
++	}
++	if (!pw_close ())
++	{
++		fprintf (stderr, "error updating password file\n");
++		return 0;
++	}
++
++	pw_unlock ();
++	return 1;
++}
++
++
+ int main (int argc, char **argv)
+ {
+ 	char buf[BUFSIZ];
+-	char *name;
+-	char *newpwd;
++	char *name = NULL;
+ 	char *cp;
+ 
+ #ifdef USE_PAM
+ 	bool use_pam = true;
+ #endif				/* USE_PAM */
+ 
+-	int errors = 0;
++	static int errors = 0;
+ 	int line = 0;
+ 
+ 	Prog = Basename (argv[0]);
+@@ -411,9 +515,6 @@ int main (int argc, char **argv)
+ 	if (!use_pam)
+ #endif				/* USE_PAM */
+ 	{
+-		is_shadow_pwd = spw_file_present ();
+-
+-		open_files ();
+ 	}
+ 
+ 	/*
+@@ -435,188 +536,27 @@ int main (int argc, char **argv)
+ 				         _("%s: line %d: line too long\n"),
+ 				         Prog, line);
+ 				errors++;
+-				continue;
++				break;
+ 			}
+ 		}
+ 
+-		/*
+-		 * The username is the first field. It is separated from the
+-		 * password with a ":" character which is replaced with a
+-		 * NUL to give the new password. The new password will then
+-		 * be encrypted in the normal fashion with a new salt
+-		 * generated, unless the '-e' is given, in which case it is
+-		 * assumed to already be encrypted.
+-		 */
+-
+-		name = buf;
+-		cp = strchr (name, ':');
+-		if (NULL != cp) {
+-			*cp = '\0';
+-			cp++;
+-		} else {
+-			fprintf (stderr,
+-			         _("%s: line %d: missing new password\n"),
+-			         Prog, line);
+-			errors++;
+-			continue;
+-		}
+-		newpwd = cp;
+-
+-#ifdef USE_PAM
+-		if (use_pam){
+-			if (do_pam_passwd_non_interractive ("chpasswd", name, newpwd) != 0) {
+-				fprintf (stderr,
+-				         _("%s: (line %d, user %s) password not changed\n"),
+-				         Prog, line, name);
++		if (eflg) {
++			if (!paste_pwd (name, cp)) {
++				fprintf (stderr, "%s: line %d: unable to paste new hash\n",
++					Prog, line);
+ 				errors++;
++				break;
+ 			}
+-		} else
+-#endif				/* USE_PAM */
+-		{
+-		const struct spwd *sp;
+-		struct spwd newsp;
+-		const struct passwd *pw;
+-		struct passwd newpw;
+-
+-		if (   !eflg
+-		    && (   (NULL == crypt_method)
+-		        || (0 != strcmp (crypt_method, "NONE")))) {
+-			void *arg = NULL;
+-			if (md5flg) {
+-				crypt_method = "MD5";
+-			}
+-#ifdef USE_SHA_CRYPT
+-			if (sflg) {
+-				arg = &sha_rounds;
+-			}
+-#endif
+-			cp = pw_encrypt (newpwd,
+-			                 crypt_make_salt(crypt_method, arg));
+-		}
+-
+-		/*
+-		 * Get the password file entry for this user. The user must
+-		 * already exist.
+-		 */
+-		pw = pw_locate (name);
+-		if (NULL == pw) {
+-			fprintf (stderr,
+-			         _("%s: line %d: user '%s' does not exist\n"), Prog,
+-			         line, name);
++		} else if (!do_pam_chpass ("chpasswd", name, cp)) {
++			fprintf (stderr, "%s: line %d: unable to change password for %s\n",
++				Prog, line, name);
+ 			errors++;
+-			continue;
+-		}
+-		if (is_shadow_pwd) {
+-			/* The shadow entry should be updated if the
+-			 * passwd entry has a password set to 'x'.
+-			 * But on the other hand, if there is already both
+-			 * a passwd and a shadow password, it's preferable
+-			 * to update both.
+-			 */
+-			sp = spw_locate (name);
+-
+-			if (   (NULL == sp)
+-			    && (strcmp (pw->pw_passwd,
+-			                SHADOW_PASSWD_STRING) == 0)) {
+-				/* If the password is set to 'x' in
+-				 * passwd, but there are no entries in
+-				 * shadow, create one.
+-				 */
+-				newsp.sp_namp  = name;
+-				/* newsp.sp_pwdp  = NULL; will be set later */
+-				/* newsp.sp_lstchg= 0;    will be set later */
+-				newsp.sp_min   = getdef_num ("PASS_MIN_DAYS", -1);
+-				newsp.sp_max   = getdef_num ("PASS_MAX_DAYS", -1);
+-				newsp.sp_warn  = getdef_num ("PASS_WARN_AGE", -1);
+-				newsp.sp_inact = -1;
+-				newsp.sp_expire= -1;
+-				newsp.sp_flag  = SHADOW_SP_FLAG_UNSET;
+-				sp = &newsp;
+-			}
+-		} else {
+-			sp = NULL;
+-		}
+-
+-		/*
+-		 * The freshly encrypted new password is merged into the
+-		 * user's password file entry and the last password change
+-		 * date is set to the current date.
+-		 */
+-		if (NULL != sp) {
+-			newsp = *sp;
+-			newsp.sp_pwdp = cp;
+-			newsp.sp_lstchg = (long) time ((time_t *)NULL) / SCALE;
+-			if (0 == newsp.sp_lstchg) {
+-				/* Better disable aging than requiring a
+-				 * password change */
+-				newsp.sp_lstchg = -1;
+-			}
+-		}
+-
+-		if (   (NULL == sp)
+-		    || (strcmp (pw->pw_passwd, SHADOW_PASSWD_STRING) != 0)) {
+-			newpw = *pw;
+-			newpw.pw_passwd = cp;
+-		}
+-
+-		/* 
+-		 * The updated password file entry is then put back and will
+-		 * be written to the password file later, after all the
+-		 * other entries have been updated as well.
+-		 */
+-		if (NULL != sp) {
+-			if (spw_update (&newsp) == 0) {
+-				fprintf (stderr,
+-				         _("%s: line %d: failed to prepare the new %s entry '%s'\n"),
+-				         Prog, line, spw_dbname (), newsp.sp_namp);
+-				errors++;
+-				continue;
+-			}
+-		}
+-		if (   (NULL == sp)
+-		    || (strcmp (pw->pw_passwd, SHADOW_PASSWD_STRING) != 0)) {
+-			if (pw_update (&newpw) == 0) {
+-				fprintf (stderr,
+-				         _("%s: line %d: failed to prepare the new %s entry '%s'\n"),
+-				         Prog, line, pw_dbname (), newpw.pw_name);
+-				errors++;
+-				continue;
+-			}
+-		}
+-		}
+-	}
+-
+-	/*
+-	 * Any detected errors will cause the entire set of changes to be
+-	 * aborted. Unlocking the password file will cause all of the
+-	 * changes to be ignored. Otherwise the file is closed, causing the
+-	 * changes to be written out all at once, and then unlocked
+-	 * afterwards.
+-	 *
+-	 * With PAM, it is not possible to delay the update of the
+-	 * password database.
+-	 */
+-	if (0 != errors) {
+-#ifdef USE_PAM
+-		if (!use_pam)
+-#endif				/* USE_PAM */
+-		{
+-			fprintf (stderr,
+-			         _("%s: error detected, changes ignored\n"),
+-			         Prog);
++			break;
+ 		}
+-		fail_exit (1);
+-	}
+-
+-#ifdef USE_PAM
+-	if (!use_pam)
+-#endif				/* USE_PAM */
+-	{
+-	/* Save the changes */
+-		close_files ();
+ 	}
+ 
+-	nscd_flush_cache ("passwd");
++	if (errors)
++		return 1;
+ 
+ 	return (0);
+ }
+Index: shadow-4.1.5.1/src/newusers.c
+===================================================================
+--- shadow-4.1.5.1.orig/src/newusers.c
++++ shadow-4.1.5.1/src/newusers.c
+@@ -66,6 +66,10 @@
+ #include "sgroupio.h"
+ #include "shadowio.h"
+ #include "chkname.h"
++#ifdef WITH_TCB
++#include "pam_chpw.h"
++#include "tcbfuncs.h"
++#endif
+ 
+ /*
+  * Global variables
+@@ -82,7 +86,6 @@ static long sha_rounds = 5000;
+ #endif				/* USE_SHA_CRYPT */
+ #endif				/* !USE_PAM */
+ 
+-static bool is_shadow;
+ #ifdef SHADOWGRP
+ static bool is_shadow_grp;
+ static bool sgr_locked = false;
+@@ -104,8 +107,6 @@ static int add_passwd (struct passwd *,
+ static void process_flags (int argc, char **argv);
+ static void check_flags (void);
+ static void check_perms (void);
+-static void open_files (void);
+-static void close_files (void);
+ 
+ /*
+  * usage - display usage message and exit
+@@ -398,9 +399,7 @@ static void update_passwd (struct passwd
+ 	if ((crypt_method != NULL) && (0 == strcmp(crypt_method, "NONE"))) {
+ 		pwd->pw_passwd = (char *)password;
+ 	} else {
+-		pwd->pw_passwd = pw_encrypt (password,
+-		                             crypt_make_salt (crypt_method,
+-		                                              crypt_arg));
++		pwd->pw_passwd = "!!";
+ 	}
+ }
+ #endif				/* !USE_PAM */
+@@ -412,6 +411,7 @@ static int add_passwd (struct passwd *pw
+ {
+ 	const struct spwd *sp;
+ 	struct spwd spent;
++	int retval;
+ 
+ #ifndef USE_PAM
+ 	void *crypt_arg = NULL;
+@@ -428,12 +428,23 @@ static int add_passwd (struct passwd *pw
+ 	 * points to the entry in the password file. Shadow files are
+ 	 * harder since there are zillions of things to do ...
+ 	 */
+-	if (!is_shadow) {
+-		update_passwd (pwd, password);
++	if (!spw_file_present()) {
++		update_passwd (pwd, NULL);
+ 		return 0;
+ 	}
+ #endif				/* USE_PAM */
+ 
++	retval = -1;
++
++	if (!spw_lock()) {
++		fprintf(stderr, "Can't lock shadow file.\n");
++		goto out;
++	}
++	if (!spw_open(O_RDWR)) {
++		fprintf(stderr, "Can't open shadow file.\n");
++		goto out_unlock;
++	}
++
+ 	/*
+ 	 * Do the first and easiest shadow file case. The user already
+ 	 * exists in the shadow password file.
+@@ -446,9 +457,8 @@ static int add_passwd (struct passwd *pw
+ 		    && (0 == strcmp(crypt_method, "NONE"))) {
+ 			spent.sp_pwdp = (char *)password;
+ 		} else {
+-			const char *salt = crypt_make_salt (crypt_method,
+-			                                    crypt_arg);
+-			spent.sp_pwdp = pw_encrypt (password, salt);
++			spent.sp_pwdp = "!!";
++			goto out_update;
+ 		}
+ 		spent.sp_lstchg = (long) time ((time_t *) 0) / SCALE;
+ 		if (0 == spent.sp_lstchg) {
+@@ -491,8 +501,7 @@ static int add_passwd (struct passwd *pw
+ 	if ((crypt_method != NULL) && (0 == strcmp(crypt_method, "NONE"))) {
+ 		spent.sp_pwdp = (char *)password;
+ 	} else {
+-		const char *salt = crypt_make_salt (crypt_method, crypt_arg);
+-		spent.sp_pwdp = pw_encrypt (password, salt);
++		spent.sp_pwdp = "!!";
+ 	}
+ #else
+ 	/*
+@@ -514,7 +523,23 @@ static int add_passwd (struct passwd *pw
+ 	spent.sp_expire = -1;
+ 	spent.sp_flag   = SHADOW_SP_FLAG_UNSET;
+ 
+-	return (spw_update (&spent) == 0);
++out_update:
++	if (!spw_update (&spent)) {
++		fprintf(stderr, "Can't update shadow file.\n");
++		spw_close();
++		goto out_unlock;
++	}
++	if (!spw_close()) {
++		fprintf(stderr, "Can't flush shadow file.\n");
++		goto out_unlock;
++	}
++	retval = 0;
++
++out_unlock:
++	spw_unlock();
++
++out:
++	return retval;
+ }
+ 
+ /*
+@@ -673,6 +698,11 @@ static void check_perms (void)
+ 		retval = pam_acct_mgmt (pamh, 0);
+ 	}
+ 
++	if (retval == PAM_SUCCESS)
++		retval = pam_end(pamh, retval);
++	else
++		pam_end(pamh, retval);
++
+ 	if (PAM_SUCCESS != retval) {
+ 		fprintf (stderr, _("%s: PAM: %s\n"),
+ 		         Prog, pam_strerror (pamh, retval));
+@@ -687,6 +717,9 @@ static void check_perms (void)
+ #endif				/* ACCT_TOOLS_SETUID */
+ }
+ 
++
++#if 0
++
+ /*
+  * open_files - lock and open the password, group and shadow databases
+  */
+@@ -825,6 +858,10 @@ static void close_files (void)
+ #endif
+ }
+ 
++#endif
++
++
++
+ int main (int argc, char **argv)
+ {
+ 	char buf[BUFSIZ];
+@@ -833,7 +870,6 @@ int main (int argc, char **argv)
+ 	char *cp;
+ 	const struct passwd *pw;
+ 	struct passwd newpw;
+-	int errors = 0;
+ 	int line = 0;
+ 	uid_t uid;
+ 	gid_t gid;
+@@ -859,14 +895,10 @@ int main (int argc, char **argv)
+ 
+ 	check_perms ();
+ 
+-	is_shadow = spw_file_present ();
+-
+ #ifdef SHADOWGRP
+ 	is_shadow_grp = sgr_file_present ();
+ #endif
+ 
+-	open_files ();
+-
+ 	/*
+ 	 * Read each line. The line has the same format as a password file
+ 	 * entry, except that certain fields are not constrained to be
+@@ -886,8 +918,7 @@ int main (int argc, char **argv)
+ 				fprintf (stderr,
+ 				         _("%s: line %d: line too long\n"),
+ 				         Prog, line);
+-				errors++;
+-				continue;
++				exit(1);
+ 			}
+ 		}
+ 
+@@ -909,8 +940,26 @@ int main (int argc, char **argv)
+ 		if (nfields != 6) {
+ 			fprintf (stderr, _("%s: line %d: invalid line\n"),
+ 			         Prog, line);
+-			errors++;
+-			continue;
++			exit(1);
++		}
++
++		if (!pw_lock()) {
++			fprintf (stderr, _("%s: Can't lock /etc/passwd.\n"), Prog);
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			exit(1);
++		}
++		if (!gr_lock()) {
++			fprintf (stderr, _("%s: Can't lock /etc/group.\n"), Prog);
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			(void) pw_unlock ();
++			exit(1);
++		}
++		if (!pw_open(O_RDWR) || !gr_open(O_RDWR)) {
++			fprintf (stderr, _("%s: Can't open files\n"), Prog);
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 
+ 		/*
+@@ -921,8 +970,9 @@ int main (int argc, char **argv)
+ 		if (   (NULL == pw)
+ 		    && (getpwnam (fields[0]) != NULL)) {
+ 			fprintf (stderr, _("%s: cannot update the entry of user %s (not in the passwd database)\n"), Prog, fields[0]);
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 
+ 		if (   (NULL == pw)
+@@ -930,8 +980,9 @@ int main (int argc, char **argv)
+ 			fprintf (stderr,
+ 			         _("%s: line %d: can't create user\n"),
+ 			         Prog, line);
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 
+ 		/*
+@@ -951,8 +1002,9 @@ int main (int argc, char **argv)
+ 			fprintf (stderr,
+ 			         _("%s: line %d: can't create group\n"),
+ 			         Prog, line);
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 
+ 		/*
+@@ -967,8 +1019,18 @@ int main (int argc, char **argv)
+ 			fprintf (stderr,
+ 			         _("%s: line %d: can't create user\n"),
+ 			         Prog, line);
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
++		}
++
++		if (!shadowtcb_create(fields[0], uid)) {
++			fprintf(stderr, "Problems creating /etc/tcb/%s; "
++					"there may be a stale entry left.\n", fields[0]);
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 
+ 		/*
+@@ -980,8 +1042,9 @@ int main (int argc, char **argv)
+ 			fprintf (stderr,
+ 			         _("%s: line %d: user '%s' does not exist in %s\n"),
+ 			         Prog, line, fields[0], pw_dbname ());
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 		newpw = *pw;
+ 
+@@ -999,8 +1062,9 @@ int main (int argc, char **argv)
+ 			fprintf (stderr,
+ 			         _("%s: line %d: can't update password\n"),
+ 			         Prog, line);
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+ 		if ('\0' != fields[4][0]) {
+ 			newpw.pw_gecos = fields[4];
+@@ -1024,6 +1088,9 @@ int main (int argc, char **argv)
+ 				         _("%s: line %d: mkdir %s failed: %s\n"),
+ 				         Prog, line, newpw.pw_dir,
+ 				         strerror (errno));
++				(void) gr_unlock ();
++				(void) pw_unlock ();
++				exit(1);
+ 			} else if (chown (newpw.pw_dir,
+ 			                  newpw.pw_uid,
+ 			                  newpw.pw_gid) != 0) {
+@@ -1031,36 +1098,38 @@ int main (int argc, char **argv)
+ 				         _("%s: line %d: chown %s failed: %s\n"),
+ 				         Prog, line, newpw.pw_dir,
+ 				         strerror (errno));
++				(void) gr_unlock ();
++				(void) pw_unlock ();
++				exit(1);
+ 			}
+ 		}
+ 
+ 		/*
+ 		 * Update the password entry with the new changes made.
+ 		 */
++		uid = pw->pw_uid;
+ 		if (pw_update (&newpw) == 0) {
+ 			fprintf (stderr,
+ 			         _("%s: line %d: can't update entry\n"),
+ 			         Prog, line);
+-			errors++;
+-			continue;
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
+ 		}
+-	}
+ 
+-	/*
+-	 * Any detected errors will cause the entire set of changes to be
+-	 * aborted. Unlocking the password file will cause all of the
+-	 * changes to be ignored. Otherwise the file is closed, causing the
+-	 * changes to be written out all at once, and then unlocked
+-	 * afterwards.
+-	 */
+-	if (0 != errors) {
+-		fprintf (stderr,
+-		         _("%s: error detected, changes ignored\n"), Prog);
+-		fail_exit (EXIT_FAILURE);
++		if (!pw_close() || ! gr_close()) {
++			fprintf (stderr, _("%s: error updating files\n"), Prog);
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit(1);
++		}
++		if (!do_pam_chpass("newusers", fields[0], fields[1])) {
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			exit(1);
++		}
+ 	}
+ 
+-	close_files ();
+-
+ 	nscd_flush_cache ("passwd");
+ 	nscd_flush_cache ("group");
+ 
+@@ -1072,11 +1141,11 @@ int main (int argc, char **argv)
+ 			fprintf (stderr,
+ 			         _("%s: (line %d, user %s) password not changed\n"),
+ 			         Prog, lines[i], usernames[i]);
+-			errors++;
++			exit(1);
+ 		}
+ 	}
+-#endif				/* USE_PAM */
++#endif /* used to be USE_PAM */
+ 
+-	return ((0 == errors) ? EXIT_SUCCESS : EXIT_FAILURE);
++	return 0;
+ }
+ 
+Index: shadow-4.1.5.1/src/pwunconv.c
+===================================================================
+--- shadow-4.1.5.1.orig/src/pwunconv.c
++++ shadow-4.1.5.1/src/pwunconv.c
+@@ -45,6 +45,7 @@
+ #include "prototypes.h"
+ #include "pwio.h"
+ #include "shadowio.h"
++#include "getdef.h"
+ /*@-exitarg@*/
+ #include "exitcodes.h"
+ 
+Index: shadow-4.1.5.1/src/vipw.c
+===================================================================
+--- shadow-4.1.5.1.orig/src/vipw.c
++++ shadow-4.1.5.1/src/vipw.c
+@@ -48,6 +48,7 @@
+ #include "shadowio.h"
+ /*@-exitarg@*/
+ #include "exitcodes.h"
++#include "getdef.h"
+ #ifdef WITH_TCB
+ #include <tcb.h>
+ #include "tcbfuncs.h"
+Index: shadow-4.1.5.1/src/userdel.c
+===================================================================
+--- shadow-4.1.5.1.orig/src/userdel.c
++++ shadow-4.1.5.1/src/userdel.c
+@@ -798,7 +798,7 @@ static int remove_tcbdir (const char *us
+ {
+ 	char *buf;
+ 	int ret = 0;
+-	size_t bufsize = (sizeof TCB_DIR) + strlen (user_name) + 2;
++	size_t buflen = (sizeof TCB_DIR) + strlen (user_name) + 2;
+ 
+ 	if (!getdef_bool ("USE_TCB")) {
+ 		return 0;
+Index: shadow-4.1.5.1/src/usermod.c
+===================================================================
+--- shadow-4.1.5.1.orig/src/usermod.c
++++ shadow-4.1.5.1/src/usermod.c
+@@ -93,10 +93,10 @@
+ const char *Prog;
+ 
+ static char *user_name;
+-static char *user_newname;
++static char *user_newname = NULL;
+ static char *user_pass;
+ static uid_t user_id;
+-static uid_t user_newid;
++static uid_t user_newid = -1;
+ static gid_t user_gid;
+ static gid_t user_newgid;
+ static char *user_comment;
+Index: shadow-4.1.5.1/lib/tcbfuncs.c
+===================================================================
+--- shadow-4.1.5.1.orig/lib/tcbfuncs.c
++++ shadow-4.1.5.1/lib/tcbfuncs.c
+@@ -459,7 +459,7 @@ shadowtcb_status shadowtcb_move (/*@NULL
+ 		return SHADOWTCB_SUCCESS;
+ 	}
+ 	if (   (asprintf (&tcbdir, TCB_DIR "/%s", user_newname) == -1)
+-	    || (asprintf (&shadow, TCB_FMT, user_newname) == -1)) {
++	    || (asprintf (&shadow, TCB_DIR "/%s/shadow", user_newname) == -1)) {
+ 		OUT_OF_MEMORY;
+ 		return SHADOWTCB_FAILURE;
+ 	}
+@@ -558,7 +558,7 @@ shadowtcb_status shadowtcb_create (const
+ 	}
+ 
+ 	if (   (asprintf (&dir, TCB_DIR "/%s", name) == -1)
+-	    || (asprintf (&shadow, TCB_FMT, name) == -1)) {
++	    || (asprintf (&shadow, TCB_DIR "/%s/shadow", name) == -1)) {
+ 		OUT_OF_MEMORY;
+ 		return SHADOWTCB_FAILURE;
+ 	}

@@ -1,0 +1,46 @@
+# ClipChangeLog for sys-libs/readline
+
+  06 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +readline-6.2_p5-r1.ebuild, +readline-6.2_p5-r1.ebuild,
+  -readline-6.1-r1.ebuild:
+  Bump to latest 6.2, add multilib support, useful for bootstraping.
+
+  04 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  -files/bash-3.0-etc-inputrc.patch,
+  -files/readline-5.1-rlfe-build.patch,
+  -files/readline-5.1-rlfe-uclibc.patch,
+  -files/readline-5.1-cleanups.patch,
+  -files/readline-5.1-rlfe-libutil.patch,
+  -files/macos.patch, -readline-5.1_p4-r3.ebuild:
+  Remove old.
+
+*readline-5.1_p4-r3 (10 Feb 2011)
+
+  10 Feb 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +readline-5.1_p4-r3.ebuild, -readline-5.1_p4-r2.ebuild:
+  Add dependency on readline >= 6 to avoid conflict.
+
+*readline-6.1-r1 (09 Feb 2011)
+
+  09 Feb 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +readline-6.1-r1.ebuild, -readline-6.1.ebuild:
+  Do not install .c files.
+
+*readline-5.1_p4-r2 (09 Feb 2011)
+
+  09 Feb 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +readline-5.1_p4-r2.ebuild, -readline-5.1_p4-r1.ebuild:
+  Add a non-conflicting version of readline-5.
+
+*readline-6.1 (05 Jan 2011)
+
+  05 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +readline-6.1.ebuild, +files/readline-5.2-no-ignore-shlib-errors.patch:
+  Bump to latest.
+
+*readline-5.1_p4-r1 (03 Mar 2009)
+
+  03 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +readline-5.1_p4-r1.ebuild, -readline-5.1_p4.ebuild:
+  Initial overlay import: add CPREFIX support.
+

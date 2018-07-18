@@ -1,0 +1,19 @@
+--- toolkit/xre/nsXREDirProvider.cpp.orig	2009-08-18 21:53:41.000000000 +0200
++++ toolkit/xre/nsXREDirProvider.cpp	2009-08-18 22:48:11.000000000 +0200
+@@ -531,6 +531,16 @@ LoadExtensionDirectories(nsINIParser &pa
+     if (NS_FAILED(rv))
+       continue;
+ 
++    if (path.Find("/usr/local/lib/") != 0) {
++    	printf("Invalid extension path: %s\n", path.get());
++	continue;
++    }
++
++    if (path.Find("..") != kNotFound) {
++    	printf("Invalid extension path (..): %s\n", path.get());
++	continue;
++    }
++
+     rv = dir->SetPersistentDescriptor(path);
+     if (NS_FAILED(rv))
+       continue;

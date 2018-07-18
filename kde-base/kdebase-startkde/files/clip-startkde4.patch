@@ -1,0 +1,57 @@
+Index: startkde.cmake
+===================================================================
+--- startkde.cmake.orig
++++ startkde.cmake
+@@ -3,10 +3,11 @@
+ #  DEFAULT KDE STARTUP SCRIPT ( @KDE4WORKSPACE_VERSION@ )
+ #
+ 
++KWIN_COMPOSE=N # Disable KWin's compositing
++export KWIN_COMPOSE 
+ if test "x$1" = x--failsafe; then
+     KDE_FAILSAFE=1 # General failsafe flag
+-    KWIN_COMPOSE=N # Disable KWin's compositing
+-    export KWIN_COMPOSE KDE_FAILSAFE
++    export KDE_FAILSAFE
+ fi
+ 
+ # When the X server dies we get a HUP signal from xinit. We must ignore it
+@@ -85,7 +86,6 @@ if test $returncode -ne 0; then
+     xmessage -geometry 500x100 "kstartupconfig4 does not exist or fails. The error code is $returncode. Check your installation."
+     exit 1
+ fi
+-[ -r $kdehome/share/config/startupconfig ] && . $kdehome/share/config/startupconfig
+ 
+ # XCursor mouse theme needs to be applied here to work even for kded or ksmserver
+ if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" ; then
+@@ -118,6 +118,12 @@ dl=$DESKTOP_LOCKED
+ unset DESKTOP_LOCKED # Don't want it in the environment
+ 
+ ksplash_pid=
++
++if [[ -f "${kdehome}/share/config/ksplashrc" ]]; then
++	ksplashrc_ksplash_engine="$(awk -F"=" '$1 == "Engine" {print $2}' "${kdehome}/share/config/ksplashrc")"
++	ksplashrc_ksplash_theme="$(awk -F"=" '$1 == "Theme" {print $2}' "${kdehome}/share/config/ksplashrc")"
++fi
++
+ if test -z "$dl"; then
+   # languages as resolved by KLocale, for the splash screens use
+   # klocale_languages is assembled by kdostartupconfig4 calling KLocale
+@@ -164,7 +170,7 @@ for prefix in `echo "$libpath" | sed -n
+ done
+ 
+ # Gentoo part for FHS installs
+-for file in "@GENTOO_PORTAGE_EPREFIX@/etc/kde/startup/"*.sh; do
++for file in "@GENTOO_PORTAGE_EPREFIX@@CPREFIX@/etc/kde/startup/"*.sh; do
+   test -r "${file}" && . "${file}"
+ done
+ 
+@@ -402,7 +408,7 @@ for prefix in `echo "$libpath" | sed -n
+ done
+ 
+ # Gentoo part for FHS installs
+-for file in "@GENTOO_PORTAGE_EPREFIX@/etc/kde/shutdown/"*.sh; do
++for file in "@GENTOO_PORTAGE_EPREFIX@@CPREFIX@/etc/kde/shutdown/"*.sh; do
+   test -r "${file}" && . "${file}"
+ done
+ 

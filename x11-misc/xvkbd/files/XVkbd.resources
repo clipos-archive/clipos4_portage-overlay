@@ -1,0 +1,4 @@
+xvkbd.keypad: false
+xvkbd.functionkey: true
+xvkbd.windowGeometry: 800x220-0+0
+xvkbd.secure: true

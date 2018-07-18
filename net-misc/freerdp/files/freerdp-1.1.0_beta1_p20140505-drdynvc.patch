@@ -1,0 +1,32 @@
+From 1404532d702ccd4f84dbf0ae7c10860b517c64cd Mon Sep 17 00:00:00 2001
+From: Zhang Zhaolong <zhangzl2013@126.com>
+Date: Tue, 11 Feb 2014 17:28:12 +0800
+Subject: [PATCH] drdynvc: fix free invalid pointer.
+
+---
+ channels/drdynvc/client/dvcman.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/channels/drdynvc/client/dvcman.c b/channels/drdynvc/client/dvcman.c
+index 954247d..c1faed1 100644
+--- a/channels/drdynvc/client/dvcman.c
++++ b/channels/drdynvc/client/dvcman.c
+@@ -413,13 +413,13 @@ int dvcman_close_channel(IWTSVirtualChannelManager* pChannelMgr, UINT32 ChannelI
+ 
+ 		IFCALL(context->OnChannelDisconnected, context, channel->channel_name, channel->pInterface);
+ 
++		free(channel->channel_name);
++
+ 		DEBUG_DVC("dvcman_close_channel: channel %d closed", ChannelId);
+ 		ichannel = (IWTSVirtualChannel*) channel;
+ 		ichannel->Close(ichannel);
+ 	}
+ 
+-	free(channel->channel_name);
+-
+ 	return 0;
+ }
+ 
+-- 
+1.7.10.4
+

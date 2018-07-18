@@ -1,0 +1,12 @@
+diff -aur portage-2.1.11.31/pym/portage/util/ExtractKernelVersion.py portage-2.1.11.31.new/pym/portage/util/ExtractKernelVersion.py
+--- portage-2.1.11.31/pym/portage/util/ExtractKernelVersion.py	2012-10-26 19:41:56.000000000 +0000
++++ portage-2.1.11.31.new/pym/portage/util/ExtractKernelVersion.py	2013-08-08 08:41:12.983870029 +0000
+@@ -71,7 +71,7 @@
+ 		version += "".join( " ".join( grabfile( base_dir+ "/" + lv ) ).split() )
+ 
+ 	# Check the .config for a CONFIG_LOCALVERSION and append that too, also stripping whitespace
+-	kernelconfig = getconfig(base_dir+"/.config")
++	kernelconfig = getconfig(base_dir+"/.config", tolerant=1)
+ 	if kernelconfig and "CONFIG_LOCALVERSION" in kernelconfig:
+ 		version += "".join(kernelconfig["CONFIG_LOCALVERSION"].split())
+ 

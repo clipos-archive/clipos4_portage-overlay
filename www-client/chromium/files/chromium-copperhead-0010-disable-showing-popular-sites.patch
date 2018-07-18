@@ -1,0 +1,16 @@
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+Cf. https://github.com/AndroidHardening/chromium_patches/blob/oreo-m2-release/COPPERHEAD_LICENSE
+
+Index: chromium-61.0.3163.79/components/ntp_tiles/constants.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/components/ntp_tiles/constants.cc
++++ chromium-61.0.3163.79/components/ntp_tiles/constants.cc
+@@ -13,7 +13,7 @@ namespace ntp_tiles {
+ const char kPopularSitesFieldTrialName[] = "NTPPopularSites";
+ 
+ extern const base::Feature kPopularSitesBakedInContentFeature{
+-    "NTPPopularSitesBakedInContent", base::FEATURE_ENABLED_BY_DEFAULT};
++    "NTPPopularSitesBakedInContent", base::FEATURE_DISABLED_BY_DEFAULT};
+ 
+ extern const base::Feature kNtpMostLikelyFaviconsFromServerFeature{
+     "NTPMostLikelyFaviconsFromServer", base::FEATURE_DISABLED_BY_DEFAULT};

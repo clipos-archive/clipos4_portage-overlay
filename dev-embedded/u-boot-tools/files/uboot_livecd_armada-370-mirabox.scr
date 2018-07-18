@@ -1,0 +1,12 @@
+echo ""
+echo "==== CLIP LiveCD ===="
+echo ""
+usb start
+echo "Chargement..."
+fatload usb 1 0x2000000 vmlinuz-clip
+fatload usb 1 0x5000000 initrd.img
+echo ""
+echo "Demarrage..."
+setenv bootargs "console=ttyS0,115200 earlyprintk=serial,0xd0012000,115200 root=/dev/ram0 cdroot nofb"
+bootm 0x2000000 0x5000000
+

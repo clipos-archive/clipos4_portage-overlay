@@ -1,0 +1,44 @@
+--- coreutils/df.c.orig	2015-01-29 12:24:42.132409879 +0100
++++ coreutils/df.c	2015-01-29 12:25:37.354926448 +0100
+@@ -167,21 +167,20 @@
+ 			if (!mount_point)
+ 				break;
+ 			mount_entry = find_mount_point(mount_point, 1);
+-			if (!mount_entry) {
+-				bb_error_msg("%s: can't find mount point", mount_point);
+- set_error:
+-				status = EXIT_FAILURE;
+-				continue;
+-			}
+ 		}
+ 
+-		device = mount_entry->mnt_fsname;
+-		mount_point = mount_entry->mnt_dir;
+-		fs_type = mount_entry->mnt_type;
++		if (mount_entry) {
++			device = mount_entry->mnt_fsname;
++			mount_point = mount_entry->mnt_dir;
++			fs_type = mount_entry->mnt_type;
++		} else {
++			device = mount_point;
++		}
+ 
+ 		if (statfs(mount_point, &s) != 0) {
+ 			bb_simple_perror_msg(mount_point);
+-			goto set_error;
++			status = EXIT_FAILURE;
++			continue;
+ 		}
+ 
+ 		if ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
+--- include/libbb.h.orig	2015-01-29 12:25:51.870536489 +0100
++++ include/libbb.h	2015-01-29 12:26:11.881998866 +0100
+@@ -1760,7 +1760,7 @@
+ 
+ /* Busybox mount uses either /proc/mounts or /etc/mtab to
+  * get the list of currently mounted filesystems */
+-#define bb_path_mtab_file IF_FEATURE_MTAB_SUPPORT("/etc/mtab")IF_NOT_FEATURE_MTAB_SUPPORT("/proc/mounts")
++#define bb_path_mtab_file "/etc/mtab"
+ 
+ #define bb_path_passwd_file  _PATH_PASSWD
+ #define bb_path_group_file   _PATH_GROUP

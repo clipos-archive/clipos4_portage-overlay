@@ -1,0 +1,10 @@
+#!/bin/sh
+export ICAROOT="/usr/local/lib/ICAClient"
+if [ "${LD_LIBRARY_PATH+set}" = "set" ] ; then
+	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${ICAROOT}:/usr/local/lib"
+else
+	export LD_LIBRARY_PATH="${ICAROOT}:/usr/local/lib"
+fi
+export LC_ALL=''
+export LANG=''
+exec ${ICAROOT}/wfica "$@"

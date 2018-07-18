@@ -1,0 +1,109 @@
+# CLIP Changelog for sys-apps/pcsc-lite
+
+*pcsc-lite-1.8.9 (18 Oct 2016)
+
+  18 Oct 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r7.ebuild, -pcsc-lite-1.8.8-r6.ebuild:
+  Added dependency on jail_init virtual service provided by init_cgroups.
+
+*pcsc-lite-1.8.8-r6 (25 Mar 2015)
+
+  25 Mar 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r6.ebuild, -pcsc-lite-1.8.8-r5.ebuild,
+  files/jails/pcsc/fstab.internal:
+  Set the jail's root read-only.
+
+*pcsc-lite-1.8.8-r5 (26 Feb 2015)
+
+  26 Feb 2015; ANSSI <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r5.ebuild, -pcsc-lite-1.8.8-r4.ebuild:
+  Create additional export directory in pcsc vserver needed
+  by smartcard-monitor.
+
+*pcsc-lite-1.8.8-r4 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r4.ebuild, -pcsc-lite-1.8.8-r3.ebuild,
+  files/jails/pcsc/nscleanup:
+  Unmount /home/user as needed when setting up the pcsc jail.
+
+*pcsc-lite-1.8.8-r3 (30 Dec 2013)
+
+  30 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r3.ebuild, -pcsc-lite-1.8.8-r2.ebuild:
+  Force rebuild to add openrc dependency.
+
+*pcsc-lite-1.8.8-r2 (14 Nov 2013)
+
+  14 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r2.ebuild, -pcsc-lite-1.8.8-r1.ebuild,
+  files/pcscd-init.4.clip:
+  Don't run pcsc unless SMARTCARD_SUPPORT=yes is present
+  in /etc/admin/conf.d/smartcards.
+
+*pcsc-lite-1.8.8-r1 (14 Nov 2013)
+
+  14 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8-r1.ebuild, -pcsc-lite-1.8.8.ebuild,
+  files/pcscd-init.4.clip:
+  Improved compatibility with openRC.
+
+*pcsc-lite-1.8.8 (12 Avr 2013)
+
+  12 Avr 2013; ANSSI <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.8.ebuild, -pcsc-lite-1.8.6-r5.ebuild:
+  Bump pcsc.
+
+*pcsc-lite-1.8.6-r5 (20 Feb 2013)
+
+  20 Feb 2013; ANSSI <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.6-r5.ebuild, -pcsc-lite-1.8.6-r3.ebuild,
+  -pcsc-lite-1.8.6-r4.ebuild:
+  Fixed installation scripts (init.d) for clip and dev-station,
+  fixed jails mount option.
+
+*pcsc-lite-1.8.6-r3 (13 Nov 2012)
+
+  13 Nov 2012; ANSSI <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.6-r3.ebuild, -pcsc-lite-1.8.6-r2.ebuild:
+  Remove reader polling (see hotplug-clip).
+
+*pcsc-lite-1.8.6-r2 (26 Oct 2012)
+
+  26 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.6-r2.ebuild, -pcsc-lite-1.8.6-r1.ebuild:
+  Add missing '/var/run/pcscd'.
+
+*pcsc-lite-1.8.6-r1 (19 Oct 2012)
+
+  19 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.8.6-r1.ebuild, -pcsc-lite-1.8.6.ebuild,
+  files/jails/pcsc/fstab.external:
+  Add 'nodev' to /sys mount options in the pcsc jail, otherwise
+  devctl will reject this mount.
+
+*pcsc-lite-1.8.6 (04 Oct 2012)
+
+  04 Oct 2012; ANSSI <clipos@ssi.gouv.fr>
+  +pcsc(lite-1.8.6.ebuild, -pcsc-lite-1.6.6-r1.ebuild:
+  Update to last version of pcsc to support last readers/cards. Patch to jail
+  pcsc in its own vserver.
+
+*pcsc-lite-1.6.6-r2 (29 Apr 2011)
+
+  29 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.6.6-r2.ebuild, -pcsc-lite-1.6.6-r1.ebuild:
+  Add inheritable CAP_KILL for pcsc --hotplug.
+
+*pcsc-lite-1.6.6 (02 Fev 2011)
+
+  02 Fev 2011; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.6.6-r1.ebuild, -pcsc-lite-1.5.5-r1.ebuild:
+  Bump to latest release. A few patches on the ebuild.
+
+*pcsc-lite-1.5.5-r1 (13 Jul 2010)
+
+  13 Jul 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +pcsc-lite-1.5.5-r1.ebuild:
+  Initial overlay import. added rc-update call to package postinst.
+

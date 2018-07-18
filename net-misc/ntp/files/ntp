@@ -1,0 +1,5 @@
+# "yes" ou "no" (sans guillemets)
+USE_NTP=no
+
+# Addresse IP ou DNS du serveur NTP
+NTP_SERVER=ntp.clip

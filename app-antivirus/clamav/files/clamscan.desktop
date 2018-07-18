@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+Encoding=UTF-8
+ServiceTypes=KonqPopupMenu/Plugin,all/allfiles,inode/directory
+Actions=scan
+
+[Desktop Action scan]
+Exec=clamscan.sh %F
+Name=Scan with ClamAV...
+Name[fr]=Analyser avec l'antivirus
+Icon=page-zoom

@@ -1,0 +1,13 @@
+# CLIP ChangeLog for media-libs/libfreehand
+
+*libfreehand-0.1.0 (31 Dec 2014)
+
+  31 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libfreehand-0.1.0.ebuild, -libfreehand-0.0.0.ebuild:
+  Bump to latest.
+
+*libfreehand-0.0.0 (07 May 2014)
+
+  07 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libfreehand-0.0.0.ebuild:
+  Initial import, CPREFIX + clip-deps fix.

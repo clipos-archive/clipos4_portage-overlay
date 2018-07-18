@@ -1,0 +1,35 @@
+# CLIP ChangeLog for media-gfx/xfig
+
+*xfig-3.2.5b-r5 (13 Nov 2013)
+
+  13 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfig-3.2.5b-r5.ebuild, -xfig-3.2.5b-r4.ebuild:
+  Force rebuild - libpng revdep.
+
+*xfig-3.2.5b-r4 (03 Sep 2013)
+
+  03 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfig-3.2.5b-r4.ebuild, -xfig-3.2.5b-r3.ebuild:
+  Switch dependency from Xaw3d to libXaw3d.
+
+*xfig-3.2.5b-r3 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfig-3.2.5b-r3.ebuild, -xfig-3.2.5b-r2.ebuild,
+  +files/xfig-3.2.5b-solaris.patch,
+  +files/xfig-3.2.5b-darwin.patch,
+  +files/xfig-3.2.5b-edit-menu.patch:
+  Sync up with gentoo ebuild.
+
+*xfig-3.2.5b-r2 (02 Apr 2012)
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfig-3.2.5b-r2.ebuild, -xfig-3.2.5b.ebuild,
+  +files/xfig-3.2.5b-fix-eps-reading.patch:
+  Fix eps import.
+
+*xfig-3.2.5b-r1 (07 Jul 2011)
+ 
+  07 Jul 2011; Arnauld Michelizza <clipos@ssi.gouv.fr>
+  xfig-3.2.5b-r1.ebuild, +files/xfig-3.2.5b-clip.patch:
+  Initial import. CPREFIX fixes + DESCRIPTION_FR.

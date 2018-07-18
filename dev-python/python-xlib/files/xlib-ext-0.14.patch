@@ -1,0 +1,10 @@
+--- a/Xlib/ext/__init__.py	2011-08-26 15:50:35.000000000 +0200
++++ b/Xlib/ext/__init__.py	2011-08-26 15:49:03.000000000 +0200
+@@ -27,6 +27,7 @@
+     ('SHAPE', 'shape'),
+     ('XINERAMA', 'xinerama'),
+     ('RECORD', 'record'),
++    ('SECURITY', 'security')
+     ]
+ 
+ __all__ = map(lambda x: x[1], __extensions__)

@@ -1,0 +1,29 @@
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+Cf. https://github.com/AndroidHardening/chromium_patches/blob/oreo-m2-release/COPPERHEAD_LICENSE
+
+Index: chromium-61.0.3163.79/chrome/browser/about_flags.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/chrome/browser/about_flags.cc
++++ chromium-61.0.3163.79/chrome/browser/about_flags.cc
+@@ -1231,7 +1231,7 @@ const FeatureEntry kFeatureEntries[] = {
+      SINGLE_VALUE_TYPE(switches::kHistoryEntryRequiresUserGesture)},
+     {"disable-hyperlink-auditing", flag_descriptions::kHyperlinkAuditingName,
+      flag_descriptions::kHyperlinkAuditingDescription, kOsAll,
+-     SINGLE_DISABLE_VALUE_TYPE(switches::kNoPings)},
++     SINGLE_VALUE_TYPE(switches::kNoPings)},
+ #if defined(OS_ANDROID)
+     {"contextual-search", flag_descriptions::kContextualSearchName,
+      flag_descriptions::kContextualSearchDescription, kOsAndroid,
+Index: chromium-61.0.3163.79/chrome/browser/chrome_content_browser_client.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/chrome/browser/chrome_content_browser_client.cc
++++ chromium-61.0.3163.79/chrome/browser/chrome_content_browser_client.cc
+@@ -842,7 +842,7 @@ ChromeContentBrowserClient::~ChromeConte
+ void ChromeContentBrowserClient::RegisterProfilePrefs(
+     user_prefs::PrefRegistrySyncable* registry) {
+   registry->RegisterBooleanPref(prefs::kDisable3DAPIs, false);
+-  registry->RegisterBooleanPref(prefs::kEnableHyperlinkAuditing, true);
++  registry->RegisterBooleanPref(prefs::kEnableHyperlinkAuditing, false);
+   registry->RegisterListPref(prefs::kEnableDeprecatedWebPlatformFeatures);
+ }
+ 

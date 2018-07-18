@@ -1,0 +1,31 @@
+
+Section "Monitor"
+
+    Identifier  "LCD"
+
+EndSection
+
+
+Section "Device"
+    Identifier  "nouveau"
+    Driver      "nouveau"
+EndSection
+
+
+Section "Screen"
+    Identifier  "Screen 1"
+    Device      "nouveau"
+    Monitor     "LCD"
+    Option "DPMS" "true"
+EndSection
+
+
+Section "ServerLayout"
+
+    Identifier  "Simple Layout"
+
+    Screen "Screen 1"
+
+    InputDevice "Keyboard0" "CoreKeyboard"
+EndSection
+

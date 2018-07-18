@@ -1,0 +1,58 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+export DISPLAY=:0
+export XAUTHORITY="/var/run/authdir/slim.auth"
+
+get_mode() {
+	local output="${1}"
+	local mode=""
+	if [[ -n "${output}" ]]; then
+		mode="$(xrandr -q | awk -vout="${output}" '$1 == out && $2 == "connected" && $4 ~ /\(/ {print $3}')"
+	else
+		mode="$(xrandr -q | awk '$2 == "connected" && $4 ~ /\(/ {print $3}' | head -n 1)"
+	fi
+	mode="${mode%%+*}"
+	echo -n "${mode}"
+}
+
+
+if [[ "${1}" == "started" ]]; then 
+	/usr/local/bin/xsetroot -cursor_name left_ptr
+
+	if [[ -f /var/run/nonetwork ]]; then
+		/usr/local/bin/nonetwork &
+	fi
+
+	/usr/local/bin/rebooter &
+
+	source /etc/conf.d/netconf
+	[[ "${BOOT_MENU}" == "yes" ]] || /usr/local/bin/netchoose &
+
+	if ! ps aux | grep -v grep | grep -q screen-monitor; then
+		# first run - get screen mode from LVDS1 or eDP1 or VGA1
+		# connectors - in that order of priority - or, failing that,
+		# from the first connected display port
+		MODE="$(get_mode LVDS1)"
+		[[ -z "${MODE}" ]] && MODE="$(get_mode eDP1)"
+		[[ -z "${MODE}" ]] && MODE="$(get_mode VGA1)"
+		[[ -z "${MODE}" ]] && MODE="$(get_mode)"
+		BPP="$(cat /sys/class/graphics/fb0/bits_per_pixel)"
+		[[ -z "${BPP}" ]] && BPP=32
+		if [[ -n "${MODE}" ]]; then
+			UMASK="$(umask)"
+			umask 022
+			echo "${MODE}:${BPP}" > "/etc/core/current.geom"
+			umask "${UMASK}"
+		fi
+		/usr/local/bin/screen-monitor &
+	fi
+
+	if [[ -c /x11/dev/input/touchscreen0 ]] || [[ -c /x11/dev/input/tablet0 ]] && [[ -x /usr/local/bin/xvkbd ]];
+	then
+		xrdb -nocpp -merge /usr/local/share/X11/app-defaults/XVkbd-french
+		xrdb -nocpp -merge /usr/local/etc/XVkbd.resources
+		/usr/local/bin/xvkbd -xdm -window root &
+	fi
+fi

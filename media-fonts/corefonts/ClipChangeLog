@@ -1,0 +1,21 @@
+# CLIP ChangeLog for media-fonts/corefonts
+
+  10 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +corefonts-1-r4.ebuild, -corefonts-1-r3.ebuild:
+  Bump to latest, drop call to ttmkfdir.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +corefonts-1-r2.ebuild:
+  Remove stale ebuild.
+
+*corefonts-1-r3 (14 Jun 2007)
+
+  14 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +corefonts-1-r3.ebuild:
+  Add missing ttmkfdir RDEPEND (not in gentoo because it is a postinst ?).
+
+*corefonts-1-r2 (27 Mar 2007)
+
+  27 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +corefonts-1-r2.ebuild:
+  Initial CLIP import : add pkg_predeb.

@@ -1,0 +1,152 @@
+# CLIP ChangeLog for kde-base/okular
+
+*okular-4.12.5-r1 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.12.5-r1.ebuild, -okular-4.12.5.ebuild:
+  Force rebuild (poppler revdep).
+
+*okular-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.12.5.ebuild, -okular-4.12.3-r1.ebuild:
+  Bump to latest.
+
+*okular-4.12.3-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.12.3-r1.ebuild, -okular-4.12.3.ebuild:
+  Force rebuild - generate doc.
+
+*okular-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.12.3.ebuild, -okular-4.9.5-r1.ebuild:
+  Bump to latest.
+
+*okular-4.9.5-r1 (23 Jul 2013)
+
+  23 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.9.5-r1.ebuild, -okular-4.9.5.ebuild:
+  Revdep rebuild following poppler bump.
+
+*okular-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.9.5.ebuild, -okular-4.9.4.ebuild:
+  Bump to latest.
+
+*okular-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.9.4.ebuild, -okular-4.7.3-r3.ebuild,
+  -files/okular-4.7.3-pdf-repaint.diff,
+  -files/okular-4.7.3-djvu-text-extraction.diff:
+  Bump to latest.
+
+*okular-4.7.3-r3 (25 Jul 2012)
+
+  25 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.7.3-r3.ebuild, -okular-4.7.3-r2.ebuild,
+  +files/okular-4.7.3-djvu-text-extraction.diff:
+  Rbump to force rebuild against newer poppler + add a patch
+  from 4.7.4, while I'm at it.
+
+  12 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  okular-4.7.3-r2.ebuild:
+  Update poppler dependency.
+
+*okular-4.7.3-r2 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.7.3-r2.ebuild, -okular-4.7.3-r1.ebuild:
+  Force rebuild.
+
+*okular-4.7.3-r1 (12 Dec 2011)
+
+  12 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.7.3-r1.ebuild, -okular-4.7.3.ebuild,
+  +files/okular-4.7.3-pdf-repaint.diff:
+  Fix some PDF repainting issues - patch from 4.7.4 commits.
+
+*okular-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.7.3.ebuild, -okular-4.7.1.ebuild:
+  Bump to latest.
+
+*okular-4.7.1 (13 Sep 2011)
+
+  13 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.7.1.ebuild, -okular-4.5.5.ebuild:
+  Bump to latest.
+
+*okular-4.5.5 (10 Jan 2011)
+
+  10 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.5.5.ebuild, -okular-4.5.4.ebuild:
+  Bump to latest.
+
+*okular-4.5.4 (20 Dec 2010)
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.5.4.ebuild, -okular-4.4.4-r1.ebuild,
+  -files/okular-4.4.4-CVE-2010-2575.patch:
+  Bump to latest.
+
+*okular-4.4.4-r1 (30 Aug 2010)
+
+  30 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.4.4-r1.ebuild, -okular-4.4.4.ebuild,
+  +files/okular-4.4.4-CVE-2010-2575.patch:
+  Patch for CVE-2010-2575.
+
+*okular-4.4.4 (30 Jun 2010)
+
+  30 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.4.4.ebuild:
+  Add latest (~x86).
+
+*okular-4.3.5-r2 (31 May 2010)
+
+  31 May 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +okular-4.3.5-r2.ebuild, -okular-4.3.5-r1.ebuild:
+  Spec change (chm and tiff use flags).
+
+*okular-4.3.5-r1 (01 Mar 2010)
+
+  01 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.3.5-r1.ebuild, -okular-4.3.5.ebuild:
+  Bump - simplify poppler deps.
+
+*okular-4.3.5 (04 Feb 2010)
+
+  04 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.3.5.ebuild, -okular-4.3.4-r1.ebuild:
+  Bump to latest.
+
+*okular-4.3.4-r1 (14 Jan 2010)
+
+  14 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.3.4-r1.ebuild, -okular-4.3.4.ebuild:
+  Bump to force recompile with proper qca LDFLAGS + 
+  add fix from gentoo to install FindOkular.cmake.
+
+  17 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  okular-4.3.4.ebuild:
+  Transform virtual/poppler-* into dev-libs/poppler-* for 
+  clip-devstation as well, I'm too lazy to download the 
+  virtual ebuilds.
+
+*okular-4.3.4 (15 Dec 2009)
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.3.4.ebuild, -okular-4.3.3.ebuild:
+  Bump.
+
+*okular-4.3.3 (13 Nov 2009)
+
+  13 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +okular-4.3.3.ebuild:
+  Initial import in ~x86. Add clip-deps fixes.
+

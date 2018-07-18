@@ -1,0 +1,16 @@
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+Cf. https://github.com/AndroidHardening/chromium_patches/blob/oreo-m2-release/COPPERHEAD_LICENSE
+
+Index: chromium-61.0.3163.79/components/ntp_snippets/features.cc
+===================================================================
+--- chromium-61.0.3163.79.orig/components/ntp_snippets/features.cc
++++ chromium-61.0.3163.79/components/ntp_snippets/features.cc
+@@ -29,7 +29,7 @@ const base::Feature*(kAllFeatures[]) = {
+                                         nullptr};
+ 
+ const base::Feature kArticleSuggestionsFeature{
+-    "NTPArticleSuggestions", base::FEATURE_ENABLED_BY_DEFAULT};
++    "NTPArticleSuggestions", base::FEATURE_DISABLED_BY_DEFAULT};
+ 
+ const base::Feature kBookmarkSuggestionsFeature{
+     "NTPBookmarkSuggestions", base::FEATURE_ENABLED_BY_DEFAULT};

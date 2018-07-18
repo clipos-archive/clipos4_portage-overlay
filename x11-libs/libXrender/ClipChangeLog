@@ -1,0 +1,44 @@
+# CLIP ChangeLog for x11-libs/libXrendr
+
+*libXrender-0.9.10 (11 Oct 2017)
+
+  11 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +libXrender-0.9.10.ebuild, -libXrender-0.9.8.ebuild:
+  Bump to latest stable. Remove x11-proto/* from RDEPEND.
+
+*libXrender-0.9.8 (25 Jun 2013)
+
+  25 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrender-0.9.8.ebuild, -libXrender-0.9.7-r1.ebuild:
+  Bump to latest.
+
+*libXrender-0.9.7-r1 (05 Jun 2013)
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrender-0.9.7-r1.ebuild, -libXrender-0.9.7.ebuild:
+  Bump to latest upstream rev.
+
+*libXrender-0.9.7 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrender-0.9.7.ebuild, -libXrender-0.9.6.ebuild:
+  Bump to latest.
+
+*libXrender-0.9.6 (07 Jul 2011)
+
+  07 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrender-0.9.6.ebuild, -libXrender-0.9.5.ebuild,
+  -files/0001-Make-libXrender-use-docdir-for-documentation-placeme.patch:
+  Bump to latest.
+
+*libXrender-0.9.5 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXrender-0.9.5.ebuild, -libXrender-0.9.4.ebuild:
+  Bump to latest.
+
+*libXrendr-0.9.4 (02 Sep 2009)
+
+  02 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  libXrendr-0.9.4.ebuild:
+  Initial overlay import. Move x11-proto/ dependencies to DEPEND.

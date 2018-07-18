@@ -1,0 +1,7 @@
+# CLIP ChangeLog for virtual/perl-Digest-SHA
+
+*perl-Digest-SHA-5.47 (31 May 2013)
+
+  31 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  perl-Digest-SHA-5.47.ebuild:
+  Initial overlay import - clip-deps fix.

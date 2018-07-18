@@ -1,0 +1,23 @@
+--- src/help.c.orig	2012-11-21 11:22:19.000000000 +0100
++++ src/help.c	2012-11-21 11:26:55.000000000 +0100
+@@ -356,6 +356,7 @@
+ void ensure_pathname_nonexisting(const char *pathname) {
+   pid_t pid;
+   const char *u;
++  struct stat sbuf;
+ 
+   u = path_skip_slash_dotslash(pathname);
+   assert(*u);
+@@ -371,6 +372,12 @@
+       return; /* OK, it was. */
+     if (errno == ENOTDIR) return;
+   }
++  if (errno == EROFS) {
++    /* CLIP: run stat in this case, because rmdir will return EROFS even
++     * for a non-existing dir on a RO mount */
++    if ((lstat(pathname, &sbuf) == -1) && (errno == ENOENT)) return;
++  }
++  
+   if (errno != ENOTEMPTY && errno != EEXIST) { /* Huh? */
+     ohshite(_("unable to securely remove '%.255s'"), pathname);
+   }

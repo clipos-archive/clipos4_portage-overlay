@@ -1,0 +1,80 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+[[ -n "${OUTPUT}" ]] || exit 1
+
+if [[ -n "${KEEPDAYS}" ]]; then
+cat > "${OUTPUT}" <<EOF
+
+# how many days we keep
+maxage ${KEEPDAYS}
+rotate ${KEEPDAYS}
+EOF
+else
+cat > "${OUTPUT}" <<EOF
+
+# how many files we keep 
+rotate ${KEEPFILES}
+EOF
+fi
+
+cat >> "${OUTPUT}" <<EOF
+
+# use date as a suffix of the rotated file
+dateext
+
+# uncomment this if you want your log files compressed
+compress
+
+# put old files in ./keep/
+olddir ${KEEPDIR}
+
+# max size before rotating
+maxsize ${KEEPSIZE}k
+
+# don't rotate files smaller than 10k
+minsize 10k
+
+# don't rotate empty files
+notifempty
+
+# don't mail logs
+nomail
+
+# truncate original files in place, so we don't have to restart syslog
+copytruncate
+
+# don't use shred
+noshred
+
+EOF
+
+# All files created by syslog
+for f in "${SYSLOG_FILES[@]}"; do
+cat >> "${OUTPUT}" <<EOF
+
+/var/log/${f} {
+	weekly
+}
+EOF
+done
+
+# Files not created by syslog
+cat >> "${OUTPUT}" <<EOF
+
+/var/log/wtmp {
+	weekly
+	create 0664 root utmp
+	maxsize 100k
+	minsize 20k
+}
+
+/var/log/slim.log {
+	weekly
+	missingok
+	maxsize 50k
+	minsize 20k
+	rotate 5
+}
+EOF

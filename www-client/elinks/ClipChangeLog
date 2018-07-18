@@ -1,0 +1,7 @@
+# CLIP ChangeLog for www-client/elinks
+
+*elinks-0.11.5 (23 Jun 2010)
+
+  23 Jun 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  elinks-0.11.5.ebuild:
+  Add verictl2 and CPREFIX support.

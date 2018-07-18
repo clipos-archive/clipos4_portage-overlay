@@ -1,0 +1,37 @@
+# CLIP ChangeLog for net-fs/davfs2
+
+  12 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +davfs2-1.5.2.ebuild, -davfs2-1.4.7-r1.ebuild,
+  -files/davfs2-1.4.7-destdir.patch,
+  -files/davfs2-1.4.7-system.patch:
+  Bump to latest stable.
+
+  22 Jan 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  davfs2-1.4.7-r1.ebuild:
+  Add DESCRIPTION_FR and CATEGORY_FR.
+
+*davfs2-1.4.7-r1 (30 Sep 2013)
+
+  30 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +davfs2-1.4.7-r1.ebuild, -davfs2-1.4.7.ebuild,
+  +files/davfs2-1.4.7-system.patch:
+  Patch for CVE-2013-4362.
+
+*davfs2-1.4.7 (15 Apr 2013)
+
+  15 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +davfs2-1.4.7.ebuild, -davfs2-1.4.5-r1.ebuild,
+  +files/davfs2-1.4.7-clip.patch, -files/davfs2-1.4.5-clip.patch,
+  +files/davfs2-1.4.7-destdir.patch, -files/davfs2-1.4.5-glibc212.patch:
+  Bump to latest (bugfix release). Fix CLIP patch - do not required 
+  getuid() == 0 to get proxy from env.
+
+*davfs2-1.4.5-r1 (19 May 2011)
+
+  19 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  davfs2-1.4.5-r1.ebuild, +files/davfs2-1.4.5-clip.patch:
+  Initial import - clip-deps / CPREFIX fixes + add verictl entry
+  + add patch to remove some invalid setuid/getuid calls (which 
+  make no sense on CLIP since we're not running setuid root) and
+  properly use /tmp/mtab as mtab.
+  Make mount.davfs setgid mtab.

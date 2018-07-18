@@ -1,0 +1,59 @@
+# CLIP ChangeLog for sys-libs/ncurses.
+
+*ncurses-5.9-r5 (25 Jan 2016)
+
+  25 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +ncurses-5.9-r5.ebuild, -ncurses-5.9-r3.ebuild,
+  +files/ncurses-5.9-gcc-5.patch,
+  +files/ncurses-5.9-no-I-usr-include.patch:
+  RBump to latest stable, fix build with gcc 5.
+
+*ncurses-5.9-r3 (14 Oct 2013)
+
+  14 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ncurses-5.9-r3.ebuild, -ncurses-5.9-r2.ebuild,
+  +files/ncurses-5.9-fix-clang-build.patch:
+  Bump to latest (gentoo -r2), add IUSE tinfo to make openrc
+  happy.
+
+*ncurses-5.9-r2 (12 Apr 2012)
+
+  12 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ncurses-5.9-r2.ebuild, -ncurses-5.6-r4.ebuild,
+  +files/ncurses-5.9-r2.ebuild,
+  +files/ncurses-5.9-rxvt-unicode-9.15.patch,
+  +files/ncurses-5.7-nongnu.patch,
+  +files/ncurses-5.8-gfbsd.patch,
+  -files/ncurses-5.6-build.patch,
+  -files/ncurses-5.6-gfbsd.patch:
+  Bump to latest.
+
+*ncurses-5.6-r4 (21 Mar 2012)
+
+  21 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ncurses-5.6-r4.ebuild, -ncurses-5.6-r3.ebuild:
+  Force rebuild.
+
+*ncurses-5.6-r3 (30 Aug 2011)
+
+  30 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ncurses-5.6-r3.ebuild, -ncurses-5.6-r2.ebuild:
+  Rbump to force rebuild with proper flags.
+
+*ncurses-5.6-r2 (19 Mar 2009)
+
+  19 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ncurses-5.6-r2.ebuild, -ncurses-5.5-r4.ebuild:
+  +files/ncurses-5.6-build.patch, +files/ncurses-5.6-gfbsd.patch,
+  -files/ncurses-5.5-gfbsd.patch, -files/ncurses-5.5-terminfo-gnome.patch,
+  -files/xterm-debian.ti:
+  Bump to latest stable, same changeset.
+
+*ncurses-5.5-r4 (06 Aug 2008)
+
+  06 Aug 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ncurses-5.5-r4.ebuild, -ncurses-5.5-r3.ebuild:
+  Initial overlay import. Put terminfo files in /etc/shared/terminfo,
+  rather than just /etc/terminfo, so they are available to all views / jails.
+
+

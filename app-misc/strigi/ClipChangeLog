@@ -1,0 +1,116 @@
+# CLIP ChangeLog for app-misc/strigi)
+
+*strigi-0.7.8-r4 (02 Jun 2017)
+
+  02 Jun 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +strigi-0.7.8-r4.ebuild, -strigi-0.7.8-r3.ebuild:
+  Force rebuild against new ffmpeg.
+
+*strigi-0.7.8-r3 (03 Jul 2014)
+
+  03 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.8-r3.ebuild, -strigi-0.7.8-r2.ebuild:
+  Force rebuild  - ffmpeg revdep.
+
+*strigi-0.7.8-r2 (12 Nov 2013)
+
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.8-r2.ebuild, -strigi-0.7.8-r1.ebuild:
+  Force rebuild - ffmpeg revdep.
+
+*strigi-0.7.8-r1 (29 Oct 2013)
+
+  29 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.8-r1.ebuild, -strigi-0.7.8.ebuild:
+  Force rebuild.
+
+*strigi-0.7.8 (24 Oct 2013)
+
+  24 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.8.ebuild, -strigi-0.7.7-r3.ebuild,
+  -files/strigi-0.7.7-ffmpeg-0.11.patch,
+  -files/strigi-0.7.7-gcc47.patch,
+  +files/strigi-0.7.8-gcc-4.8.patch:
+  Bump to latest, reenable polling since disabling it did not
+  have an impact.
+
+*strigi-0.7.7-r3 (23 Jul 2013)
+
+  23 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.7-r3.ebuild, -strigi-0.7.7-r2.ebuild:
+  Force rebuild - ffmpeg revdep.
+
+*strigi-0.7.7-r2 (18 Jul 2013)
+
+  18 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.7-r2.ebuild, -strigi-0.7.7-r1.ebuild,
+  +files/strigi-0.7.7-ffmpeg-0.11.patch,
+  +files/strigi-0.7.7-gcc47.patch:
+  Bump to latest rev. Disable polling on CLIP.
+
+*strigi-0.7.7-r1 (31 Dec 2012)
+
+  31 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.7-r1.ebuild, -strigi-0.7.7.ebuild:
+  Bump to force rebuild without hyperestraier.
+
+*strigi-0.7.7 (02 Feb 2012)
+
+  02 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.7.ebuild, -strigi-0.7.6-r1.ebuild,
+  -files/changeset_r4e272a5937abac88fd0662f23d05dbd1dce18ecb.diff,
+  -files/strigi-0.7.5-no-qt4.patch,
+  -files/Revert_patch_that_breaks_parsing_of_PDF_files.patch:
+  Bump to latest.
+
+*strigi-0.7.6-r1 (12 Oct 2011)
+
+  12 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.6-r1.ebuild, -strigi-0.7.6.ebuild,
+  +files/changeset_r4e272a5937abac88fd0662f23d05dbd1dce18ecb.diff,
+  +files/Revert_patch_that_breaks_parsing_of_PDF_files.patch,
+  Add two upstream patches to fix and optimize PDF parsing.
+
+*strigi-0.7.6 (10 Oct 2011)
+
+  10 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.6.ebuild, -strigi-0.7.5-r2.ebuild:
+
+*strigi-0.7.5-r2 (12 Sep 2011)
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.5-r2.ebuild, -strigi-0.7.2-r2.ebuild,
+  -files/strigi-0.6.5-gcc4.4-missing-headers.patch,
+  -files/strigi-0.6.4-gcc44.patch, -files/strigi-disable_java.patch, 
+  +files/strigi-0.7.5-ffmpeg.patch, +files/strigi-0.7.5-no-qt4.patch:
+  Bump to latest.
+
+*strigi-0.7.2-r2 (20 Dec 2010)
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.2-r2.ebuild, -strigi-0.7.2-r1.ebuild:
+  Bump to force rebuild.
+
+*strigi-0.7.2-r1 (30 Jun 2010)
+
+  30 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.2-r1.ebuild, -strigi-0.7.2.ebuild:
+  Bump to force rebuild.
+
+*strigi-0.7.2 (15 Jun 2010)
+
+  15 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.2.ebuild, -strigi-0.7.1.ebuild:
+  Bump to latest.
+
+*strigi-0.7.1 (03 Feb 2010)
+
+  03 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strigi-0.7.1.ebuild, -strigi-0.7.0.ebuild:
+  Bump to latest.
+
+*strigi-0.7.0 (12 Nov 2009)
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  strigi-0.7.0.ebuild:
+  Initial import. clip-deps fixes.

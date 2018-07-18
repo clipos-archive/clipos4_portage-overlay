@@ -1,0 +1,21 @@
+# CLIP ChangeLog for virtual/os-headers
+
+*os-headers-0-r3 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +os-headers-0-r3.ebuild, -os-headers-0-r2.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*os-headers-0-r2 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +os-headers-0-r2.ebuild, -os-headers-0-r1.ebuild:
+  Update linux-headers dependency.
+
+*os-headers-0-r1 (28 Sep 2015)
+
+  28 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +os-headers-0-r1.ebuild, -os-headers-0.ebuild:
+  Update dependency on linux-headers when compiling for clip-devstation.
+
+

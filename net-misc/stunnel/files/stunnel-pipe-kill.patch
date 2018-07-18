@@ -1,0 +1,123 @@
+From 63c2e73532bf58230a5ef5e9b2d6832399b941ae Mon Sep 17 00:00:00 2001
+From: Nicolas Belouin <clipos@ssi.gouv.fr>
+Date: Tue, 9 Aug 2016 10:09:23 +0200
+Subject: [PATCH] Pipe killing method
+
+---
+ src/options.c    | 26 ++++++++++++++++++++++++++
+ src/prototypes.h |  1 +
+ src/stunnel.c    | 14 ++++++++++++++
+ 3 files changed, 41 insertions(+)
+
+diff --git a/src/options.c b/src/options.c
+index 22e00dd..9fe9e78 100644
+--- a/src/options.c
++++ b/src/options.c
+@@ -958,6 +958,32 @@ NOEXPORT char *parse_global_option(CMD cmd, char *opt, char *arg) {
+     }
+ #endif
+ 
++    /* exit pipe */
++#ifndef USE_WIN32
++    switch(cmd) {
++    case CMD_BEGIN:
++        new_global_options.exitpipe=NULL; /* do not create a pipe file */
++        break;
++    case CMD_EXEC:
++        if(strcasecmp(opt, "exit_pipe"))
++            break;
++        if(arg[0]) /* is argument not empty? */
++            new_global_options.exitpipe=str_dup(arg);
++        else
++            new_global_options.exitpipe=NULL; /* empty -> do not create a pipe file */
++        return NULL; /* OK */
++    case CMD_END:
++        break;
++    case CMD_FREE:
++        break;
++    case CMD_DEFAULT:
++        break;
++    case CMD_HELP:
++        s_log(LOG_NOTICE, "%-22s = exit pipe file", "exit_pipe");
++        break;
++    }
++#endif
++
+     /* RNDbytes */
+     switch(cmd) {
+     case CMD_BEGIN:
+diff --git a/src/prototypes.h b/src/prototypes.h
+index 182c764..2448947 100644
+--- a/src/prototypes.h
++++ b/src/prototypes.h
+@@ -128,6 +128,7 @@ typedef struct {
+ #endif
+     unsigned long dpid;
+     char *pidfile;
++	char *exitpipe;
+ #endif
+ 
+         /* logging-support data for log.c */
+diff --git a/src/stunnel.c b/src/stunnel.c
+index b602d55..c7c9797 100644
+--- a/src/stunnel.c
++++ b/src/stunnel.c
+@@ -37,6 +37,7 @@
+ 
+ #include "common.h"
+ #include "prototypes.h"
++#include <unistd.h>
+ 
+ /* http://www.openssl.org/support/faq.html#PROG2 */
+ #ifdef USE_WIN32
+@@ -78,6 +79,7 @@ NOEXPORT char *signal_name(int);
+ /**************************************** global variables */
+ 
+ static SOCKET signal_pipe[2]={INVALID_SOCKET, INVALID_SOCKET};
++static SOCKET pipefd=0;
+ 
+ #ifndef USE_FORK
+ long max_clients=0;
+@@ -145,6 +147,12 @@ int main_configure(char *arg1, char *arg2) {
+      * to be able to access /dev/log socket */
+     syslog_open();
+ #endif /* !defined(USE_WIN32) && !defined(__vms) */
++	if(global_options.exitpipe != NULL){
++		unlink(global_options.exitpipe);
++		if(mkfifo(global_options.exitpipe, 0600))
++			fatal("Fifo failed");
++		pipefd = open(global_options.exitpipe, O_RDONLY|O_NONBLOCK);
++	}
+     if(bind_ports())
+         return 1;
+ 
+@@ -291,6 +299,8 @@ void daemon_loop(void) {
+             if(s_poll_canread(fds, signal_pipe[0]))
+                 if(signal_pipe_dispatch()) /* SIGNAL_TERMINATE or error */
+                     break; /* terminate daemon_loop */
++			if(s_poll_canread(fds, pipefd))
++				break;
+             for(opt=service_options.next; opt; opt=opt->next)
+                 if(opt->option.accept && s_poll_canread(fds, opt->fd))
+                     if(accept_connection(opt))
+@@ -372,6 +382,8 @@ void unbind_ports(void) {
+ 
+     s_poll_init(fds);
+     s_poll_add(fds, signal_pipe[0], 1, 0);
++	if(pipefd != 0)
++	    s_poll_add(fds, pipefd, 1, 0);
+ 
+     for(opt=service_options.next; opt; opt=opt->next) {
+         s_log(LOG_DEBUG, "Closing service [%s]", opt->servname);
+@@ -431,6 +443,8 @@ int bind_ports(void) {
+ 
+     s_poll_init(fds);
+     s_poll_add(fds, signal_pipe[0], 1, 0);
++	if(pipefd != 0)
++	    s_poll_add(fds, pipefd, 1, 0);
+ 
+     /* allow clean unbind_ports() even though
+        bind_ports() was not fully performed */
+-- 
+2.8.1
+

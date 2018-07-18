@@ -1,0 +1,128 @@
+--- ./kdecore/config/kconfig.cpp.orig	2012-11-30 08:17:37.000000000 +0100
++++ ./kdecore/config/kconfig.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -71,7 +71,7 @@ KConfigPrivate::KConfigPrivate(const KCo
+ #ifdef Q_WS_WIN
+             QFile::decodeName( qgetenv("WINDIR") + "/kde4rc" );
+ #else
+-            QLatin1String("/etc/kde4rc");
++            QLatin1String("/usr/local/etc/kde4rc");
+ #endif
+         if (!KStandardDirs::checkAccess(etc_kderc, R_OK)) {
+             etc_kderc.clear();
+--- ./plasma/remote/authorizationmanager.cpp.orig	2012-11-30 08:17:38.000000000 +0100
++++ ./plasma/remote/authorizationmanager.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -134,7 +134,7 @@ AuthorizationManagerPrivate::Authorizati
+       authorizationPolicy(AuthorizationManager::DenyAll),
+       authorizationInterface(new DenyAllAuthorization()),
+       customAuthorizationInterface(0),
+-      rulesConfig(KSharedConfig::openConfig("/etc/plasma-remotewidgets.conf")->group("Rules")),
++      rulesConfig(KSharedConfig::openConfig("/usr/local/etc/plasma-remotewidgets.conf")->group("Rules")),
+       locked(false)
+ {
+ }
+@@ -192,7 +192,7 @@ void AuthorizationManagerPrivate::saveRu
+ 
+     KAuth::Action action("org.kde.kcontrol.kcmremotewidgets.save");
+     action.addArgument("source", tempFile.fileName());
+-    action.addArgument("filename", "/etc/plasma-remotewidgets.conf");
++    action.addArgument("filename", "/usr/local/etc/plasma-remotewidgets.conf");
+     KAuth::ActionReply reply = action.execute();
+ 
+     if (reply.failed()) {
+--- ./kio/kio/ksambashare.cpp.orig	2013-07-29 15:43:04.000000000 +0200
++++ ./kio/kio/ksambashare.cpp	2013-07-29 15:52:13.000000000 +0200
+@@ -40,13 +40,7 @@
+ // sorted by priority, most priority first
+ static const char * const DefaultSambaConfigFilePathList[] =
+ {
+-  "/etc/samba/smb.conf",
+-  "/etc/smb.conf",
+-  "/usr/local/etc/smb.conf",
+-  "/usr/local/samba/lib/smb.conf",
+-  "/usr/samba/lib/smb.conf",
+-  "/usr/lib/smb.conf",
+-  "/usr/local/lib/smb.conf"
++  "/usr/local/etc/kde/samba/smb.conf"
+ };
+ static const int DefaultSambaConfigFilePathListSize = sizeof(DefaultSambaConfigFilePathList)
+         / sizeof(char*);
+--- ./kdeui/colors/kcolordialog.cpp.orig	2012-11-30 08:17:37.000000000 +0100
++++ ./kdeui/colors/kcolordialog.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -627,9 +627,7 @@ static const char * const *namedColorFil
+ #ifdef X11_RGBFILE
+         X11_RGBFILE, 0,
+ #endif
+-        "/usr/share/X11/rgb.txt", 0,
+-        "/usr/X11R6/lib/X11/rgb.txt", 0,
+-        "/usr/openwin/lib/X11/rgb.txt", 0, // for Solaris.
++        "/usr/local/share/X11/rgb.txt", 0,
+ #else /* systems without X11 */
+         "kdeui/rgb.txt", "data",
+ #endif
+--- ./kdeui/icons/kicontheme.cpp.orig	2012-11-30 08:17:37.000000000 +0100
++++ ./kdeui/icons/kicontheme.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -153,7 +153,7 @@ KIconTheme::KIconTheme(const QString& na
+ 
+     icnlibs = KGlobal::dirs()->resourceDirs("icon")
+         << KGlobal::dirs()->resourceDirs("xdgdata-icon")
+-        << "/usr/share/pixmaps/"
++        << "/usr/local/share/pixmaps/"
+         // These are not in the icon spec, but e.g. GNOME puts some icons there anyway.
+         << KGlobal::dirs()->resourceDirs("xdgdata-pixmap");
+     icnlibs.removeDuplicates();
+@@ -551,7 +551,7 @@ QStringList KIconTheme::list()
+ 
+     const QStringList icnlibs = KGlobal::dirs()->resourceDirs("icon")
+      << KGlobal::dirs()->resourceDirs("xdgdata-icon")
+-     << "/usr/share/pixmaps"
++     << "/usr/local/share/pixmaps"
+      // These are not in the icon spec, but e.g. GNOME puts some icons there anyway.
+      << KGlobal::dirs()->resourceDirs("xdgdata-pixmap");
+ 
+--- ./kdeui/icons/kiconloader.cpp.orig	2012-11-30 08:17:37.000000000 +0100
++++ ./kdeui/icons/kiconloader.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -545,7 +545,7 @@ bool KIconLoaderPrivate::initIconThemes(
+     dirs += mpDirs->resourceDirs("icon");
+     dirs += mpDirs->resourceDirs("pixmap");
+     dirs += mpDirs->resourceDirs("xdgdata-icon");
+-    dirs += "/usr/share/pixmaps";
++    dirs += "/usr/local/share/pixmaps";
+     // These are not in the icon spec, but e.g. GNOME puts some icons there anyway.
+     dirs += mpDirs->resourceDirs("xdgdata-pixmap");
+     for (QStringList::ConstIterator it = dirs.constBegin(); it != dirs.constEnd(); ++it)
+--- ./kdeui/icons/kiconcache.cpp.orig	2012-11-30 08:17:37.000000000 +0100
++++ ./kdeui/icons/kiconcache.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -192,7 +192,7 @@ QSet<QString> KIconCache::existingIconTh
+     // This has been taken from kicontheme.cpp
+     QStringList icondirs = KGlobal::dirs()->resourceDirs("icon")
+             << KGlobal::dirs()->resourceDirs("xdgdata-icon")
+-            << "/usr/share/pixmaps/"
++            << "/usr/local/share/pixmaps/"
+             // These are not in the icon spec, but e.g. GNOME puts some icons there anyway.
+             << KGlobal::dirs()->resourceDirs("xdgdata-pixmap");
+     icondirs.removeDuplicates();
+--- ./sonnet/plugins/hunspell/kspell_hunspelldict.cpp.orig	2012-11-30 08:17:38.000000000 +0100
++++ ./sonnet/plugins/hunspell/kspell_hunspelldict.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -31,9 +31,9 @@ HunspellDict::HunspellDict( const QStrin
+     : SpellerPlugin(lang), m_speller(0)
+ {
+     kDebug()<<" HunspellDict::HunspellDict( const QString& lang ):"<<lang;
+-        QString dic=QString("/usr/share/myspell/dicts/%1.dic").arg(lang);
++        QString dic=QString("/usr/local/share/myspell/dicts/%1.dic").arg(lang);
+     if (QFileInfo(dic).exists())
+-        m_speller = new Hunspell(QString("/usr/share/myspell/dicts/%1.aff").arg(lang).toUtf8().constData(),dic.toUtf8().constData());
++        m_speller = new Hunspell(QString("/usr/local/share/myspell/dicts/%1.aff").arg(lang).toUtf8().constData(),dic.toUtf8().constData());
+     else
+         m_speller = 0;
+     kDebug()<<" dddddd "<<m_speller;
+--- ./sonnet/plugins/hunspell/kspell_hunspellclient.cpp.orig	2012-11-30 08:17:38.000000000 +0100
++++ ./sonnet/plugins/hunspell/kspell_hunspellclient.cpp	2013-07-29 15:52:06.000000000 +0200
+@@ -52,7 +52,7 @@ SpellerPlugin *HunspellClient::createSpe
+ QStringList HunspellClient::languages() const
+ {
+     QStringList lst;
+-    QDir dir("/usr/share/myspell/dicts/");
++    QDir dir("/usr/local/share/myspell/dicts/");
+     if(dir.exists())
+     {
+         QStringList lstDic = dir.entryList(QStringList("*.dic"), QDir::Files );

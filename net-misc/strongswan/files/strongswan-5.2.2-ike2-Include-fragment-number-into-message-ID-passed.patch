@@ -1,0 +1,39 @@
+From 62e0abe7591489c563c3d4380054050af9cb4838 Mon Sep 17 00:00:00 2001
+From: Martin Willi <martin@revosec.ch>
+Date: Fri, 17 Apr 2015 14:19:37 +0200
+Subject: [PATCH] ikev2: Include fragment number into message ID passed to IV
+ gen
+
+When using a cipher with sequential IVs, we never must pass an identical IV
+to the IV generator. To avoid it when using IKEv2 fragmentation, use the lower
+bits of the 64-bit message ID as the fragment number.
+---
+ src/libcharon/encoding/payloads/encrypted_payload.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/libcharon/encoding/payloads/encrypted_payload.c b/src/libcharon/encoding/payloads/encrypted_payload.c
+index 04372fd..d1a2678 100644
+--- a/src/libcharon/encoding/payloads/encrypted_payload.c
++++ b/src/libcharon/encoding/payloads/encrypted_payload.c
+@@ -502,6 +502,8 @@ METHOD(encrypted_payload_t, encrypt, status_t,
+ 	generator = generator_create();
+ 	plain = generate(this, generator);
+ 	assoc = append_header(this, assoc);
++	/* lower 32-bits are for fragment number, if used */
++	mid <<= 32;
+ 	status = encrypt_content("encrypted payload", this->aead, mid, plain, assoc,
+ 							 &this->encrypted);
+ 	generator->destroy(generator);
+@@ -932,6 +934,9 @@ METHOD(encrypted_payload_t, frag_encrypt, status_t,
+ 	}
+ 	free(this->encrypted.ptr);
+ 	assoc = append_header_frag(this, assoc);
++	/* IKEv2 message IDs are not unique if fragmentation is used, hence include
++	 * the fragment number to make it unique */
++	mid = mid << 32 | this->fragment_number;
+ 	status = encrypt_content("encrypted fragment payload", this->aead, mid,
+ 							 this->plain, assoc, &this->encrypted);
+ 	free(assoc.ptr);
+-- 
+2.5.4
+

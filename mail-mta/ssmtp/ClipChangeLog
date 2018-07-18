@@ -1,0 +1,26 @@
+# CLIP ChangeLog for mail-mta/ssmtp
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 2.61-r3.
+
+*ssmtp-2.61-r3 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ssmtp-2.61-r3.ebuild:
+  Add IUSE core-deps to remove dependency on openssl.
+
+*ssmtp-2.61-r2 (17 Jul 2006)
+
+  17 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ssmtp-2.61-r2.ebuild:
+  Yada yada yada, remove clip-usrsep, add CPREFIX support and dep
+  on >=portage-2.1.1_pre2, yeepee.
+  Bump straight to -r2, as there is already a '-r1', which is
+  masked, and I'm lazy.
+
+*ssmtp-2.61 (28 Apr 2006)
+
+  28 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  ssmtp-2.61.ebuild:
+  Initial import in clip, to fix silly bug with clip-usrsep USE flag.
+

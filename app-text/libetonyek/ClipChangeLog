@@ -1,0 +1,22 @@
+# CLIP ChangeLog for app-text/libetonyek
+
+*libetonyek-0.1.3 (30 Dec 2015)
+
+  30 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libetonyek-0.1.3.ebuild:
+  Bump to latest. Leave old version in place pending stabilization
+  of libreoffice-5 (0.1.3 needs a newer mdds which requires gcc 4.8+).
+
+*libetonyek-0.1.1 (31 Dec 2014)
+
+  31 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libetonyek-0.1.1.ebuild, -libetonyek-0.0.3.ebuild,
+  -files/libetonyek-0.0.3-comma.patch,
+  -files/libetonyek-0.0.3-lexical_cast.patch:
+  Bump to latest.
+
+*libetonyek-0.3.0 (07 May 2014)
+
+  07 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libetonyek-0.3.0.ebuild:
+  Initial import, CPREFIX + clip-deps fix.

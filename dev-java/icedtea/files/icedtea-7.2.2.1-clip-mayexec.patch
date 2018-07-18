@@ -1,0 +1,370 @@
+--- ./openjdk/jdk/make/java/zip/mapfile-vers.orig	2012-06-08 15:09:13.000000000 +0200
++++ ./openjdk/jdk/make/java/zip/mapfile-vers	2012-08-07 14:53:21.000000000 +0200
+@@ -76,6 +76,7 @@ SUNWprivate_1.1 {
+ 		ZIP_GetNextEntry;
+ 		ZIP_Lock;
+ 		ZIP_Open;
++		ZIP_Open_Generic;
+ 		ZIP_Read;
+ 		ZIP_ReadEntry;
+ 		ZIP_Unlock;
+--- ./openjdk/jdk/src/share/bin/java.c.orig	2012-06-08 15:09:13.000000000 +0200
++++ ./openjdk/jdk/src/share/bin/java.c	2012-08-07 15:26:06.000000000 +0200
+@@ -50,6 +50,18 @@
+  * the CreateExecutionEnviroment will remove the -d<n> flags.
+  */
+ 
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <errno.h>
++#include <fcntl.h>
++
++#ifndef O_MAYEXEC
++#define O_MAYEXEC      00000040        /* command execution from file is intended, check exec permissions */
++#endif
++
++static int ClipCheckOnePath(const char *name);
++static int ClipCheckPaths(const char *paths);
++static int ClipCheckClassName(const char *name);
+ 
+ #include "java.h"
+ 
+@@ -285,6 +297,9 @@ JLI_Launch(int argc, char ** argv,      
+         SetClassPath(what);     /* Override class path */
+     }
+ 
++    if (what && ClipCheckClassName(what))
++        exit(1);
++
+     /* set the -Dsun.java.command pseudo property */
+     SetJavaCommandLineProp(what, argc, argv);
+ 
+@@ -688,6 +703,61 @@ AddOption(char *str, void *info)
+     }
+ }
+ 
++static int
++ClipCheckOnePath(const char *name)
++{
++    int fd = open(name, O_RDONLY | O_MAYEXEC, 0);
++    if (fd < 0 && (errno == EACCES || errno == EPERM)) {
++        JLI_ReportMessage("Access denied to %s", name);
++        return -1;
++    } else {
++        close(fd);
++        return 0;
++    }
++}
++
++static int
++ClipCheckPaths(const char *s)
++{
++    char *p, *q, *path;
++    int ret = -1;
++
++    path = strdup(s); // Work on a writable copy
++    if (!path) {
++        JLI_ReportMessage("Access denied to %s (OOM)", s);
++        return -1;
++    } 
++
++    p = path;
++    do {
++        q = strchr(p, ':');
++        if (q) 
++            *q = '\0';
++        if (ClipCheckOnePath(p))
++            goto out;
++        if (q) 
++            p = q + 1; // OK, null-terminated
++    } while (q);
++    ret = 0;
++out:
++    free(path);
++    return ret;
++}
++
++static int
++ClipCheckClassName(const char *name)
++{
++    int ret;
++    char *path = JLI_MemAlloc(strlen(name) + sizeof(".class"));
++    if (!path)
++        return -1;
++    sprintf(path, "%s.class", name);
++    ret = ClipCheckOnePath(path);
++    free(path);
++    return ret;
++}
++
++
+ static void
+ SetClassPath(const char *s)
+ {
+@@ -695,6 +765,8 @@ SetClassPath(const char *s)
+     const char *orig = s;
+     static const char format[] = "-Djava.class.path=%s";
+     s = JLI_WildcardExpandClasspath(s);
++    if (ClipCheckPaths(s))
++        return;
+     def = JLI_MemAlloc(sizeof(format)
+                        - 2 /* strlen("%s") */
+                        + JLI_StrLen(s));
+@@ -1295,7 +1367,7 @@ TranslateApplicationArgs(int jargc, cons
+ static jboolean
+ AddApplicationOptions(int cpathc, const char **cpathv)
+ {
+-    char *envcp, *appcp, *apphome;
++    char *envcp, *appcp, *apphome, *appcp_path;
+     char home[MAXPATHLEN]; /* application home */
+     char separator[] = { PATH_SEPARATOR, '\0' };
+     int size, i;
+@@ -1304,6 +1376,8 @@ AddApplicationOptions(int cpathc, const 
+         const char *s = getenv("CLASSPATH");
+         if (s) {
+             s = (char *) JLI_WildcardExpandClasspath(s);
++            if (ClipCheckPaths(s))
++                return JNI_FALSE;
+             /* 40 for -Denv.class.path= */
+             envcp = (char *)JLI_MemAlloc(JLI_StrLen(s) + 40);
+             sprintf(envcp, "-Denv.class.path=%s", s);
+@@ -1328,12 +1402,16 @@ AddApplicationOptions(int cpathc, const 
+     }
+     appcp = (char *)JLI_MemAlloc(size + 1);
+     JLI_StrCpy(appcp, "-Djava.class.path=");
++    appcp_path = appcp + sizeof("-Djava.class.path=") - 1;
++
+     for (i = 0; i < cpathc; i++) {
+         JLI_StrCat(appcp, home);                        /* c:\program files\myapp */
+         JLI_StrCat(appcp, cpathv[i]);           /* \lib\myapp.jar         */
+         JLI_StrCat(appcp, separator);           /* ;                      */
+     }
+     appcp[JLI_StrLen(appcp)-1] = '\0';  /* remove trailing path separator */
++    if (ClipCheckPaths(appcp_path))
++         return JNI_FALSE;
+     AddOption(appcp, NULL);
+     return JNI_TRUE;
+ }
+--- ./openjdk/hotspot/src/share/vm/classfile/classLoader.cpp.orig	2012-06-07 16:30:51.000000000 +0200
++++ ./openjdk/hotspot/src/share/vm/classfile/classLoader.cpp	2012-08-07 14:53:21.000000000 +0200
+@@ -72,10 +72,14 @@
+ # include "os_bsd.inline.hpp"
+ #endif
+ 
++#ifndef O_MAYEXEC
++#define O_MAYEXEC      00000040        /* command execution from file is intended, check exec permissions */
++#endif
+ 
+ // Entry points in zip.dll for loading zip/jar file entries
+ 
+ typedef void * * (JNICALL *ZipOpen_t)(const char *name, char **pmsg);
++typedef void * * (JNICALL *ZipOpenGeneric_t)(const char *name, char **pmsg, int, jlong);
+ typedef void (JNICALL *ZipClose_t)(jzfile *zip);
+ typedef jzentry* (JNICALL *FindEntry_t)(jzfile *zip, const char *name, jint *sizeP, jint *nameLen);
+ typedef jboolean (JNICALL *ReadEntry_t)(jzfile *zip, jzentry *entry, unsigned char *buf, char *namebuf);
+@@ -83,6 +87,7 @@ typedef jboolean (JNICALL *ReadMappedEnt
+ typedef jzentry* (JNICALL *GetNextEntry_t)(jzfile *zip, jint n);
+ 
+ static ZipOpen_t         ZipOpen            = NULL;
++static ZipOpenGeneric_t  ZipOpenGeneric     = NULL;
+ static ZipClose_t        ZipClose           = NULL;
+ static FindEntry_t       FindEntry          = NULL;
+ static ReadEntry_t       ReadEntry          = NULL;
+@@ -207,7 +212,7 @@ ClassFileStream* ClassPathDirEntry::open
+   struct stat st;
+   if (os::stat(path, &st) == 0) {
+     // found file, open it
+-    int file_handle = os::open(path, 0, 0);
++    int file_handle = os::open(path, O_RDONLY | O_MAYEXEC, 0);
+     if (file_handle != -1) {
+       // read contents into resource array
+       u1* buffer = NEW_RESOURCE_ARRAY(u1, st.st_size);
+@@ -486,7 +491,10 @@ void ClassLoader::create_class_path_entr
+       // enable call to C land
+       ThreadToNativeFromVM ttn(thread);
+       HandleMark hm(thread);
+-      zip = (*ZipOpen)(canonical_path, &error_msg);
++      if (ZipOpenGeneric)
++	      zip = (*ZipOpenGeneric)(canonical_path, &error_msg, O_RDONLY | O_MAYEXEC, 42);
++      else
++	      zip = (*ZipOpen)(canonical_path, &error_msg);
+     }
+     if (zip != NULL && error_msg == NULL) {
+       *new_entry = new ClassPathZipEntry(zip, path);
+@@ -536,7 +544,10 @@ ClassPathZipEntry* ClassLoader::create_c
+           JavaThread* thread = JavaThread::current();
+           ThreadToNativeFromVM ttn(thread);
+           HandleMark hm(thread);
+-          zip = (*ZipOpen)(canonical_path, &error_msg);
++	  if (ZipOpenGeneric)
++		  zip = (*ZipOpenGeneric)(canonical_path, &error_msg, O_RDONLY | O_MAYEXEC, 42);
++	  else
++		  zip = (*ZipOpen)(canonical_path, &error_msg);
+         }
+         if (zip != NULL && error_msg == NULL) {
+           // create using canonical path
+@@ -600,7 +611,7 @@ void ClassLoader::print_bootclasspath() 
+ }
+ 
+ void ClassLoader::load_zip_library() {
+-  assert(ZipOpen == NULL, "should not load zip library twice");
++  assert(ZipOpenGeneric == NULL, "should not load zip library twice");
+   // First make sure native library is loaded
+   os::native_java_library();
+   // Load zip library
+@@ -612,7 +623,11 @@ void ClassLoader::load_zip_library() {
+     vm_exit_during_initialization("Unable to load ZIP library", path);
+   }
+   // Lookup zip entry points
+-  ZipOpen      = CAST_TO_FN_PTR(ZipOpen_t, os::dll_lookup(handle, "ZIP_Open"));
++  ZipOpenGeneric  = CAST_TO_FN_PTR(ZipOpenGeneric_t, os::dll_lookup(handle, "ZIP_Open_Generic"));
++  /* Bootstrap - build host may not have ZIP_Open_Generic */
++  if (ZipOpenGeneric == NULL)
++	  ZipOpen  = CAST_TO_FN_PTR(ZipOpen_t, os::dll_lookup(handle, "ZIP_Open"));
++
+   ZipClose     = CAST_TO_FN_PTR(ZipClose_t, os::dll_lookup(handle, "ZIP_Close"));
+   FindEntry    = CAST_TO_FN_PTR(FindEntry_t, os::dll_lookup(handle, "ZIP_FindEntry"));
+   ReadEntry    = CAST_TO_FN_PTR(ReadEntry_t, os::dll_lookup(handle, "ZIP_ReadEntry"));
+@@ -620,7 +635,7 @@ void ClassLoader::load_zip_library() {
+   GetNextEntry = CAST_TO_FN_PTR(GetNextEntry_t, os::dll_lookup(handle, "ZIP_GetNextEntry"));
+ 
+   // ZIP_Close is not exported on Windows in JDK5.0 so don't abort if ZIP_Close is NULL
+-  if (ZipOpen == NULL || FindEntry == NULL || ReadEntry == NULL || GetNextEntry == NULL) {
++  if ((ZipOpen == NULL && ZipOpenGeneric == NULL) || FindEntry == NULL || ReadEntry == NULL || GetNextEntry == NULL) {
+     vm_exit_during_initialization("Corrupted ZIP library", path);
+   }
+ 
+--- ./openjdk/hotspot/src/share/tools/launcher/java.c.orig	2012-06-07 16:30:51.000000000 +0200
++++ ./openjdk/hotspot/src/share/tools/launcher/java.c	2012-08-07 14:53:21.000000000 +0200
+@@ -77,6 +77,18 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <errno.h>
++#include <fcntl.h>
++
++#ifndef O_MAYEXEC
++#define O_MAYEXEC      00000040        /* command execution from file is intended, check exec permissions */
++#endif
++
++static int ClipCheckOnePath(const char *name);
++static int ClipCheckPaths(const char *paths);
++static int ClipCheckClassName(const char *name);
+ 
+ #include <jni.h>
+ #include <jvm.h>
+@@ -335,6 +347,9 @@ main(int argc, char ** argv)
+         SetClassPath(jarfile);
+     }
+ 
++    if (classname && ClipCheckClassName(classname))
++        exit(1);
++
+     /* set the -Dsun.java.command pseudo property */
+     SetJavaCommandLineProp(classname, jarfile, argc, argv);
+ 
+@@ -875,10 +890,68 @@ AddOption(char *str, void *info)
+     }
+ }
+ 
++static int
++ClipCheckOnePath(const char *name)
++{
++    int fd = open(name, O_RDONLY | O_MAYEXEC, 0);
++    if (fd < 0 && (errno == EACCES || errno == EPERM)) {
++        ReportErrorMessage2("Access denied to %s",
++                  name, JNI_TRUE);
++        return -1;
++    } else {
++        close(fd);
++        return 0;
++    }
++}
++
++static int
++ClipCheckPaths(const char *s)
++{
++    char *p, *q, *path;
++    int ret = -1;
++
++    path = strdup(s); // Work on a writable copy
++    if (!path) {
++        ReportErrorMessage2("Access denied to %s (OOM)",
++                  s, JNI_TRUE);
++        return -1;
++    } 
++
++    p = path;
++    do {
++        q = strchr(p, ':');
++        if (q) 
++            *q = '\0';
++        if (ClipCheckOnePath(p))
++            goto out;
++        if (q) 
++            p = q + 1; // OK, null-terminated
++    } while (q);
++    ret = 0;
++out:
++    free(path);
++    return ret;
++}
++
++static int
++ClipCheckClassName(const char *name)
++{
++    int ret;
++    char *path = JLI_MemAlloc(strlen(name) + sizeof(".class"));
++    if (!path)
++        return -1;
++    sprintf(path, "%s.class", name);
++    ret = ClipCheckOnePath(path);
++    free(path);
++    return ret;
++}
++
+ static void
+ SetClassPath(const char *s)
+ {
+     char *def;
++    if (ClipCheckPaths(s))
++        return;
+     s = JLI_WildcardExpandClasspath(s);
+     def = JLI_MemAlloc(strlen(s) + 40);
+     sprintf(def, "-Djava.class.path=%s", s);
+@@ -1550,6 +1623,7 @@ AddApplicationOptions()
+ {
+     const int NUM_APP_CLASSPATH = (sizeof(app_classpath) / sizeof(char *));
+     char *envcp, *appcp, *apphome;
++    char *envcp, *appcp, *apphome, *appcp_path;
+     char home[MAXPATHLEN]; /* application home */
+     char separator[] = { PATH_SEPARATOR, '\0' };
+     int size, i;
+@@ -1558,6 +1632,8 @@ AddApplicationOptions()
+     {
+         const char *s = getenv("CLASSPATH");
+         if (s) {
++            if (ClipCheckPaths(s))
++                return JNI_FALSE;
+             s = (char *) JLI_WildcardExpandClasspath(s);
+             /* 40 for -Denv.class.path= */
+             envcp = (char *)JLI_MemAlloc(strlen(s) + 40);
+@@ -1584,12 +1660,16 @@ AddApplicationOptions()
+     }
+     appcp = (char *)JLI_MemAlloc(size + 1);
+     strcpy(appcp, "-Djava.class.path=");
++    appcp_path = appcp + sizeof("-Djava.class.path=") - 1;
++
+     for (i = 0; i < NUM_APP_CLASSPATH; i++) {
+         strcat(appcp, home);                    /* c:\program files\myapp */
+         strcat(appcp, app_classpath[i]);        /* \lib\myapp.jar         */
+         strcat(appcp, separator);               /* ;                      */
+     }
+     appcp[strlen(appcp)-1] = '\0';  /* remove trailing path separator */
++    if (ClipCheckPaths(appcp_path))
++        return JNI_FALSE;
+     AddOption(appcp, NULL);
+     return JNI_TRUE;
+ }

@@ -1,0 +1,116 @@
+# CLIP ChangeLog for media-gfx/imagemagick
+
+*imagemagick-6.9.0.3 (05 Jan 2015)
+
+  05 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.9.0.3.ebuild, -imagemagick-6.8.8.10-r1.ebuild,
+  -files/imagemagick-6.8.8.10-LIBOPENJP2_DELEGATE_not_JP2_DELEGATE.patch,
+  -files/imagemagick-6.8.8.8-openjpeg-2.0.0-has-no-opj_stream_destroy_v3.patch:
+  Security bump to latest.
+
+*imagemagick-6.8.8.10-r1 (20 May 2014)
+
+  20 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.8.8.10-r1.ebuild, -imagemagick-6.8.8.5.ebuild,
+  +files/imagemagick-6.8.8.10-LIBOPENJP2_DELEGATE_not_JP2_DELEGATE.patch,
+  +files/imagemagick-6.8.8.8-openjpeg-2.0.0-has-no-opj_stream_destroy_v3.patch:
+  Security bump to latest.
+
+*imagemagick-6.8.8.5 (03 Mar 2014)
+
+  03 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.8.8.5.ebuild, -imagemagick-6.8.6.8-r2.ebuild,
+  -files/imagemagick-6.8.6.8-broken_glib_version_check.patch.patch:
+  Bump to latest stable, libwebp revdep.
+
+*imagemagick-6.8.6.8-r2 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.8.6.8-r2.ebuild, -imagemagick-6.8.6.8-r1.ebuild:
+  Force rebuild to fix wrong jpeg linking.
+
+*imagemagick-6.8.6.8-r1 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.8.6.8-r1.ebuild, -imagemagick-6.7.8.7-r1.ebuild,
+  +files/imagemagick-6.8.6.8-broken_glib_version_check.patch.patch:
+  Bump to latest.
+
+*imagemagick-6.7.8.7-r1 (15 Oct 2013)
+
+  15 Oct 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +imagemagick-6.7.8.7-r1.ebuild, -imagemagick-6.7.8.7.ebuild:
+  Remove xz-utils dependency for clip-deps.
+
+*imagemagick-6.7.8.7 (06 Aug 2012)
+
+  06 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.7.8.7.ebuild, -imagemagick-6.7.7.5.ebuild:
+  Security bump to latest - CVE-2012-3437,3438.
+
+*imagemagick-6.7.7.5 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.7.7.5.ebuild, -imagemagick-6.7.6.5.ebuild:
+  Bump to latest.
+
+*imagemagick-6.7.6.5 (10 Apr 2012)
+
+  10 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.7.6.5.ebuild, -imagemagick-6.7.5.3-r2.ebuild:
+  Security bump to latest - CVE-2012-{0259,0260,1610,1798}.
+
+*imagemagick-6.7.5.3-r2 (29 Mar 2012)
+
+  29 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.7.5.3-r2.ebuild, -imagemagick-6.7.5.3-r1.ebuild:
+  Force rebuild - tiff update
+
+*imagemagick-6.7.5.3-r1 (15 Mar 2012)
+
+  15 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.7.5.3-r1.ebuild, -imagemagick-6.6.5.6-r1.ebuild:
+  Bump to latest.
+
+*imagemagick-6.6.5.6-r1 (10 Jan 2011)
+
+  10 Jan 2011; Olivier Levillain <clipos@ssi.gouv.fr>
+  +imagemagick-6.6.5.6-r1.ebuild, -imagemagick-6.6.5.6.ebuild:
+  Rbump.
+
+*imagemagick-6.6.5.6 (08 Dec 2010)
+
+  08 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.6.5.6.ebuild, -imagemagick-6.5.2.9-r2.ebuild:
+  Bump to latest for libpng14 migration.
+
+*imagemagick-6.5.2.9-r2 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.5.2.9-r2.ebuild, -imagemagick-6.5.2.9-r1.ebuild:
+  Fake bump to force rebuild (broken depends).
+
+*imagemagick-6.5.2.9-r1 (25 Mar 2010)
+
+  25 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.5.2.9-r1.ebuild, -imagemagick-6.5.2.9.ebuild:
+  Fake bump to force rebuild (xcb revdep).
+
+*imagemagick-6.5.2.9 (22 Oct 2009)
+
+  22 Oct 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.5.2.9.ebuild, -imagemagick-6.5.1.0.ebuild:
+  Bump to latest - same changeset.
+
+*imagemagick-6.5.1.0 (25 May 2009)
+
+  25 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +imagemagick-6.5.1.0.ebuild, -imagemagick-6.3.8.3-r1.ebuild,
+  -files/imagemagick-6.3.8.3-hpgl.patch:
+  Bump to latest - same fixes.
+
+*imagemagick-6.3.8.3-r1 (11 Apr 2008)
+
+  11 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  imagemagick-6.3.8.3-r1.ebuild:
+  Initial CLIP import. Add dependency and CPREFIX fixes.

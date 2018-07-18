@@ -1,0 +1,16 @@
+--- configure.ac.orig	2011-03-23 13:17:22.525078758 +0100
++++ configure.ac	2011-03-23 13:18:38.516078680 +0100
+@@ -55,7 +55,12 @@ PKG_CHECK_MODULES(XORG, [xorg-server >= 
+ 
+ # X Server SDK location is required to install Synaptics header files
+ # This location is also relayed in the xorg-synaptics.pc file
+-sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
++syssdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
++AC_ARG_WITH(xorg-sdk-dir,
++            AC_HELP_STRING([--with-xorg-sdk-dir=DIR],
++                           [Default xorg sdk directory [[default=from $PKG_CONFIG xorg-server]]]),
++            [sdkdir="$withval"],
++            [sdkdir="$syssdkdir"])
+ AC_SUBST([sdkdir])
+ 
+ DRIVER_NAME=synaptics

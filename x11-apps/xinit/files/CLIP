@@ -1,0 +1,243 @@
+!/bin/sh
+
+VIEW_MODE="$(</var/run/viewmode)"
+WP_PATH="/usr/local/share/wallpapers"
+CONFDIR="/etc/conf.d"
+OPENBOXCFG="${CONFDIR}/session/openbox"
+ADESKBARCFG="${CONFDIR}/session/adeskbar"
+COLOR_FILTER="[0-9a-fA-F]{6}"
+OPB_THEMEFILE="/tmp/session/openbox/themerc"
+SMARTCARD_MONITOR_CFG="/etc/conf.d/smartcard-monitor"
+LOGIN_CARDS="/home/user/.smartcards"
+
+load_wallpaper() {
+	local geom="${1}"
+	local -i w=${geom%%x*}
+	local -i h=${geom##*x}
+	
+	if [[ "${w}" == "${geom}" ]]; then
+		logger -p user.warning "xinit: invalid geometry: ${geom}, falling back to default wallpaper"
+		feh --bg-scale --no-fehbg "${WP_PATH}/clip-16x9.png" &
+		return 0
+	fi
+
+	local -i fact=$(( ( 16 * $h ) / $w ))
+	local wp="${WP_PATH}/clip-16x${fact}.png" 
+
+	if [[ ! -e "${wp}" ]]; then
+		# Possibly an extended screen - try halving the width
+		w=$(( ${w} / 2 ))
+		fact=$(( ( 16 * $h ) / $w ))
+		wp="${WP_PATH}/clip-16x${fact}.png" 
+	fi
+		
+	# Fall back to 16/9 as a last resort
+	[[ -e "${wp}" ]] || wp="${WP_PATH}/clip-16x9.png"
+
+	feh --bg-scale --no-fehbg "${WP_PATH}/clip-16x${fact}.png" &
+}
+
+load_keymap() {
+	[[ -e "/home/user/.config/lxkeymap.cfg" ]] || return 0
+
+	(sleep 3 && lxkeymap --autostart ) &
+}
+
+do_numlock() {
+	local machine="$(</etc/core/machine)"
+
+	[[ -n "${machine}" ]] || return 0
+
+	[[ -e "/usr/share/clip-hardware/profiles/${machine}/nonumlock" ]] && return 0
+
+
+	numlockx on &
+}
+
+
+user_session() {
+	source "/lib/clip/import.sub"
+	local gfile="/etc/core/screen.geom"
+	[[ -f "/etc/core/current.geom" ]] && gfile="/etc/core/current.geom" 
+	local geom="$(<${gfile})"
+	geom="${geom%:*}"
+	local conf="${1}"
+	local opts="${2}"
+	xscreensaver-settime.sh init
+	if [[ -x "/usr/local/bin/synaptics-settings.sh" ]] ; then 
+		synaptics-settings.sh init &
+	fi
+	if [[ ! -f /usr/local/var/no_keyboard ]];
+	then
+		xscreensaver &
+	fi
+	syndaemon -i 0.5 -k -d
+	lxinput-restore &
+	local opb_config="/usr/local/etc/xdg/openbox/rc.xml"
+
+	SHOW_DESKTOP_ENTRIES=""
+	if [[ -e "/var/run/has_jail_rm_h" ]]; then
+		SHOW_DESKTOP_ENTRIES="X-RMH"
+		[[ -e "/var/run/has_jail_rm_b" ]] \
+			&& SHOW_DESKTOP_ENTRIES="X-RMH X-RMB"
+	else
+		[[ -e "/var/run/has_jail_rm_b" ]] \
+			&& SHOW_DESKTOP_ENTRIES="X-RMB"
+	fi
+	export SHOW_DESKTOP_ENTRIES
+
+	load_wallpaper "${geom}"
+
+	case "${VIEW_MODE}" in
+		mixborder)
+			opb_config="/usr/local/etc/xdg/openbox/rc-border.xml"
+			;;
+		*)
+			echo "viewmode does not match: ${VIEW_MODE}" >&2
+			exit 1
+			;;
+	esac
+
+	mkdir -p "$(dirname ${OPB_THEMEFILE})" 2> /dev/null
+	if [[ -r "${OPENBOXCFG}" && -r "/usr/local/etc/xdg/openbox/themes/CLIP/openbox-3/themerc.skel" ]]; then
+		OUTFILE="${OPB_THEMEFILE}"
+
+		import_conf_noerr "${OPENBOXCFG}" "${COLOR_FILTER}" "RM_H_COLOR" || RM_H_COLOR=ee2828
+		import_conf_noerr "${OPENBOXCFG}" "${COLOR_FILTER}" "RM_B_COLOR" || RM_B_COLOR=53e310
+		import_conf_noerr "${OPENBOXCFG}" "${COLOR_FILTER}" "CORE_COLOR" || CORE_COLOR=658fb5
+		import_conf_noerr "${OPENBOXCFG}" "${COLOR_FILTER}" "CORE_BG_COLOR" || CORE_BG_COLOR=f1eeea
+
+		source "/usr/local/etc/xdg/openbox/themes/CLIP/openbox-3/themerc.skel" || exit 1
+	else
+		cp /usr/local/share/themes/CLIP/openbox-3/themerc.orig ${OPB_THEMEFILE}
+	fi
+
+	openbox --config-file "${opb_config}" &
+
+	case "${PKAUTH}" in
+		yes)
+			import_conf_noerr "${SMARTCARD_MONITOR_CFG}" ".*" "LISTER_SOCKET" || LISTER_SOCKET=/var/run/smartcard/smartcard_lister.socket
+			/usr/sbin/smartcard_list -s "${LISTER_SOCKET}" > "${LOGIN_CARDS}"
+			NBLINES="$(cat "${LOGIN_CARDS}" | wc -l)"
+			[[ "${NBLINES}" -le 0 ]] && rm -f "${LOGIN_CARDS}"
+			break
+			;;
+		*)
+			rm -f "${LOGIN_CARDS}"
+			;;
+	esac
+
+	if [[ -r "${ADESKBARCFG}" && -r "/usr/local/etc/adeskbar/${conf}.skel" ]]; then
+		ADB_OUTFILE="/tmp/session/adeskbar/${conf}.cfg"
+		OUTFILE="${ADB_OUTFILE}"
+		import_conf_noerr "${ADESKBARCFG}" "[ _0-9a-zA-Z]+" "JAIL_NAMES" || JAIL_NAMES="RM_H RM_B"
+		import_conf_noerr "${ADESKBARCFG}" "${COLOR_FILTER}" "CORE_COLOR" || CORE_COLOR="3e66ed"
+		import_conf_noerr "${ADESKBARCFG}" "yes|no" "HAS_CLOCK" || HAS_CLOCK="yes"
+
+		import_conf_noerr "${ADESKBARCFG}" "-" "RM_B_DESC" || RM_B_DESC="Niveau <b>bas</b>"
+		import_conf_noerr "${ADESKBARCFG}" "-" "RM_B_IMG" || RM_B_IMG="level-b"
+		import_conf_noerr "${ADESKBARCFG}" "yes|no" "RM_B_AUTOSTART" || RM_B_AUTOSTART="yes"
+		import_conf_noerr "${ADESKBARCFG}" "${COLOR_FILTER}" "RM_B_COLOR" || RM_B_COLOR="3eed7c"
+
+		import_conf_noerr "${ADESKBARCFG}" "-" "RM_H_DESC" || RM_H_DESC="Niveau <b>haut</b>"
+		import_conf_noerr "${ADESKBARCFG}" "-" "RM_H_IMG" || RM_H_IMG="level-h"
+		import_conf_noerr "${ADESKBARCFG}" "yes|no" "RM_H_AUTOSTART" || RM_H_AUTOSTART="no"
+		import_conf_noerr "${ADESKBARCFG}" "${COLOR_FILTER}" "RM_H_COLOR" || RM_H_COLOR="e42c33"
+
+			
+		mkdir -p "$(dirname ${ADB_OUTFILE})" 2> /dev/null
+		source "/usr/local/etc/adeskbar/${conf}.skel" || exit 1
+		# we need to remove the .cfg suffix in order to please adeskbar
+		adeskbar "${ADB_OUTFILE%%.cfg}"
+	else
+		adeskbar "${conf}"
+	fi
+
+	local ret=$?
+
+	if [[ -n "${ADB_OUTFILE}" ]]; then
+		rm -f "${ADB_OUTFILE}"
+	fi
+
+	rm -f "${OPB_THEMEFILE}"
+
+	kill -TERM -1
+	exit ${ret}
+}
+
+get_conf() {
+	OPTS="--options"
+	LAST_JAIL=""
+	USER_SESSION="y"
+	CONF=""
+	CONFPATH="/usr/local/share/adeskbar"
+	PKAUTH="no"
+
+	local -a grps=( $(groups) )
+	local g
+
+	for g in "${grps[@]}"; do
+		case "${g}" in
+			pkauth)
+				PKAUTH="yes"
+				break
+				;;
+			*)
+				;;
+		esac
+	done
+
+	for g in "${grps[@]}"; do
+		case "${g}" in
+			priv_user)
+				[[ -n "${CONF}" ]] || CONF="privuser"
+				OPTS="${OPTS} admin audit"
+				# We need to keep looking for a possible 'nomad_user'
+				;;
+			nomad_user)
+				CONF="nomad"
+				OPTS="${OPTS} nomad"
+				break
+				;;
+			core_admin)
+				USER_SESSION=""
+				CONF="admin"
+				OPTS="${OPTS} admin"
+				break
+				;;
+			core_audit)
+				USER_SESSION=""
+				CONF="audit"
+				OPTS="${OPTS} audit"
+				break
+				;;
+		esac
+	done
+	# default - simple user
+	[[ -n "${CONF}" ]] || CONF="user"
+
+	# Use custom config if present
+	[[ -e "${CONFPATH}/${CONF}_custom.cfg" ]] && CONF="${CONF}_custom"
+
+	if [[ -n "${USER_SESSION}" ]]; then
+		local f
+		for f in /var/run/has_jail_*; do
+			[[ -f "${f}" ]] || continue
+			OPTS="${OPTS} ${f##*/has_jail_}"
+			LAST_JAIL="${f##*/has_jail_}"
+		done
+	fi
+}
+
+export HOME=/home/user
+export LANG=fr_FR
+export LC_ALL=fr_FR
+export GTK2_RC_FILES="/usr/local/etc/gtk-2.0/gtkrc"
+
+do_numlock
+
+get_conf
+
+load_keymap
+
+user_session "${CONF}" "${OPTS}"

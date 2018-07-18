@@ -1,0 +1,16 @@
+It does not make sense to compile all the "hacks" (the way Xscreensaver calls
+its fancy screensavers) for CLIP since we deliberatly set the blank screensaver
+in the final configuration.
+diff --git a/Makefile.in b/Makefile.in
+index c919051..dc52290 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -6,7 +6,7 @@ srcdir		= @srcdir@
+ VPATH		= @srcdir@
+ 
+ SHELL		= /bin/sh
+-SUBDIRS 	= utils jwxyz hacks hacks/glx driver po
++SUBDIRS 	= utils jwxyz driver po
+ SUBDIRS2	= $(SUBDIRS) OSX android
+ TARFILES	= README README.hacking README.VMS INSTALL \
+ 		  configure configure.in Makefile.in config.h.in \

@@ -1,0 +1,17 @@
+diff --git a/vncviewer/Viewport.cxx b/vncviewer/Viewport.cxx
+index 768bc34..1e2b2dc 100644
+--- a/vncviewer/Viewport.cxx
++++ b/vncviewer/Viewport.cxx
+@@ -420,6 +420,12 @@ int Viewport::handle(int event)
+                          buttonMask | wheelMask);
+     } 
+ 
++		// even though FL_MOVE is supposed to be sent when mouse is moved without
++		// any buttons held down, it happens sometimes (touchscreen) that
++		// Fl::event_button1() returns true, which breaks CLIP vncviewer on
++		// touchscreen
++		if(FL_MOVE == event)
++			buttonMask = 0;
+     handlePointerEvent(Point(Fl::event_x() - x(), Fl::event_y() - y()), buttonMask);
+     return 1;
+ 

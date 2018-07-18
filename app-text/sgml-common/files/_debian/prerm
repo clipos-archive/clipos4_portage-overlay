@@ -1,0 +1,6 @@
+#!/bin/sh
+
+INSTALLER="/usr/local/bin/install-catalog"
+
+cp -f "${INSTALLER}" "${INSTALLER}.bkp"
+chmod +x "${INSTALLER}.bkp"

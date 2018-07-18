@@ -1,0 +1,52 @@
+--- Xdialog-2.3.1.orig/src/callbacks.c	2006-08-18 18:19:14.000000000 +0200
++++ Xdialog-2.3.1/src/callbacks.c	2012-01-16 16:16:54.000000000 +0100
+@@ -713,6 +713,8 @@ gboolean editbox_ok(gpointer object, gpo
+ }
+ #endif
+ 
++/* noprint */
++#if 0
+ /* The print button callback (used by editbox, textbox and tailbox) */
+ 
+ #ifdef USE_GTK2
+@@ -773,6 +775,9 @@ gboolean print_text(gpointer object, gpo
+ }
+ #endif
+ 
++#endif
++/* /noprint */
++
+ /* rangebox callbacks */
+ 
+ gboolean rangebox_exit(GtkButton *button, gpointer data)
+--- Xdialog-2.3.1.orig/src/callbacks.h	2005-11-19 19:49:34.000000000 +0100
++++ Xdialog-2.3.1/src/callbacks.h	2012-01-16 16:16:54.000000000 +0100
+@@ -43,8 +43,6 @@ gboolean hide_passwords(GtkObject *butto
+ 
+ gboolean editbox_ok(gpointer object, gpointer data);
+ 
+-gboolean print_text(gpointer object, gpointer data);
+-
+ gboolean rangebox_exit(GtkButton *button, gpointer data);
+ 
+ gboolean rangebox_timeout(gpointer data);
+--- Xdialog-2.3.1.orig/src/interface.c	2006-08-18 18:13:12.000000000 +0200
++++ Xdialog-2.3.1/src/interface.c	2012-01-16 16:16:54.000000000 +0100
+@@ -472,7 +472,7 @@ static GtkWidget *set_button(gchar *defa
+ 			break;
+ 		case 4:
+ 			gtk_signal_connect_after(GTK_OBJECT(button), "clicked",
+-						 GTK_SIGNAL_FUNC(print_text),
++						 GTK_SIGNAL_FUNC(exit_cancel),
+ 						 NULL);
+ 			break;
+ 	}
+@@ -534,8 +534,6 @@ static GtkWidget *set_all_buttons(gboole
+ 		button_ok = set_button(NEXT, hbuttonbox, 0, TRUE);
+ 	if (Xdialog.help)
+ 		set_button(HELP, hbuttonbox, 2, FALSE);
+-	if (print && Xdialog.print)
+-		set_button(PRINT, hbuttonbox, 4, FALSE);
+ 
+ 	return button_ok;
+ }

@@ -1,0 +1,60 @@
+diff -aur gcc-4.6.3/work/gcc-4.6.3/gcc/Makefile.in gcc-4.6.3.new/work/gcc-4.6.3/gcc/Makefile.in
+--- gcc-4.6.3/work/gcc-4.6.3/gcc/Makefile.in	2013-10-25 11:13:53.602262304 +0200
++++ gcc-4.6.3.new/work/gcc-4.6.3/gcc/Makefile.in	2013-10-24 19:02:15.424769579 +0200
+@@ -4553,6 +4553,7 @@
+   $(EXCEPT_H) tree-ssa-sccvn.h real.h output.h $(IPA_UTILS_H) \
+   $(C_PRAGMA_H)  $(CPPLIB_H)  $(FUNCTION_H) \
+   cppdefault.h flags.h $(MD5_H) params.def params.h prefix.h tree-inline.h \
++  config/arm/arm-cores.def \
+   $(IPA_PROP_H) $(RTL_H) $(TM_P_H) $(CFGLOOP_H) $(EMIT_RTL_H) version.h
+ 
+ # generate the 'build fragment' b-header-vars
+diff -aur gcc-4.6.3/work/gcc-4.6.3/gcc/config.gcc gcc-4.6.3.new/work/gcc-4.6.3/gcc/config.gcc
+--- gcc-4.6.3/work/gcc-4.6.3/gcc/config.gcc	2013-10-25 11:13:53.602262304 +0200
++++ gcc-4.6.3.new/work/gcc-4.6.3/gcc/config.gcc	2013-10-25 11:30:08.922287277 +0200
+@@ -468,6 +468,9 @@
+ 	fi
+ 	tm_file="vxworks-dummy.h ${tm_file}"
+ 	;;
++arm*-*-*)
++	tm_file="vxworks-dummy.h ${tm_file}"
++	;;
+ esac
+ 
+ # On a.out targets, we need to use collect2.
+@@ -844,7 +847,7 @@
+ 	    tmake_file="$tmake_file arm/t-linux"
+ 	    ;;
+ 	esac
+-	tm_file="$tm_file arm/aout.h arm/arm.h"
++	tm_file="$tm_file arm/aout.h vxworks-dummy.h arm/arm.h"
+ 	tmake_file="${tmake_file} arm/t-arm-softfp soft-fp/t-softfp"
+ 	;;
+ arm*-*-uclinux*)		# ARM ucLinux
+@@ -862,7 +865,7 @@
+ 	    # The EABI requires the use of __cxa_atexit.
+ 	    default_use_cxa_atexit=yes
+ 	esac
+-	tm_file="$tm_file arm/aout.h arm/arm.h"
++	tm_file="$tm_file arm/aout.h vxworks-dummy.h arm/arm.h"
+ 	tmake_file="${tmake_file} arm/t-arm-softfp soft-fp/t-softfp"
+ 	;;
+ arm*-*-ecos-elf)
+@@ -892,7 +895,7 @@
+ 	  tmake_file="${tmake_file} arm/t-symbian"
+ 	  ;;
+ 	esac
+-	tm_file="${tm_file} arm/aout.h arm/arm.h"
++	tm_file="${tm_file} arm/aout.h vxworks-dummy.h arm/arm.h"
+ 	tmake_file="${tmake_file} arm/t-arm-softfp soft-fp/t-softfp"
+ 	;;
+ arm*-*-rtems*)
+@@ -901,7 +904,7 @@
+ 	tmake_file="${tmake_file} arm/t-arm-softfp soft-fp/t-softfp"
+ 	;;
+ arm*-*-elf)
+-	tm_file="dbxelf.h elfos.h newlib-stdint.h arm/unknown-elf.h arm/elf.h arm/aout.h arm/arm.h"
++	tm_file="dbxelf.h elfos.h newlib-stdint.h arm/unknown-elf.h arm/elf.h arm/aout.h vxworks-dummy.h arm/arm.h"
+ 	tmake_file="arm/t-arm arm/t-arm-elf"
+ 	tmake_file="${tmake_file} arm/t-arm-softfp soft-fp/t-softfp"
+ 	;;

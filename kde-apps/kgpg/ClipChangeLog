@@ -1,0 +1,92 @@
+# CLIP ChangeLog for kde-base/kgpg
+
+*kgpg-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.12.5.ebuild, -kgpg-4.12.3-r1.ebuild:
+  Bump to latest.
+
+*kgpg-4.12.3-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.12.3-r1.ebuild, -kgpg-4.12.3.ebuild:
+  Force rebuild - generate doc.
+
+*kgpg-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.12.3.ebuild, -kgpg-4.9.5.ebuild:
+  Bump to latest.
+
+*kgpg-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.9.5.ebuild, -kgpg-4.9.4.ebuild:
+  Bump to latest.
+
+*kgpg-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.9.4.ebuild, -kgpg-4.7.3-r2.ebuild:
+
+*kgpg-4.7.3-r2 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.7.3-r2.ebuild, -kgpg-4.7.3-r1.ebuild:
+  Force rebuild.
+
+*kgpg-4.7.3-r1 (29 Dec 2011)
+
+  29 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.7.3-r1.ebuild, -kgpg-4.7.3.ebuild,
+  +files/kgpg-de841cf6.diff, +files/kgpg-6a3e8d21.diff:
+  Add two patches from 4.7.4 to prevent some crashes.
+
+*kgpg-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.7.3.ebuild, -kgpg-4.7.1.ebuild:
+  Bump to latest.
+
+*kgpg-4.7.1 (12 Sep 2011)
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.7.1.ebuild, -kgpg-4.5.5.ebuild:
+  Bump to latest.
+
+*kgpg-4.5.5 (10 Jan 2011)
+
+  10 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.5.5.ebuild, -kgpg-4.5.4.ebuild:
+  Bump to latest.
+
+*kgpg-4.5.4 (20 Dec 2010)
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.5.4.ebuild, -kgpg-4.4.4.ebuild:
+  Bump to latest.
+
+*kgpg-4.4.4 (30 Jun 2010)
+
+  30 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.4.4.ebuild:
+  Add newest (~x86).
+
+*kgpg-4.3.5 (04 Feb 2010)
+
+  04 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.3.5.ebuild, -kgpg-4.3.4.ebuild:
+  Bump.
+
+*kgpg-4.3.4 (15 Dec 2009)
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.3.4.ebuild, -kgpg-4.3.3.ebuild:
+  Bump.
+
+*kgpg-4.3.3 (11 Dec 2009)
+
+  11 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kgpg-4.3.3.ebuild:
+  Initial import in overlay. Fix servicemenu messages.
+

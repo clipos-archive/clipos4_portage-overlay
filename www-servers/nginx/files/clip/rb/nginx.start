@@ -1,0 +1,28 @@
+#!/bin/bash
+# Copyright 2015 SGDSN/ANSSI
+# Author: Mickaël Salaün <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+source /lib/clip/jails.sub
+source /etc/conf.d/jail-net
+
+JAIL="$(basename -- "$(readlink -f -- "$0")")"
+JAIL="${JAIL%.*}"
+
+_LOCAL_ADDR="${JAIL^^}_LOCAL_ADDR"
+LOCAL_ADDR="${!_LOCAL_ADDR}"
+_ADDR="${JAIL^^}_ADDR"
+ADDR="${!_ADDR}"
+
+opt="-a ${LOCAL_ADDR}/255.255.255.255 -l ${LOCAL_ADDR}"
+if [[ -n "${ADDR}" && "${ADDR}" != "virtual" ]]; then
+	opt="${opt} -a ${ADDR}/255.255.255.255 -b ${ADDR}"
+fi
+if ! jail_setup_wait "${JAIL}" ${opt}; then
+	ewarn "Failed to set up the ${JAIL} jail"
+	exit 1
+fi
+if ! vsctl -i /dev/null -o /dev/null "${JAIL}" enter -- /usr/sbin/nginx; then
+	ewarn "Failed to run Nginx in the ${JAIL} jail"
+	exit 1
+fi

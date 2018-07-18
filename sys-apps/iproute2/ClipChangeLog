@@ -1,0 +1,59 @@
+# CLIP ChangeLog for sys-apps/iproute2
+
+*iproute2-3.1.0-r2 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +iproute2-3.1.0-r2.ebuild, -iproute2-3.1.0-r1.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*iproute2-3.1.0-r1 (13 Oct 2015)
+
+  13 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +iproute2-3.1.0-r1.ebuild, -iproute2-3.1.0.ebuild:
+  Update dependency on linux headers.
+
+*iproute2-3.1.0 (21 Mar 2012)
+
+  21 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +iproute2-3.1.0.ebuild, -iproute2-2.6.38.ebuild,
+  -files/iproute2-2.6.29.1-hfsc.patch, +files/iproute2-3.1.0-mtu.patch:
+  Bump to latest.
+
+*iproute2-2.6.38 (30 Aug 2011)
+
+  30 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +iproute2-2.6.38.ebuild, -iproute2-2.6.22.20070710.ebuild,
+  +files/iproute2-2.6.29.1-hfsc.patch,
+  -files/iproute2-2.6.16.20060323-build.patch:
+  Bump to latest.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  iproute2-2.6.22.20070710.ebuild:
+  Switch to verictl2.eclass.
+
+*iproute2-2.6.22.20070710 (12 Jun 2008)
+
+  12 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +iproute2-2.6.22.20070710.ebuild, -iproute2-2.6.22.20070710.ebuild:
+  Bump to latest stable.
+
+*iproute2-2.6.15.20060110-r1 (11 Jun 2008)
+
+  11 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +iproute2-2.6.15.20060110-r1.ebuild, -iproute2-2.6.15.20060110.ebuild:
+  Switch to CCSD veriexec hashes.
+
+  10 May 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  iproute2-2.6.15.20060110.ebuild:
+  Add CLIP_PRIV_NETLINK to ip.
+
+  13 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  iproute2-2.6.15.20060110.ebuild:
+  Also give CLSM_PRIV_NETCLIENT and CLSM_PRIV_NETSERVER to /sbin/ip,
+  since it needs to do both a bind and a connect.
+
+*iproute2-2.6.15.20060110 (22 Jan 2007)
+
+  22 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  iproute2-2.6.15.20060110.ebuild:
+  Initial CLIP import. Add verictl support : CAP_NET_ADMIN.

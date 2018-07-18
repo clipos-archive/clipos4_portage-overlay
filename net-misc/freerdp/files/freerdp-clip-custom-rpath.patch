@@ -1,0 +1,16 @@
+Index: freerdp-1.2.1_pre20150326/CMakeLists.txt
+===================================================================
+--- freerdp-1.2.1_pre20150326.orig/CMakeLists.txt
++++ freerdp-1.2.1_pre20150326/CMakeLists.txt
+@@ -643,9 +643,9 @@ if(CMAKE_SKIP_RPATH)
+        set(CMAKE_SKIP_INSTALL_RPATH TRUE)
+ endif()
+ set(CMAKE_SKIP_BUILD_RPATH FALSE)
+-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
++set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+-set(CMAKE_INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}:\$ORIGIN/..")
++set(CMAKE_INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}:\$ORIGIN/..;/usr/local/lib")
+ 
+ # Android profiling
+ if(ANDROID)

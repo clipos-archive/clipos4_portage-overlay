@@ -1,0 +1,36 @@
+# CLIP ChangeLog for dev-python/pygtk
+
+*pygtk-2.24.0-r4 (25 Jul 2013)
+
+  25 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygtk-2.24.0-r4.ebuild, -pygtk-2.24.0-r3.ebuild:
+  Rbump to force rebuild. Simple clip-deps fix - optimizing is now
+  handled by the eclass.
+
+*pygtk-2.24.0-r3 (30 Jan 2013)
+
+  30 Jan 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pygtk-2.24.0-r3.ebuild, -pygtk-2.24.0-r2.ebuild:
+  Bump to latest.
+
+*pygtk-2.24.0-r2 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygtk-2.24.0-r2.ebuild, -pygtk-2.24.0-r1.ebuild:
+  Force rebuild
+
+*pygtk-2.24.0-r1 (19 Jul 2011)
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pygtk-2.24.0-r1.ebuild, -pygtk-2.14.1-r1.ebuild,
+  -files/pygtk-2.14.1-gtktoggle.patch,
+  -files/pygtk-2.14.1-numpy.patch,
+  -files/pygtk-2.14.1-ltihooks.patch,
+  -files/pygtk-2.14.1-fix-numpy-warning.patch:
+  Bump to latest.
+
+*pygtk-2.14.1-r1 (24 Mar 2010)
+
+  24 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  pygtk-2.14.1-r1.ebuild:
+  Initial overlay import. clip-deps fixes + add optimizing predeb call.

@@ -1,0 +1,25 @@
+# Copyright 1999-2005 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/profiles/default-linux/make.defaults,v 1.14 2006/03/14 04:09:54 solar Exp $
+#
+# System-wide defaults for the Portage system
+# See portage(5) manpage
+#
+# Please avoid enabling things by default in here if possible. Understand any 
+# implications with core packages.  For example, if "java" is in USE and db 
+# has a conditional dependency on java (which it does,) then a JDK will be 
+# pulled in during *emerge system*!
+
+# build X in an expected way
+USE="bitmap-fonts truetype-fonts type1-fonts"
+
+# make sure toolchain has sane defaults
+USE="${USE} fortran"
+
+# 2006/03/07 - Donnie Berkholz <spyderous@gentoo.org>
+# Modular X: Support direct rendering by default
+USE="${USE} dri"
+
+# 2006/03/13 - Chris Gianelloni <wolf31o2@gentoo.org>
+# Make sure dev-lang/php works right.  See bug #120088 for more info.
+#USE="${USE} apache2 cli ctype dba expat fastbuild force-cgi-redirect ftp gd memlimit nls pcre posix session simplexml soap sockets spl ssl tokenizer truetype xml xsl zlib"

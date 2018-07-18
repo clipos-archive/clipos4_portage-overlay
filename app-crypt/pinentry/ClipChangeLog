@@ -1,0 +1,54 @@
+# CLIP ChangeLog for app-crypt/pinentry
+
+*pinentry-0.9.5-r1 (10 Jul 2017)
+
+  10 Jul 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +pinentry-0.9.5-r1.ebuild, -pinentry-0.9.5.ebuild:
+  Remove dependency on gpg-error (clip-core package).
+
+*pinentry-0.9.5 (27 Jan 2016)
+
+  27 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pinentry-0.9.5.ebuild, -pinentry-0.8.1-r1.ebuild:
+  Bump to latest stable.
+
+*pinentry-0.8.1-r1 (16 Jul 2012)
+
+  16 Jul 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pinentry-0.8.1-r1.ebuild, -pinentry-0.8.1.ebuild:
+  files/pinentry-wrapper: fix pinentry-gtk-2 exe name.
+
+*pinentry-0.8.1 (16 Apr 2012)
+
+  16 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pinentry-0.8.1.ebuild, -pinentry-0.7.6.ebuild,
+  +files/pinentry-wrapper, +files/pinentry.sh:
+  Bump to latest. Add wrappers for rm (to select appropriate
+  toolkit depending on the environment) and clip (to deal
+  with XAUTHORITY, etc. when run through vsctl).
+
+*pinentry-0.7.6 (14 Jan 2010)
+
+  14 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pinentry-0.7.6.ebuild:
+  Add latest unstable, qt4 support.
+
+*pinentry-0.7.5 (26 Mar 2009)
+
+  26 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pinentry-0.7.5.ebuild, -pinentry-0.7.4-r2.ebuild:
+  Bump to latest stable, same changeset.
+
+*pinentry-0.7.4-r2 (03 Mar 2009)
+
+  03 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +pinentry-0.7.4-r2.ebuild, -pinentry-0.7.4-r1.ebuild:
+  Silent bump to force rebuild with proper LDFLAGS for linking with
+  qt.
+
+*pinentry-7.1.4-r1 (04 Mar 2008)
+
+  04 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  pinentry-7.1.4-r1.ebuild:
+  Initial overlay import. Add IUSE clip-deps to remove dependency
+  on ncurses.

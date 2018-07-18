@@ -1,0 +1,31 @@
+
+*thunar-1.6.3 (13 Jan 2014)
+
+  13 Jan 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunar-1.6.3.ebuild, -thunar-1.6.2-r2.ebuild:
+  Bump to latest.
+
+*thunar-1.6.2-r2 (31 Oct 2013)
+
+  31 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunar-1.6.2-r2.ebuild, -thunar-1.6.2-r1.ebuild:
+  Force rebuild against newer libpcre.so.
+
+*thunar-1.6.2-r1 (31 Dec 2012)
+
+  31 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunar-1.6.2-r1.ebuild, -thunar-1.6.2.ebuild:
+  Integrate CLIP-specific modifications.
+  Add "prefix" to IUSE (might be a temp fix).
+  Stabilize.
+
+*thunar-1.4.0-r1 (22 May 2012)
+
+  22 May 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunar-1.4.0-r1.ebuild, -thunar-1.4.0.ebuild:
+
+*thunar-1.2.3-r1 (27 Mar 2012)
+
+  27 Mar 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunar-1.2.3-r1.ebuild, -thunar-1.2.3.ebuild:
+  use CPREFIX for html and doc installation.

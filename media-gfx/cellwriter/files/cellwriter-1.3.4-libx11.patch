@@ -1,0 +1,14 @@
+--- configure.ac.orig	2012-09-14 14:36:32.199389754 +0200
++++ configure.ac	2012-09-14 14:36:55.832722240 +0200
+@@ -31,6 +31,11 @@ AC_CHECK_LIB(Xtst, XTestFakeKeyEvent, []
+              [AC_ERROR(XTest library not found or outdated!
+                   Please install the latest libxtst-dev package.)])
+ 
++AC_CHECK_LIB(X11, XDisplayKeycodes, [],
++             [AC_ERROR(X11 library not found or outdated!
++                  Please install the latest libX11-dev package.)])
++
++# Math library
+ # Math library
+ AC_CHECK_LIB(m, atan2, [], [AC_ERROR(Math library not installed or invalid!)])
+ 

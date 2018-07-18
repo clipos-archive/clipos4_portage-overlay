@@ -1,0 +1,54 @@
+# CLIP ChangeLog for kde-base/konqueror
+
+*konqueror-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.12.5.ebuild, -konqueror-4.12.3-r1.ebuild:
+  Bump to latest.
+
+*konqueror-4.12.3-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.12.3-r1.ebuild, -konqueror-4.12.3.ebuild:
+  Force rebuild - generate doc.
+
+*konqueror-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.12.3.ebuild, -konqueror-4.9.5.ebuild:
+  Bump to latest.
+
+*konqueror-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.9.5.ebuild, -konqueror-4.9.4.ebuild:
+  Bump to latest.
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  konqueror-4.9.4.ebuild:
+  Don't show konqbrowser in menus on CLIP.
+
+*konqueror-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.9.4.ebuild, -konqueror-4.7.3-r1.ebuild:
+  Bump to latest.
+
+*konqueror-4.7.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.7.3-r1.ebuild, -konqueror-4.7.3.ebuild:
+  Force rebuild.
+
+*konqueror-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.7.3.ebuild, -konqueror-4.7.1.ebuild:
+  Bump to latest.
+
+*konqueror-4.7.1 (13 Sep 2011)
+
+  13 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +konqueror-4.7.1.ebuild:
+  Initial import. Add conflict against earlier versions of kdebase-apps.
+

@@ -1,0 +1,165 @@
+--- a/lib/gprocess.c
++++ b/lib/gprocess.c
+@@ -787,6 +787,56 @@ g_process_change_root(void)
+ }
+ 
+ /**
++ * g_process_jail_self:
++ *
++ * Jail process in an existing context.
++ * CLIP-only
++ **/
++static int
++g_process_jail_self(xid_t xid)
++{
++  pid_t pid;
++  if (xid) 
++    {
++      int ret = clip_enter_context(xid);
++      if (ret) 
++        {
++          g_process_message("Error in clip_enter_context(); xid=%u, error=%d\n", xid, ret);
++          return FALSE;
++        }
++    }
++  /* Re-daemonize in the new context ... */
++  pid = fork();
++  switch (pid)
++    {
++      case -1:
++        g_process_message("fork() error in clip_enter_context()");
++        return FALSE;
++      case 0:
++        break;
++      default:
++        _exit(0);
++    }
++  if (setsid() < 0) {
++    g_process_message("setsid() error in clip_enter_context()");
++    return FALSE;
++  }
++  pid = fork();
++  switch (pid)
++    {
++      case -1:
++        g_process_message("fork() error in clip_enter_context()");
++        return FALSE;
++      case 0:
++        break;
++      default:
++        _exit(0);
++    }
++
++  return TRUE;
++}
++
++/**
+  * g_process_change_user:
+  *
+  * Change the current user/group/groups to the value specified by the user.
+@@ -1256,7 +1306,7 @@ g_process_perform_supervise(void)
+  * g_process_set_*() functions.
+  **/
+ void
+-g_process_start(void)
++g_process_start(xid_t xid)
+ {
+   pid_t pid;
+   
+@@ -1362,6 +1412,7 @@ g_process_start(void)
+    * */
+ 
+   if (!g_process_change_root() ||
++      !g_process_jail_self(xid) ||
+       !g_process_change_user() ||
+       !g_process_change_caps())
+     {
+--- a/lib/gprocess.h
++++ b/lib/gprocess.h
+@@ -33,6 +33,10 @@
+ #  include <sys/capability.h>
+ #endif
+ 
++/* CLIP */
++#include <clip/clip-vserver.h>
++/* /CLIP */
++
+ typedef enum
+ {
+   G_PM_FOREGROUND,
+@@ -77,7 +81,7 @@ void g_process_set_check(gint check_peri
+ 
+ gboolean g_process_check_cap_syslog(void);
+ 
+-void g_process_start(void);
++void g_process_start(xid_t xid);
+ void g_process_startup_failed(guint ret_num, gboolean may_exit);
+ void g_process_startup_ok(void);
+ void g_process_finish(void);
+--- a/lib/Makefile.am
++++ b/lib/Makefile.am
+@@ -8,7 +8,7 @@ YFLAGS=@YFLAGS@
+ export top_srcdir
+ 
+ lib_LTLIBRARIES = libsyslog-ng.la
+-libsyslog_ng_la_LIBADD = @CORE_DEPS_LIBS@
++libsyslog_ng_la_LIBADD = @CORE_DEPS_LIBS@ -lclipvserver
+ libsyslog_ng_la_LDFLAGS = -no-undefined -release @VERSION@
+ 
+ # this is intentionally formatted so conflicts are less likely to arise. one name in every line.
+--- a/syslog-ng/main.c
++++ b/syslog-ng/main.c
+@@ -55,6 +55,8 @@
+ #include <getopt.h>
+ #endif
+ 
++#include <clip/clip-vserver.h>
++
+ #include <iv.h>
+ #include <iv_signal.h>
+ 
+@@ -68,6 +70,8 @@ static gboolean dummy = FALSE;
+ extern int cfg_parser_debug;
+ #endif
+ 
++static xid_t xid = 0;
++
+ static GOptionEntry syslogng_options[] = 
+ {
+   { "version",           'V',         0, G_OPTION_ARG_NONE, &display_version, "Display version number (" PACKAGE " " VERSION ")", NULL },
+@@ -77,6 +81,9 @@ static GOptionEntry syslogng_options[] =
+ #ifdef YYDEBUG
+   { "yydebug",           'y',         0, G_OPTION_ARG_NONE, &cfg_parser_debug, "Enable configuration parser debugging", NULL },
+ #endif
++  /* CLIP */
++  { "xid",               'x',         0, G_OPTION_ARG_INT, &xid, "Enter vserver context with xid <xid>\n", NULL },
++  /* /CLIP */
+   { NULL },
+ };
+ 
+@@ -244,7 +251,7 @@ main(int argc, char *argv[])
+    */
+   rc = main_loop_init();
+   
+-  g_process_start();
++  g_process_start(xid);
+ 
+   if (rc)
+     {
+--- a/syslog-ng/Makefile.am
++++ b/syslog-ng/Makefile.am
+@@ -14,12 +14,12 @@ syslog_ng_SOURCES = main.c
+ # libtool, because in mixed mode libtool is not used for the final linking
+ # phase.  See the comment in the configure script for details.
+ 
+-syslog_ng_LDADD = -L../lib/.libs -lsyslog-ng @SYSLOGNG_DEPS_LIBS@
++syslog_ng_LDADD = -L../lib/.libs -lsyslog-ng @SYSLOGNG_DEPS_LIBS@ -lclipvserver
+ syslog_ng_LINK =  @SYSLOGNG_LINK@
+ syslog_ng_wrapper_SOURCES = wrapper.c
+ 
+ syslog_ng_ctl_SOURCES = syslog-ng-ctl.c ../lib/gsocket.c ../lib/gsockaddr.c
+-syslog_ng_ctl_LDADD = @BASE_LIBS@ @GLIB_LIBS@ @RESOLV_LIBS@
++syslog_ng_ctl_LDADD = @BASE_LIBS@ @GLIB_LIBS@ @RESOLV_LIBS@ -lclipvserver
+ 
+ 
+ install-exec-hook:

@@ -1,0 +1,31 @@
+# CLIP ChangeLog for media-gfx/xloadimage
+
+*xloadimage-4.1-r12 (08 Aug 2012)
+
+  08 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xloadimage-4.1-r12.ebuild, -xloadimage-4.1-r11.ebuild,
+  +files/xloadimage-4.1-bracket.patch,
+  +files/xloadimage-4.1-libpng15.patch:
+  Bump to latest gentoo version, fix build with png-1.5.
+
+*xloadimage-4.1-r11 (25 May 2011)
+
+  25 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xloadimage-4.1-r11.ebuild, -xloadimage-4.1-r5.ebuild,
+  +files/xloadimage-4.1-unaligned-access.patch,
+  +files/xloadimage-4.1-ldflags_and_exit.patch:
+  Bump to latest upstream from gentoo to fix compilation.
+  Remove ltiff fix - seems to be OK now.
+
+*xloadimage-4.1-r5.ebuild (24 Nov 2006)
+
+  24 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xloadimage-4.1-r5.ebuild, -xloadimage-4.1-r4.ebuild:
+  Add IUSE core-deps to remove dependency on png, jpeg.
+
+*xloadimage-4.1-r4.ebuild (24 Nov 2006)
+
+  24 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  xloadimage-4.1-r4.ebuild:
+  Kill -ltiff in configure, otherwise a dependency on tiff is picked
+  up if the build host has it installed...

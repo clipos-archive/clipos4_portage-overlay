@@ -1,0 +1,41 @@
+
+*xfce4-session-4.10.1 (13 Jan 2014)
+
+  13 Jan 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-session-4.10.1.ebuild, -xfce4-session-4.10.0-r4.ebuild:
+  Bump to latest.
+
+*xfce4-session-4.10.0-r4 (31 Dec 2012)
+
+  31 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-session-4.10.0-r4.ebuild, -xfce4-session-4.10.0-r3.ebuild:
+  Bump EAPI.
+
+*xfce4-session-4.10.0-r3 (18 Jul 2012)
+
+  18 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfce4-session-4.10.0-r3.ebuild, -xfce4-session-4.10.0-r2.ebuild:
+  Bump to force rebuild.
+
+*xfce4-session-4.10.0-r2 (18 Jul 2012)
+
+  18 Jul 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-session-4.10.0-r2.ebuild, -xfce4-session-4.10.0-r1.ebuild:
+  +files/fix-iceauth-path.patch:
+  use correct path for iceauth command
+  +files/force-ssh-agent-type-to-ssh-agent.patch:
+  force the default ssh-agent type to ssh-agent (code default to gpg-agent)
+
+*xfce4-session-4.10.0-r1 (22 May 2012)
+
+  22 May 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-session-4.10.0-r1.ebuild, -xfce4-session-4.10.0.ebuild:
+  use CPREFIX for doc installation and xsession prefix.
+  +files/cd-to-home-before-start.patch:
+  make the current working directory $HOME for Xfce
+
+*xfce4-session-4.8.2-r1 (27 Mar 2012)
+
+  27 Mar 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-session-4.8.2-r1.ebuild, -xfce4-session-4.8.2.ebuild:
+  use CPREFIX for doc installation.

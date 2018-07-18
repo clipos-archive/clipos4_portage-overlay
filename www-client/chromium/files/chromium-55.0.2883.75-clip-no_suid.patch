@@ -1,0 +1,33 @@
+Index: chromium-55.0.2883.75/sandbox/linux/suid/client/setuid_sandbox_host.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/sandbox/linux/suid/client/setuid_sandbox_host.cc
++++ chromium-55.0.2883.75/sandbox/linux/suid/client/setuid_sandbox_host.cc
+@@ -153,7 +153,7 @@ void SetuidSandboxHost::PrependWrapper(b
+   }
+ 
+   if (access(sandbox_binary.c_str(), X_OK) != 0 || (st.st_uid != 0) ||
+-      ((st.st_mode & S_ISUID) == 0) || ((st.st_mode & S_IXOTH)) == 0) {
++      ((st.st_mode & S_IXOTH)) == 0) {
+     LOG(FATAL) << "The SUID sandbox helper binary was found, but is not "
+                   "configured correctly. Rather than run without sandboxing "
+                   "I'm aborting now. You need to make sure that "
+Index: chromium-55.0.2883.75/sandbox/linux/suid/sandbox.c
+===================================================================
+--- chromium-55.0.2883.75.orig/sandbox/linux/suid/sandbox.c
++++ chromium-55.0.2883.75/sandbox/linux/suid/sandbox.c
+@@ -460,12 +460,14 @@ int main(int argc, char** argv) {
+     return 1;
+   }
+ 
++#if 0
+   if (geteuid() != 0) {
+-    fprintf(stderr,
++  fprintf(stderr,
+             "The setuid sandbox is not running as root. Common causes:\n"
+             "  * An unprivileged process using ptrace on it, like a debugger.\n"
+             "  * A parent process set prctl(PR_SET_NO_NEW_PRIVS, ...)\n");
+   }
++#endif
+ 
+   if (!MoveToNewNamespaces())
+     return 1;

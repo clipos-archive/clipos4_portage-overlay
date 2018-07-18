@@ -1,0 +1,17 @@
+--- a/gio/giomodule.c
++++ b/gio/giomodule.c
+@@ -1035,6 +1035,14 @@
+ 	  g_strfreev (paths);
+ 	}
+ 
++      /* GIO_MODULE_DIR is by default configured to be '/usr/lib/gio/modules'
++       * but on CLIP modules may be installed by rm-apps packages in
++       * '/usr/local/lib/gio/modules'. We could configure GIO_MODULE_DIR
++       * to be the latter path, but then gio wouldn't find modules installed
++       * in the former path. Ideally, we would like to look in both paths,
++       * so I add the CLIP-specific path here. */
++      g_io_modules_scan_all_in_directory_with_scope ("/usr/local/lib/gio/modules", scope);
++
+       /* Then load the compiled in path */
+       g_io_modules_scan_all_in_directory_with_scope (GIO_MODULE_DIR, scope);
+ 

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+if [[ ! -d "${HOME}/.clamav" ]]; then
+	mkdir -p "${HOME}/.clamav"
+	# Initial download
+	freshclam --on-update-execute="/usr/local/bin/freshclam-updated" &
+fi
+
+/usr/local/bin/freshclam -c 3 -d --on-update-execute="/usr/local/bin/freshclam-updated"
+
+if [[ -e "${HOME}/.clamav/clamd.sock" ]]; then
+	ps | grep -v grep | grep -q clamd || rm -f "${HOME}/.clamav/clamd.sock"
+fi
+
+if [[ ! -e "${HOME}/.config/autostart/clamd-autostart.desktop" ]]; then
+	mkdir -p "${HOME}/.config/autostart/"
+	cp "/usr/local/share/clamav/clamd-autostart.desktop" \
+		"${HOME}/.config/autostart/"
+fi

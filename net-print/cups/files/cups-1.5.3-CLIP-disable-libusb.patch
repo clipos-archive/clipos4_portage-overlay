@@ -1,0 +1,11 @@
+--- ./backend/usb.c.orig	2012-07-26 20:14:34.000000000 +0200
++++ ./backend/usb.c	2012-07-26 20:14:52.000000000 +0200
+@@ -55,7 +55,7 @@
+  * Include the vendor-specific USB implementation...
+  */
+ 
+-#ifdef HAVE_LIBUSB
++#if 0
+ #  include "usb-libusb.c"
+ #elif defined(__APPLE__)
+ #  include "usb-darwin.c"

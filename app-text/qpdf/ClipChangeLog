@@ -1,0 +1,7 @@
+# CLIP ChangeLog for app-text/qpdf
+
+*qpdf-5.0.1 (31 Oct 2013)
+
+  31 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  qpdf-5.0.1.ebuild:
+  Initial import, clip-deps fixes.

@@ -1,0 +1,7 @@
+fakeinit
+virt_mem
+virt_uptime
+virt_cpu
+virt_load
+hide_mount
+hide_vinfo

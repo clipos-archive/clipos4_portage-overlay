@@ -1,0 +1,8 @@
+# CLIP ChangeLog for dev-texlive/texlive-latexextra
+
+*texlive-latexextra-20012-r1 (02 Aug 2013)
+
+  02 Aug 2013; ANSSI <clipos@ssi.gouv.fr>
+  texlive-latexextra-2012-r1.ebuild:
+  Removed obscure runtime dependency on dev-perl/Spreadsheet-ParseExcel.
+

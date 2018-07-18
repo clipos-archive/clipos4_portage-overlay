@@ -1,0 +1,54 @@
+--- ./ksysguard/ksysguardd/Linux/stat.c.orig	2011-05-20 22:32:07.000000000 +0200
++++ ./ksysguard/ksysguardd/Linux/stat.c	2011-09-13 17:36:32.000000000 +0200
+@@ -599,6 +599,11 @@ void initStat( struct SensorModul* sm ) 
+ 		}
+ 	}
+     fclose(stat);
++	if ( CPUCount > 0 )
++		SMPLoad = (CPULoadInfo*)calloc( CPUCount, sizeof( CPULoadInfo ) );
++	
++	/* Call processStat to eliminate initial peek values. */
++	processStat();
+ 
+ 	stat = fopen("/proc/vmstat", "r");
+     if(!stat) {
+@@ -619,11 +624,6 @@ void initStat( struct SensorModul* sm ) 
+         }
+         fclose(stat);
+     }
+-	if ( CPUCount > 0 )
+-		SMPLoad = (CPULoadInfo*)calloc( CPUCount, sizeof( CPULoadInfo ) );
+-	
+-	/* Call processStat to eliminate initial peek values. */
+-	processStat();
+ }
+ 	
+ void exitStat( void ) {
+--- ./libs/ksysguard/processcore/processes.cpp.orig	2011-05-20 22:32:07.000000000 +0200
++++ ./libs/ksysguard/processcore/processes.cpp	2011-09-13 17:32:40.000000000 +0200
+@@ -137,6 +137,8 @@ bool Processes::updateProcess( Process *
+         parent = &d->mFakeProcess;
+     Q_ASSERT(parent);  //even init has a non-null parent - the mFakeProcess
+ 
++#if CLIP_BORKEN
++    /* Broken in CLIP */
+     if(ps->parent != parent) {
+         emit beginMoveProcess(ps, parent/*new parent*/);
+         //Processes has been reparented
+@@ -160,6 +162,7 @@ bool Processes::updateProcess( Process *
+     }
+ 
+     ps->parent_pid = ppid;
++#endif
+ 
+     bool success = updateProcessInfo(ps);
+     emit processChanged(ps, false);
+@@ -254,6 +257,8 @@ bool Processes::addProcess(long pid, lon
+     if(!parent) {
+         //Under race conditions, the parent could have already quit
+         //In this case, attach to top leaf
++ 	// CLIP
++ 	ppid = 0;
+         parent = &d->mFakeProcess;
+         Q_ASSERT(parent);  //even init has a non-null parent - the mFakeProcess
+     }

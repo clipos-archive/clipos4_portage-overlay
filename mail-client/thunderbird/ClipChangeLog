@@ -1,0 +1,1005 @@
+# CLIP ChangeLog for mail-client/thunderbird
+
+*thunderbird-52.8.0-r1 (31 May 2018)
+
+  31 May 2018; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-52.8.0-r1.ebuild, -thunderbird-52.6.0-r1.ebuild:
+  Bump to latest ESR.
+
+*thunderbird-52.6.0-r1 (05 Feb 2018)
+
+  05 Feb 2018; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-52.6.0-r1.ebuild, -thunderbird-52.5.2-r1.ebuild,
+  +files/thunderbird_52.6.0_clip_answer_no_to_reporting_question.patch:
+  Bump to latest ESR.
+
+*thunderbird-52.5.2-r1 (09 Jan 2018)
+
+  09 Jan 2018; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-52.5.2-r1.ebuild, -thunderbird-52.3.0-r2.ebuild:
+  Bump to latest ESR.
+
+*thunderbird-52.3.0-r2 (08 Nov 2017)
+
+  08 Nov 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +thunderbird-52.3.0-r2.ebuild, -thunderbird-52.3.0-r1.ebuild:
+  RBump to add enigmail back AND revert theses changes partially as enigmail
+  must not be packaged in /usr/local/share but as an extension
+
+*thunderbird-52.3.0-r1 (28 Sep 2017)
+
+  28 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-52.3.0-r1.ebuild, -thunderbird-45.6.0-r6.ebuild:
+  Update to 52.3.0.
+
+*thunderbird-45.6.0-r6 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-45.6.0-r6.ebuild, -thunderbird-45.6.0-r5.ebuild:
+  RBump to link with icu 58.2.
+
+*thunderbird-45.6.0-r5 (19 Jul 2017)
+
+  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +thunderbird-45.6.0-r5.ebuild, -thunderbird-45.6.0-r4.ebuild:
+  RBump because of a change to mozilla ebuild (add clip-deps to expat)
+
+*thunderbird-45.6.0-r4 (18 Apr 2017)
+
+  18 Apr 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +thunderbird-45.6.0-r4.ebuild, -thunderbird-45.6.0-r3.ebuild:
+  Force rebuild
+
+*thunderbird-45.6.0-r3 (28 Feb 2017)
+
+  28 Feb 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +thunderbird-45.6.0-r3.ebuild, -thunderbird-45.6.0-r2.ebuild:
+  RBump because of a change to mozconf eclass (myspell support)
+
+*thunderbird-45.6.0-r2 (12 Jan 2017)
+
+  12 Jan 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-45.6.0-r2.ebuild, -thunderbird-45.6.0-r1.ebuild:
+  Disable local extension installation and bootstrap extension loading.
+
+*thunderbird-45.6.0 (02 Jan 2017)
+
+  02 Jan 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-45.6.0.ebuild, -thunderbird-45.5.1-r1.ebuild:
+  Bump thunderbird for CERTFR-2016-AVI-431.
+
+*thunderbird-45.5.1-r1 (20 Dec 2016)
+
+  20 Dec 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-45.5.1-r1.ebuild, -thunderbird-38.8.0-r5.ebuild:
+  Bump to latest.
+
+*thunderbird-38.8.0-r5 (29 Nov 2016)
+
+  29 Nov 2016; Tony Cheneau <clipos@ssi.gouv.fr>
+  +thunderbird-38.8.0-r5.ebuild, -thunderbird-38.8.0-r4.ebuild,
+  +files/clip/makeMimeTypes.sh, -files/clip/mimeTypes.rdf:
+  Force some more file associations with xdg-open. Introduce a script to
+  automate some parts of the process.
+
+*thunderbird-38.8.0-r4 (02 Nov 2016)
+
+  02 Nov 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +thunderbird-38.8.0-r4.ebuild, -thunderbird-38.8.0-r3.ebuild:
+  Bump for rebuild with correct GCC version.
+
+*thunderbird-38.8.0-r3 (02 Nov 2016)
+
+  02 Nov 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +thunderbird-38.8.0-r3.ebuild, -thunderbird-38.8.0-r1.ebuild:
+  Bump to force update from CLIP 4.4.2 to 4.4.3.
+
+*thunderbird-38.8.0-r1 (09 Aug 2016)
+
+  09 Aug 2016; Tony Cheneau <clipos@ssi.gouv.fr>
+  +thunderbird-38.8.0-r1.ebuild, -thunderbird-38.8.0.ebuild,
+  files/clip/mimeTypes.rdf:
+  Force rebuild to include new mimetypes.rdf database - fix bad behavior when
+  handling pdf/ps filetypes.
+
+*thunderbird-38.8.0 (30 Jun 2016)
+  01 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-38.8.0.ebuild, -thunderbird-38.7.1.ebuild:
+  Bump to ESR 38.8.0.
+
+*thunderbird-38.7.1 (30 Mar 2016)
+
+  30 Mar 2016; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +thunderbird-38.7.1.ebuild, -thunderbird-38.6.0.ebuild:
+  Bump to 38.7.1
+
+*thunderbird-38.6.0 (01 Mar 2016)
+
+  01 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-38.6.0.ebuild, -thunderbird-38.5.0-r1.ebuild,
+  -files/enigmail-1.6.0-parallel-fix.patch,
+  -files/thunderbird-31.7.0-gcc5-1.patch,
+  -files/thunderbird-xul-1.9.2-arm-fixes.patch:
+  Bump to ESR 38.6.1.
+  
+*thunderbird-38.5.0-r1 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +thunderbird-38.5.0-r1.ebuild, -thunderbird-38.5.0.ebuild:
+  Rbump to link with icu 55.1.
+
+*thunderbird-38.5.0 (11 Jan 2016)
+
+  11 Jan 2016; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +thunderbird-38.5.0.ebuild, -thunderbird-38.4.0.ebuild:
+  Bump to 38.5.0
+
+*thunderbird-38.2.0-r2 (16 Dec 2015)
+
+  16 Dec 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +thunderbird-38.2.0-r2.ebuild, -thunderbird-38.2.0-r1.ebuild:
+  Bump Thunderbird
+
+*thunderbird-38.2.0-r1 (09 Oct 2015)
+
+  09 Oct 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +thunderbird-38.2.0-r1.ebuild, -thunderbird-38.2.0.ebuild:
+  Better cleaning of telemetry plugin
+
+*thunderbird-38.2.0 (02 Oct 2015)
+
+  02 Oct 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +thunderbird-38.2.0.ebuild, -thunderbird-31.8.0.ebuild:
+  Bump to 38.2.0
+
+*thunderbird-31.8.0 (12 Aug 2015)
+  12 Aug 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-31.8.0.ebuild, -thunderbird-31.7.0-r1.ebuild:
+  Security bump to latest.
+
+*thunderbird-31.7.0-r1 (17 Jun 2015)
+
+  17 Jun 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +thunderbird-31.7.0-r1.ebuild, -thunderbird-31.7.0.ebuild:
+  Fix missing dependencies inside ebuild
+
+*thunderbird-31.7.0 (12 June 2015)
+  12 June 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-31.7.0.ebuild, -thunderbird-31.6.0-r1.ebuild,
+  -files/enigmail-1.7.2-xauthority.patch:
+  Security bump to latest.
+
+*thunderbird-31.6.0-r1 (13 May 2015)
+
+  13 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-31.6.0-r1.ebuild, -thunderbird-31.6.0.ebuild:
+  Rebuild against icu 54.1.
+
+  08 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-31.6.0.ebuild, -thunderbird-31.5.0.ebuild:
+  Security bump to latest.
+
+*thunderbird-31.6.0 (06 Apr 2015)
+
+  09 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-31.5.0.ebuild, -thunderbird-31.4.0.ebuild:
+  Security bump to latest.
+
+*thunderbird-31.5.0 (26 Feb 2015)
+
+*thunderbird-31.4.0 (19 Jan 2015)
+
+  19 Jan 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-31.4.0.ebuild,-thunderbird-31.3.0-r3.ebuild:
+  Security bump to latest.
+
+*thunderbird-31.3.0-r3 (08 Jan 2015)
+
+  08 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-31.3.0-r3.ebuild, -thunderbird-31.3.0-r2.ebuild:
+  -files/thunderbird-clip-default-prefs.js,
+  +files/clip/local-settings.js, +files/clip/mozilla.cfg:
+  Update default settings and lock some of them down.
+
+*thunderbird-31.3.0 (23 Dec 2014)
+
+  23 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-31.3.0.ebuild, -thunderbird-24.8.0-r1.ebuild,
+  +files/thunderbird_31.3_clip_disable_upload_reports.patch,
+  +files/enigmail-1.7.2-xauthority.patch,
+  -files/thunderbird_24.5.0_clip_disable_upload_reports.patch,
+  -files/enigmail-1.4.6-xauthority.patch:
+  Bump to latest.
+
+*thunderbird-24.8.0-r1 (15 Oct 2014)
+
+  15 Oct 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-24.8.0-r1.ebuild, -thunderbird-24.8.0.ebuild,
+  files/thunderbird-clip-default-prefs.js:
+  Disable SSLv3 and enable TLSv1.2 by default.
+
+*thunderbird-24.8.0 (03 Sep 2014)
+
+  08 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +thunderbird-24.8.0.ebuild, -thunderbird-24.6.0.ebuild:
+  Bump to latest.
+
+*thunderbird-24.6.0-r1 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.6.0-r1.ebuild, -thunderbird-24.6.0.ebuild,
+  +files/thunderbird_24.5.0_clip_disable_upload_reports.patch:
+  Disable misc. reporting tools, ported from changes by
+  Alain Ozanne in stable-4.4.0 branch.
+
+*thunderbird-24.6.0 (12 Jun 2014)
+
+  12 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.6.0.ebuild, -thunderbird-24.5.0.ebuild:
+  Security bump to latest.
+
+*thunderbird-24.5.0 (02 May 2014)
+
+  02 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.5.0.ebuild, -thunderbird-24.4.0.ebuild:
+  Bump to latest.
+
+*thunderbird-24.4.0 (25 Mar 2014)
+
+  25 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.4.0.ebuild, -thunderbird-24.3.0.ebuild:
+  Bump to latest.
+
+*thunderbird-24.3.0 (11 Feb 2014)
+
+  11 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.3.0.ebuild, -thunderbird-24.2.0-r1.ebuild,
+  +files/enigmail-1.6.0-parallel-fix.patch:
+  Security bump to latest.
+
+*thunderbird-24.2.0-r1 (13 Jan 2014)
+
+  13 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.2.0-r1.ebuild, -thunderbird-24.2.0.ebuild:
+  Force rebuild - libffi revdep.
+
+  23 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  thunderbird-24.2.0.ebuild:
+  Change gstreamer dependency to gstreamer:0.10, we don't have
+  gst-plugins-meta:0.10.
+
+*thunderbird-24.2.0 (13 Dec 2013)
+
+  13 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.2.0.ebuild, -thunderbird-24.1.1.ebuild:
+  Bump to latest.
+
+*thunderbird-24.1.1 (22 Nov 2013)
+
+  22 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.1.1.ebuild, -thunderbird-24.1.0-r3.ebuild:
+  Bump to latest. Note : gentoo ebuild now includes localization
+  for lightning, CLIP-specific fr localization is no longer
+  needed.
+
+*thunderbird-24.1.0-r3 (15 Nov 2013)
+
+  15 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.1.0-r3.ebuild, -thunderbird-24.1.0-r2.ebuild,
+  files/thunderbird-clip-default-prefs.js:
+  Add a few more URL prefs.
+  Set default print paper size to A4.
+
+*thunderbird-24.1.0-r2 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.1.0-r2.ebuild, -thunderbird-24.1.0-r1.ebuild:
+  Bump lightning-fr bundle.
+
+*thunderbird-24.1.0-r1 (07 Nov 2013)
+
+  07 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-24.1.0-r1.ebuild, -thunderbird-17.0.9.ebuild:
+  Bump to new ESR branch.
+
+*thunderbird-17.0.9 (19 Sep 2013)
+
+  19 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.9.ebuild, -thunderbird-17.0.8.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0.8 (08 Aug 2013)
+
+  08 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.8.ebuild, -thunderbird-17.0.7-r1.ebuild:
+  Bump to latest, bump sqlite requirement.
+
+*thunderbird-17.0.7-r1 (10 Jul 2013)
+
+  10 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.7-r1.ebuild, -thunderbird-17.0.6-r1.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0.6-r1 (11 Jun 2013)
+
+  11 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.6-r1.ebuild, -thunderbird-17.0.6.ebuild:
+  Bump to latest upstream rev.
+
+*thunderbird-17.0.6 (15 May 2013)
+
+  15 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.6.ebuild, -thunderbird-17.0.5-r1.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0.5-r1 (10 Apr 2013)
+
+  10 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.5-r1.ebuild, -thunderbird-17.0.5.ebuild:
+  Do not install Google Calendar Provider for CLIP.
+
+*thunderbird-17.0.5 (04 Apr 2013)
+
+  04 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.5.ebuild, -thunderbird-17.0.4-r1.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0.4-r1 (22 Mar 2013)
+
+  22 Mar 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.4-r1.ebuild, -thunderbird-17.0.4.ebuild,
+  files/clip/mimeTypes.rdf:
+  Use user preferences to open HTTP[S] and FTP links.
+
+*thunderbird-17.0.4 (12 Mar 2013)
+
+  12 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.4.ebuild, -thunderbird-17.0.3.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0.3 (25 Feb 2013)
+
+  25 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.3.ebuild, -thunderbird-17.0.2.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0.2 (14 Jan 2013)
+
+  14 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.2.ebuild, -thunderbird-17.0-r2.ebuild:
+  Bump to latest.
+
+*thunderbird-17.0-r2 (27 Dec 2012)
+
+  27 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0-r2.ebuild, -thunderbird-17.0-r1.ebuild,
+  files/clip/mozillathunderbird.desktop,
+  +files/enigmail-1.4.6-xauthority.patch:
+  Remove esound from dependencies, as we're switching 
+  to pulseaudio.
+  Fix desktop file - invalid categories, etc.
+  Re-add old patch to enigmail to pass XAUTHORITY to 
+  pinentry.
+
+*thunderbird-17.0-r1 (26 Nov 2012)
+
+  26 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0-r1.ebuild, -thunderbird-17.0.ebuild:
+  Rebuild with official gentoo patch bundles.
+
+*thunderbird-17.0 (20 Nov 2012)
+
+  20 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-17.0.ebuild, -thunderbird-10.0.9.ebuild,
+  -files/thunderbird-10.0.6-jstracer.patch,
+  -files/thunderbird-3.0-addons-empty-url.patch,
+  -files/enigmail-1.3.3-fr.patch,
+  -files/enigmail-1.3.3-bug373733.patch,
+  -files/bug-606109.patch,
+  +files/plugin-container.in:
+  Bump to new ESR version. Cleanup old patches. Add plugin-container
+  wrapper just like we do in firefox.
+  N.B. : no Gentoo ebuild for now. Upstream release is not even
+  official yet :)
+
+*thunderbird-10.0.9 (16 Oct 2012)
+
+  16 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.9.ebuild, -thunderbird-10.0.7.ebuild:
+  Security bump.
+
+*thunderbird-10.0.7 (30 Aug 2012)
+
+  30 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.7.ebuild, -thunderbird-10.0.6-r2.ebuild:
+  Security bump.
+
+*thunderbird-10.0.6-r2 (01 Aug 2012)
+
+  01 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.6-r2.ebuild, -thunderbird-10.0.6-r1.ebuild:
+  Force rebuild - libevent revdep.
+
+*thunderbird-10.0.6-r1 (24 Jul 2012)
+
+  24 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.6-r1.ebuild, -thunderbird-10.0.6.ebuild:
+  Force rebuild.
+
+*thunderbird-10.0.6 (19 Jul 2012)
+
+  19 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.6.ebuild, -thunderbird-10.0.5-r2.ebuild,
+  +files/thunderbird-10.0.6-jstracer.patch:
+  Bump to latest.
+
+*thunderbird-10.0.5-r2 (15 Jun 2012)
+
+  15 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.5-r2.ebuild, -thunderbird-10.0.5-r1.ebuild,
+  files/thunderbird-clip-default-prefs.js:
+  Disable more remote checks, try to disable extension compat
+  check on update.
+
+*thunderbird-10.0.5-r1 (13 Jun 2012)
+
+  13 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.5-r1.ebuild, -thunderbird-10.0.5.ebuild:
+  Bump lightning fr tarball - fix missing label.
+
+*thunderbird-10.0.5 (06 Jun 2012)
+
+  06 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.5.ebuild, -thunderbird-10.0.4.ebuild:
+  Bump to latest.
+
+*thunderbird-10.0.4 (30 Apr 2012)
+
+  30 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.4.ebuild, -thunderbird-10.0.3.ebuild:
+  Bump to latest.
+
+*thunderbird-10.0.3 (27 Mar 2012)
+
+  27 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.3.ebuild, -thunderbird-10.0.1-r1.ebuild:
+  Bump to latest (ESR).
+
+*thunderbird-10.0.1-r1 (20 Feb 2012)
+
+  20 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.1-r1.ebuild, -thunderbird-10.0.1.ebuild:
+  Remove dependency on libffi, which is moving to the core.
+
+*thunderbird-10.0.1 (13 Feb 2012)
+
+  13 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.1.ebuild, -thunderbird-10.0.ebuild:
+  Bump to latest.
+
+*thunderbird-10.0 (10 Feb 2012)
+
+  10 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-10.0.ebuild, -thunderbird-9.0-r1.ebuild,
+  +files/thunderbird-gentoo-default-prefs-1.js-1,
+  files/thunderbird-clip-default-prefs.js,
+  -files/thunderbird-9.0-jsgccchunk-aslr.patch,
+  -files/thunderbird-gentoo-default-prefs-1.js:
+  Bump to latest. Jemalloc patches are now in the gentoo patch bundle.
+
+*thunderbird-9.0-r1 (26 Dec 2011)
+
+  26 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-9.0-r1.ebuild, -thunderbird-9.0.ebuild,
+  +files/thunderbird-9.0-jemalloc-no-pagefile.patch:
+  Disable jemalloc pagefile feature on CLIP, as this only fills /tmp 
+  with a huge file for no good reason.
+
+*thunderbird-9.0 (26 Dec 2011)
+
+  26 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-9.0.ebuild, -thunderbird-8.0.ebuild,
+  +files/thunderbird-9.0-jsgccchunk-aslr.patch:
+  Bump to latest (homemade ebuild based on latest 8.0 from gentoo, i.e.
+  including fixes to startup cache).
+  Add specific patch to fix js chunk allocation with ASLR (same issue as
+  in jemalloc, same kind of fix).
+
+*thunderbird-8.0 (14 Nov 2011)
+
+  14 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-8.0.ebuild, -thunderbird-3.1.15-r2.ebuild,
+  +files/enigmail-1.3.3-bug373733.patch,
+  +files/enigmail-1.3.3-fr.patch:
+  Bump to 8.0. Removes trustedbird support altogether.
+  Added a homemade french localization patch for enigmail.
+
+*thunderbird-3.1.15-r2 (04 Nov 2011)
+
+  04 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.15-r2.ebuild, -thunderbird-3.1.15-r1.ebuild:
+  Try to fix french localization.
+
+*thunderbird-3.1.15-r1 (11 Oct 2011)
+
+  11 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.15-r1.ebuild, -thunderbird-3.1.15.ebuild:
+  Force rebuild.
+
+*thunderbird-3.1.15 (05 Oct 2011)
+
+  05 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.15.ebuild, -thunderbird-3.1.14-r2.ebuild:
+  Security bump to latest.
+
+*thunderbird-3.1.14-r2 (28 Sep 2011)
+
+  28 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.14-r2.ebuild, -thunderbird-3.1.14-r1.ebuild:
+  Rbump trustedbird branding distfile - the last one was corrupted
+  (I may have converted a few too many '\r\n' to '\n', e.g. in PNG
+  images...).
+
+*thunderbird-3.1.14-r1 (27 Sep 2011)
+
+  27 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.14-r1.ebuild, -thunderbird-3.1.14.ebuild,
+  -files/trustedbird-3.1.9+0.4.3-source.patch,
+  +files/trustedbird-3.1.14+0.5.1-source.patch:
+  Bump trustedbird files to latest upstream.
+
+*thunderbird-3.1.14 (07 Sep 2011)
+
+  07 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.14.ebuild, -thunderbird-3.1.13.ebuild:
+  Bump to latest. More untrusted DigiNotar CAs.
+
+*thunderbird-3.1.13 (05 Sep 2011)
+
+  05 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.13.ebuild, -thunderbird-3.1.11.ebuild,
+  +files/trustedbird-3.1.9+0.4.3-source.patch:
+  Security bump. Make trustedbird source modifications a patch
+  rather than separate source files, to ease maintenance.
+
+*thunderbird-3.1.11 (23 Jun 2011)
+
+  23 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.11.ebuild, -thunderbird-3.1.10-r1.ebuild:
+  Bump to latest.
+
+*thunderbird-3.1.10-r1 (03 May 2011)
+
+  03 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.10-r1.ebuild, -thunderbird-3.1.10.ebuild:
+  Bump ligthning-fr file, switch back again to ziped localization
+  files.
+
+*thunderbird-3.1.10 (02 May 2011)
+
+  02 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.10.ebuild, -thunderbird-3.1.9-r3.ebuild,
+  -files/libnotify-0.7.patch,
+  files/clip/mozillathunderbird.desktop,
+  +files/icon/thunderbird-unbranded.desktop,
+  +files/icon/thunderbird.desktop,
+  -files/icon/mozilla-thunderbird-unbranded.desktop,
+  -files/icon/mozilla-thunderbird.desktop,
+  -files/icon/mozillathunderbird.desktop:
+  Bump to latest, cleanup desktop files and add x-scheme-handler mimetype.
+
+*thunderbird-3.1.9-r3 (26 Apr 2011)
+
+  26 Apr 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.9-r3.ebuild, -thunderbird-3.1.9-r2.ebuild,
+  files/clip/mozillathunderbird.desktop:
+  Add MIME type associations.
+
+*thunderbird-3.1.9-r2 (25 Mar 2011)
+
+  25 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.9-r2.ebuild, -thunderbird-3.1.9-r1.ebuild:
+  Rebuild with a proper trustedbird pixmaps (removing \r is a 
+  Good Thing in source files, less so when it comes to PNG images).
+
+*thunderbird-3.1.9-r1 (21 Mar 2011)
+
+  21 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.9-r1.ebuild, -thunderbird-3.1.9.ebuild,
+  files/thunderbird.sh:
+  Bump trustedbird patch to upstream 3.1.9 (with proper end
+  of lines restored, since the kernel doesn't know how to 
+  execute '/bin/sh\r', grrrr).
+  Remove useless nss/nspr paths from LD_LIBRARY_PATH in wrapper.
+
+*thunderbird-3.1.9 (08 Mar 2011)
+
+  08 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.9.ebuild, -thunderbird-3.1.7-r4.ebuild,
+  +files/libnotify-0.7.patch, -files/cups-1.4.4-fixup.patch,
+  -files/thunderbird-respect-ldflags.patch:
+  Bump to latest, bump trustedbird to 0.4.3 (still for 3.1.7...).
+  Bump lightning localization - packing it as jars no longer
+  seems to work.
+
+  04 Feb 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  thunderbird-3.1.7-r4.ebuild:
+  Add IUSE clip-devel to not disable user extensions.
+
+*thunderbird-3.1.7-r4 (24 Jan 2011)
+
+  24 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.7-r4.ebuild, -thunderbird-3.1.7-r3.ebuild:
+  Re-add 'Thunderbird/${PV}' to user agent string.
+
+*thunderbird-3.1.7-r3 (04 Jan 2011)
+
+  04 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.7-r3.ebuild, -thunderbird-3.1.7-r2.ebuild,
+  +files/cups-1.4.4-fixup.patch,
+  +files/thunderbird-respect-ldflags.patch:
+  Add two patches from gentoo.
+
+  17 Dec 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  thunderbird-3.1.7-r2.ebuild:
+  Avoid the use of cp in an ebuild!
+
+*thunderbird-3.1.7-r2 (16 Dec 2010)
+
+  16 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.7-r2.ebuild, -thunderbird-3.1.7-r1.ebuild:
+  Remove all extra useragent strings.
+
+*thunderbird-3.1.7-r1 (15 Dec 2010)
+
+  15 Dec 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.7-r1.ebuild, -thunderbird-3.1.7.ebuild,
+  files/thunderbird-clip-default-prefs.js:
+  Cleanup prefs, split gentoo and clip, remove vendor and *file_picker.
+
+*thunderbird-3.1.7 (14 Dec 2010)
+
+  14 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.7.ebuild, -thunderbird-3.1.6.ebuild,
+  -files/xulrunner-1.9.2-gtk+-2.21.patch,
+  files/clip/mozillathunderbird.desktop:
+  Bump to latest.
+  Add IUSE trustedbird to compile in trustedbird source code.
+
+*thunderbird-3.1.6 (29 Oct 2010)
+
+  29 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.6.ebuild, -thunderbird-3.1.5.ebuild,
+  +files/xulrunner-1.9.2-gtk+-2.21.patch,
+  +files/bug-606109.patch:
+  Bump to latest.
+
+*thunderbird-3.1.5 (20 Oct 2010)
+
+  20 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.5.ebuild, -thunderbird-3.1.4.ebuild:
+  Bump to latest.
+
+*thunderbird-3.1.4 (08 Oct 2010)
+
+  08 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.4.ebuild, -thunderbird-3.1.3-r1.ebuild:
+  Bump to latest.
+
+*thunderbird-3.1.3-r1 (05 Oct 2010)
+
+  05 Oct 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.3-r1.ebuild, -thunderbird-3.1.3.ebuild:
+  Add esound to RDEPEND: fix no sound bug.
+
+*thunderbird-3.1.3 (08 Sep 2010)
+
+  08 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.3.ebuild, -thunderbird-3.1.2-r1.ebuild:
+  Bump to latest.
+
+*thunderbird-3.1.2-r1 (03 Sep 2010)
+
+  03 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.2-r1.ebuild, -thunderbird-3.1.1-r2.ebuild,
+  -files/1002_fix-system-hunspell-dict-detections.patch, 
+  -files/thunderbird-3.1-gcc45.patch:
+  Bump to latest.
+
+*thunderbird-3.1.1-r2 (27 Jul 2010)
+
+  27 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.1-r2.ebuild, -thunderbird-3.1.1-r1.ebuild,
+  +files/1002_fix-system-hunspell-dict-detections.patch:
+  Bring back hunspell fix. Pass --enable-system-hunspell rather
+  than --with-system-hunspell...
+
+*thunderbird-3.1.1-r1 (26 Jul 2010)
+
+  26 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.1-r1.ebuild, -thunderbird-3.1.1.ebuild:
+  Fix lightning localization.
+
+*thunderbird-3.1.1 (26 Jul 2010)
+
+  26 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.1.1.ebuild, -thunderbird-3.0.5.ebuild,
+  -files/1002_fix-system-hunspell-dict-detections.patch,
+  -files/thunderbird-gentoo-default-prefs.js,
+  +files/thunderbird-3.1-gcc45.patch,
+  +files/thunderbird-gentoo-default-prefs-1.js,
+  +files/thunderbird-xul-1.9.2-arm-fixes.patch,
+  files/thunderbird-clip-default-prefs.js,
+  files/clip/mozillathunderbird.desktop:
+  Bump to latest. Activate startup notification.
+
+*thunderbird-3.0.5 (21 Jun 2010)
+
+  21 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +thunderbird-3.0.5.ebuild, -mozilla-thunderbird-3.0.4-r2.ebuild:
+  Bump to latest + apply gentoo's pkg_move mozilla-thunderbird -> thunderbird.
+
+*mozilla-thunderbird-3.0.4-r2 (21 Apr 2010)
+
+  21 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-3.0.4-r2.ebuild, -mozilla-thunderbird-3.0.4-r1.ebuild,
+  files/thunderbird-clip-default-prefs.js:
+  Fix myspell dictionnary path for CPREFIX (following the addition of 
+  patch 1002_fix-system-hunspell-dict-detections.patch), and remove symlink
+  kludge for myspell dicts.
+
+*mozilla-thunderbird-3.0.4-r1 (14 Apr 2010)
+
+  14 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-3.0.4-r1.ebuild, -mozilla-thunderbird-3.0.3.ebuild,
+  +files/1002_fix-system-hunspell-dict-detections.patch:
+  Bump to latest.
+
+  05 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-3.0.1-r1.ebuild:
+  Force the use of system sqlite.
+
+*mozilla-thunderbird-3.0.1-r1 (03 Feb 2010)
+*mozilla-thunderbird-2.0.0.23-r3 (03 Feb 2010)
+
+  03 Feb 2010; Olivier Levillain <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-3.0.1-r1.ebuild, -mozilla-thunderbird-3.0.1.ebuild,
+  +mozilla-thunderbird-2.0.0.23-r3.ebuild, -mozilla-thunderbird-2.0.0.23-r2.ebuild:
+  Clean the now useless call to rmh-config from mozilla scripts.
+
+*mozilla-thunderbird-3.0.1 (22 Jan 2010)
+
+  22 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-3.0.1.ebuild, -mozilla-thunderbird-3.0-r2.ebuild,
+  -files/1000_fix-menus-gentoo.patch, -files/storage-step-fail.diff,
+  +files/mozilla-thunderbird-3.0-addons-empty-url.patch:
+  Bump to latest.
+
+*mozilla-thunderbird-3.0-r1 (06 Jan 2010)
+
+  06 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-3.0-r1.ebuild, +files/1000_fix-menus-gentoo.patch,
+  +files/mozilla-thunderbird-3.0-disable-extensions.patch,
+  +files/thunderbird-clip-default-prefs.js,
+  +files/thunderbird-gentoo-default-prefs.js,
+  +files/storage-step-fail.diff, +files/clip/mimeTypes.rdf:
+  Initial import of 3.0. Still ~x86 at the moment. N.B. : I needed to disable
+  PAX MPROTECT for it to work, just like with firefox-3.5...
+  Add patch from mozilla bug #529853 to fix calendar profile migration.
+
+*mozilla-thunderbird-2.0.0.23-r2 (22 Sep 2009)
+
+  22 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.23-r2.ebuild, -mozilla-thunderbird-2.0.0.23-r1.ebuild:
+  Point global mailcap file to /usr/local/etc/mailcap. Same goes for mime.types.
+
+*mozilla-thunderbird-2.0.0.23-r1 (16 Sep 2009)
+
+  16 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.23-r1.ebuild, -mozilla-thunderbird-2.0.0.23.ebuild,
+  files/thunderbird.sh:
+  Do not clear out GTK2_RC_FILES.
+  Remove 'dirver' binary that does not serve any purpose and has RPATH issues.
+
+*mozilla-thunderbird-2.0.0.23 (26 Aug 2009)
+
+  26 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.23.ebuild, -mozilla-thunderbird-2.0.0.22-r2.ebuild:
+  Bump to .23 (without waiting for the gentoo version) to fix SSL vuln (CVE-2009-2408,
+  MFSA-2009-42).
+
+*mozilla-thunderbird-2.0.0.22-r2 (19 Aug 2009)
+
+  19 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.22-r2.ebuild, -mozilla-thunderbird-2.0.0.22-r1.ebuild,
+  +files/mozilla-thunderbird-2.0.0.22-disable-extensions.patch:
+  Add a patch to disable loading user extensions - only those extensions from
+  /usr/local/lib will be loaded.
+
+  21 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-2.0.0.22-r1.ebuild:
+  Remove some of the default URL to try to speed up the first start.
+
+*mozilla-thunderbird-2.0.0.22-r1 (17 Jul 2009)
+
+  17 Jul 2009; Olivier Levillain <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.22-r1.ebuild, -mozilla-thunderbird-2.0.0.22.ebuild,
+  Add a call to rmh-config if present when launching firefox, so
+  as to clean certificate databases if needed.
+
+*mozilla-thunderbird-2.0.0.22 (26 Jun 2009)
+
+  26 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.22.ebuild, -mozilla-thunderbird-2.0.0.21.ebuild:
+  Bump to latest stable. Many fixes as usual.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-2.0.0.21.ebuild:
+  Switch to verictl2.eclass.
+
+*mozilla-thunderbird-2.0.0.21 (23 Mar 2009)
+
+  23 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.21.ebuild, -mozilla-thunderbird-2.0.0.19-r1.ebuild:
+  Bump to latest stable version. Numerous security fixes.
+
+*mozilla-thunderbird-2.0.0.19-r1 (11 Mar 2009)
+
+  11 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.19-r1.ebuild, -mozilla-thunderbird-2.0.0.19.ebuild:
+  Make kprinter the default printing dialog.
+  Fix stack protector flags with gcc-4.
+
+*mozilla-thunderbird-2.0.0.19 (12 Jan 2009)
+
+  12 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.19.ebuild, -mozilla-thunderbird-2.0.0.18.ebuild:
+  Bump to latest stable, to fix multiple vulnerabilities.
+
+*mozilla-thunderbird-2.0.0.18 (21 Nov 2008)
+
+  21 Nov 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.18.ebuild, -mozilla-thunderbird-2.0.0.17.ebuild,
+  files/icon/thunderbird-icon-unbranded.png:
+  Bump to latest, new icon.
+
+*mozilla-thunderbird-2.0.0.17 (30 Sep 2008)
+
+  30 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.17.ebuild, -mozilla-thunderbird-2.0.0.16-r1.ebuild:
+  Bump to latest stable.
+
+*mozilla-thunderbird-2.0.0.16-r1 (01 Aug 2008)
+
+  01 Aug 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.16-r1.ebuild, -mozilla-thunderbird-2.0.0.16.ebuild:
+  Remove POSTDEPEND on CLIP, this messes up apt-get ("Internal error, could not 
+  perform immediate configuration (2)").
+
+*mozilla-thunderbird-2.0.0.16 (28 Jul 2008)
+
+  28 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.16.ebuild, -mozilla-thunderbird-2.0.0.14-r2.ebuild:
+  Bump to latest stable. Fixes CVES 2008-{2785,2811,2809,2807,2803,2802,2799,2798}.
+
+*mozilla-thunderbird-2.0.0.14-r2 (22 Jul 2008)
+
+  22 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.14-r2.ebuild, -mozilla-thunderbird-2.0.0.14-r1.ebuild:
+  Disable ugly GTK+ filepicker, leave the QT one.
+  Switch to CCSD veriexec hash.
+
+*mozilla-thunderbird-2.0.0.14-r1 (18 Jul 2008)
+
+  18 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.14-r1.ebuild, -mozilla-thunderbird-2.0.0.14.ebuild,
+  files/thunderbird.sh:
+  Add NSS path to LD_LIBRARY_PATH in wrapper script.
+  Set firefox.sh as URL (http, https, ftp) handler.
+
+*mozilla-thunderbird-2.0.0.14 (21 May 2008)
+
+  21 May 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.14.ebuild, -mozilla-thunderbird-2.0.0.12-r1.ebuild:
+  Bump to latest version, to fix GLSA-20080518.
+
+*mozilla-thunderbird-2.0.0.12-r1 (23 Apr 2008)
+
+  23 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.12-r1.ebuild, -mozilla-thunderbird-2.0.0.12.ebuild:
+  Use myspell dictionnary for spell-checking, rather than a custom installed one.
+
+*mozilla-thunderbird-2.0.0.12 (09 Apr 2008)
+
+  09 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.12.ebuild, -mozilla-thunderbird-2.0.0.9-r2.ebuild:
+  Bump to latest gentoo stable.
+
+*mozilla-thunderbird-2.0.0.9-r2 (02 Apr 2008)
+
+  02 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-2.0.0.9-r2.ebuild, -mozilla-thunderbird-2.0.0.9-r1.ebuild:
+  No-op bump to trace evolution of mozconfig.eclass (complete removal of dependency
+  on glib).
+
+*mozilla-thunderbird-2.0.0.9-r1 (09 Jan 2008)
+
+  09 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozillla-thunderbird-2.0.0.9-r1.ebuild, -mozillla-thunderbird-2.0.0.9.ebuild:
+  Re-add fr-FR support to the spellchecker, and finally make it the default dictionnary
+  for thunderbird.
+
+*mozilla-thunderbird-2.0.0.9 (08 Jan 2008)
+
+  08 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozillla-thunderbird-2.0.0.9.ebuild, -mozillla-thunderbird-1.5.0.10-r1.ebuild,
+  files/clip/mozillathunderbird.desktop:
+  Bump to latest stable version. Changeset is unchanged, but we lose the french spellchecker
+  for now.
+  Fixes GLSA 200711-24. 
+
+*mozilla-thunderbird-1.5.0.10-r1 (23 Nov 2007)
+
+  23 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozillla-thunderbird-1.5.0.10-r1.ebuild, -mozillla-thunderbird-1.5.0.10.ebuild,
+  files/thunderbird.sh, files/clip/mozillathunderbird.desktop:
+  Unset GTK?_RC_FILES in thunderbird.sh to avoid wrong gtkrc passed by KDE.
+  Disable startup notification in desktop file because it is somewhat 
+  messy in KDE when thunderbird is already running.
+
+ 07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+ Remove stale ebuilds before 1.5.0.10.
+
+ 12 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+ mozilla-thurderbird-1.5.0.10.ebuild, 
+ +files/clip/mozillathunderbird.desktop:
+ Proper desktop file.
+
+ 27 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+ mozilla-thunderbird-1.5.0.10.ebuild:
+ Add verictl network hook support.
+
+*mozilla-thunderbird-1.5.0.10 (21 Mar 2007)
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-1.5.0.10.ebuild:
+  Bump, fix GLSA 200703-18.
+  
+*mozilla-thunderbird-1.5.0.8 (17 Nov 2006)
+
+  17 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +mozilla-thunderbird-1.5.0.8.ebuild:
+  Version bump from upstream, fixing several memory corruption
+  vulnerabilities. Path is the same as previous one.
+
+  21 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-1.5.0.7.ebuild:
+  Add french spellchecker support, based on gentoo bug #120042.
+  
+  19 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-1.5.0.7.ebuild:
+  Add mozextension to inherited classes, fix unpack to not unpack ${A},
+  which does not work with LINGUAS!=""
+
+*mozilla-thunderbird-1.5.0.7 (18 Sep 2006)
+
+  18 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-1.5.0.7.ebuild:
+  Version bump from upstream, portage rsync'ed from this day. Same
+  CLIP patch except for cosmetic changes. Note that this was marked
+  ~x86 in gentoo. Note that this added support for LINGUAS, ebuild is
+  patched in CLIP to only support LINGUAS=fr, to facilitate digest 
+  generation.
+
+*mozilla-thunderbird-1.5.0.5 (04 Aug 2006)
+
+  04 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-1.5.0.5.ebuild:
+  Version bump from upstream. CLIP patch is basically the same.
+
+*mozilla-thunderbird-1.5.0.4 (31 Jul 2006)
+
+  31 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  mozilla-thunderbird-1.5.0.4.ebuild, +files/thunderbird.sh:
+  Initial CLIP import, added CPREFIX and FEATURES:noinclude support.
+  Install thunderbird.sh (originally from rm-sessions.sh).

@@ -1,0 +1,46 @@
+# CLIP ChangeLog for app-text/hunspell
+
+*hunspell-1.6.1-r2 (28 Sep 2017)
+
+  28 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +hunspell-1.6.1-r2.ebuild, -hunspell-1.3.2-r5.ebuild:
+
+*hunspell-1.3.2-r5 (03 Dec 2012)
+
+  03 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +hunspell-1.3.2-r5.ebuild, -hunspell-1.3.2-r4.ebuild,
+  files/hunspell-1.3.2-clip-dict-paths.patch:
+  Fix dictionnary lookup paths for CLIP.
+
+*hunspell-1.3.2-r4 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +hunspell-1.3.2-r4.ebuild, -hunspell-1.3.2-r3.ebuild:
+  Force rebuild
+
+*hunspell-1.3.2-r3 (10 Oct 2011)
+
+  10 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +hunspell-1.3.2-r3.ebuild, -hunspell-1.2.8.ebuild,
+  -files/hunspell-1.2.2-renameexes.patch,
+  +files/hunspell-1.3.2-static-lib.patch,
+  +files/hunspell-1.3-renameexes.patch:
+  Bump to latest.
+
+*hunspell-1.2.8 (09 Apr 2009)
+
+  09 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +hunspell-1.2.8.ebuild, -hunspell-1.1.9.ebuild,
+  -files/hunspell-1.1.3-renameexes.patch, -files/hunspell-1.1.4-gettext.patch,
+  -files/hunspell-1.1.4-libtool.patch, -files/hunspell-1.1.4-renameexes.patch,
+  -files/hunspell-1.1.5-renameexes.patch, -files/hunspell-1.2.2b-renameexes.patch,
+  +files/hunspell-1.2.2-renameexes.patch:
+  Bump to latest, same changeset.
+
+*hunspell-1.1.9 (15 Apr 2008)
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +hunspell-1.1.9.ebuild:
+  Initial import. Fix for clip-deps/core-deps.
+
+

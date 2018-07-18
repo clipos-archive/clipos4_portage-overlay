@@ -1,0 +1,241 @@
+# CLIP ChangeLog for media-gfx/splashutils
+
+*splashutils-1.5.4.4-r18 (04 Dec 2015)
+
+  04 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r18.ebuild, -splashutils-1.5.4.4-r17.ebuild:
+  Sync ebuild with upstream.
+  Bump libpng dependency to 1.16.16.
+
+*splashutils-1.5.4.4-r17 (03 Mar 2015)
+
+  03 Mar 2015; ANSSI <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r17.ebuild, -splashutils-1.5.4.4-r16.ebuild:
+  Bump to freetype-2.5.5 in distfile.
+
+*splashutils-1.5.4.4-r16 (03 Mar 2015)
+
+  03 Mar 2015; ANSSI <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r16.ebuild, -splashutils-1.5.4.4-r15.ebuild:
+  Fix patch application related to truetype/freetype.
+
+*splashutils-1.5.4.4-r15 (21 May 2014)
+
+  21 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r15.ebuild, -splashutils-1.5.4.4-r14.ebuild,
+  +files/splashutils-1.5.4.4-freetype251-splashutils.patch,
+  +files/splashutils-1.5.4.4-freetype251.patch:
+  Fix build with freetype-2.5.1+, patches from b.g.o #506124.
+  Use freetype-2.5.3 distfile.
+
+*splashutils-1.5.4.4-r14 (18 Mar 2014)
+
+  18 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r14.ebuild, -splashutils-1.5.4.4-r13.ebuild:
+  Bump libpng.
+
+*splashutils-1.5.4.4-r13 (06 Jan 2014)
+
+  06 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r13.ebuild, -splashutils-1.5.4.4-r12.ebuild:
+  Bump libpng.
+
+*splashutils-1.5.4.4-r12 (18 Nov 2013)
+
+  18 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r12.ebuild, -splashutils-1.5.4.4-r11.ebuild,
+  files/splashutils-1.5.4.4-clip.patch:
+  Bump libpng distfile.
+  Remove dependency on fbgrab for CLIP (only useful for taking
+  screenshots).
+  Restore accented characters in boot msg (they only needed to be
+  switched to UTF-8).
+
+*splashutils-1.5.4.4-r11 (18 Oct 2013)
+
+  18 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r11.ebuild, -splashutils-1.5.4.4-r10.ebuild,
+  files/splash:
+  Add 'splash exit' command.
+
+*splashutils-1.5.4.4-r10 (14 Oct 2013)
+
+  14 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r10.ebuild, -splashutils-1.5.4.4-r9.ebuild,
+  +files/splashutils-1.5.4.4-clip-openrc.patch,
+  +files/splashutils-1.5.4.4-multi-keyboard.patch:
+  Bump to latest rev from gentoo.
+  Remove splashutils-functions-bl1.sh now that we've switched to openrc.
+  Add a clip patch to make the openrc splash plugin stop fbsplash at
+  the end of the default runlevel, rather than the boot runlevel : the
+  vanilla behaviour of the plugin is to stop as soon as a runlevel other
+  than 'boot' is finished, but in CLIP's case this means splash stops
+  at the end of the 'nonetwork' runlevel, while we still have 'default'
+  to run. Change this to only exit when the 'default' runlevel is done.
+
+*splashutils-1.5.4.4-r9 (11 Oct 2013)
+
+  11 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r9.ebuild, -splashutils-1.5.4.4-r8.ebuild,
+  files/splashutils-1.5.4.4-clip.patch:
+  Remove accents from boot messages for now, since they don't 
+  work too well with openrc.
+  Remove a call to '/bin/sed -i <> /etc/mtab' which on CLIP is :
+   - useless (no stale lines in mtab, which is a symlink to /proc/mounts)
+   - annoying (creates a sed warning)
+   - dangerous (might result in turning /etc/mtab into an actual file
+     if / is mounted R/W).
+
+*splashutils-1.5.4.4-r8 (13 Aug 2013)
+
+  13 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r8.ebuild, -splashutils-1.5.4.4-r7.ebuild:
+  Bump zlib and libpng distfiles.
+
+*splashutils-1.5.4.4-r7 (24 Jan 2013)
+
+  24 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r7.ebuild, -splashutils-1.5.4.4-r6.ebuild:
+  Bump freetype to 2.4.11.
+
+*splashutils-1.5.4.4-r6 (04 Jan 2013)
+
+  04 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r6.ebuild, -splashutils-1.5.4.4-r5.ebuild,
+  +files/splashutils-1.5.4.4-zlib-ar.patch,
+  +files/splashutils-1.5.4.4-libpng15.patch,
+  Bump distfiles : freetype to 2.4.10, zlib to 1.2.7 (with patch),
+  libpng to 1.5.13 (with patch).
+
+*splashutils-1.5.4.4-r5 (04 Dec 2012)
+
+  04 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r5.ebuild, -splashutils-1.5.4.4-r4.ebuild,
+  +files/splashutils-1.5.4.4-bzip2.patch:
+  Bump to -r2 from gentoo. Force installation of splash-functions-bl1.sh
+  on clip.
+
+*splashutils-1.5.4.4-r4 (29 Nov 2012)
+
+  29 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r4.ebuild, -splashutils-1.5.4.4-r3.ebuild:
+  Bump libpng. Depend on sys-libs/zlib[static-libs].
+
+*splashutils-1.5.4.4-r3 (11 Apr 2012)
+
+  11 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r3.ebuild, -splashutils-1.5.4.4-r2.ebuild:
+  Bump libpng.
+
+*splashutils-1.5.4.4-r2 (26 Mar 2012)
+
+  26 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r2.ebuild, -splashutils-1.5.4.4-r1.ebuild:
+  Force rebuild, bump libpng, freetype and jpeg versions.
+
+  25 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  splashutils-1.5.4.4-r1.ebuild:
+  Bump freetype version to 2.4.7. 
+
+*splashutils-1.5.4.4-r1 (31 Aug 2011)
+
+  31 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4-r1.ebuild, -splashutils-1.5.4.4.ebuild,
+  files/splashutils-1.5.4.4-clip.patch:
+  Fix shutdown / reboot confusion in clip patch.
+
+*splashutils-1.5.4.4 (30 Aug 2011)
+
+  30 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.5.4.4.ebuild, -splashutils-1.1.9.10-r8.ebuild,
+  +files/splashutils-1.5.4.4-clip.patch, +files/splash,
+  +files/splashutils-1.5.4.4-gentoo-typo-fix.patch,
+  +files/splashutils-1.5.4.4-freetype-bz2.patch,
+  -files/splashutils-1.1.9.10-2.6.18-vt-fix.patch,
+  -files/splashutils-1.1.9.10-fr.patch,
+  -files/splashutils-1.1.9.10-mountopts.patch,
+  -files/splashutils-1.1.9.10-ppc-2.6.14.patch,
+  -files/splashutils-depscan.patch,
+  -files/splashutils-1.1.9.10-types_h.patch,
+  -files/splashutils-1.1.9.10-makefile.patch,
+  -files/splashutils-1.1.9.10-mountsilent.patch,
+  -files/splashutils-1.1.9.10-roroot.patch:
+  Bump to latest. Merge all clip patches into a single one.
+  Bumped libpng, freetype and zlib distfiles to latest ones in CLIP.
+  Added a '/sbin/splash' wrapper script to provide backward compatibility
+  with CLIP init scripts.
+  Add SYS_TTY_CONFIG inheritable cap to fbsplashd.static.
+
+*splashutils-1.1.9.10-r8 (30 Aug 2011)
+
+  30 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r8.ebuild, -splashutils-1.1.9.10-r7.ebuild:
+
+*splashutils-1.1.9.10-r7 (16 Dec 2009)
+
+  16 Dec 2009; Florent Chabaud <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r7.ebuild, -splashutils-1.1.9.10-r6.ebuild:
+  Ajout d'un espace entre le mot 'Demarrage' et la parenthese au boot de CLIP. Ticket #137 du reseau de test
+
+*splashutils-1.1.9.10-r6 (24 Apr 2008)
+
+  24 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r6.ebuild, -splashutils-1.1.9.10-r5.ebuild:
+  Do not output mount error messages on console, they are harmless.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  splashutils-1.1.9.10-r6.ebuild:
+  Fix usage of newer linux-info.eclass.
+
+*splashutils-1.1.9.10-r5 (07 Mar 2008)
+
+  07 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r5.ebuild, -splashutils-1.1.9.10-r4.ebuild,
+  files/splashutils-1.1.9.10-mountopts.patch:
+  Re-add executable permission on the splash cache mounting, to allow 
+  a O_MAYEXEC-aware bash to source files from there.
+
+*splashutils-1.1.9.10-r4 (12 Dec 2007)
+
+  12 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r4.ebuild, -splashutils-1.1.9.10-r3.ebuild,
+  +files/splashutils-1.1.9.10-mountopts.patch:
+  Fix state dir mount options (bug #107).
+
+*splashutils-1.1.9.10-r3 (13 Sep 2007)
+
+  13 Sep 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r3.ebuild,
+  files/splashutils-1.1.9.10-roroot.patch:
+  Do not try to bind mount / on /lib/splash/tmp for a stupid test, 
+  this does not work with devctl.
+  Bump ebuild to force upgrade.
+  
+*splashutils-1.1.9.10-r2 (28 Aug 2007)
+
+  28 Aug 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +splashutils-1.1.9.10-r2.ebuild:
+  Do not install init.d/env.d stuff on CLIP.
+
+  03 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +files/splashutils-1.1.9.10-roroot.patch,splashutils-1.1.9.10.ebuild:
+  Patch that removes accesses to $(cachedir)/levels for ro /.
+
+  12 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  splashutils-1.1.9.10-r1.ebuild:
+  Move some of the RDEPENDS to simple DEPENDS (jpeg, png, etc...) as
+  these are really just needed to generate the initrd.
+
+*splashutils-1.3-r1 (20 Jul 2006)
+
+  20 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  splashutils-1.3-r1.ebuild, +files/splashutils-1.3-fr.patch:
+  Update to current ~x86.
+
+*splashutils-1.1.9.10-r1 (21 Apr 2006)
+
+  21 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  splashutils-1.1.9.10-r1.ebuild, +files/splashutils-1.1.9.10-fr.patch:
+  Initial CLIP import. Add french translations.
+
+

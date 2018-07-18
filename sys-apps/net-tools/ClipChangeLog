@@ -1,0 +1,22 @@
+# CLIP ChangeLog for sys-apps/net-tools
+
+*net-tools-1.60_p20130513023548-r2 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +net-tools-1.60_p20130513023548-r2.ebuild, -net-tools-1.60_p20130513023548-r1.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*net-tools-1.60_p20130513023548-r1 (13 Oct 2015)
+
+  13 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +net-tools-1.60_p20130513023548-r1.ebuild, -net-tools-1.60_p20130513023548.ebuild:
+  new version and set dependency to linux-headers version.
+
+*net-tools-1.60-r12 (18 Mar 2009)
+
+  18 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +net-tools-1.60-r12.ebuild, -net-tools-1.60-r11.ebuild,
+  +files/net-tools-1.60-gcc4.patch:
+  Fix gcc-4 compilation.
+
+

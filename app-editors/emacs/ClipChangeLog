@@ -1,0 +1,91 @@
+# CLIP ChangeLog for app-text/dvipdfm
+
+*emacs-24.5-r1 (11 Jul 2016)
+  11 Jul 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +emacs-24.5-r1.ebuild,
+  -emacs-24.1-r5.ebuild:
+  Bump to latest.
+
+*emacs-24.1-r5 (19 May 2016)
+
+  19 May 2016; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +emacs-24.1-r5.ebuild, -emacs-24.1-r4.ebuild:
+  Fixed /usr/bin/emacs eselection
+
+*emacs-24.1-r4 (14 Nov 2013)
+
+  14 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +emacs-24.1-r4.ebuild, -emacs-24.1-r3.ebuild:
+  Force rebuild - libpng revdep.
+
+*emacs-24.1-r3 (06 Feb 2013)
+
+  06 Feb 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +emacs-24.1-r3.ebuild, -emacs-24.1-r2.ebuild:
+  Break circular dependencies loop with USE=clip.
+
+*emacs-24.1-r2 (16 Aug 2012)
+
+  16 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +emacs-24.1-r2.ebuild, -emacs-24.1-r1.ebuild:
+  Bump to gentoo's -r1, bump patch bundle to fix CVE-2012-3479.
+
+*emacs-24.1-r1 (11 Jul 2012)
+
+  11 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +emacs-24.1-r1.ebuild, -emacs-24.1.ebuild,
+  +files/_debian/postinst:
+  Re-add DESCRIPTION_FR, add CATEGORY_FR.
+  Depend on color-theme (let's not make it a separate optional package).
+  Add a postinst to generate site-gentoo.el.
+
+*emacs-24.1 (21 Jun 2012)
+
+  21 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +emacs-24.1.ebuild, -emacs-22.1-r6.ebuild,
+  -files/emacs-subdirs-el-gentoo.diff,
+  -files/emacs-21.desktop,
+  -files/emacs-22.1-backup-buffer.patch,
+  -files/emacs-22.1-Xaw3d-headers.patch,
+  -files/emacs-22.1-format-int.patch,
+  -files/emacs-22.1-freebsd-sparc.patch,
+  -files/emacs-22.1-makefiles.patch,
+  -files/emacs-22.1-disable_alsa_detection.patch,
+  -files/emacs-22.1-hack-local-variables.patch,
+  -files/60emacs-21.envd,
+  -files/60emacs-22.0.50.envd,
+  -files/emacs-22.1-oldxmenu-qa.patch:
+  Bump to latest.
+
+  07 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  emacs-22.1-r5.ebuild, +files/emacs-22.1-makefiles.patch:
+  Fix makefiles for compilation with make-3.82.
+
+*emacs-22.1-r6 (21 Jul 2010)
+
+  21 Jul 2010; Olivier Levillain <clipos@ssi.gouv.fr>
+  +emacs-22.1-r6.ebuild, -emacs-22.1-r5.ebuild:
+  Fix emacs wrapper.
+
+*emacs-22.1-r5 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +emacs-22.1-r5.ebuild, -emacs-22.1-r4.ebuild:
+  Fix clip-deps.
+
+  20 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  emacs-22.1-r4.ebuild :
+  Added DESCRIPTION_FR. Personnally, I can't see why people would
+  care about it... But never let it be said that I am biased :)
+
+  28 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  emacs-22.1-r4.ebuild :
+  Disable SSP with GCC >= 4, as it breaks the build.
+
+*emacs-22.1-r4.ebuild (24 Apr 2009)
+
+  24 Apr 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  emacs-22.1-r4.ebuild :
+	- add CPREFIX on a few lines
+	- inherit deb
+

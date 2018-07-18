@@ -1,0 +1,858 @@
+diff --git a/argp/argp-help.c b/argp/argp-help.c
+index c5217d8..365c838 100644
+--- a/argp/argp-help.c
++++ b/argp/argp-help.c
+@@ -164,7 +164,7 @@ static const struct uparam_name uparam_names[] =
+ static void
+ fill_in_uparams (const struct argp_state *state)
+ {
+-  const char *var = getenv ("ARGP_HELP_FMT");
++  const char *var = __libc_secure_getenv ("ARGP_HELP_FMT");
+ 
+ #define SKIPWS(p) do { while (isspace (*p)) p++; } while (0);
+ 
+diff --git a/catgets/catgets.c b/catgets/catgets.c
+index eac2827..e5846a9 100644
+--- a/catgets/catgets.c
++++ b/catgets/catgets.c
+@@ -49,7 +49,7 @@ catopen (const char *cat_name, int flag)
+ 	  || (__libc_enable_secure && strchr (env_var, '/') != NULL))
+ 	env_var = "C";
+ 
+-      nlspath = getenv ("NLSPATH");
++      nlspath = __libc_secure_getenv ("NLSPATH");
+       if (nlspath != NULL && *nlspath != '\0')
+ 	{
+ 	  /* Append the system dependent directory.  */
+diff --git a/debug/pcprofile.c b/debug/pcprofile.c
+index 827f413..cd84e62 100644
+--- a/debug/pcprofile.c
++++ b/debug/pcprofile.c
+@@ -37,7 +37,7 @@ install (void)
+ {
+   /* See whether the environment variable `PCPROFILE_OUTPUT' is defined.
+      If yes, it should name a FIFO.  We open it and mark ourself as active.  */
+-  const char *outfile = getenv ("PCPROFILE_OUTPUT");
++  const char *outfile = __libc_secure_getenv ("PCPROFILE_OUTPUT");
+ 
+   if (outfile != NULL && *outfile != '\0')
+     {
+diff --git a/debug/segfault.c b/debug/segfault.c
+index ba2c11d..c1768b3 100644
+--- a/debug/segfault.c
++++ b/debug/segfault.c
+@@ -145,7 +145,7 @@ __attribute__ ((constructor))
+ install_handler (void)
+ {
+   struct sigaction sa;
+-  const char *sigs = getenv ("SEGFAULT_SIGNALS");
++  const char *sigs = __libc_secure_getenv ("SEGFAULT_SIGNALS");
+   const char *name;
+ 
+   sa.sa_handler = (void *) catch_segfault;
+@@ -153,7 +153,7 @@ install_handler (void)
+   sa.sa_flags = SA_RESTART;
+ 
+   /* Maybe we are expected to use an alternative stack.  */
+-  if (getenv ("SEGFAULT_USE_ALTSTACK") != 0)
++  if (__libc_secure_getenv ("SEGFAULT_USE_ALTSTACK") != 0)
+     {
+       void *stack_mem = malloc (2 * SIGSTKSZ);
+       struct sigaltstack ss;
+@@ -199,7 +199,7 @@ install_handler (void)
+     }
+ 
+   /* Preserve the output file name if there is any given.  */
+-  name = getenv ("SEGFAULT_OUTPUT_NAME");
++  name = __libc_secure_getenv ("SEGFAULT_OUTPUT_NAME");
+   if (name != NULL && name[0] != '\0')
+     {
+       int ret = access (name, R_OK | W_OK);
+diff --git a/elf/dl-environ.c b/elf/dl-environ.c
+index afcd11d..5f2744f 100644
+--- a/elf/dl-environ.c
++++ b/elf/dl-environ.c
+@@ -83,3 +83,32 @@ unsetenv (const char *name)
+ 
+   return 0;
+ }
++
++/* We need our own getenv too, for the 'buggy' loop in rtld.c */
++char *
++getenv (const char *name)
++{
++  char **ep;
++
++  ep = __environ;
++  while (*ep != NULL)
++    {
++      size_t cnt = 0;
++
++      while ((*ep)[cnt] == name[cnt] && name[cnt] != '\0')
++	++cnt;
++
++      if (name[cnt] == '\0' && (*ep)[cnt] == '=')
++	{
++	  /* Found it. */
++	  if ((*ep)[cnt + 1] != '\0')
++		return (char *)&((*ep)[cnt + 1]);
++	  else 
++	  	return NULL;
++	}
++      else
++	++ep;
++    }
++
++  return NULL;
++}
+diff --git a/elf/dl-support.c b/elf/dl-support.c
+index e435436..23aeb43 100644
+--- a/elf/dl-support.c
++++ b/elf/dl-support.c
+@@ -318,7 +318,7 @@ _dl_non_dynamic_init (void)
+   if (HP_TIMING_AVAIL)
+     HP_TIMING_NOW (_dl_cpuclock_offset);
+ 
+-  _dl_verbose = *(getenv ("LD_WARN") ?: "") == '\0' ? 0 : 1;
++  _dl_verbose = *(__libc_secure_getenv ("LD_WARN") ?: "") == '\0' ? 0 : 1;
+ 
+   /* Set up the data structures for the system-supplied DSO early,
+      so they can influence _dl_init_paths.  */
+@@ -326,18 +326,18 @@ _dl_non_dynamic_init (void)
+ 
+   /* Initialize the data structures for the search paths for shared
+      objects.  */
+-  _dl_init_paths (getenv ("LD_LIBRARY_PATH"));
++  _dl_init_paths (__libc_secure_getenv ("LD_LIBRARY_PATH"));
+ 
+   /* Remember the last search directory added at startup.  */
+   _dl_init_all_dirs = GL(dl_all_dirs);
+ 
+-  _dl_lazy = *(getenv ("LD_BIND_NOW") ?: "") == '\0';
++  _dl_lazy = *(__libc_secure_getenv ("LD_BIND_NOW") ?: "") == '\0';
+ 
+-  _dl_bind_not = *(getenv ("LD_BIND_NOT") ?: "") != '\0';
++  _dl_bind_not = *(__libc_secure_getenv ("LD_BIND_NOT") ?: "") != '\0';
+ 
+-  _dl_dynamic_weak = *(getenv ("LD_DYNAMIC_WEAK") ?: "") == '\0';
++  _dl_dynamic_weak = *(__libc_secure_getenv ("LD_DYNAMIC_WEAK") ?: "") == '\0';
+ 
+-  _dl_profile_output = getenv ("LD_PROFILE_OUTPUT");
++  _dl_profile_output = __libc_secure_getenv ("LD_PROFILE_OUTPUT");
+   if (_dl_profile_output == NULL || _dl_profile_output[0] == '\0')
+     _dl_profile_output
+       = &"/var/tmp\0/var/profile"[__libc_enable_secure ? 9 : 0];
+@@ -350,6 +350,8 @@ _dl_non_dynamic_init (void)
+ 	EXTRA_UNSECURE_ENVVARS
+ #endif
+ 	;
++      static const char restricted_envvars[] =
++	RESTRICTED_ENVVARS;
+       const char *cp = unsecure_envvars;
+ 
+       while (cp < unsecure_envvars + sizeof (unsecure_envvars))
+@@ -360,6 +362,19 @@ _dl_non_dynamic_init (void)
+ 
+       if (__access ("/etc/suid-debug", F_OK) != 0)
+ 	__unsetenv ("MALLOC_CHECK_");
++
++      /* This loop is buggy: it will only check the first occurrence of each
++	 variable (but will correctly remove all in case of a match).  This
++	 may be a problem if the list is later re-ordered or accessed by an
++	 application with something other than the glibc getenv().  */
++      cp = restricted_envvars;
++      while (cp < restricted_envvars + sizeof (restricted_envvars))
++	{
++	  const char *value = getenv (cp);
++	  if (value && (value[0] == '.' || strchr(value, '/')))
++	    __unsetenv (cp);
++	  cp = (const char *) __rawmemchr (cp, '\0') + 1;
++	}
+     }
+ 
+ #ifdef DL_PLATFORM_INIT
+diff --git a/elf/dl-sysdep.c b/elf/dl-sysdep.c
+index d8cdb7e..54d5d6e 100644
+--- a/elf/dl-sysdep.c
++++ b/elf/dl-sysdep.c
+@@ -79,6 +79,10 @@ void *_dl_random attribute_relro = NULL;
+ # define DL_STACK_END(cookie) ((void *) (cookie))
+ #endif
+ 
++#ifdef HAVE_AUX_XID
++#undef HAVE_AUX_XID
++#endif
++
+ ElfW(Addr)
+ _dl_sysdep_start (void **start_argptr,
+ 		  void (*dl_main) (const ElfW(Phdr) *phdr, ElfW(Word) phnum,
+diff --git a/elf/ldd.bash.in b/elf/ldd.bash.in
+index 4ff140d..64d3818 100644
+--- a/elf/ldd.bash.in
++++ b/elf/ldd.bash.in
+@@ -165,15 +165,9 @@ warning: you do not have execution permission for" "\`$file'" >&2
+     done
+     case $ret in
+     0)
+-      # If the program exits with exit code 5, it means the process has been
+-      # invoked with __libc_enable_secure.  Fall back to running it through
+-      # the dynamic linker.
+-      try_trace "$file"
++      # CLIP : force usage of RTLD anyway
++      try_trace "$RTLD" "$file"
+       rc=$?
+-      if [ $rc = 5 ]; then
+-	try_trace "$RTLD" "$file"
+-	rc=$?
+-      fi
+       [ $rc = 0 ] || result=1
+       ;;
+     1)
+diff --git a/elf/rtld.c b/elf/rtld.c
+index 6dcbabc..9e0e306 100644
+--- a/elf/rtld.c
++++ b/elf/rtld.c
+@@ -2488,6 +2488,7 @@ process_envvars (enum mode *modep)
+   GLRO(dl_profile_output)
+     = &"/var/tmp\0/var/profile"[INTUSE(__libc_enable_secure) ? 9 : 0];
+ 
++  if (__builtin_expect (!INTUSE(__libc_enable_secure), 1))
+   while ((envline = _dl_next_ld_env_entry (&runp)) != NULL)
+     {
+       size_t len = 0;
+@@ -2554,8 +2555,7 @@ process_envvars (enum mode *modep)
+ 	case 9:
+ 	  /* Test whether we want to see the content of the auxiliary
+ 	     array passed up from the kernel.  */
+-	  if (!INTUSE(__libc_enable_secure)
+-	      && memcmp (envline, "SHOW_AUXV", 9) == 0)
++	  if (memcmp (envline, "SHOW_AUXV", 9) == 0)
+ 	    _dl_show_auxv ();
+ 	  break;
+ 
+@@ -2568,8 +2568,7 @@ process_envvars (enum mode *modep)
+ 
+ 	case 11:
+ 	  /* Path where the binary is found.  */
+-	  if (!INTUSE(__libc_enable_secure)
+-	      && memcmp (envline, "ORIGIN_PATH", 11) == 0)
++	  if (memcmp (envline, "ORIGIN_PATH", 11) == 0)
+ 	    GLRO(dl_origin_path) = &envline[12];
+ 	  break;
+ 
+@@ -2588,8 +2587,7 @@ process_envvars (enum mode *modep)
+ 	      break;
+ 	    }
+ 
+-	  if (!INTUSE(__libc_enable_secure)
+-	      && memcmp (envline, "DYNAMIC_WEAK", 12) == 0)
++	  if (memcmp (envline, "DYNAMIC_WEAK", 12) == 0)
+ 	    GLRO(dl_dynamic_weak) = 1;
+ 	  break;
+ 
+@@ -2599,8 +2597,7 @@ process_envvars (enum mode *modep)
+ #ifdef EXTRA_LD_ENVVARS_13
+ 	  EXTRA_LD_ENVVARS_13
+ #endif
+-	  if (!INTUSE(__libc_enable_secure)
+-	      && memcmp (envline, "USE_LOAD_BIAS", 13) == 0)
++	  if (memcmp (envline, "USE_LOAD_BIAS", 13) == 0)
+ 	    {
+ 	      GLRO(dl_use_load_bias) = envline[14] == '1' ? -1 : 0;
+ 	      break;
+@@ -2612,8 +2609,7 @@ process_envvars (enum mode *modep)
+ 
+ 	case 14:
+ 	  /* Where to place the profiling data file.  */
+-	  if (!INTUSE(__libc_enable_secure)
+-	      && memcmp (envline, "PROFILE_OUTPUT", 14) == 0
++	  if (memcmp (envline, "PROFILE_OUTPUT", 14) == 0
+ 	      && envline[15] != '\0')
+ 	    GLRO(dl_profile_output) = &envline[15];
+ 	  break;
+@@ -2657,16 +2653,27 @@ process_envvars (enum mode *modep)
+ 	EXTRA_UNSECURE_ENVVARS
+ #endif
+ 	UNSECURE_ENVVARS;
++      static const char restricted_envvars[] =
++	RESTRICTED_ENVVARS;
+       const char *nextp;
+ 
+-      nextp = unsecure_envvars;
+-      do
++      for (nextp = unsecure_envvars; *nextp != '\0';
++	   nextp = (char *) rawmemchr (nextp, '\0') + 1)
+ 	{
+ 	  unsetenv (nextp);
+-	  /* We could use rawmemchr but this need not be fast.  */
+-	  nextp = (char *) (strchr) (nextp, '\0') + 1;
+ 	}
+-      while (*nextp != '\0');
++
++      /* This loop is buggy: it will only check the first occurrence of each
++	 variable (but will correctly remove all in case of a match).  This
++	 may be a problem if the list is later re-ordered or accessed by an
++	 application with something other than the glibc getenv().  */
++      for (nextp = restricted_envvars; *nextp != '\0';
++	   nextp = (char *) rawmemchr (nextp, '\0') + 1)
++	{
++	  const char *value = getenv (nextp);
++	  if (value && (value[0] == '.' || strchr(value, '/')))
++	    unsetenv (nextp);
++	}
+ 
+       if (__access ("/etc/suid-debug", F_OK) != 0)
+ 	{
+diff --git a/gmon/gmon.c b/gmon/gmon.c
+index 9774d57..2ede231 100644
+--- a/gmon/gmon.c
++++ b/gmon/gmon.c
+@@ -346,8 +346,8 @@ write_gmon (void)
+ # define O_NOFOLLOW	0
+ #endif
+ 
+-    env = getenv ("GMON_OUT_PREFIX");
+-    if (env != NULL && !__libc_enable_secure)
++    env = __libc_secure_getenv ("GMON_OUT_PREFIX");
++    if (env != NULL)
+       {
+ 	size_t len = strlen (env);
+ 	char buf[len + 20];
+diff --git a/iconv/gconv_cache.c b/iconv/gconv_cache.c
+index 41a4688..e9a8000 100644
+--- a/iconv/gconv_cache.c
++++ b/iconv/gconv_cache.c
+@@ -54,7 +54,7 @@ __gconv_load_cache (void)
+ 
+   /* We cannot use the cache if the GCONV_PATH environment variable is
+      set.  */
+-  __gconv_path_envvar = getenv ("GCONV_PATH");
++  __gconv_path_envvar = __libc_secure_getenv ("GCONV_PATH");
+   if (__gconv_path_envvar != NULL)
+     return -1;
+ 
+diff --git a/io/getdirname.c b/io/getdirname.c
+index 88febbe..2300f1b 100644
+--- a/io/getdirname.c
++++ b/io/getdirname.c
+@@ -30,7 +30,7 @@ get_current_dir_name (void)
+   char *pwd;
+   struct stat64 dotstat, pwdstat;
+ 
+-  pwd = getenv ("PWD");
++  pwd = __libc_secure_getenv ("PWD");
+   if (pwd != NULL
+       && stat64 (".", &dotstat) == 0
+       && stat64 (pwd, &pwdstat) == 0
+diff --git a/libidn/toutf8.c b/libidn/toutf8.c
+index c7e67ca..7049a4a 100644
+--- a/libidn/toutf8.c
++++ b/libidn/toutf8.c
+@@ -72,7 +72,7 @@
+ const char *
+ stringprep_locale_charset (void)
+ {
+-  const char *charset = getenv ("CHARSET");	/* flawfinder: ignore */
++  const char *charset = __libc_secure_getenv ("CHARSET");	/* flawfinder: ignore */
+ 
+   if (charset && *charset)
+     return charset;
+diff --git a/locale/newlocale.c b/locale/newlocale.c
+index 18fb6e2..6aafc80 100644
+--- a/locale/newlocale.c
++++ b/locale/newlocale.c
+@@ -102,7 +102,7 @@ __newlocale (int category_mask, const char *locale, __locale_t base)
+   locale_path = NULL;
+   locale_path_len = 0;
+ 
+-  locpath_var = getenv ("LOCPATH");
++  locpath_var = __libc_secure_getenv ("LOCPATH");
+   if (locpath_var != NULL && locpath_var[0] != '\0')
+     {
+       if (__argz_create_sep (locpath_var, ':',
+diff --git a/locale/setlocale.c b/locale/setlocale.c
+index b70fa6c..9380539 100644
+--- a/locale/setlocale.c
++++ b/locale/setlocale.c
+@@ -251,7 +251,7 @@ setlocale (int category, const char *locale)
+   locale_path = NULL;
+   locale_path_len = 0;
+ 
+-  locpath_var = getenv ("LOCPATH");
++  locpath_var = __libc_secure_getenv ("LOCPATH");
+   if (locpath_var != NULL && locpath_var[0] != '\0')
+     {
+       if (__argz_create_sep (locpath_var, ':',
+diff --git a/malloc/arena.c b/malloc/arena.c
+index 5088a25..d1d86e3 100644
+--- a/malloc/arena.c
++++ b/malloc/arena.c
+@@ -391,7 +391,7 @@ ptmalloc_init (void)
+   tsd_setspecific (arena_key, (void *) &main_arena);
+   thread_atfork (ptmalloc_lock_all, ptmalloc_unlock_all, ptmalloc_unlock_all2);
+   const char *s = NULL;
+-  if (__builtin_expect (_environ != NULL, 1))
++  if (! __builtin_expect (__libc_enable_secure, 0) && __builtin_expect (_environ != NULL, 1))
+     {
+       char **runp = _environ;
+       char *envline;
+diff --git a/malloc/memusage.c b/malloc/memusage.c
+index bfbaecc..39f129f 100644
+--- a/malloc/memusage.c
++++ b/malloc/memusage.c
+@@ -217,7 +217,7 @@ int_handler (int signo)
+ static void
+ me (void)
+ {
+-  const char *env = getenv ("MEMUSAGE_PROG_NAME");
++  const char *env = __libc_secure_getenv ("MEMUSAGE_PROG_NAME");
+   size_t prog_len = strlen (__progname);
+ 
+   initialized = -1;
+@@ -253,7 +253,7 @@ me (void)
+       if (!start_sp)
+         start_sp = GETSP ();
+ 
+-      outname = getenv ("MEMUSAGE_OUTPUT");
++      outname = __libc_secure_getenv ("MEMUSAGE_OUTPUT");
+       if (outname != NULL && outname[0] != '\0'
+           && (access (outname, R_OK | W_OK) == 0 || errno == ENOENT))
+         {
+@@ -276,7 +276,7 @@ me (void)
+               /* Determine the buffer size.  We use the default if the
+                  environment variable is not present.  */
+               buffer_size = DEFAULT_BUFFER_SIZE;
+-              if (getenv ("MEMUSAGE_BUFFER_SIZE") != NULL)
++              if (__libc_secure_getenv ("MEMUSAGE_BUFFER_SIZE") != NULL)
+                 {
+                   buffer_size = atoi (getenv ("MEMUSAGE_BUFFER_SIZE"));
+                   if (buffer_size == 0 || buffer_size > DEFAULT_BUFFER_SIZE)
+@@ -284,7 +284,7 @@ me (void)
+                 }
+ 
+               /* Possibly enable timer-based stack pointer retrieval.  */
+-              if (getenv ("MEMUSAGE_NO_TIMER") == NULL)
++              if (__libc_secure_getenv ("MEMUSAGE_NO_TIMER") == NULL)
+                 {
+                   struct sigaction act;
+ 
+@@ -305,7 +305,7 @@ me (void)
+             }
+         }
+ 
+-      if (!not_me && getenv ("MEMUSAGE_TRACE_MMAP") != NULL)
++      if (!not_me && __libc_secure_getenv ("MEMUSAGE_TRACE_MMAP") != NULL)
+         trace_mmap = true;
+     }
+ }
+diff --git a/nis/nis_defaults.c b/nis/nis_defaults.c
+index 7e92a80..3e5d3b5 100644
+--- a/nis/nis_defaults.c
++++ b/nis/nis_defaults.c
+@@ -358,7 +358,7 @@ __nis_default_owner (char *defaults)
+ 
+   char *cptr = defaults;
+   if (cptr == NULL)
+-    cptr = getenv ("NIS_DEFAULTS");
++    cptr = __libc_secure_getenv ("NIS_DEFAULTS");
+ 
+   if (cptr != NULL)
+     {
+@@ -385,7 +385,7 @@ __nis_default_group (char *defaults)
+ 
+   char *cptr = defaults;
+   if (cptr == NULL)
+-    cptr = getenv ("NIS_DEFAULTS");
++    cptr = __libc_secure_getenv ("NIS_DEFAULTS");
+ 
+   if (cptr != NULL)
+     {
+@@ -417,7 +417,7 @@ __nis_default_ttl (char *defaults)
+ 	return searchttl (defaults);
+     }
+ 
+-  cptr = getenv ("NIS_DEFAULTS");
++  cptr = __libc_secure_getenv ("NIS_DEFAULTS");
+   if (cptr == NULL)
+     return DEFAULT_TTL;
+ 
+@@ -445,7 +445,7 @@ __nis_default_access (char *param, unsigned int defaults)
+     result = searchaccess (param, result);
+   else
+     {
+-      cptr = getenv ("NIS_DEFAULTS");
++      cptr = __libc_secure_getenv ("NIS_DEFAULTS");
+       if (cptr != NULL && strstr (cptr, "access=") != NULL)
+ 	result = searchaccess (cptr, result);
+     }
+diff --git a/nis/nis_local_names.c b/nis/nis_local_names.c
+index 5c0e034..d9e77b9 100644
+--- a/nis/nis_local_names.c
++++ b/nis/nis_local_names.c
+@@ -29,7 +29,7 @@ nis_local_group (void)
+ 
+   char *cptr;
+   if (__nisgroup[0] == '\0'
+-      && (cptr = getenv ("NIS_GROUP")) != NULL
++      && (cptr = __libc_secure_getenv ("NIS_GROUP")) != NULL
+       && strlen (cptr) < NIS_MAXNAMELEN)
+     {
+       char *cp = stpcpy (__nisgroup, cptr);
+diff --git a/nis/nis_subr.c b/nis/nis_subr.c
+index 4a4580a..7759ff3 100644
+--- a/nis/nis_subr.c
++++ b/nis/nis_subr.c
+@@ -177,7 +177,7 @@ nis_getnames (const_nis_name name)
+     }
+ 
+   /* Get the search path, where we have to search "name" */
+-  path = getenv ("NIS_PATH");
++  path = __libc_secure_getenv ("NIS_PATH");
+   if (path == NULL)
+     path = strdupa ("$");
+   else
+diff --git a/posix/execvpe.c b/posix/execvpe.c
+index e067ada..98f1e39 100644
+--- a/posix/execvpe.c
++++ b/posix/execvpe.c
+@@ -89,7 +89,7 @@ __execvpe (file, argv, envp)
+     {
+       size_t pathlen;
+       size_t alloclen = 0;
+-      char *path = getenv ("PATH");
++      char *path = __libc_secure_getenv ("PATH");
+       if (path == NULL)
+ 	{
+ 	  pathlen = confstr (_CS_PATH, (char *) NULL, 0);
+diff --git a/posix/glob.c b/posix/glob.c
+index f143108..e8c086b 100644
+--- a/posix/glob.c
++++ b/posix/glob.c
+@@ -597,7 +597,7 @@ glob (pattern, flags, errfunc, pglob)
+ 	      && (dirname[2] == '\0' || dirname[2] == '/')))
+ 	{
+ 	  /* Look up home directory.  */
+-	  char *home_dir = getenv ("HOME");
++	  char *home_dir = __libc_secure_getenv ("HOME");
+ 	  int malloc_home_dir = 0;
+ # ifdef _AMIGA
+ 	  if (home_dir == NULL || home_dir[0] == '\0')
+diff --git a/posix/wordexp.c b/posix/wordexp.c
+index 366ec18..406cc2c 100644
+--- a/posix/wordexp.c
++++ b/posix/wordexp.c
+@@ -319,7 +319,7 @@ parse_tilde (char **word, size_t *word_length, size_t *max_length,
+ 	 results are unspecified.  We do a lookup on the uid if
+ 	 HOME is unset. */
+ 
+-      home = getenv ("HOME");
++      home = __libc_secure_getenv ("HOME");
+       if (home != NULL)
+ 	{
+ 	  *word = w_addstr (*word, word_length, max_length, home);
+@@ -1535,7 +1535,7 @@ envsubst:
+ 	}
+     }
+   else
+-    value = getenv (env);
++    value = __libc_secure_getenv (env);
+ 
+   if (value == NULL && (flags & WRDE_UNDEF))
+     {
+@@ -2304,7 +2304,7 @@ wordexp (const char *words, wordexp_t *pwordexp, int flags)
+   /* Find out what the field separators are.
+    * There are two types: whitespace and non-whitespace.
+    */
+-  ifs = getenv ("IFS");
++  ifs = __libc_secure_getenv ("IFS");
+ 
+   if (ifs == NULL)
+     /* IFS unset - use <space><tab><newline>. */
+diff --git a/resolv/res_hconf.c b/resolv/res_hconf.c
+index b4c8622..a96148b 100644
+--- a/resolv/res_hconf.c
++++ b/resolv/res_hconf.c
+@@ -301,7 +301,7 @@ do_init (void)
+ 
+   memset (&_res_hconf, '\0', sizeof (_res_hconf));
+ 
+-  hconf_name = getenv (ENV_HOSTCONF);
++  hconf_name = __libc_secure_getenv (ENV_HOSTCONF);
+   if (hconf_name == NULL)
+     hconf_name = _PATH_HOSTCONF;
+ 
+@@ -320,23 +320,23 @@ do_init (void)
+       fclose (fp);
+     }
+ 
+-  envval = getenv (ENV_SPOOF);
++  envval = __libc_secure_getenv (ENV_SPOOF);
+   if (envval)
+     arg_spoof (ENV_SPOOF, 1, envval);
+ 
+-  envval = getenv (ENV_MULTI);
++  envval = __libc_secure_getenv (ENV_MULTI);
+   if (envval)
+     arg_bool (ENV_MULTI, 1, envval, HCONF_FLAG_MULTI);
+ 
+-  envval = getenv (ENV_REORDER);
++  envval = __libc_secure_getenv (ENV_REORDER);
+   if (envval)
+     arg_bool (ENV_REORDER, 1, envval, HCONF_FLAG_REORDER);
+ 
+-  envval = getenv (ENV_TRIM_ADD);
++  envval = __libc_secure_getenv (ENV_TRIM_ADD);
+   if (envval)
+     arg_trimdomain_list (ENV_TRIM_ADD, 1, envval);
+ 
+-  envval = getenv (ENV_TRIM_OVERR);
++  envval = __libc_secure_getenv (ENV_TRIM_OVERR);
+   if (envval)
+     {
+       _res_hconf.num_trimdomains = 0;
+diff --git a/resolv/res_init.c b/resolv/res_init.c
+index 5e1a747..931b08c 100644
+--- a/resolv/res_init.c
++++ b/resolv/res_init.c
+@@ -195,7 +195,7 @@ __res_vinit(res_state statp, int preinit) {
+ #endif
+ 
+ 	/* Allow user to override the local domain definition */
+-	if ((cp = getenv("LOCALDOMAIN")) != NULL) {
++	if ((cp = __libc_secure_getenv("LOCALDOMAIN")) != NULL) {
+ 		(void)strncpy(statp->defdname, cp, sizeof(statp->defdname) - 1);
+ 		statp->defdname[sizeof(statp->defdname) - 1] = '\0';
+ 		haveenv++;
+@@ -469,7 +469,7 @@ __res_vinit(res_state statp, int preinit) {
+ #endif /* !RFC1535 */
+ 	}
+ 
+-	if ((cp = getenv("RES_OPTIONS")) != NULL)
++	if ((cp = __libc_secure_getenv("RES_OPTIONS")) != NULL)
+ 		res_setoptions(statp, cp, "env");
+ 	statp->options |= RES_INIT;
+ 	return (0);
+diff --git a/resolv/res_query.c b/resolv/res_query.c
+index 1325f97..2b43228 100644
+--- a/resolv/res_query.c
++++ b/resolv/res_query.c
+@@ -605,7 +605,7 @@ res_hostalias(const res_state statp, const char *name, char *dst, size_t siz) {
+ 
+ 	if (statp->options & RES_NOALIASES)
+ 		return (NULL);
+-	file = getenv("HOSTALIASES");
++	file = __libc_secure_getenv("HOSTALIASES");
+ 	if (file == NULL || (fp = fopen(file, "rce")) == NULL)
+ 		return (NULL);
+ 	setbuf(fp, NULL);
+diff --git a/stdlib/fmtmsg.c b/stdlib/fmtmsg.c
+index acf3be2..7180dce 100644
+--- a/stdlib/fmtmsg.c
++++ b/stdlib/fmtmsg.c
+@@ -210,8 +210,8 @@ fmtmsg (long int classification, const char *label, int severity,
+ static void
+ init (void)
+ {
+-  const char *msgverb_var = getenv ("MSGVERB");
+-  const char *sevlevel_var = getenv ("SEV_LEVEL");
++  const char *msgverb_var = __libc_secure_getenv ("MSGVERB");
++  const char *sevlevel_var = __libc_secure_getenv ("SEV_LEVEL");
+ 
+   if (msgverb_var != NULL && msgverb_var[0] != '\0')
+     {
+diff --git a/sunrpc/rpc_svcout.c b/sunrpc/rpc_svcout.c
+index 4f12a81..4013c01 100644
+--- a/sunrpc/rpc_svcout.c
++++ b/sunrpc/rpc_svcout.c
+@@ -887,7 +887,7 @@ write_pm_most (const char *infile, int netflag)
+   f_print (fout, "\t\t_rpcpmstart = 1;\n");
+   if (logflag)
+     open_log_file (infile, "\t\t");
+-  f_print (fout, "\t\tif ((netid = getenv(\"NLSPROVIDER\")) == NULL) {\n");
++  f_print (fout, "\t\tif ((netid = __libc_secure_getenv(\"NLSPROVIDER\")) == NULL) {\n");
+   sprintf (_errbuf, "cannot get transport name");
+   print_err_message ("\t\t\t");
+   f_print (fout, "\t\t} else if ((nconf = getnetconfigent(netid)) == NULL) {\n");
+diff --git a/sysdeps/generic/unsecvars.h b/sysdeps/generic/unsecvars.h
+index d5b8119..85782fd 100644
+--- a/sysdeps/generic/unsecvars.h
++++ b/sysdeps/generic/unsecvars.h
+@@ -2,25 +2,83 @@
+    all stuffed in a single string which means they have to be terminated
+    with a '\0' explicitly.  */
+ #define UNSECURE_ENVVARS \
++  "ARGP_HELP_FMT\0"							\
++  "DATEMSK\0"								\
+   "GCONV_PATH\0"							      \
+   "GETCONF_DIR\0"							      \
++  "GMON_OUT_PREFIX\0"							\
++  "HESIOD_CONFIG\0"							\
++  "HES_DOMAIN\0"							\
+   "HOSTALIASES\0"							      \
+   "LD_AUDIT\0"								      \
++  "LD_BIND_NOT\0"							\
++  "LD_BIND_NOW\0"							\
+   "LD_DEBUG\0"								      \
+   "LD_DEBUG_OUTPUT\0"							      \
+   "LD_DYNAMIC_WEAK\0"							      \
+   "LD_LIBRARY_PATH\0"							      \
++  "LD_HWCAP_MASK\0"							\
+   "LD_ORIGIN_PATH\0"							      \
+   "LD_PRELOAD\0"							      \
+   "LD_PROFILE\0"							      \
++  "LD_PROFILE_OUTPUT\0"							\
+   "LD_SHOW_AUXV\0"							      \
++  "LD_TRACE_LOADED_OBJECTS\0"						\
+   "LD_USE_LOAD_BIAS\0"							      \
++  "LD_WARN\0"								\
+   "LOCALDOMAIN\0"							      \
+   "LOCPATH\0"								      \
++  "MALLOC_CHECK_\0"							\
++  "MALLOC_MMAP_MAX_\0"							\
++  "MALLOC_MMAP_THRESHOLD_\0"						\
++  "MALLOC_TOP_PAD_\0"							\
+   "MALLOC_TRACE\0"							      \
++  "MALLOC_TRIM_THRESHOLD_\0"						\
++  "MEMUSAGE_BUFFER_SIZE\0"						\
++  "MEMUSAGE_NO_TIMER\0"							\
++  "MEMUSAGE_OUTPUT\0"							\
++  "MEMUSAGE_PROG_NAME\0"						\
++  "MEMUSAGE_TRACE_MMAP\0"						\
++  "MSGVERB\0"								\
++  "NIS_DEFAULTS\0"							\
++  "NIS_GROUP\0"								\
+   "NIS_PATH\0"								      \
+   "NLSPATH\0"								      \
++  "PCPROFILE_OUTPUT\0"							\
++  "POSIXLY_CORRECT\0"							\
++  "RESOLV_ADD_TRIM_DOMAINS\0"						\
+   "RESOLV_HOST_CONF\0"							      \
++  "RESOLV_MULTI\0"							\
++  "RESOLV_OVERRIDE_TRIM_DOMAINS\0"					\
++  "RESOLV_REORDER\0"							\
++  "RESOLV_SERV_ORDER\0"							\
++  "RESOLV_SPOOF_CHECK\0"						\
+   "RES_OPTIONS\0"							      \
++  "SEGFAULT_OUTPUT_NAME\0"						\
++  "SEGFAULT_SIGNALS\0"							\
++  "SEGFAULT_USE_ALTSTACK\0"						\
++  "SEV_LEVEL\0"								\
+   "TMPDIR\0"								      \
++  "TZ\0"								\
+   "TZDIR\0"
++
++#define UNSECURE_UID_ENVVARS \
++  "TMPDIR\0"
++
++#define RESTRICTED_ENVVARS \
++  "LANG\0"								\
++  "LANGUAGE\0"								\
++  "LC_ADDRESS\0"							\
++  "LC_ALL\0"								\
++  "LC_COLLATE\0"							\
++  "LC_CTYPE\0"								\
++  "LC_IDENTIFICATION\0"							\
++  "LC_MEASUREMENT\0"							\
++  "LC_MESSAGES\0"							\
++  "LC_MONETARY\0"							\
++  "LC_NAME\0"								\
++  "LC_NUMERIC\0"							\
++  "LC_PAPER\0"								\
++  "LC_TELEPHONE\0"							\
++  "LC_TIME\0"								\
++  "LC_XXX\0"
+diff --git a/sysdeps/posix/spawni.c b/sysdeps/posix/spawni.c
+index 58c9e5d..76cc9e9 100644
+--- a/sysdeps/posix/spawni.c
++++ b/sysdeps/posix/spawni.c
+@@ -249,16 +249,15 @@ __spawni (pid_t *pid, const char *file,
+     }
+ 
+   /* We have to search for FILE on the path.  */
+-  path = getenv ("PATH");
++  path = __libc_secure_getenv ("PATH");
+   if (path == NULL)
+     {
+       /* There is no `PATH' in the environment.
+-	 The default search path is the current directory
+-	 followed by the path `confstr' returns for `_CS_PATH'.  */
++	 The default search path is ehat `confstr' returns
++	 for `_CS_PATH'.  */
+       len = confstr (_CS_PATH, (char *) NULL, 0);
+-      path = (char *) __alloca (1 + len);
+-      path[0] = ':';
+-      (void) confstr (_CS_PATH, path + 1, len);
++      path = (char *) __alloca (len);
++      (void) confstr (_CS_PATH, path, len);
+     }
+ 
+   len = strlen (file) + 1;
+diff --git a/sysdeps/unix/sysv/linux/dl-librecon.h b/sysdeps/unix/sysv/linux/dl-librecon.h
+index 7ff36a2..2dc39a9 100644
+--- a/sysdeps/unix/sysv/linux/dl-librecon.h
++++ b/sysdeps/unix/sysv/linux/dl-librecon.h
+@@ -52,7 +52,7 @@ _dl_osversion_init (char *assume_kernel)
+ 
+ #define DL_OSVERSION_INIT \
+   do {									      \
+-    char *assume_kernel = getenv ("LD_ASSUME_KERNEL");			      \
++    char *assume_kernel = __libc_secure_getenv ("LD_ASSUME_KERNEL");		      \
+     if (assume_kernel)							      \
+       _dl_osversion_init (assume_kernel);				      \
+   } while (0)
+diff --git a/sysdeps/unix/sysv/linux/i386/dl-librecon.h b/sysdeps/unix/sysv/linux/i386/dl-librecon.h
+index 95e32ac..4c56def 100644
+--- a/sysdeps/unix/sysv/linux/i386/dl-librecon.h
++++ b/sysdeps/unix/sysv/linux/i386/dl-librecon.h
+@@ -56,6 +56,7 @@
+ /* Extra unsecure variables.  The names are all stuffed in a single
+    string which means they have to be terminated with a '\0' explicitly.  */
+ #define EXTRA_UNSECURE_ENVVARS \
++  "LD_LIBRARY_VERSION\0"						      \
+   "LD_AOUT_LIBRARY_PATH\0"						      \
+   "LD_AOUT_PRELOAD\0"
+ 
+diff --git a/time/getdate.c b/time/getdate.c
+index 4754d12..b8b1895 100644
+--- a/time/getdate.c
++++ b/time/getdate.c
+@@ -116,7 +116,7 @@ __getdate_r (const char *string, struct tm *tp)
+   struct stat64 st;
+   int mday_ok = 0;
+ 
+-  datemsk = getenv ("DATEMSK");
++  datemsk = __libc_secure_getenv ("DATEMSK");
+   if (datemsk == NULL || *datemsk == '\0')
+     return 1;
+ 
+diff --git a/time/tzfile.c b/time/tzfile.c
+index deef58e..f762468 100644
+--- a/time/tzfile.c
++++ b/time/tzfile.c
+@@ -147,7 +147,7 @@ __tzfile_read (const char *file, size_t extra, char **extrap)
+     {
+       const char *tzdir;
+ 
+-      tzdir = getenv ("TZDIR");
++      tzdir = __libc_secure_getenv ("TZDIR");
+       if (tzdir == NULL || *tzdir == '\0')
+ 	tzdir = default_tzdir;
+       if (__asprintf (&new, "%s/%s", tzdir, file) == -1)
+diff --git a/time/tzset.c b/time/tzset.c
+index bfcd943..ae5ede5 100644
+--- a/time/tzset.c
++++ b/time/tzset.c
+@@ -409,8 +409,11 @@ tzset_internal (always, explicit)
+     return;
+   is_initialized = 1;
+ 
+-  /* Examine the TZ environment variable.  */
+-  tz = getenv ("TZ");
++  /* Examine the TZ environment variable.  This doesn't really have to be
++     a __libc_secure_getenv() call as __tzfile_read() tries to only read files
++     found under a trusted directory, but this helps reduce the amount of
++     security-critical code.  */
++  tz = __libc_secure_getenv ("TZ");
+   if (tz == NULL && !explicit)
+     /* Use the site-wide default.  This is a file name which means we
+        would not see changes to the file if we compare only the file

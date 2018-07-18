@@ -1,0 +1,179 @@
+diff -pru kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/CMakeLists.txt kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/CMakeLists.txt
+--- kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/CMakeLists.txt	2009-10-26 10:14:50.000000000 +0100
++++ kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/CMakeLists.txt	2010-08-05 16:55:51.000000000 +0200
+@@ -13,7 +13,6 @@ set(libkickoff_SRCS
+     core/kickoffproxymodel.cpp
+     core/applicationmodel.cpp
+     core/favoritesmodel.cpp
+-    core/leavemodel.cpp
+     core/models.cpp
+     core/recentapplications.cpp
+     core/recentlyusedmodel.cpp
+diff -pru kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/core/models.cpp kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/core/models.cpp
+--- kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/core/models.cpp	2009-10-15 18:33:38.000000000 +0200
++++ kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/core/models.cpp	2010-08-05 16:20:47.000000000 +0200
+@@ -19,7 +19,9 @@
+ 
+ // Own
+ #include "core/models.h"
++#if NOT_ON_CLIP
+ #include "core/leavemodel.h"
++#endif
+ 
+ // Qt
+ #include <QFileInfo>
+@@ -93,8 +95,10 @@ QStandardItem *StandardItemFactory::crea
+         item->setData(subTitle, Kickoff::SubTitleRole);
+ 
+         setSpecialUrlProperties(desktopUrl, item);
++#if NOT_ON_CLIP
+     } else if (url.scheme() == "leave") {
+         item = LeaveModel::createStandardItem(urlString);
++#endif
+     } else {
+         item = new QStandardItem;
+         const QString subTitle = url.isLocalFile() ? url.toLocalFile() : url.prettyUrl();
+diff -pru kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/simpleapplet/simpleapplet.cpp kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/simpleapplet/simpleapplet.cpp
+--- kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/simpleapplet/simpleapplet.cpp	2010-01-06 18:00:18.000000000 +0100
++++ kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/simpleapplet/simpleapplet.cpp	2010-08-05 16:31:26.000000000 +0200
+@@ -70,7 +70,9 @@
+ #include "core/systemmodel.h"
+ #include "core/recentlyusedmodel.h"
+ #include "core/recentapplications.h"
++#if NOT_ON_CLIP
+ #include "core/leavemodel.h"
++#endif
+ #include "core/urlitemlauncher.h"
+ #include "ui/contextmenufactory.h"
+ 
+@@ -348,7 +350,9 @@ void MenuLauncherApplet::init()
+     }
+ 
+     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler, "desktop", new Kickoff::ServiceItemHandler);
++#if NOT_ON_CLIP
+     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
++#endif
+ 
+     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
+         QAction* menueditor = new QAction(i18n("Menu Editor"), this);
+@@ -713,6 +717,7 @@ void MenuLauncherApplet::toggleMenu(bool
+                         m->addAction(KIcon(module.icon()), module.moduleName().replace('&',"&&"))->setData(KUrl("kcm:/" + entry->entryPath()));
+                     }
+                 }
++#if NOT_ON_CLIP
+             } else if(vtname == "RunCommand") {
+                 if (KAuthorized::authorize("run_command")) {
+                     menuview->addAction(KIcon(d->viewIcon(RunCommand)), d->viewText(RunCommand))->setData(KUrl("leave:/run"));
+@@ -751,6 +756,7 @@ void MenuLauncherApplet::toggleMenu(bool
+                         menuview->addAction(KIcon(d->viewIcon(Shutdown)), d->viewText(Shutdown))->setData(KUrl("leave:/shutdown"));
+                 }
+ #endif
++#endif
+             }
+         }
+     }
+@@ -762,6 +768,7 @@ void MenuLauncherApplet::toggleMenu(bool
+ void MenuLauncherApplet::actionTriggered(QAction *action)
+ {
+     const KUrl url = action->data().value<KUrl>();
++#if NOT_ON_CLIP
+     if (url.scheme() == "leave") {
+         if (!d->launcher) {
+             d->launcher = new Kickoff::UrlItemLauncher(d->menuview.data());
+@@ -770,6 +777,7 @@ void MenuLauncherApplet::actionTriggered
+         d->launcher.data()->openUrl(url.url());
+         return;
+     }
++#endif
+     if (url.scheme() == "kcm") {
+         KToolInvocation::kdeinitExec("kcmshell4",  QStringList() << url.fileName());
+         return;
+diff -pru kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/ui/launcher.cpp kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/ui/launcher.cpp
+--- kdebase-workspace-4.4.4.orig/plasma/desktop/applets/kickoff/ui/launcher.cpp	2010-02-26 19:31:56.000000000 +0100
++++ kdebase-workspace-4.4.4/plasma/desktop/applets/kickoff/ui/launcher.cpp	2010-08-05 16:34:56.000000000 +0200
+@@ -48,7 +48,9 @@
+ #include "core/favoritesmodel.h"
+ #include "core/recentlyusedmodel.h"
+ #include "core/applicationmodel.h"
++#if NOT_ON_CLIP
+ #include "core/leavemodel.h"
++#endif
+ #include "core/itemhandlers.h"
+ //#include "core/searchmodel.h"
+ #include "core/krunnermodel.h"
+@@ -73,7 +75,9 @@ public:
+             , applet(0)
+             , urlLauncher(new UrlItemLauncher(launcher))
+             , searchModel(0)
++#if NOT_ON_CLIP
+             , leaveModel(0)
++#endif
+             , searchBar(0)
+             , footer(0)
+             , contentAreaHeader(0)
+@@ -143,13 +147,16 @@ public:
+         // Recently Used view
+         setupRecentView();
+ 
++#if NOT_ON_CLIP
+         // Leave view
+         setupLeaveView();
++#endif
+ 
+         // Search Bar
+         setupSearchView();
+     }
+ 
++#if NOT_ON_CLIP
+     void setupLeaveView()
+     {
+         leaveModel = new LeaveModel(q);
+@@ -162,6 +169,7 @@ public:
+         view->setItemStateProvider(delegate);
+         addView(i18n("Leave"), KIcon("system-shutdown"), leaveModel, view);
+     }
++#endif
+ 
+     void setupFavoritesView()
+     {
+@@ -273,7 +281,9 @@ public:
+     void registerUrlHandlers()
+     {
+         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler, "desktop", new ServiceItemHandler);
++#if NOT_ON_CLIP
+         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
++#endif
+         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "krunner", new KRunnerItemHandler);
+     }
+ 
+@@ -449,7 +459,9 @@ public:
+     RecentlyUsedModel *recentlyUsedModel;
+     KRunnerModel *searchModel;
+     SystemModel *systemModel;
++#if NOT_ON_CLIP
+     LeaveModel *leaveModel;
++#endif
+     SearchBar *searchBar;
+     QWidget *footer;
+     QLabel *userinfo;
+@@ -686,7 +698,9 @@ void Launcher::reset()
+     d->contentArea->setCurrentWidget(d->favoritesView);
+     d->searchBar->clear();
+     d->applicationView->viewRoot();
++#if NOT_ON_CLIP
+     d->leaveModel->updateModel();
++#endif
+ }
+ 
+ Launcher::~Launcher()
+diff -pru kdebase-workspace-4.4.4.orig/plasma/generic/runners/CMakeLists.txt kdebase-workspace-4.4.4/plasma/generic/runners/CMakeLists.txt
+--- kdebase-workspace-4.4.4.orig/plasma/generic/runners/CMakeLists.txt	2009-12-01 01:31:24.000000000 +0100
++++ kdebase-workspace-4.4.4/plasma/generic/runners/CMakeLists.txt	2010-08-05 16:48:14.000000000 +0200
+@@ -14,7 +14,6 @@ endif(Nepomuk_FOUND)
+ 
+ if(NOT WIN32)
+ add_subdirectory(powerdevil)
+-add_subdirectory(sessions)
+ add_subdirectory(windows)
+ add_subdirectory(kill)
+ endif(NOT WIN32)

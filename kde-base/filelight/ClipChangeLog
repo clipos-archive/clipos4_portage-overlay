@@ -1,0 +1,36 @@
+# CLIP ChangeLog for kde-base/filelight
+
+*filelight-4.14.3 (12 Jul 2016)
+  12 Jul 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +filelight-4.14.3.ebuild, -filelight-4.12.5.ebuild:
+  Bump to latest for KDE4.
+
+*filelight-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +filelight-4.12.5.ebuild, -filelight-4.12.3-r1.ebuild:
+  Bump to latest.
+
+*filelight-4.12.3-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +filelight-4.12.3-r1.ebuild, -filelight-4.12.3.ebuild:
+  Force rebuild - generate doc.
+
+*filelight-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +filelight-4.12.3.ebuild, -filelight-4.9.5.ebuild:
+  Bump to latest.
+
+*filelight-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +filelight-4.9.5.ebuild, -filelight-4.9.4.ebuild:
+  Bump to latest.
+
+*filelight-4.9.4 (26 Dec 2012)
+
+  24 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  filelight-4.9.4.ebuild:
+  Initial overlay import. Remove dependency on xdpyinfo on CLIP.

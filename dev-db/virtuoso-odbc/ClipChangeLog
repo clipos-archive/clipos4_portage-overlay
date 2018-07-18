@@ -1,0 +1,24 @@
+# CLIP ChangeLog for dev-db/libiodbc
+
+*virtuoso-odbc-6.1.6-r2 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +virtuoso-odbc-6.1.6-r2.ebuild, -virtuoso-odbc-6.1.6-r1.ebuild:
+  Rbump to link with icu 58.2.
+
+*virtuoso-odbc-6.1.6-r1 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +virtuoso-odbc-6.1.6-r1.ebuild, -virtuoso-odbc-6.1.6.ebuild:
+  Rbump to link with icu 55.1.
+
+*virtuoso-odbc-6.1.6 (30 Nov 2012)
+
+  30 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +virtuoso-odbc-6.1.6.ebuild, -virtuoso-odbc-6.1.1.ebuild:
+
+*virtuoso-odbc-6.1.1 (15 Jun 2010)
+
+  15 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  virtuoso-odbc-6.1.1.ebuild:
+  Initial import. clip-deps fixes.

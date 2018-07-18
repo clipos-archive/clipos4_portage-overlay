@@ -1,0 +1,11 @@
+--- modules/video_output/xcb/x11.c.orig	2013-04-05 14:24:42.000000000 +0200
++++ modules/video_output/xcb/x11.c	2013-04-05 15:34:18.000000000 +0200
+@@ -91,7 +91,7 @@ static const xcb_depth_t *FindDepth (con
+          it.rem > 0 && d == NULL;
+          xcb_depth_next (&it))
+     {
+-        if (it.data->depth == depth)
++        if (it.data->depth == depth && xcb_depth_visuals_length(it.data) != 0)
+             d = it.data;
+     }
+ 

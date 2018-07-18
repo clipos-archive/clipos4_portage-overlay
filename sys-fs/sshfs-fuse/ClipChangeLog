@@ -1,0 +1,40 @@
+# CLIP ChangeLog for sys-fs/sshfs-fuse
+
+*sshfs-fuse-2.5 (12 Jan 2016)
+
+  12 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +sshfs-fuse-2.5.ebuild, -sshfs-fuse-2.2-r3.ebuild:
+  Bump to latest stable.
+
+*sshfs-fuse-2.2-r3 (14 Mar 2014)
+
+  14 Mar 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +sshfs-fuse-2.2-r3.ebuild, -sshfs-fuse-2.2-r2.ebuild,
+  files/sshfs-fuse-2.2-clip-ssh-path.patch,
+  +files/sshfs-fuse-2.2-clip-sgid.patch:
+  Reset the GID before executing ssh.
+
+*sshfs-fuse-2.2-r2 (13 Mar 2014)
+
+  13 Mar 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +sshfs-fuse-2.2-r2.ebuild, -sshfs-fuse-2.2-r1.ebuild,
+  +files/sshfs-fuse-2.2-clip-ssh-path.patch:
+  Fix and force ssh path.
+
+*sshfs-fuse-2.2-r1 (22 Jan 2014)
+
+  22 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +sshfs-fuse-2.2-r1.ebuild, -sshfs-fuse-2.2.ebuild:
+  Force rebuild.
+
+  22 Jan 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  sshfs-fuse-2.2.ebuild:
+  Add CATEGORY_FR.
+
+*sshfs-fuse-2.2 (19 May 2011)
+
+  19 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  sshfs-fuse-2.2.ebuild:
+  Initial import - clip-deps fixes + add DESCRIPTION_FR +
+  add verictl entry.
+  Make sshfs setgid mtab.

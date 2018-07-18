@@ -1,0 +1,23 @@
+--- compat/xfree86.orig	2012-07-31 10:47:49.339938021 +0200
++++ compat/xfree86	2012-07-31 10:48:11.574935828 +0200
+@@ -47,20 +47,4 @@ default partial xkb_compatibility "basic
+     interpret XF86LogWindowTree {
+         action = Private(type=0x86, data="PrWins");
+     };
+-
+-    interpret XF86_Next_VMode {
+-        action = Private(type=0x86, data="+VMode");
+-    };
+-    interpret XF86_Prev_VMode {
+-        action = Private(type=0x86, data="-VMode");
+-    };
+-};
+-
+-partial xkb_compatibility "grab_break" {
+-    interpret XF86_Ungrab {
+-        action = Private(type=0x86, data="Ungrab");
+-    };
+-    interpret XF86_ClearGrab {
+-        action = Private(type=0x86, data="ClsGrb");
+-    };
+ };

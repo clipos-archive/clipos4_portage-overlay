@@ -1,0 +1,16 @@
+#!/bin/sh
+
+INSTALLER="/usr/local/bin/install-catalog.bkp"
+
+if [[ -e "/usr/local/etc/sgml/sgml-ent.cat" ]]; then
+	${INSTALLER} --remove \
+		/usr/local/etc/sgml/sgml-ent.cat \
+		/usr/local/share/sgml/sgml-iso-entities-8879.1986/catalog &>/dev/null
+fi
+if [[ -e "/usr/local/etc/sgml/sgml-docbook.cat" ]]; then
+	${INSTALLER} --remove \
+		/usr/local/etc/sgml/sgml-docbook.cat \
+		/usr/local/etc/sgml/sgml-ent.cat &>/dev/null
+fi
+
+rm -f "${INSTALLER}"

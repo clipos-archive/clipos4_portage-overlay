@@ -1,0 +1,74 @@
+--- ./scripts/splash-functions.sh.in.orig	2011-06-12 23:43:39.000000000 +0200
++++ ./scripts/splash-functions.sh.in	2013-10-11 17:45:23.000000000 +0200
+@@ -145,9 +145,9 @@ splash_setup() {
+ 	export SPLASH_TTY="16"
+ 	export SPLASH_KDMODE="TEXT"
+ 	export SPLASH_AUTOVERBOSE="0"
+-	export SPLASH_BOOT_MESSAGE="Booting the system (\$progress%)... Press F2 for verbose mode."
+-	export SPLASH_SHUTDOWN_MESSAGE="Shutting down the system (\$progress%)... Press F2 for verbose mode."
+-	export SPLASH_REBOOT_MESSAGE="Rebooting the system (\$progress%)... Press F2 for verbose mode."
++	export SPLASH_BOOT_MESSAGE="Démarrage en cours (\$progress%) ..."
++	export SPLASH_REBOOT_MESSAGE="Redémarrage en cours (\$progress%) ..."
++	export SPLASH_SHUTDOWN_MESSAGE="Arrêt en cours (\$progress%) ..."
+ 	export SPLASH_XSERVICE="xdm"
+ 
+ 	[ -f @sysconfdir@/splash/splash ] && . @sysconfdir@/splash/splash
+@@ -215,18 +215,18 @@ splash_start() {
+ 			return 1
+ 		fi
+ 
+-		if [ -n "$(grep -E '(^| )CONSOLE=/dev/tty1( |$)' /proc/cmdline)" ]; then
+-			mount -n --bind / ${spl_tmpdir}
+-			if [ ! -c "${spl_tmpdir}/dev/tty1" ]; then
+-				umount -n ${spl_tmpdir}
+-				splash_warn "The filesystem mounted on / doesn't contain the /dev/tty1 device"
+-				splash_warn "which is required for the silent splash to function properly."
+-				splash_warn "Silent splash will not be enabled. Please create the appropriate"
+-				splash_warn "device node to avoid this message."
+-				return 1
+-			fi
+-			umount -n ${spl_tmpdir}
+-		fi
++		#if [ -n "$(grep -E '(^| )CONSOLE=/dev/tty1( |$)' /proc/cmdline)" ]; then
++		#	mount -n --bind / ${spl_tmpdir}
++		#	if [ ! -c "${spl_tmpdir}/dev/tty1" ]; then
++		#		umount -n ${spl_tmpdir}
++		#		splash_warn "The filesystem mounted on / doesn't contain the /dev/tty1 device"
++		#		splash_warn "which is required for the silent splash to function properly."
++		#		splash_warn "Silent splash will not be enabled. Please create the appropriate"
++		#		splash_warn "device node to avoid this message."
++		#		return 1
++		#	fi
++		#	umount -n ${spl_tmpdir}
++		#fi
+ 	fi
+ 
+ 	rm -f "${spl_pidfile}"
+--- ./src/common.h.orig	2011-06-12 23:43:39.000000000 +0200
++++ ./src/common.h	2013-10-11 17:45:37.000000000 +0200
+@@ -50,10 +50,10 @@ typedef enum { little, big } sendian_t;
+ #define MSG_WARN		2
+ #define MSG_INFO		3
+ 
+-#define SYSMSG_DEFAULT  "Initializing the kernel..."
+-#define SYSMSG_BOOTUP	"Booting the system ($progress%)... Press F2 for verbose mode."
+-#define SYSMSG_REBOOT	"Rebooting the system ($progress%)... Press F2 for verbose mode."
+-#define SYSMSG_SHUTDOWN	"Shutting down the system ($progress%)... Press F2 for verbose mode."
++#define SYSMSG_DEFAULT  "Chargement du noyau..."
++#define SYSMSG_BOOTUP	"Démarrage en cours ($progress%) ..."
++#define SYSMSG_REBOOT	"Redémarrage en cours ($progress%) ..."
++#define SYSMSG_SHUTDOWN	"Arrêt en cours ($progress%) ..."
+ 
+ #define DEFAULT_FONT	"luxisri.ttf"
+ #define TTF_DEFAULT		FBSPL_THEME_DIR"/"DEFAULT_FONT
+--- ./src/libfbsplash.c.orig	2013-10-11 17:46:23.000000000 +0200
++++ ./src/libfbsplash.c	2013-10-11 17:46:26.000000000 +0200
+@@ -495,7 +495,7 @@ int fbsplash_cache_cleanup(char **profil
+ 
+ nosave:
+ 	/* Clear a stale mtab entry that might have been created by the initscripts. */
+-	system("/bin/sed -i -e '\\#"FBSPLASH_CACHEDIR"# d' /etc/mtab");
++	//system("/bin/sed -i -e '\\#"FBSPLASH_CACHEDIR"# d' /etc/mtab");
+ 
+ 	umount2(what, MNT_DETACH);
+ 	return err;

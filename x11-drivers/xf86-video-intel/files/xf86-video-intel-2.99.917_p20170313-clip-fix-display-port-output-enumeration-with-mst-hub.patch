@@ -1,0 +1,20 @@
+Author of this patch: Philippe Trébuchet <clipos@ssi.gouv.fr>
+
+diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
+index e85e444..ea7765e 100644
+--- a/src/sna/sna_display.c
++++ b/src/sna/sna_display.c
+@@ -5076,7 +5076,12 @@ sna_output_add(struct sna *sna, unsigned id, unsigned serial)
+ 	VG(VALGRIND_MAKE_MEM_DEFINED(sna_output->prop_values, sizeof(uint64_t)*sna_output->num_props));
+ 
+ 	/* Construct name from topology, and recheck if output is acceptable */
+-	path = name_from_path(sna, sna_output, name);
++	// path = name_from_path(sna, sna_output, name);  /* CLIP */
++
++	/* CLIP: do not rename connectors following the Display Port MST logic.
++	 * Multiple connectors can be reachable by the same MST path producing
++	 * infinite detection of new outputs. */
++	path = 0;
+ 	if (path) {
+ 		if (output_ignored(scrn, name)) {
+ 			len = 0;

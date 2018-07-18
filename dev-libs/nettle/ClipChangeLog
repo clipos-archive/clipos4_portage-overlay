@@ -1,0 +1,13 @@
+# CLIP ChangeLog for dev-libs/nettle
+
+*nettle-3.1.1 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +nettle-3.1.1.ebuild, -nettle-2.7.1.ebuild:
+  Bump to latest.
+
+*nettle-2.7.1 (04 Jun 2014)
+
+  04 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  nettle-2.7.1.ebuild:
+  Initial overlay import - CPREFIX fix.

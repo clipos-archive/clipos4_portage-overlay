@@ -1,0 +1,110 @@
+Index: libreoffice-4.2.6.3/desktop/source/deployment/gui/dp_gui_dialog2.cxx
+===================================================================
+--- libreoffice-4.2.6.3.orig/desktop/source/deployment/gui/dp_gui_dialog2.cxx
++++ libreoffice-4.2.6.3/desktop/source/deployment/gui/dp_gui_dialog2.cxx
+@@ -725,6 +725,11 @@ ExtMgrDialog::ExtMgrDialog(Window *pPare
+     m_pExtensionBox->SetHyperlinkHdl( LINK( this, ExtMgrDialog, HandleHyperlink ) );
+ 
+     m_pAddBtn->SetClickHdl( LINK( this, ExtMgrDialog, HandleAddBtn ) );
++
++    // CLIP --------------------------------------
++    m_pAddBtn->Enable( false );
++    // CLIP --------------------------------------
++
+     m_pCloseBtn->SetClickHdl( LINK( this, ExtMgrDialog, HandleCloseBtn ) );
+ 
+     m_pUpdateBtn->SetClickHdl( LINK( this, ExtMgrDialog, HandleUpdateBtn ) );
+@@ -763,7 +768,6 @@ void ExtMgrDialog::setGetExtensionsURL(
+ long ExtMgrDialog::addPackageToList( const uno::Reference< deployment::XPackage > &xPackage,
+                                      bool bLicenseMissing )
+ {
+-
+     const SolarMutexGuard aGuard;
+     m_pUpdateBtn->Enable(true);
+ 
+@@ -777,10 +781,13 @@ long ExtMgrDialog::addPackageToList( con
+     {
+         return m_pExtensionBox->addEntry( xPackage, bLicenseMissing );
+     }
++    // CLIP : on empêche l'ajout dans la liste des extensions utilisateur 
++    /*
+     else if (m_pUserCbx->IsChecked() && (xPackage->getRepositoryName() == USER_PACKAGE_MANAGER ))
+     {
+         return m_pExtensionBox->addEntry( xPackage, bLicenseMissing );
+     }
++    */
+     else
+     {
+     //OSL_FAIL("Package will not be displayed");
+@@ -1003,7 +1010,11 @@ IMPL_LINK( ExtMgrDialog, startProgress,
+     }
+ 
+     m_pCancelBtn->Enable( bLockInterface );
+-    m_pAddBtn->Enable( !bLockInterface );
++
++    // CLIP : on empêche l'activation du bouton
++    // m_pAddBtn->Enable( !bLockInterface );
++    m_pAddBtn->Enable( false );
++
+     m_pUpdateBtn->Enable( !bLockInterface && m_pExtensionBox->getItemCount() );
+     m_pExtensionBox->enableButtons( !bLockInterface );
+ 
+Index: libreoffice-4.2.6.3/desktop/source/deployment/manager/dp_extensionmanager.cxx
+===================================================================
+--- libreoffice-4.2.6.3.orig/desktop/source/deployment/manager/dp_extensionmanager.cxx
++++ libreoffice-4.2.6.3/desktop/source/deployment/manager/dp_extensionmanager.cxx
+@@ -367,6 +367,11 @@ ExtensionManager::getExtensionsWithSameI
+ bool ExtensionManager::isUserDisabled(
+     OUString const & identifier, OUString const & fileName)
+ {
++	// CLIP : on désactive les extensions utilisateur
++	// ----------------------------------------------
++	return true;
++	// ----------------------------------------------
++
+     ::std::list<Reference<css::deployment::XPackage> > listExtensions;
+ 
+     try {
+@@ -384,6 +389,11 @@ bool ExtensionManager::isUserDisabled(
+ bool ExtensionManager::isUserDisabled(
+     uno::Sequence<Reference<css::deployment::XPackage> > const & seqExtSameId)
+ {
++	// CLIP : on désactive les extensions utilisateur
++	// ----------------------------------------------
++	return true;
++	// ----------------------------------------------
++
+     OSL_ASSERT(seqExtSameId.getLength() == 3);
+     Reference<css::deployment::XPackage> const & userExtension = seqExtSameId[0];
+     if (userExtension.is())
+@@ -640,6 +650,12 @@ Reference<css::deployment::XPackage> Ext
+                lang::IllegalArgumentException,
+                uno::RuntimeException)
+ {
++    // CLIP ------------------------------------------------------------------
++    throw uno::RuntimeException(
++        "Extension Manager: extension installation unsupported in CLIP",
++        static_cast<OWeakObject*>(this));
++    // CLIP ------------------------------------------------------------------
++
+     Reference<css::deployment::XPackage> xNewExtension;
+     //Determine the repository to use
+     Reference<css::deployment::XPackageManager> xPackageManager;
+@@ -966,9 +982,17 @@ void ExtensionManager::enableExtension(
+         bUserDisabled = isUserDisabled(dp_misc::getIdentifier(extension),
+                                        extension->getName());
+ 
++	// CLIP
++	// ------------------------------------------------------
++	/*
+         activateExtension(dp_misc::getIdentifier(extension),
+                           extension->getName(), false, false,
+                           xAbortChannel, xCmdEnv);
++	*/
++        activateExtension(dp_misc::getIdentifier(extension),
++                          extension->getName(), bUserDisabled, false,
++                          xAbortChannel, xCmdEnv);
++	// ------------------------------------------------------
+     }
+     catch ( const css::deployment::DeploymentException& ) {
+         excOccurred = ::cppu::getCaughtException();

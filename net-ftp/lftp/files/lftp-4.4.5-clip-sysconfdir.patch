@@ -1,0 +1,13 @@
+--- configure.ac.orig	2013-05-14 12:27:24.000000000 +0200
++++ configure.ac	2013-05-14 12:27:27.000000000 +0200
+@@ -443,10 +443,6 @@
+ #endif
+ ])
+ 
+-if test "$prefix" = /usr -a "$sysconfdir" = '${prefix}/etc'; then
+-   sysconfdir=/etc
+-fi
+-
+ AH_TOP([
+ #ifndef CONFIG_H
+ #define CONFIG_H

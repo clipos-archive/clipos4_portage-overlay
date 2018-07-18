@@ -1,0 +1,291 @@
+# CLIP ChangeLog for sys-boot/syslinux
+
+*syslinux-4.07-r8 (14 Feb 2018)
+
+  15 Dec 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r8.ebuild, -syslinux-4.07-r7.ebuild,
+  files/postinst:
+  Fix postinst: handle system upgrade when /etc/bootargs has not
+  been synced with a recently updated /etc/bootargs (crypt1->crypt0)
+
+*syslinux-4.07-r7 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r7.ebuild, -syslinux-4.07-r6.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*syslinux-4.07-r8 (14 Feb 2018)
+
+  15 Dec 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r8.ebuild, -syslinux-4.07-r7.ebuild,
+  files/postinst:
+  Fix postinst: handle system upgrade when /etc/bootargs has not
+  been synced with a recently updated /etc/bootargs (crypt1->crypt0)
+
+*syslinux-4.07-r6 (20 Nov 2017)
+
+  20 Nov 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r6.ebuild, -syslinux-4.07-r5.ebuild:
+  Add /etc/bootargs to conffiles.list so as to copy it when switching roots.
+
+*syslinux-4.07-r5 (03 Jul 2017)
+
+  3 Jul 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r5.ebuild, -syslinux-4.07-r4.ebuild:
+  Force rebuild for writting a new config with the new bootargs from
+  clip-hardware.
+  Handle the case where /boot/extlinux.conf is not a symlink anymore.
+
+*syslinux-4.07-r4 (12 Oct 2016)
+
+  12 Oct 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r4.ebuild, -syslinux-4.07-r3.ebuild:
+
+*syslinux-4.07-r3 (04 Oct 2016)
+
+  04 Oct 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  files/extlinux_5.conf, files/extlinux_10.conf, files/postinst,
+  +syslinux-4.07-r3.ebuild, -syslinux-4.07-r2.ebuild:
+  Add new menu entry : Change disk encryption password
+
+*syslinux-4.07-r2 (23 Oct 2015)
+
+  23 Oct 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r2.ebuild, -syslinux-4.07-r1.ebuild:
+  Fix syslinux ebuild
+
+*syslinux-4.07-r1 (29 Sep 2015)
+
+  29 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +syslinux-4.07-r1.ebuild, -syslinux-4.05-r3.ebuild:
+  Version bump and update dependency on linux-headers when compiling for
+  clip-devstation.
+
+*syslinux-4.05-r3 (20 Aug 2015)
+
+  20 Aug 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +syslinux-4.05-r3.ebuild, -syslinux-4.05-r2.ebuild:
+  In case of RAID installation, install on both drives
+
+*syslinux-4.05-r2 (30 Jul 2015)
+
+  30 Jul 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +syslinux-4.05-r2.ebuild, -syslinux-4.05-r1.ebuild:
+  Deal with UEFI computer by installing syslinux-6.03 binaries if needed
+  Deal with FAT /boot partition by using a extlinux.conf with include directive
+
+  04 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  -syslinux-3.83-r9.ebuild, -files/syslinux-3.72-nopie.patch,
+  -files/syslinux-3.72-nostrip.patch:
+  Remove old.
+
+*syslinux-4.05-r1 (02 Oct 2012)
+
+  02 Oct 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +syslinux-4.05-r1.ebuild, -syslinux-4.05.ebuild:
+  integrate CLIP-specific changes from 3.83-r9,
+  ship linux.c32 module
+	files/4.05/extlinux_{5,10}.conf: use linux.c32 module to load Linux kernel,
+  fix boot with HP Slate 2
+
+*syslinux-3.83-r9 (13 Feb 2012)
+
+  13 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r9.ebuild, -syslinux-3.83-r8.ebuild,
+  files/postinst:
+  Fix postinst : /etc/share/video may not contain 'fbdev', only
+  'vesa'.
+
+*syslinux-3.83-r8 (02 Jan 2012)
+
+  02 Jan 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r8.ebuild, -syslinux-3.83-r7.ebuild,
+  files/postinst: 
+  Fix video arguments for KMS configs :
+   - do not pass old-style video="WxH" arguments on KMS configs - 
+   they serve no purpose and may actually be harmful 
+   - instead, pass 'video=SVIDEO-1:d' automatically, to forcibly 
+   disable SVIDEO output and avoid certain issues related to it.
+
+*syslinux-3.83-r7 (24 Nov 2011)
+
+  24 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r7.ebuild, -syslinux-3.83-r6.ebuild:
+  Change dependency on clip-kernel-modular to clip-kernel.
+
+*syslinux-3.83-r6 (29 Apr 2011)
+
+  29 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r6.ebuild, -syslinux-3.83-r5.ebuild,
+  files/postinst:
+  Fix postinst for /dev/mapper root case.
+
+*syslinux-3.83-r5 (13 Apr 2011)
+
+  13 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r5.ebuild, -syslinux-3.83-r4.ebuild,
+  files/postinst:
+  Add fallback case in postinst for where /dev is found empty
+  (which could happen during an update from 4.1.X to 4.2.1).
+  In that case, a temporary /dev is mounted and populated with
+  the needed devices.
+
+*syslinux-3.83-r4 (06 Apr 2011)
+
+  06 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r4.ebuild, -syslinux-3.83-r3.ebuild,
+  +files/postinst, files/_debian/preinst:
+  Move postinst out of the ebuild for the most part. Hack 
+  preinst / postinst so that we don't lose the versions / dates
+  written into the new / old extlinux.conf files when updating
+  extlinux.
+
+*syslinux-3.83-r3 (28 Mar 2011)
+
+  28 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r3.ebuild, -syslinux-3.83-r2.ebuild:
+  Rbump to use newest rootdisk.eclass and ROOT_DEVICE_NOCRYPT
+  for full-disk encryption cases.
+
+*syslinux-3.83-r2 (17 Jan 2011)
+
+  17 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r2.ebuild, -syslinux-3.83-r1.ebuild,
+  files/_debian/preinst:
+  Fix preinst script to not error out on initial install of a
+  CLIP system.
+
+*syslinux-3.83-r1 (13 Jan 2011)
+
+  13 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83-r1.ebuild, -syslinux-3.83.ebuild,
+  files/3.83/extlinux.conf.{5,10}, +files/_debian/preinst:
+  Switch to a saner scheme for kernel image / initrd names, 
+  (i.e. vmlinuz-clip.{5,10} rather than vmlinuz-clip{,-old}), 
+  so that we never overwrite the old install's kernel. This 
+  requires a preinst to actually make sure those images exist.
+  Pass 'oldclip' on the kernel command line to provide an easy
+  way for userland to know it's using the alternate CLIP install.
+  Do not provide '1024x800' and '800x600' entries unless the 
+  system is using fbdev for video.
+
+*syslinux-3.83 (02 Nov 2009)
+
+  02 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.83.ebuild, -syslinux-3.11-r11.ebuild,
+  -files/3.11-r5, +files/3.83,
+  -files/syslinux-3.11-nopie.patch, -files/syslinux-3.11-nossp.patch,
+  +files/syslinux-3.72-nopie.patch, +files/syslinux-3.72-nostrip.patch:
+  Bump to latest. Add new entries for 800x600 resolution (and 1024x768,
+  if that is not the default resolution) in CLIP config.
+  Also fix the 'Automatic boot in ' message -> add french message.
+
+*syslinux-3.11-r11 (17 Aug 2009)
+
+  17 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.11-r11.ebuild, -syslinux-3.11-r10.ebuild:
+  Bump ebuild to force removal of screen-geom calls.
+
+  07 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  syslinux-3.11-r10.ebuild:
+  Remove useless screen-geom calls.
+
+*syslinux-3.11-r10 (23 Apr 2008)
+
+  23 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.11-r10.ebuild, -syslinux-3.11-r9.ebuild,
+  files/3.11-r5/extlinux_{5,10}.conf:
+  Make the previous version of clip boot on vmlinuz-clip-old, 
+  not vmlinuz-clip.
+
+*syslinux-3.11-r9 (15 Apr 2008)
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.11-r9.ebuild, -syslinux-3.11-r8.ebuild:
+  Support new CLIP_SCREEN_GEOM depth field to generate 16bit-depth
+  vga options.
+
+*syslinux-3.11-r8 (05 Dec 2007)
+
+  05 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.11-r8.ebuild, -syslinux-3.11-r7.ebuild:
+  Do not pass a hardcoded vga=XXX resolution on boot when running a 
+  modules-based syslinux. Instead, try to copy /etc/bootargs - if 
+  present - on the boot command line.
+
+*syslinux-3.11-r7 (13 Nov 2007)
+
+  13 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.11-r7.ebuild, -syslinux-3.11-r6.ebuild:
+  Switch default resolutions to 32 bit depths.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 3.11-r6.
+
+*syslinux-3.11-r6 (05 Nov 2007)
+
+  05 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +syslinux-3.11-r6.ebuild:
+  Bump, same config but postinst script detects the presence of
+  an initramfs image in /boot, and modifies the config to pass it
+  to the kernel.
+  
+*syslinux-3.11-r5 (15 Oct 2007)
+
+  15 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  syslinux-3.11-r5.ebuild, +files/3.11-r5/extlinux_{5,10}.conf:
+  Unify multiple config files. Root disk device and resolution 
+  possibilities are now managed through a postinst script, using
+  screen-geom.eclass and rootdisk.eclass.
+  
+*syslinux-3.11-r4 (02 Oct 2007)
+
+  02 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  syslinux-3.11-r4.ebuild, +files/3.11-r4/*:
+  Merge from my old 3.11-r2 : remove initrd from boot args. Also 
+  change root=/dev/sdaX to root=/dev/hdaX when USE clip-sgdn is set.
+
+*syslinux-3.11-r3 (3 Sep 2007)
+
+  03 Sep 2007; EADS D&S <clipos@ssi.gouv.fr>
+  syslinux-3.11-r3.ebuild, extlinux_3.conf.clt, extlinux_10.conf.clt,
+  extlinux_3.conf.gtw, extlinux_10.conf.gtw
+  Create extlinux_3.conf.{clt|gtw} and extlinux_10.conf.{clt|gtw}
+  (new partition table)
+
+*syslinux-3.11-r2 (06 Aug 2007)
+
+  06 Aug 2007; EADS D&S <clipos@ssi.gouv.fr>
+  syslinux-3.11-r2.ebuild, extlinux_5.conf.clt, extlinux_11.conf.clt,
+  extlinux_5.conf.gtw, extlinux_11.conf.gtw
+  Add IUSE clip-sgdn, clip-eads, clip-gtw
+  Create extlinux_5.conf.{clt|gtw} and extlinux_11.conf.{clt|gtw}
+  with a vga=791 kernel option.
+  NOTE: import from EADS, overwrites my -r2 (Vincent Strubel).
+
+*syslinux-3.11-r2 (27 Aug 2007)
+
+  27 Aug 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  syslinux-3.11-r2.ebuild, files/extlinux_5.conf, 
+  files/extlinux_11.conf:
+  Remove initrd from boot arguments, it is not needed without the 
+  fbsplash kernel patch...
+  Bump ebuild to force update.
+  
+*syslinux-3.11-r1 (26 Jun 2007)
+
+  25 Jun 2007; EADS D&S <clipos@ssi.gouv.fr>
+  syslinux-3.11-r1.ebuild,extlinux_5.conf, extlinux_11.conf:
+  Create extlinux_5.conf and extlinux_11.conf.
+  extlinux.conf is a link to one of them.
+
+  10 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  syslinux-3.11.ebuild:
+  Remove mtools RDEPEND if USE clip.
+
+*syslinux-3.11 (28 Sep 2006)
+
+  28 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +files/extlinux.conf, syslinux-3.11.ebuild:
+  Add IUSE clip. If USE clip is set, install only extlinux, and 
+  the basic clip extlinux.conf.

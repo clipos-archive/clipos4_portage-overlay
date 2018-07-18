@@ -1,0 +1,18 @@
+# CLIP ChangeLog for dev-python/dbus-python
+
+*dbus-python-1.2.0 (24 Jul 2013)
+
+  10 Oct 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  dbus-python-1.2.0.ebuild:
+  Remove all references to python 2.6.
+  
+  24 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +dbus-python-1.2.0.ebuild, -dbus-python-1.0.0.ebuild,
+  -files/dbus-python-1.0.0-test-socket-tmpdir.patch:
+  Bump to latest.
+
+*dbus-python-1.0.0 (02 Apr 2012)
+
+  02 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  dbus-python-1.0.0.ebuild:
+  Initial import - CPREFIX fix.

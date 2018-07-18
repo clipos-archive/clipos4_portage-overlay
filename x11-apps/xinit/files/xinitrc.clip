@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec /usr/local/etc/X11/Sessions/CLIP

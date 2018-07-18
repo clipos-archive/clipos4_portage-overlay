@@ -1,0 +1,38 @@
+# CLIP ChangeLog for app-text/libmspub
+
+*libmspub-0.1.2-r2 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libmspub-0.1.2-r2.ebuild, -libmspub-0.1.2-r1.ebuild:
+  Rbump to link with icu 58.2.
+
+*libmspub-0.1.2-r1 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libmspub-0.1.2-r1.ebuild, -libmspub-0.1.2.ebuild:
+  Rbump to link with icu 55.1.
+
+*libmspub-0.1.2 (12 May 2015)
+
+  15 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +libmspub-0.1.2.ebuild, -libmspub-0.1.1.ebuild:
+  Bump to latest stable.
+
+*libmspub-0.1.1 (31 Dec 2014)
+
+  31 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmspub-0.1.1.ebuild, -libmspub-0.0.6-r1.ebuild:
+  Bump to latest.
+
+*libmspub-0.0.6-r1 (07 Nov 2013)
+
+  07 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libmspub-0.0.6-r1.ebuild, -libmspub-0.0.6.ebuild:
+  Force rebuild (icu revdep).
+
+*libmspub-0.0.6 (26 Jul 2013)
+
+  26 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  libmspub-0.0.6.ebuild:
+  Initial import - CPREFIX + clip-deps fixes.
+

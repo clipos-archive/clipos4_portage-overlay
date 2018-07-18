@@ -1,0 +1,46 @@
+--- securproto.h.orig	2009-08-11 06:06:40.000000000 +0200
++++ securproto.h	2010-03-16 17:25:17.000000000 +0100
+@@ -32,7 +32,10 @@ from The Open Group.
+ #define X_SecurityQueryVersion		0
+ #define X_SecurityGenerateAuthorization 1
+ #define X_SecurityRevokeAuthorization   2
+-
++/* CLIP_RM */
++#define X_SecurityQueryTrustLevel	3
++/* CLIP_RM */
++ 
+ typedef struct {
+     CARD8       reqType;
+     CARD8       securityReqType;
+@@ -93,6 +96,31 @@ typedef struct {
+ } xSecurityRevokeAuthorizationReq;
+ #define sz_xSecurityRevokeAuthorizationReq 8
+ 
++/* CLIP_RM */
++typedef struct _xSecurityQueryTrustLevelReq {
++    CARD8	reqType;
++    CARD8	securityReqType;
++    CARD16	length B16;
++    CARD32	window B32;    
++} xSecurityQueryTrustLevelReq;
++#define sz_xSecurityQueryTrustLevelReq 8
++
++typedef struct _xSecurityQueryTrustLevelReply {
++    CARD8	type;
++    CARD8	pad0;
++    CARD16	sequenceNumber	B16;
++    CARD32	length		B32;
++    CARD32	window		B32;
++    CARD32	trustLevel	B32;
++    CARD32	pad1		B32;
++    CARD32	pad2		B32;
++    CARD32	pad3		B32;
++    CARD32	pad4		B32;
++} xSecurityQueryTrustLevelReply;
++#define sz_xSecurityQueryTrustLevelReply 32
++
++/* CLIP_RM */
++
+ typedef struct _xSecurityAuthorizationRevokedEvent {
+     BYTE	type;
+     BYTE	detail;

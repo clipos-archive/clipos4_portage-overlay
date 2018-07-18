@@ -1,0 +1,11 @@
+--- pam_tcb/support.h.orig	2008-05-19 16:40:14.000000000 +0200
++++ pam_tcb/support.h	2008-05-19 16:39:23.000000000 +0200
+@@ -12,7 +12,7 @@
+ # include "compat.h"
+ #endif
+ 
+-#define PASSWD_FILE			"/etc/passwd"
++#define PASSWD_FILE			"/etc/core/passwd"
+ #define SHADOW_FILE			"/etc/shadow"
+ 
+ /* should be large enough to hold "*NP*" */

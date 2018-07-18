@@ -1,0 +1,71 @@
+# CLIP ChangeLog for media-libs/raptor
+
+*raptor-2.0.9-r5 (18 Sep 2017)
+
+  18 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +raptor-2.0.9-r5.ebuild, -raptor-2.0.9-r4.ebuild:
+  Rbump to link with icu 58.2.
+
+*raptor-2.0.9-r4 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +raptor-2.0.9-r4.ebuild, -raptor-2.0.9-r3.ebuild:
+  Rbump to link with icu 55.1.
+
+*raptor-2.0.9-r3 (13 May 2015)
+
+  13 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +raptor-2.0.9-r3.ebuild, -raptor-2.0.9-r2.ebuild:
+  Rebuild against icu 54.1.
+
+*raptor-2.0.9-r2 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.9-r2.ebuild, -raptor-2.0.9-r1.ebuild:
+  Force rebuild (icu revdep).
+
+*raptor-2.0.9-r1 (07 Nov 2013)
+
+  07 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.9-r1.ebuild, -raptor-2.0.9.ebuild:
+  Force rebuild (icu revdep).
+
+*raptor-2.0.9 (18 Jul 2013)
+
+  18 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.9.ebuild, -raptor-2.0.8.ebuild:
+  Bump to latest.
+
+  30 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  raptor-2.0.8.ebuild:
+  Remove conflict against self for CLIP.
+
+*raptor-2.0.8 (27 Jul 2012)
+
+  27 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.8.ebuild, -raptor-2.0.7.ebuild:
+  Bump to latest.
+
+*raptor-2.0.7 (06 Apr 2012)
+
+  06 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.7.ebuild, -raptor-2.0.6.ebuild:
+  Security bump to latest, CVE-2012-0037.
+
+*raptor-2.0.6 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.6.ebuild, -raptor-2.0.4.ebuild:
+  Bump to latest.
+
+*raptor-2.0.4 (10 Aug 2011)
+
+  10 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +raptor-2.0.4.ebuild, -raptor-1.4.18.ebuild:
+  Bump to latest.
+
+*raptor-1.4.18 (08 Sep 2009)
+
+  08 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  raptor-1.4.18.ebuild:
+  Initial import. clip-depends fixes.

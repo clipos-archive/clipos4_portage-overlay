@@ -1,0 +1,7 @@
+# CLIP ChangeLog for virtual/perl-Digest-MD5
+
+*perl-Digest-MD5-2.39 (31 May 2013)
+
+  31 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  perl-Digest-MD5-2.39.ebuild:
+  Initial overlay import - clip-deps fix.

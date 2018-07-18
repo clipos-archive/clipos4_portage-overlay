@@ -1,0 +1,43 @@
+Port 22
+Protocol 2
+AddressFamily inet
+
+KexAlgorithms ecdh-sha2-nistp521
+Ciphers chacha20-poly1305@openssh.com
+MACs hmac-sha2-512-etm@openssh.com
+
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_rsa_key
+
+SyslogFacility AUTH
+LogLevel INFO
+
+LoginGraceTime 2m
+PermitRootLogin no
+PermitUserEnvironment no
+PermitTunnel no
+StrictModes yes
+AllowUsers	_admin
+MaxAuthTries 2
+MaxStartups 20
+
+AuthenticationMethods publickey
+PubkeyAuthentication yes
+AuthorizedKeysFile	.ssh/authorized_keys .ssh-remote/authorized_keys
+
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+AllowTcpForwarding no
+GatewayPorts no
+X11Forwarding yes
+XauthLocation /usr/local/bin/xauth
+X11UseLocalHost yes
+PrintMotd no
+PrintLastLog yes
+Banner /etc/ssh/banner
+
+UseDNS no
+TCPKeepAlive yes
+PrintLastLog yes
+AcceptEnv LC_ALL LANG

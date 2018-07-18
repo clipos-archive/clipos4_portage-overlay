@@ -1,0 +1,52 @@
+--- configure.ac.orig	2017-10-23 15:32:26.266476289 +0200
++++ configure.ac	2017-10-23 15:32:56.802477071 +0200
+@@ -45,7 +45,6 @@
+ 
+ # Obtain compiler/linker options from server and required extensions
+ PKG_CHECK_MODULES(XORG, [xorg-server >= 1.12] xproto [inputproto >= 2.1.99.3])
+-PKG_CHECK_MODULES(UDEV, libudev)
+ 
+ PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4])
+ PKG_CHECK_MODULES(MTDEV, mtdev)
+--- src/evdev.c.orig	2017-10-23 15:32:45.282476776 +0200
++++ src/evdev.c	2017-10-23 15:36:26.642482444 +0200
+@@ -40,7 +40,6 @@
+ 
+ #include <linux/version.h>
+ #include <sys/stat.h>
+-#include <libudev.h>
+ #include <unistd.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -223,6 +222,7 @@
+     return FALSE;
+ }
+ 
++#if 0
+ static BOOL
+ EvdevDeviceIsVirtual(const char* devicenode)
+ {
+@@ -257,6 +257,7 @@
+     udev_unref(udev);
+     return rc;
+ }
++#endif
+ 
+ 
+ static EventQueuePtr
+@@ -2855,6 +2856,7 @@
+     if (rc != Success)
+         return;
+ 
++    #if 0
+     if (EvdevDeviceIsVirtual(pEvdev->device))
+     {
+         BOOL virtual = 1;
+@@ -2867,6 +2869,7 @@
+ 
+         XISetDevicePropertyDeletable(dev, prop_virtual, FALSE);
+     }
++    #endif
+ 
+ 
+     XISetDevicePropertyDeletable(dev, prop_device, FALSE);

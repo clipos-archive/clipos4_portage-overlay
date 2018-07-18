@@ -1,0 +1,19 @@
+--- procps/top.c.orig	2015-01-29 12:27:40.411620192 +0100
++++ procps/top.c	2015-01-29 12:31:36.865264941 +0100
+@@ -577,6 +577,8 @@
+ 	 */
+ 	display_cpus(scr_width, scrbuf, lines_rem_p);
+ 
++	/* No loadavg on clip */
++# if 0
+ 	/* Read load average as a string */
+ 	buf = stpcpy(scrbuf, "Load average: ");
+ 	open_read_close("loadavg", buf, sizeof(scrbuf) - sizeof("Load average: "));
+@@ -584,6 +586,7 @@
+ 	strchrnul(buf, '\n')[0] = '\0';
+ 	puts(scrbuf);
+ 	(*lines_rem_p)--;
++#endif
+ 
+ 	return meminfo[MI_MEMTOTAL];
+ }

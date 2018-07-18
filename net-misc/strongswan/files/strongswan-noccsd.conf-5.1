@@ -1,0 +1,40 @@
+# strongswan.conf - strongSwan configuration file
+
+charon {
+
+	close_ike_on_child_failure = yes
+
+	install_routes = no
+
+	install_virtual_ip = no
+
+	process_route = no
+
+	multiple_authentication = no
+
+	# number of worker threads in charon
+	threads = 16
+	
+	# plugins to load in charon
+	load = aes sha2 random nonce x509 pubkey pem openssl hmac kernel-netlink stroke socket-default revocation clip-updown
+
+	plugins {
+		socket-default {
+			use_ipv6 = no
+		}
+	}
+
+	# only retransmit once, we handle that through netmonitor.sh and keep trying
+	# to mount IPsec tunnel anyway.
+	retransmit_tries = 1
+
+	# do not send NAT keepalive too frequently
+	# (useful when using mobile device on battery that needs to sleep)
+	keep_alive = 1h
+}
+
+libstrongswan {
+	x509 {
+		allow_missing_policy = yes
+	}
+}

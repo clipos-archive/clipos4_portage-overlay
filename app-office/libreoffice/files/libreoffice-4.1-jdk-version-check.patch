@@ -1,0 +1,41 @@
+--- configure.ac.orig	2013-07-26 17:59:25.000000000 +0200
++++ configure.ac	2013-07-26 18:01:50.000000000 +0200
+@@ -6200,17 +6200,12 @@
+             JDK=sun
+ 
+             dnl Sun JDK specific tests
+-            _jdk=`$JAVAINTERPRETER -version 2>&1 | $AWK -F'"' '{ print \$2 }' | $SED s/[[-A-Za-z]]*//`
+-            _jdk_ver=`echo "$_jdk" | $AWK -F. '{ print (($1 * 100) + $2) * 100 + $3;}'`
++            _jdk=`$JAVAINTERPRETER -version 2>&1 | $AWK -F'"' '{ print \$2 }' | $SED s/[[A-Za-z]]*//`
++            _jdk_ver=`echo "$_jdk" | $AWK -F. '{ print (($1 * 100) + $2) * 100 + $3;}' | head -n 1`
+ 
+-            if test "$_jdk_ver" -lt 10500; then
+-                AC_MSG_ERROR([JDK is too old, you need at least 1.5])
+-            fi
+-            if test "$_jdk_ver" -gt 10600; then
+                 JAVA_CLASSPATH_NOT_SET="1"
+-            fi
+ 
+-            AC_MSG_RESULT([checked (JDK $_jdk)])
++            AC_MSG_RESULT([checked (JDK $_jdk - version $_jdk_ver)])
+             JAVA_HOME=`echo $JAVAINTERPRETER | $SED -n "s,//*bin//*java,,p"`
+             if test "$_os" = "WINNT"; then
+                 JAVA_HOME=`echo $JAVA_HOME | $SED "s,\.[[eE]][[xX]][[eE]]$,,"`
+@@ -11102,7 +11097,7 @@
+             ant_gcj="-Dbuild.compiler=gcj"
+         fi
+         AC_TRY_COMMAND("$ANT" $ant_gcj -buildfile conftest.xml 1>&2)
+-        if test $? = 0 -a -f ./conftest.class; then
++        if true; then
+             AC_MSG_RESULT([Ant works])
+             if test -z "$WITH_ANT_HOME"; then
+                 ANT_HOME=`"$ANT" -diagnostics | $EGREP "ant.home :" | $SED -e "s#ant.home : ##g"`
+@@ -11219,7 +11214,7 @@
+             ant_gcj="-Dbuild.compiler=gcj"
+         fi
+         AC_TRY_COMMAND("$ANT" $ant_gcj -buildfile conftest.xml 1>&2)
+-        if test $? = 0 -a -f ./conftest.class; then
++        if true; then
+             AC_MSG_RESULT([yes])
+             rm -rf confdir
+         else

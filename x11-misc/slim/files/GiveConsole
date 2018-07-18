@@ -1,0 +1,27 @@
+#!/bin/sh
+# Assign ownership of the console to the invoking user
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+USER="${1}"
+
+killall rebooter
+killall netchoose
+killall Xdialog
+killall xvkbd
+
+chown $USER /dev/console
+
+/usr/local/bin/sessreg -a -w "/var/log/wtmp" -u "/var/run/utmp" \
+	-l $DISPLAY -h "" $USER
+
+
+if [[ -x /usr/local/bin/netchoose ]]; then
+	. /lib/clip/misc.sub
+	# Only priv_user, core_admin and nomad_user groups can set the network configuration
+	case "$(current_gid)" in
+		3000|3001|3004)
+			[[ -f /usr/local/var/net_choice ]] && /usr/local/bin/netswitch.sh "$(cat /usr/local/var/net_choice)" &
+			;;
+	esac
+fi

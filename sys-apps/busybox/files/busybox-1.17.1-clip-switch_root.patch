@@ -1,0 +1,20 @@
+--- util-linux/switch_root.c.orig	2010-08-25 18:43:41.000000000 +0200
++++ util-linux/switch_root.c	2010-08-25 18:45:49.000000000 +0200
+@@ -15,6 +15,9 @@
+ #ifndef TMPFS_MAGIC
+ # define TMPFS_MAGIC ((unsigned)0x01021994)
+ #endif
++#ifndef EXT2_SUPER_MAGIC
++# define EXT2_SUPER_MAGIC ((unsigned)0xef53)
++#endif
+ #ifndef MS_MOVE
+ # define MS_MOVE     8192
+ #endif
+@@ -91,6 +94,7 @@ int switch_root_main(int argc UNUSED_PAR
+ 	statfs("/", &stfs); // this never fails
+ 	if ((unsigned)stfs.f_type != RAMFS_MAGIC
+ 	 && (unsigned)stfs.f_type != TMPFS_MAGIC
++	 && (unsigned)stfs.f_type != EXT2_SUPER_MAGIC
+ 	) {
+ 		bb_error_msg_and_die("root filesystem is not ramfs/tmpfs : 0x%x", stfs.f_type);
+ 	}

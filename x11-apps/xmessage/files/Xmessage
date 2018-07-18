@@ -1,0 +1,6 @@
+*baseTranslations: 		#override :<Key>Return: default-exit()
+*message.scrollVertical:	Never
+*message.scrollHorizontal:	Never
+*Command.shapeStyle:		Rectangle
+*Command.highlightThickness:	2
+*Font: -adobe-helvetica-bold-r-normal--16-180-75-75-p-103-iso8859-1

@@ -1,0 +1,147 @@
+# CLIP ChangeLog for app-crypt/gnupg
+
+*gnupg-2.0.28-r2 (22 Jun 2018)
+
+  22 Jun 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +gnupg-2.0.28-r2.ebuild, -gnupg-2.0.28-r1.ebuild:
+  Backport fix for CVE-2018-12020.
+
+*gnupg-2.0.28-r1 (06 Jan 2016)
+
+  06 Jan 2016; ANSSI <clipos@ssi.gouv.fr>
+  +gnupg-2.0.28-r1.ebuild, -gnupg-2.0.28.ebuild:
+  RBump gnupg.
+
+*gnupg-2.0.28 (29 Dec 2015)
+
+  29 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.28.ebuild, -gnupg-2.0.25-r1.ebuild:
+  Bump to latest.
+
+*gnupg-2.0.25-r1 (05 Aug 2014)
+
+  05 Aug 2014; ANSSI <clipos@ssi.gouv.fr>
+  +gnupg-2.0.25-r1.ebuild, -gnupg-2.0.25.ebuild:
+  Fix bad scdaemon path introduced by previous bump.
+
+*gnupg-2.0.25 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.25.ebuild, -gnupg-2.0.22-r1.ebuild:
+  Bump to latest, fix for CVE-2014-4617.
+
+*gnupg-2.0.22-r1 (14 Nov 2013)
+
+  14 Nov 2013; ANSSI <clipos@ssi.gouv.fr>
+  +gnupg-2.0.22-r1.ebuild, -gnupg-2.0.19-r2.ebuild:
+  Bump to latest + patch clip.
+
+  30 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  gnupg-2.0.19-r2.ebuild:
+  Don't depend on virtual/mta on clip-devstation.
+
+*gnupg-2.0.19-r2 (8 Avr 2013)
+
+  8 Avr 2013; ANSSI <clipos@ssi.gouv.fr>
+  +gnupg-2.0.19-r2.ebuild, -gnupg-2.0.19-r1.ebuild,
+  +files/gnupg-2.0.19-smartcard-4096_and_pcsc.patch:
+  Patch for correct handling of smartcards with 4096 bits RSA keys.
+
+  19 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  gnupg-2.0.19-r1.ebuild, -gnupg-2.0.16-r3.ebuild, 
+  -files/CVE-2010-2547.patch:
+  clip-deps fix (zlib). Remove old.
+
+*gnupg-2.0.19-r1 (17 Oct 2012)
+
+  17 Oct 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  ++, -gnupg-2.0.19.ebuild:
+  Include CLIP specific changes.
+
+*gnupg-2.0.16-r3 (05 Jan 2011)
+
+  05 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.16-r3.ebuild, -gnupg-2.0.16-r2.ebuild:
+  Bump to force relinking with libreadline.so.6.
+
+*gnupg-2.0.16-r2 (09 Aug 2010)
+
+  03 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.16-r2.ebuild, -gnupg-2.0.16-r1.ebuild,
+  Bump to force relinking with libldap.
+
+*gnupg-2.0.16-r1 (03 Aug 2010)
+
+  03 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.16-r1.ebuild, -gnupg-2.0.11-r2.ebuild,
+  +files/CVE-2010-2547.patch:
+  Bump to latest + patch vuln.
+
+*gnupg-2.0.11-r2 (12 Jan 2010)
+
+  12 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.11-r2.ebuild, -gnupg-2.0.11-r1.ebuild:
+  Silent bump to force rebuild with USE ldap.
+
+*gnupg-2.0.11-r1 (11 Dec 2009)
+
+  11 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.11-r1.ebuild, -gnupg-2.0.11.ebuild:
+  Add network access privs to gpg2keys_{hkp,curl}.
+
+*gnupg-2.0.11 (12 Nov 2009)
+
+  12 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.11.ebuild, -gnupg-2.0.9.ebuild,
+  -files/gnupg-2.0.9-gcc-4.3.patch:
+  Bump to latest gentoo stable.
+
+*gnupg-2.0.9 (03 Mar 2009)
+
+  03 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-2.0.9.ebuild, -gnupg-1.9.20-r4.ebuild,
+  -files/gnupg-1.9.20-fbsd.patch, -files/gnupg-1.9.20-fbsd-gcc41.patch,
+  -files/gnupg-1.4.3-jari.patch, -files/gnupg-1.4.3-badruman.patch,
+  -files/gnupg-1.4.3-selftest.patch, -files/gnupg-1.4.3-keyserver.patch,
+  -files/gnupg-1.9.20-fbsd-gcc41.patch, -gnupg-1.4.5-r1.ebuild,
+  +files/gnupg-2.0.9-gcc-4.3.patch:
+  Bump to latest stable, to fix CVE-2008-1530.
+  Remove gnupg1 entirely (not needed anymore).
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 1.4.5-r1 and 1.9.20-r4.
+
+*gnupg-1.4.5-r1 (11 Jul 2007)
+*gnupg-1.9.20-r4 (11 Jul 2007)
+
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gnupg-1.4.5-r1.ebuild, +gnupg-1.9.20-r4.ebuild:
+  Add IUSE clip-deps to remove dependencies on zlib and libc and 
+  libintl.
+  Add IUSE core-deps to further remove dependencies on libgcrypt
+  and libgpg-error.
+
+  12 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  gnupg-1.4.5.ebuild, gnupg-1.9.20-r3.ebuild:
+  Remove stupid mta dependency.
+
+*gnupg-1.4.5 (18 Sep 2006)
+
+  18 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gnupg-1.4.5.ebuild:
+  Import version bump from upstream, fix for GLSA 200608-06. CLIP
+  patch is the same as for 1.4.4.
+
+*gnupg-1.4.4 (07 Sep 2006)
+
+  07 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gnupg-1.4.4.ebuild:
+  CLIP import to fix stray /usr/libexec stuff that does not follow 
+  CPREFIX.
+
+*gnupg-1.9.20-r3 (31 Jul 2006)
+
+  31 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gnupg-1.9.20-r3.ebuild:
+  Initial CLIP import. Make bloody perl dependency conditional on
+  ! use clip.

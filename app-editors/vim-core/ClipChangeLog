@@ -1,0 +1,43 @@
+# CLIP ChangeLog for app-editors/vim-core
+
+*vim-core-7.3.762-r1 (20 Sep 2013)
+
+  20 Sep 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +vim-core-7.3.762-r1.ebuild, -vim-core-7.3.762.ebuild:
+  Rbump to add vim*pager commands.
+
+*vim-core-7.3.762 (05 Aug 2013)
+
+  05 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vim-core-7.3.762.ebuild, -vim-core-7.2.303-r4.ebuild,
+  -files/vimrc-r3:
+  Bump to latest.
+
+*vim-core-7.2.303-r4 (19 Sep 2012)
+
+  19 Sep 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +vim-core-7.2.303-r4.ebuild, -vim-core-7.2.303-r3.ebuild,
+  files/vimrc-devstation:
+  Set filetype for log files.
+  Use devstation config file for livecd as well.
+
+*vim-core-7.2.303-r3 (09 Jan 2012)
+
+  09 Jan 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +vim-core-7.2.303-r3.ebuild, -vim-core-7.2.303-r2.ebuild,
+  files/vimrc-devstation:
+  Extend changelog syntax (use gq* commands to wrap lines) and set strict
+  formating for python files.
+
+*vim-core-7.2.303-r2 (23 May 2011)
+
+  23 May 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +vim-core-7.2.303-r2.ebuild, -vim-core-7.2.303-r1.ebuild,
+  +files/vimrc-devstation:
+  Initial CLIP import, add devstation vimrc.
+
+*vim-core-7.2.303-r1 (21 May 2010)
+
+  21 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vim-core-7.2.303-r1.ebuild, -vim-core-7.2.303.ebuild:
+  Bump to force rebuild with fixed vim.eclass.

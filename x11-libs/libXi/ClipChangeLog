@@ -1,0 +1,31 @@
+# CLIP Changelog for x11-libs/libXi
+
+*libXi-1.7.2 (09 Jul 2013)
+
+  09 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXi-1.7.2.ebuild, -libXi-1.7.1.ebuild:
+  Security bump to latest.
+
+*libXi-1.7.1 (05 Jun 2013)
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXi-1.7.1.ebuild, -libXi-1.6.1.ebuild:
+  Bump to latest.
+
+*libXi-1.6.1 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXi-1.6.1.ebuild, -libXi-1.4.5.ebuild:
+  Bump to latest.
+
+*libXi-1.4.5 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libXi-1.4.5.ebuild, -libXi-1.4.3.ebuild:
+  Bump to latest.
+
+*libXi-1.4.3 (11 Jul 2011)
+
+  11 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  libXi-1.4.3.ebuild:
+  Initial import. Fix dependencies on *proto.

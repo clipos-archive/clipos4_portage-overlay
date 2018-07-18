@@ -1,0 +1,44 @@
+--- /dev/shm/portage/kde-base/plasma-workspace-4.11.19/work/plasma-workspace-4.11.19/CMakeLists.txt	2016-02-23 14:09:11.295705869 +0100
++++ /tmp/plasma-workspace-4.11.19/CMakeLists.txt	2016-02-23 14:15:42.295699607 +0100
+@@ -198,7 +198,7 @@
+   configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
+   configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
+   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
+-    set(EXPORT_XCURSOR_PATH "XCURSOR_PATH=${CMAKE_INSTALL_PREFIX}/share/icons:$XCURSOR_PATH\":~/.icons:/usr/share/icons:/usr/share/pixmaps:/usr/X11R6/lib/X11/icons\"; export XCURSOR_PATH")
++    set(EXPORT_XCURSOR_PATH "XCURSOR_PATH=${CMAKE_INSTALL_PREFIX}/share/icons:$XCURSOR_PATH\":~/.icons:/usr/local/share/icons:/usr/local/share/pixmaps:/usr/X11R6/lib/X11/icons\"; export XCURSOR_PATH")
+   endif(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
+ #DONOTINSTALL   configure_file(startkde.cmake ${CMAKE_CURRENT_BINARY_DIR}/startkde  @ONLY)
+ endif(NOT WIN32)
+--- /dev/shm/portage/kde-base/plasma-workspace-4.11.19/work/plasma-workspace-4.11.19/plasma/desktop/applets/kickoff/core/applicationmodel.cpp	2015-05-07 20:13:26.000000000 +0200
++++ /tmp/plasma-workspace-4.11.19/plasma/desktop/applets/kickoff/core/applicationmodel.cpp	2016-02-23 14:15:42.295699607 +0100
+@@ -686,7 +686,7 @@
+ 
+ /**
+  * FIXME This is a temporary workaround to map the icon names found
+- * in the desktop directory files (from /usr/share/desktop-directories)
++ * in the desktop directory files (from /usr/local/share/desktop-directories)
+  * into the Oxygen icon names.  (Only applies if the Gnome menu files
+  * are also installed)
+  *
+--- /dev/shm/portage/kde-base/plasma-workspace-4.11.19/work/plasma-workspace-4.11.19/plasma/desktop/applets/kickoff/core/models.cpp	2015-05-07 20:13:26.000000000 +0200
++++ /tmp/plasma-workspace-4.11.19/plasma/desktop/applets/kickoff/core/models.cpp	2016-02-23 14:15:42.295699607 +0100
+@@ -60,7 +60,7 @@
+ 
+     // Match files ending with ".desktop" and being local or having a relative
+     // path. For instance applications that still installs .desktop files at
+-    // /usr/share/applnk, like KVirc 3
++    // /usr/local/share/applnk, like KVirc 3
+     if (urlString.endsWith(QLatin1String(".desktop")) && (url.isLocalFile() || url.isRelative())) {
+         // .desktop files may be services (type field == 'Application' or 'Service')
+         // or they may be other types such as links.
+--- /dev/shm/portage/kde-base/plasma-workspace-4.11.19/work/plasma-workspace-4.11.19/startkde.cmake	2015-05-07 20:13:26.000000000 +0200
++++ /tmp/plasma-workspace-4.11.19/startkde.cmake	2016-02-23 14:15:42.295699607 +0100
+@@ -262,7 +262,7 @@
+ # to set it to a list of paths *not* including the KDE prefix if it's not /usr or
+ # /usr/local.
+ if test -z "$XDG_DATA_DIRS"; then
+-    XDG_DATA_DIRS="@SHARE_INSTALL_PREFIX@:/usr/share:/usr/local/share"
++    XDG_DATA_DIRS="@SHARE_INSTALL_PREFIX@:/usr/share:/usr/local/share/"
+ else
+     XDG_DATA_DIRS="@SHARE_INSTALL_PREFIX@:$XDG_DATA_DIRS"
+ fi

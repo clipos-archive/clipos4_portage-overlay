@@ -1,0 +1,8 @@
+
+*xapian-1.2.19-r1 (19 Jul 2017)
+
+  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +xapian-1.2.19-r1.ebuild, -xapian-1.2.19.ebuild:
+  Add clip-deps elements
+
+ 

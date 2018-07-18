@@ -1,0 +1,15 @@
+--- locale-gen.orig	2014-08-05 16:55:03.215676690 +0000
++++ locale-gen	2014-08-05 16:55:14.615360057 +0000
+@@ -113,12 +113,6 @@
+ 	DESTDIR=${EROOT}
+ fi
+ 
+-# XXX: should fix this ...
+-if [[ ${ROOT} != "/" ]] ; then
+-	eerror "Sorry, but ROOT support is incomplete at this time."
+-	exit 0
+-fi
+-
+ : ${CONFIG:=${EROOT}etc/locale.gen}
+ LOCALES=${DESTDIR}usr/share/i18n/locales
+ CHARMAPS=${DESTDIR}usr/share/i18n/charmaps

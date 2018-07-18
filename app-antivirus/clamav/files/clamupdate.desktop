@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Update antiviral signatures
+Name[fr]=Mise à jour antivirus
+Icon=svn-update
+Type=Application
+TryExec=clamupdate.sh
+Exec=clamupdate.sh
+StartupNotify=false
+Categories=Utility;

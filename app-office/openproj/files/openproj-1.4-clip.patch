@@ -1,0 +1,103 @@
+--- openproj_build/resources/openproj.sh.orig	2010-12-01 20:26:48.915709966 +0100
++++ openproj_build/resources/openproj.sh	2010-12-01 20:28:51.739709744 +0100
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ #
+ #The contents of this file are subject to the Common Public Attribution License
+ #Version 1.0 (the "License"); you may not use this file except in compliance with
+@@ -50,9 +50,10 @@
+ #
+ 
+ CONF_DIR="$HOME/.openproj"
+-RUN_CONF="$CONF_DIR/run.conf"
+ VERSION_FILE="$CONF_DIR/java-version"
+-JAVA_INSTALL_DIR="/usr/java"
++DIALOG_CONF_DIR="$HOME/.java/.userPrefs/com/projity/dialog/"
++DIALOG_CONF="$DIALOG_CONF_DIR/prefs.xml"
++JAVA_INSTALL_DIR="/usr/local/lib/java"
+ JAVA_INSTALL_DIR_EXE="bin/java"
+ JAVA_INSTALL_DIR2="/usr/lib/jvm"
+ JAVA_INSTALL_DIR_EXE2="bin/java"
+@@ -63,9 +64,10 @@ MIN_JAVA_VERSION="1.5"
+ #Default conf values
+ JAVA_EXE="java"
+ JAVA_OPTS="-Xms128m -Xmx768m"
+-OPENPROJ_HOME0="/usr/share/openproj"
++OPENPROJ_HOME0="/usr/local/lib/openproj"
+ #OPENPROJ_HOME0=`(dirname $0)`
+ OPENPROJ_HOME="$OPENPROJ_HOME0"
++RUN_CONF="$OPENPROJ_HOME/run.conf"
+ LOG_LEVEL="DEBUG"
+ LOG_FILE="/dev/null"
+ AUTO_CONFIGURATION="1"
+@@ -80,33 +82,6 @@ else
+ 	TAIL_COMMAND="tail"
+ fi
+ 
+-create_run_conf() {
+-	echo "#Auto-generated parameters" > "$RUN_CONF"
+-	echo "AUTO_CONFIGURATION=\"$AUTO_CONFIGURATION\"" >> "$RUN_CONF"
+-	echo "JAVA_EXE=\"$JAVA_EXE\"" >> "$RUN_CONF"
+-
+-	if [ "x$OS_NAME" = "xLinux" ]; then
+-		OS_ID=`lsb_release -i 2> /dev/null | sed "s/.*:[ \t]*\(.*\)/\1/"`
+-		OS_RELEASE=`lsb_release -r 2> /dev/null | sed "s/.*:[ \t]*\(.*\)/\1/"`
+-	else
+-		#OS_ID=`uname -v`
+-		OS_RELEASE=`uname -r`
+-	fi
+-	echo "OS_NAME=\"$OS_NAME\"" >> "$RUN_CONF"
+-	echo "OS_ID=\"$OS_ID\"" >> "$RUN_CONF"
+-	echo "OS_RELEASE=\"$OS_RELEASE\"" >> "$RUN_CONF"
+-
+-	if [ "x$OS_ID" = "xSUSE LINUX" ]; then
+-		#fix broken prefs on SLED10/IBM
+-		JAVA_OPTS="$JAVA_OPTS -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.systemRoot=$HOME/.openproj"
+-	fi
+-	echo "JAVA_OPTS=\"$JAVA_OPTS\"" >> "$RUN_CONF"
+-
+-	#echo "OPENPROJ_HOME=\"$OPENPROJ_HOME\"" >> "$RUN_CONF"
+-	echo "LOG_LEVEL=\"$LOG_LEVEL\"" >> "$RUN_CONF"
+-	echo "LOG_FILE=\"$LOG_FILE\"" >> "$RUN_CONF"
+-}
+-
+ check_java() {
+ 	JAVA_EXE="$1"
+ 	echo "Checking $JAVA_EXE"
+@@ -140,7 +115,6 @@ check_java() {
+ 				fi
+ 				if [ "x$JAVA_IMPL" = "xJava(TM)" ] || [ "x$JAVA_IMPL" = "xIcedTea" ]; then
+ 					echo "OK"
+-					create_run_conf
+ 					JAVA_OK="1"
+ 				else
+ 					echo "NOK, OpenProj requires Sun, IBM or IcedTea implementation"
+@@ -194,6 +168,19 @@ if [ -f "$RUN_CONF" ]; then
+ 	ARGS="$ARGS0"
+ fi
+ 
++if [[ ! -f "${DIALOG_CONF}" ]]; then
++	mkdir -p "${DIALOG_CONF_DIR}"
++
++	cat > "${DIALOG_CONF}" <<EOF
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
++<map MAP_XML_VERSION="1.0">
++  <entry key="userEmail" value=""/>
++  <entry key="validatedLicense" value="true"/>
++</map>
++EOF
++fi
++
+ if [ "$JAVA_OK" -eq "0" ]; then
+ 	echo "Java auto-detection..."
+ 
+@@ -312,7 +299,6 @@ if [ "$JAVA_OK" -eq "0" ]; then
+ 		if [ "x$FIRST_JAVA_WITH_CORRECT_VERSION" != "x" ]; then
+ 			echo "Trying $FIRST_JAVA_WITH_CORRECT_VERSION ..."
+ 			JAVA_EXE="$FIRST_JAVA_WITH_CORRECT_VERSION"
+-			create_run_conf
+ 			run_openproj
+ 			echo $?
+ 		fi

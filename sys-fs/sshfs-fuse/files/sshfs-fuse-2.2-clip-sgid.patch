@@ -1,0 +1,15 @@
+--- a/sshfs.c
++++ b/sshfs.c
+@@ -920,6 +920,12 @@ static int start_ssh(void)
+ 	} else if (pid == 0) {
+ 		int devnull;
+ 
++		/* Use the real-GID */
++		if (setegid(getgid())) {
++			perror("setegid");
++			return 1;
++		}
++
+ #ifdef SSH_NODELAY_WORKAROUND
+ 		if (sshfs.nodelay_workaround &&
+ 		    do_ssh_nodelay_workaround() == -1) {

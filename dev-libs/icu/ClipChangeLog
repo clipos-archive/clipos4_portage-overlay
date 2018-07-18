@@ -1,0 +1,18 @@
+
+*icu-58.2-r2 (13 Sep 2017)
+
+  13 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +icu-58.2-r2.ebuild, -icu-58.2-r1.ebuild:
+  Update icu for firefox/chromium, ebuild modify for backport in EAPI5.
+
+*icu-54.1-r2 (12 May 2015)
+
+  12 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +icu-54.1-r2.ebuild, -icu-54.1-r1.ebuild,
+  files/CVE-2014-6585.patch,
+  files/CVE-2014-6591.patch,
+  files/CVE-2014-7923+7926.patch,
+  files/CVE-2014-8146.patch,
+  files/CVE-2014-8147.patch:
+  Add some security patches from Debian.
+  

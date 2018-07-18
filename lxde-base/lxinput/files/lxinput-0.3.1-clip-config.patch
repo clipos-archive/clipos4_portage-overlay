@@ -1,0 +1,114 @@
+--- src/lxinput.c.orig	2011-07-29 15:10:06.000000000 +0200
++++ src/lxinput.c	2011-08-03 19:09:19.000000000 +0200
+@@ -32,7 +32,7 @@
+ #include <X11/Xlib.h>
+ #include <X11/XKBlib.h>
+ 
+-static char* file = NULL;
++static char* file = "/home/user/.lxinput.conf";
+ static GKeyFile* kf;
+ 
+ static GtkWidget *dlg;
+@@ -69,12 +69,28 @@ static void on_mouse_threshold_changed(G
+                              0, 10, threshold);
+ }
+ 
++static void on_kb_delay_changed(GtkRange* range, gpointer user_data)
++{
++    delay = (int)gtk_range_get_value(range);
++    /* apply keyboard values */
++    XkbSetAutoRepeatRate(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), XkbUseCoreKbd, delay, interval);
++}
++
++static void on_kb_interval_changed(GtkRange* range, gpointer user_data)
++{
++    interval = (int)gtk_range_get_value(range);
++    /* apply keyboard values */
++    XkbSetAutoRepeatRate(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), XkbUseCoreKbd, delay, interval);
++}
++
++#if 0
+ static void on_kb_range_changed(GtkRange* range, int* val)
+ {
+     *val = (int)gtk_range_get_value(range);
+     /* apply keyboard values */
+     XkbSetAutoRepeatRate(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), XkbUseCoreKbd, delay, interval);
+ }
++#endif
+ 
+ /* This function is taken from Gnome's control-center 2.6.0.3 (gnome-settings-mouse.c) and was modified*/
+ #define DEFAULT_PTR_MAP_SIZE 128
+@@ -123,12 +139,14 @@ static void on_kb_beep_toggle(GtkToggleB
+     XChangeKeyboardControl(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), KBBellPercent, &values);
+ }
+ 
++#if 0
+ static gboolean on_change_val(GtkRange *range, GtkScrollType scroll,
+                                  gdouble value, gpointer user_data)
+ {
+-    int interval = GPOINTER_TO_INT(user_data);
++    interval = GPOINTER_TO_INT(user_data);
+     return FALSE;
+ }
++#endif
+ 
+ static const gchar* detect_keymap_program()
+ {
+@@ -178,8 +196,7 @@ static void load_settings()
+     const char* session_name = g_getenv("DESKTOP_SESSION");
+ 	/* load settings from current session config files */
+     if(!session_name)
+-        session_name = "LXDE";
+-	file = g_build_filename( g_get_user_config_dir(), "lxsession", session_name, "desktop.conf", NULL );
++	//file = g_build_filename( g_get_user_config_dir(), "lxsession", session_name, "desktop.conf", NULL );
+ 	ret = g_key_file_load_from_file( kf, file, 0, NULL );
+ 
+     if( ret )
+@@ -260,11 +277,15 @@ int main(int argc, char** argv)
+     load_settings();
+ 
+     /* init the UI */
++    gtk_range_set_range(mouse_accel, 0, 100);
+     gtk_range_set_value(mouse_accel, accel);
++    gtk_range_set_range(mouse_threshold, 0, 100);
+     gtk_range_set_value(mouse_threshold, 110-threshold);
+     gtk_toggle_button_set_active(mouse_left_handed, left_handed);
+ 
++    gtk_range_set_range(kb_delay, 100, 1000);
+     gtk_range_set_value(kb_delay, delay);
++    gtk_range_set_range(kb_interval, 20, 200);
+     gtk_range_set_value(kb_interval, interval);
+     gtk_toggle_button_set_active(kb_beep, beep);
+ 
+@@ -275,9 +296,9 @@ int main(int argc, char** argv)
+     g_signal_connect(mouse_left_handed, "toggled", G_CALLBACK(on_left_handed_toggle), NULL);
+ 
+     set_range_stops(kb_delay, 10);
+-    g_signal_connect(kb_delay, "value-changed", G_CALLBACK(on_kb_range_changed), &kb_delay);
++    g_signal_connect(kb_delay, "value-changed", G_CALLBACK(on_kb_delay_changed), &kb_delay);
+     set_range_stops(kb_interval, 10);
+-    g_signal_connect(kb_interval, "value-changed", G_CALLBACK(on_kb_range_changed), &kb_interval);
++    g_signal_connect(kb_interval, "value-changed", G_CALLBACK(on_kb_interval_changed), &kb_interval);
+     g_signal_connect(kb_beep, "toggled", G_CALLBACK(on_kb_beep_toggle), NULL);
+     g_signal_connect(kb_layout, "clicked", G_CALLBACK(on_kb_layout_clicked), NULL);
+ 
+@@ -330,7 +351,7 @@ int main(int argc, char** argv)
+ 
+     gtk_widget_destroy( dlg );
+ 
+-	g_free( file );
++	//g_free( file );
+     g_key_file_free( kf );
+ 
+     return 0;
+--- po/fr.po.orig	2011-08-03 20:01:42.000000000 +0200
++++ po/fr.po	2011-08-03 20:02:32.000000000 +0200
+@@ -52,7 +52,7 @@ msgstr "Forte"
+ 
+ #: ../data/lxinput.ui.h:9
+ msgid "Input Device Preferences"
+-msgstr "Préférences des périphériques d'entrée"
++msgstr "Préférences Clavier / Souris"
+ 
+ #: ../data/lxinput.ui.h:10
+ msgid "Interval between each key repeat"

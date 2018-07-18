@@ -1,0 +1,75 @@
+# CLIP ChangeLog for x11-drivers/xf86-input-evdev
+
+*xf86-input-evdev-2.10.5-r1 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.10.5-r1.ebuild, -xf86-input-evdev-2.10.5.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*xf86-input-evdev-2.10.5 (23 Oct 2017)
+
+  23 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.10.5.ebuild, -xf86-input-evdev-2.9.2.ebuild:
+  Bump to latest stable.
+
+*xf86-input-evdev-2.9.2 (09 Feb 2016)
+  09 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.9.2.ebuild, -xf86-input-evdev-2.8.4-r1.ebuild:
+  Bump to latest.
+
+*xf86-input-evdev-2.8.4-r1 (13 Oct 2015)
+
+  13 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.8.4-r1.ebuild, -xf86-input-evdev-2.8.4.ebuild:
+  update dependency on linux headers.
+
+*xf86-input-evdev-2.8.4 (07 Jul 2014)
+
+  07 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.8.4.ebuild, -xf86-input-evdev-2.8.2.ebuild:
+  Bump to latest.
+
+*xf86-input-evdev-2.8.2 (21 May 2014)
+
+  21 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.8.2.ebuild, -xf86-input-evdev-2.7.3-r3.ebuild:
+  Bump to latest.
+
+*xf86-input-evdev-2.7.3-r3 (20 Aug 2013)
+
+  20 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.7.3-r3.ebuild, -xf86-input-evdev-2.7.3-r2.ebuild:
+  Force rebuild.
+
+*xf86-input-evdev-2.7.3-r2 (27 Sep 2012)
+
+  27 Sep 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.7.3-r2.ebuild, -xf86-input-evdev-2.7.3-r1.ebuild:
+  Disable udev use flag in xorg dependency for clip/clip-devstation.
+
+*xf86-input-evdev-2.7.3-r1 (07 Sep 2012)
+
+  07 Sep 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.7.3-r1.ebuild, -xf86-input-evdev-2.7.3.ebuild,
+  files/51-ntrig.conf:
+  Add and install config file for N-Trig touchscreen (Dell Latitude ST).
+
+*xf86-input-evdev-2.7.3 (16 Aug 2012)
+
+  16 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.7.3.ebuild, -xf86-input-evdev-2.7.1.ebuild:
+  Bump to latest.
+
+*xf86-input-evdev-2.7.1 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.7.1.ebuild, -xf86-input-evdev-2.6.0-r1.ebuild:
+  Bump to latest + actually install panjit.conf.
+
+*xf86-input-evdev-2.6.0-r1 (30 Jan 2012)
+
+  30 Jan 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xf86-input-evdev-2.6.0-r1.ebuild, -xf86-input-evdev-2.6.0.ebuild,
+  +files/51-panjit.conf:
+  Install 51-panjit.conf to xorg.conf.d to configure Panjit touchscreen.
+  Configure Panjit touchscreen.

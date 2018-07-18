@@ -1,0 +1,32 @@
+# CLIP ChangeLog for app-crypt/qca
+
+*qca-2.0.3-r2 (23 Jan 2014)
+
+  23 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-2.0.3-r2.ebuild, -qca-2.0.3-r1.ebuild,
+  +files/qca-2.0.3+gcc-4.7.patch:
+  Fix build with gcc-4.7.
+
+*qca-2.0.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-2.0.3-r1.ebuild, -qca-2.0.3.ebuild:
+  Force rebuild
+
+*qca-2.0.3 (12 Sep 2011)
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-2.0.3.ebuild, -qca-2.0.2-r3.ebuild:
+  Bump to latest.
+
+*qca-2.0.2-r3 (12 Jan 2010)
+
+  12 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-2.0.2-r3.ebuild, -qca-2.0.2-r2.ebuild:
+  Silent bump to force rebuild with proper LDFLAGS.
+
+*qca-2.0.2-r2 (13 Nov 2009)
+
+  13 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +qca-2.0.2-r2.ebuild:
+  Initial import. CPREFIX fixes.

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+let "minutes=${RANDOM}"
+let "minutes%=60"
+CRONTAB="/update_root/etc/cron/crontab/root"
+
+/bin/echo "${minutes} * * * *  /usr/bin/clip_ntpdate" >> "${CRONTAB}" \
+ || echo " ! Failed to add ntpdate to crontab !" >&2
+
+

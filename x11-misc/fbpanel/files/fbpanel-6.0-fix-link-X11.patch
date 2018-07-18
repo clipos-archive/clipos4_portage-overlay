@@ -1,0 +1,13 @@
+diff --git a/panel/Makefile.in b/panel/Makefile.in
+index 6e9c48e..6d488c3 100644
+--- a/panel/Makefile.in
++++ b/panel/Makefile.in
+@@ -5,7 +5,7 @@ SRCS += xconf.c gconf.c gconf_panel.c gconf_plugins.c
+ #SRCS += configurator.c 
+ 
+ BINTARGET = fbpanel
+-LDFLAGS += $(GMODULE_LIBS)
++LDFLAGS += $(GMODULE_LIBS) -lX11
+ 
+ ifeq (enabled,$(STATIC_BUILD))
+ OBJS += $(wildcard $(TOPDIR)/plugins/*/*.o)

@@ -1,0 +1,11 @@
+--- Imakefile	2011-07-07 15:41:55.000000000 +0200
++++ Imakefile	2011-07-07 15:42:17.234439401 +0200
+@@ -46,6 +46,8 @@
+ XCOMM purpose of DESTDIR is to test an install process by installing in a benign area.
+ 
+ XAPPLOADDIR = /usr/local/etc/X11/app-defaults
++ETCX11DIR = /usr/local/etc/X11
++LIBDIR = /usr/local/lib/X11
+ 
+ XCOMM Comment out the following definition for XAW3D if you don't to want to use
+ XCOMM the 3d Athena Widget Set

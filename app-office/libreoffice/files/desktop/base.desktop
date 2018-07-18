@@ -1,0 +1,22 @@
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Icon=libreoffice-base
+Type=Application
+Categories=Office;Database;X-Red-Hat-Base;X-MandrivaLinux-MoreApplications-Databases;
+Exec=libreoffice --base %U
+MimeType=application/vnd.oasis.opendocument.database;application/vnd.sun.xml.base;
+Name=LibreOffice Base
+GenericName=Database Development
+GenericName[fr]=Gestion de base de données
+GenericName[qtz]=ZSt5‖Database Development
+Comment=Manage databases, create queries and reports to track and manage your information by using Base.
+Comment[fr]=Gérez vos bases de données, créez des recherches et des rapports avec LibreOffice Base.
+Comment[qtz]=l8Gh‖Manage databases, create queries and reports to track and manage your information by using Base.
+InitialPreference=5
+X-Ayatana-Desktop-Shortcuts=X-New
+[X-New Shortcut Group]
+Name=New Database
+Name[qtz]=HaS4‖New Database
+Exec=libreoffice --base %U
+TargetEnvironment=Unity

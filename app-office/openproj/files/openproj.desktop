@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=OpenProj
+GenericName=Project Management
+GenericName[fr]=Gestion de projet
+Icon=openproj.png
+TryExec=openproj
+Exec=openproj %f
+Terminal=false
+MimeType=application/x-openproj;application/vnd.ms-project;application/vnd.ms-project-xml;
+StartupNotify=false
+Categories=Application;Office;ProjectManagement;

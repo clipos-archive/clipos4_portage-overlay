@@ -1,0 +1,13 @@
+--- openproj.sh	2008-04-22 19:38:11.000000000 +0300
++++ openproj.sh	2009-10-11 02:19:59.000000000 +0300
+@@ -63,8 +63,8 @@ MIN_JAVA_VERSION="1.5"
+ #Default conf values
+ JAVA_EXE="java"
+ JAVA_OPTS="-Xms128m -Xmx768m"
+-#OPENPROJ_HOME0="/usr/share/openproj"
+-OPENPROJ_HOME0=`(dirname $0)`
++OPENPROJ_HOME0="/usr/share/openproj"
++#OPENPROJ_HOME0=`(dirname $0)`
+ OPENPROJ_HOME="$OPENPROJ_HOME0"
+ LOG_LEVEL="DEBUG"
+ LOG_FILE="/dev/null"

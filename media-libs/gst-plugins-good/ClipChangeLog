@@ -1,0 +1,44 @@
+# CLIP ChangeLog for media-libs/gst-plugins-good
+
+*gst-plugins-good-1.4.5 (31 Dec 2015)
+
+  31 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-good-1.4.5.ebuild, -gst-plugins-good-1.2.4-r1.ebuild,
+  +files/gst-plugins-good-1.4.5-rtp-test-fixes.patch:
+  Bump to latest.
+
+*gst-plugins-good-1.2.4-r1 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-good-1.2.4-r1.ebuild, -gst-plugins-good-1.2.0.ebuild:
+  Bump to latest, make multilib-aware.
+
+*gst-plugins-good-1.2.0 (12 Nov 2013)
+
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-good-1.2.0.ebuild, -gst-plugins-good-1.0.7.ebuild:
+  Bump to latest.
+
+*gst-plugins-good-1.0.7 (22 Jul 2013)
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-good-1.0.7.ebuild:
+  Initial import from 1.0 branch.
+
+*gst-plugins-good-0.10.31 (22 Jul 2013)
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-good-0.10.31.ebuild, -gst-plugins-good-0.10.30.ebuild:
+  Bump to latest from 0.10 branch.
+
+*gst-plugins-good-0.10.30 (24 Feb 2012)
+
+  24 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-good-0.10.30.ebuild, -gst-plugins-good-0.10.28.ebuild:
+  Bump to latest.
+
+*gst-plugins-good-0.10.28 (09 Jun 2011)
+
+  09 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  gst-plugins-good-0.10.28.ebuild:
+  Initial overlay import - clip-deps fix.

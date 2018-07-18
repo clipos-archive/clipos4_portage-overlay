@@ -1,0 +1,4 @@
+#!/bin/sh
+
+[[ -e /usr/local/var/usb_status ]] || touch /usr/local/var/usb_status
+[[ -e /usr/local/var/net_status ]] || touch /usr/local/var/net_status

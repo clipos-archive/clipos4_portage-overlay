@@ -1,0 +1,17 @@
+# CLIP ChangeLog for dev-python/pillow
+
+*pillow-2.5.3-r1 (26 Oct 2014)
+
+  04 Nov 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +pillow-2.5.3-r1.ebuild, -pillow-2.0.0-r1.ebuild,
+	-files/imaging-1.1.7-no-xv.patch,
+	-files/pillow-2.0.0-delete_hardcoded_paths.patch,
+	-files/pillow-2.0.0-libm_linking.patch:
+	Bump to latest.
+
+*pillow-2.0.0-r1 (29 Jul 2013)
+
+  29 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  pillow-2.0.0-r1.ebuild:
+  Initial import - clip-deps fix.
+

@@ -1,0 +1,54 @@
+# ChangeLog for dev-util/rr
+# Copyright 1999-2017 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+  29 Apr 2017; Justin Lecher <jlec@gentoo.org> metadata.xml:
+  Globally add missing remote ID references to metadata.xml
+
+  Signed-off-by: Justin Lecher <jlec@gentoo.org>
+
+  20 Apr 2017; David Seifert <soap@gentoo.org> rr-4.5.0.ebuild:
+  QA] Add missing python metadata variables
+
+  Package-Manager: Portage-2.3.5, Repoman-2.3.2
+
+  28 Feb 2017; Robin H. Johnson <robbat2@gentoo.org> rr-4.5.0.ebuild:
+  Drop $Id$ per council decision in bug #611234.
+
+  Signed-off-by: Robin H. Johnson <robbat2@gentoo.org>
+
+  13 Feb 2017; Mike Frysinger <vapier@gentoo.org> rr-4.5.0.ebuild:
+  fix leading whitespace errors
+
+  13 Feb 2017; Mike Frysinger <vapier@gentoo.org>
+  +files/rr-4.5.0-sysmacros.patch, rr-4.5.0.ebuild:
+  fix build w/newer glibc
+
+  13 Feb 2017; Mike Frysinger <vapier@gentoo.org> rr-4.5.0.ebuild:
+  clean up build/test deps
+
+  We only need zlib & gdb at runtime.  All the other deps in here
+  are for building & testing only, so drop them from RDEPEND.
+
+  13 Feb 2017; Mike Frysinger <vapier@gentoo.org> rr-4.5.0.ebuild:
+  drop libpfm dep
+
+  Can't find any references in the source to this package (header or lib),
+  and it builds fine w/out it.  Drop the dep.
+
+  13 Feb 2017; Mike Frysinger <vapier@gentoo.org> rr-4.5.0.ebuild:
+  do not build w/-Werror #609192
+
+  12 Feb 2017; Ettore Di Giacinto <mudler@gentoo.org> rr-4.5.0.ebuild:
+  add seccomp requirement
+
+  Package-Manager: Portage-2.3.3, Repoman-2.3.1
+
+*rr-4.5.0 (12 Feb 2017)
+
+  12 Feb 2017; Luca Barbato <lu_zero@gentoo.org> +metadata.xml,
+  +rr-4.5.0.ebuild:
+  Initial import
+
+  Package-Manager: portage-2.3.3
+

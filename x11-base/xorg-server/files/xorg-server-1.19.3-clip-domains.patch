@@ -1,0 +1,202 @@
+*** Xext/security.c.orig	2017-03-15 19:05:25.000000000 +0100
+--- Xext/security.c	2017-08-09 15:33:05.204522670 +0200
+***************
+*** 67,72 ****
+--- 67,73 ----
+  static const char *SecurityTrustedExtensions[] = {
+      "XC-MISC",
+      "BIG-REQUESTS",
++     "XKEYBOARDS",
+      NULL
+  };
+  
+***************
+*** 81,87 ****
+      DixReceiveAccess | DixSendAccess | DixAddAccess | DixRemoveAccess;
+  static const Mask SecurityDeviceMask =
+      DixGetAttrAccess | DixReceiveAccess | DixGetFocusAccess |
+!     DixGrabAccess | DixSetAttrAccess | DixUseAccess;
+  static const Mask SecurityServerMask = DixGetAttrAccess | DixGrabAccess;
+  static const Mask SecurityClientMask = DixGetAttrAccess;
+  
+--- 82,89 ----
+      DixReceiveAccess | DixSendAccess | DixAddAccess | DixRemoveAccess;
+  static const Mask SecurityDeviceMask =
+      DixGetAttrAccess | DixReceiveAccess | DixGetFocusAccess |
+!     DixGrabAccess | DixUseAccess | DixBellAccess |
+!     DixListPropAccess | DixGetPropAccess;
+  static const Mask SecurityServerMask = DixGetAttrAccess | DixGrabAccess;
+  static const Mask SecurityClientMask = DixGetAttrAccess;
+  
+***************
+*** 121,128 ****
+--- 123,136 ----
+          return Success;
+      if (subj->trustLevel == XSecurityClientTrusted)
+          return Success;
++     /* CLIP */
++     if (obj->trustLevel == subj->trustLevel)
++     	return Success;
++     /*
+      if (obj->trustLevel != XSecurityClientTrusted)
+          return Success;
++     */
++     /* /CLIP */
+      if ((requested | allowed) == allowed)
+          return Success;
+  
+***************
+*** 437,447 ****
+      trustLevel = XSecurityClientUntrusted;
+      if (stuff->valueMask & XSecurityTrustLevel) {
+          trustLevel = *values++;
+!         if (trustLevel != XSecurityClientTrusted &&
+              trustLevel != XSecurityClientUntrusted) {
+              client->errorValue = trustLevel;
+              return BadValue;
+          }
+      }
+  
+      /* check group */
+--- 445,459 ----
+      trustLevel = XSecurityClientUntrusted;
+      if (stuff->valueMask & XSecurityTrustLevel) {
+          trustLevel = *values++;
+! 	/* CLIP TODO : perform a valid check here */
+! #if 0
+!        if (trustLevel != XSecurityClientTrusted &&
+              trustLevel != XSecurityClientUntrusted) {
+              client->errorValue = trustLevel;
+              return BadValue;
+          }
++ #endif
++ 	/* /CLIP */
+      }
+  
+      /* check group */
+***************
+*** 584,589 ****
+--- 596,644 ----
+      return Success;
+  }                               /* ProcSecurityRevokeAuthorization */
+  
++ /* CLIP */
++ static int
++ ProcSecurityQueryTrustLevel(
++ 		ClientPtr client)
++ {
++     REQUEST(xSecurityQueryTrustLevelReq);
++     xSecurityQueryTrustLevelReply rep;
++     WindowPtr pWin;
++     SecurityStateRec *subj = dixLookupPrivate(&client->devPrivates, stateKey);
++     SecurityStateRec *obj;
++     int rc;
++ 
++     /* paranoia: this "can't happen" because this extension is hidden
++      * from untrusted clients, but just in case...
++      */
++     if (subj->trustLevel != XSecurityClientTrusted)
++             return BadRequest;
++     
++     REQUEST_SIZE_MATCH(xSecurityQueryTrustLevelReq);
++     
++     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
++     if (rc != Success)
++ 	    return BadWindow;
++     
++     rep.type = X_Reply;
++     rep.sequenceNumber = client->sequence;
++     rep.length = 0;
++     rep.window = stuff->window;
++     obj = dixLookupPrivate(&(wClient(pWin))->devPrivates, stateKey);
++     rep.trustLevel = obj->trustLevel;
++     if (client->swapped)
++     {
++ 	    swaps(&rep.sequenceNumber);
++ 	    swapl(&rep.trustLevel);
++ 	    swapl(&rep.window);
++     }
++     (void)WriteToClient(client, SIZEOF(xSecurityQueryTrustLevelReply),
++ 			(char *)&rep);
++     return client->noClientException;
++ } /* ProcSecurityQueryTrustLevel */
++ /* CLIP */
++ 
++ 
+  static int
+  ProcSecurityDispatch(ClientPtr client)
+  {
+***************
+*** 596,601 ****
+--- 651,660 ----
+          return ProcSecurityGenerateAuthorization(client);
+      case X_SecurityRevokeAuthorization:
+          return ProcSecurityRevokeAuthorization(client);
++    /* CLIP */
++     case X_SecurityQueryTrustLevel:
++         return ProcSecurityQueryTrustLevel(client);  
++     /* CLIP */	
+      default:
+          return BadRequest;
+      }
+***************
+*** 648,653 ****
+--- 707,726 ----
+      return ProcSecurityRevokeAuthorization(client);
+  }                               /* SProcSecurityRevokeAuthorization */
+  
++ /* CLIP */
++ static int
++ SProcSecurityQueryTrustLevel(
++     ClientPtr client)
++ {
++     REQUEST(xSecurityQueryTrustLevelReq);
++ 
++     swaps(&stuff->length);
++     REQUEST_SIZE_MATCH(xSecurityQueryTrustLevelReq);
++     swapl(&stuff->window);
++     return ProcSecurityQueryTrustLevel(client);
++ } /* SProcSecurityQueryTrustLevel */
++ /* /CLIP */
++ 
+  static int
+  SProcSecurityDispatch(ClientPtr client)
+  {
+***************
+*** 660,665 ****
+--- 733,742 ----
+          return SProcSecurityGenerateAuthorization(client);
+      case X_SecurityRevokeAuthorization:
+          return SProcSecurityRevokeAuthorization(client);
++     /* CLIP */
++     case X_SecurityQueryTrustLevel:
++         return SProcSecurityQueryTrustLevel(client);
++     /* CLIP */	
+      default:
+          return BadRequest;
+      }
+***************
+*** 702,711 ****
+      subj = dixLookupPrivate(&rec->client->devPrivates, stateKey);
+      obj = dixLookupPrivate(&serverClient->devPrivates, stateKey);
+  
+-     if (rec->dev != inputInfo.keyboard)
+-         /* this extension only supports the core keyboard */
+-         allowed = requested;
+- 
+      if (SecurityDoCheck(subj, obj, requested, allowed) != Success) {
+          SecurityAudit("Security denied client %d keyboard access on request "
+                        "%s\n", rec->client->index,
+--- 779,784 ----
+***************
+*** 910,915 ****
+--- 983,991 ----
+      if (SecurityDoCheck(subj, obj, DixReceiveAccess, 0) == Success)
+          return;
+  
++     if (obj->haveState && obj->trustLevel == XSecurityClientTrusted)
++ 	return;
++ 
+      SecurityAudit("Security: denied client %d from receiving an event "
+                    "sent to window 0x%lx of client %d\n",
+                    rec->client->index, (unsigned long)rec->pWin->drawable.id,

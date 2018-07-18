@@ -1,0 +1,27 @@
+# CLIP ChangeLog for media-libs/gst-plugins-bad
+
+*gst-plugins-bad-1.4.5 (31 Dec 2015)
+
+  31 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-bad-1.4.5.ebuild, -gst-plugins-bad-1.2.4-r1.ebuild:
+  Bump to latest.
+
+*gst-plugins-bad-1.2.4-r1 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-bad-1.2.4-r1.ebuild, -gst-plugins-bad-1.2.0-r1.ebuild:
+  Bump to latest, make multilib-aware.
+
+*gst-plugins-bad-1.2.0-r1 (12 Nov 2013)
+
+  12 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gst-plugins-bad-1.2.0-r1.ebuild, -gst-plugins-bad-1.0.7.ebuild,
+  +files/gst-plugins-bad-1.2.0-optional-egl.patch:
+  Bump to latest.
+
+*gst-plugins-bad-1.0.7 (22 Jul 2013)
+
+  22 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  gst-plugins-bad-1.0.7.ebuild:
+  Initial import, clip-deps fix.
+

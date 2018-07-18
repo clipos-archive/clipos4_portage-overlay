@@ -1,0 +1,31 @@
+# CLIP ChangeLog for app-text/libebook
+
+*libebook-0.1.2-r2 (13 Sep 2017)
+
+  13 Sep 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libebook-0.1.2-r2.ebuild, -libebook-0.1.2-r1.ebuild:
+  Rbump to link with icu 58.2.
+
+*libebook-0.1.2-r1 (25 Feb 2016)
+
+  25 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libebook-0.1.2-r1.ebuild, -libebook-0.1.2.ebuild:
+  Rbump to link with icu 55.1.
+
+*libebook-0.1.2 (12 May 2015)
+
+  15 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +libebook-0.1.2.ebuild, -libebook-0.1.1.ebuild:
+  Bump to latest stable.
+
+*libebook-0.1.1 (31 Dec 2014)
+
+  31 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libebook-0.1.1.ebuild, -libebook-0.0.2.ebuild:
+  Bump to latest.
+
+*libebook-0.0.2 (07 May 2014)
+
+  07 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libebook-0.0.2.ebuild:
+  Initial import, CPREFIX + clip-deps fix.

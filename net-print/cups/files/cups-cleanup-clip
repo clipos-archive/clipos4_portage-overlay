@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+# Cleanup legacy 'ImpressionAvancee' printer in user's printer.conf
+# Author: Vincent Strubel <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+use strict;
+use warnings;
+
+open IN, "<", $ARGV[0] or die "Failed to open $ARGV[0] for reading";
+open OUT, ">", $ARGV[1] or die "Failed to open $ARGV[1] for writing";
+
+my $np = 0;
+
+while (<IN>) {
+	/<Printer ImpressionAvancee>/ and $np = 1; 
+	print OUT unless ($np); 
+	/<\/Printer>/ and $np = 0;
+}
+
+close IN;
+close OUT;

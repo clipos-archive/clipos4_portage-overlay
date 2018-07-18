@@ -1,0 +1,12 @@
+
+*xfce4-appfinder-4.10.1 (13 Jan 2014)
+
+  13 Jan 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-appfinder-4.10.1.ebuild, -xfce4-appfinder-4.10.0-r1.ebuild:
+  Bump to latest.
+
+*xfce4-appfinder-4.10.0-r1 (31 Dec 2012)
+
+  31 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-appfinder-4.10.0-r1.ebuild, -xfce4-appfinder-4.10.0.ebuild:
+  Bump EAPI.

@@ -1,0 +1,14 @@
+# CLIP ChangeLog for media-libs/silgraphite
+
+*silgraphite-2.3.1-r2 (10 Jun 2014)
+
+  10 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +silgraphite-2.3.1-r2.ebuild, -silgraphite-2.3.1-r1.ebuild:
+  Force rebuild.
+
+*silgraphite-2.3.1-r1 (01 Aug 2013)
+
+  01 Aug 2013; ANSSI <clipos@ssi.gouv.fr>
+  +silgraphite-2.3.1-r1.ebuild, -silgraphite-2.3.1.ebuild:
+  Fixed misplaced pkgconfig files.
+

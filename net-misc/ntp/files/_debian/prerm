@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+CRONTAB="/update_root/etc/cron/crontab/root"
+
+/bin/sed -i -e '/^.*clip_ntpdate.*$/d' "${CRONTAB}"
+
+

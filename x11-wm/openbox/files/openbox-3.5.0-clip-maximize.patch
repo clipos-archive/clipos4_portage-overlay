@@ -1,0 +1,177 @@
+--- ./openbox/client.c.orig	2013-03-19 18:23:11.000000000 +0100
++++ ./openbox/client.c	2013-03-19 18:40:31.000000000 +0100
+@@ -1974,7 +1974,7 @@ void client_setup_decor_and_functions(Ob
+            the case any more though !
+ 
+            but do kill the handle on fully maxed windows */
+-        self->decorations &= ~(OB_FRAME_DECOR_HANDLE | OB_FRAME_DECOR_GRIPS);
++	self->decorations &= ~OB_FRAME_DECOR_TITLEBAR;
+     }
+ 
+     /* if we don't have a titlebar, then we cannot shade! */
+@@ -3536,21 +3536,21 @@ void client_maximize(ObClient *self, gbo
+ 
+     /* these will help configure_full figure out which screen to fill with
+        the window */
+-    x = self->area.x;
+-    y = self->area.y;
+-    w = self->area.width;
+-    h = self->area.height;
++    x = self->area.x + ob_rr_theme->cbwidthx;
++    y = self->area.y + ob_rr_theme->cbwidthy;
++    w = self->area.width - (2 * ob_rr_theme->cbwidthx);
++    h = self->area.height - (2 * ob_rr_theme->cbwidthy);
+ 
+     if (max) {
+         if ((dir == 0 || dir == 1) && !self->max_horz) { /* horz */
+             RECT_SET(self->pre_max_area,
+-                     self->area.x, self->pre_max_area.y,
+-                     self->area.width, self->pre_max_area.height);
++                     x, self->pre_max_area.y,
++                     w, self->pre_max_area.height);
+         }
+         if ((dir == 0 || dir == 2) && !self->max_vert) { /* vert */
+             RECT_SET(self->pre_max_area,
+-                     self->pre_max_area.x, self->area.y,
+-                     self->pre_max_area.width, self->area.height);
++                     self->pre_max_area.x, y, 
++                     self->pre_max_area.width, h);
+         }
+     } else {
+         if ((dir == 0 || dir == 1) && self->max_horz) { /* horz */
+--- ./openbox/frame.c.orig	2012-10-07 05:07:09.000000000 +0200
++++ ./openbox/frame.c	2013-03-19 19:17:42.000000000 +0100
+@@ -348,13 +348,11 @@ void frame_adjust_area(ObFrame *self, gb
+         self->shaded = self->client->shaded;
+ 
+         if (self->decorations & OB_FRAME_DECOR_BORDER)
+-            self->bwidth = self->client->undecorated ?
+-                ob_rr_theme->ubwidth : ob_rr_theme->fbwidth;
++            self->bwidth = ob_rr_theme->fbwidth;
+         else
+             self->bwidth = 0;
+ 
+-        if (self->decorations & OB_FRAME_DECOR_BORDER &&
+-            !self->client->undecorated)
++        if (self->decorations & OB_FRAME_DECOR_BORDER)
+         {
+             self->cbwidth_l = self->cbwidth_r = ob_rr_theme->cbwidthx;
+             self->cbwidth_t = self->cbwidth_b = ob_rr_theme->cbwidthy;
+@@ -362,13 +360,7 @@ void frame_adjust_area(ObFrame *self, gb
+             self->cbwidth_l = self->cbwidth_t =
+                 self->cbwidth_r = self->cbwidth_b = 0;
+ 
+-        if (self->max_horz) {
+-            self->cbwidth_l = self->cbwidth_r = 0;
+-            self->width = self->client->area.width;
+-            if (self->max_vert)
+-                self->cbwidth_b = 0;
+-        } else
+-            self->width = self->client->area.width +
++        self->width = self->client->area.width +
+                 self->cbwidth_l + self->cbwidth_r;
+ 
+         /* some elements are sized based of the width, so don't let them have
+@@ -377,12 +369,10 @@ void frame_adjust_area(ObFrame *self, gb
+                           (ob_rr_theme->grip_width + self->bwidth) * 2 + 1);
+ 
+         STRUT_SET(self->size,
+-                  self->cbwidth_l + (!self->max_horz ? self->bwidth : 0),
+-                  self->cbwidth_t +
+-                  (!self->max_horz || !self->max_vert ? self->bwidth : 0),
+-                  self->cbwidth_r + (!self->max_horz ? self->bwidth : 0),
+-                  self->cbwidth_b +
+-                  (!self->max_horz || !self->max_vert ? self->bwidth : 0));
++                  self->cbwidth_l + self->bwidth,
++                  self->cbwidth_t + self->bwidth,
++                  self->cbwidth_r + self->bwidth,
++                  self->cbwidth_b + self->bwidth);
+ 
+         if (self->decorations & OB_FRAME_DECOR_TITLEBAR)
+             self->size.top += ob_rr_theme->title_height + self->bwidth;
+@@ -497,7 +486,7 @@ void frame_adjust_area(ObFrame *self, gb
+                 gint titlesides;
+ 
+                 /* height of titleleft and titleright */
+-                titlesides = (!self->max_horz ? ob_rr_theme->grip_width : 0);
++                titlesides = ob_rr_theme->grip_width;
+ 
+                 XMoveResizeWindow(obt_display, self->titletop,
+                                   ob_rr_theme->grip_width + self->bwidth, 0,
+@@ -542,7 +531,7 @@ void frame_adjust_area(ObFrame *self, gb
+ 
+                 if (self->decorations & OB_FRAME_DECOR_TITLEBAR) {
+                     XMoveResizeWindow(obt_display, self->titlebottom,
+-                                      (self->max_horz ? 0 : self->bwidth),
++                                      self->bwidth,
+                                       ob_rr_theme->title_height + self->bwidth,
+                                       self->width,
+                                       self->bwidth);
+@@ -562,7 +551,7 @@ void frame_adjust_area(ObFrame *self, gb
+ 
+             if (self->decorations & OB_FRAME_DECOR_TITLEBAR) {
+                 XMoveResizeWindow(obt_display, self->title,
+-                                  (self->max_horz ? 0 : self->bwidth),
++                                  self->bwidth,
+                                   self->bwidth,
+                                   self->width, ob_rr_theme->title_height);
+ 
+@@ -603,7 +592,7 @@ void frame_adjust_area(ObFrame *self, gb
+             layout_title(self);
+ 
+         if (!fake) {
+-            gint sidebwidth = self->max_horz ? 0 : self->bwidth;
++            gint sidebwidth = self->bwidth;
+ 
+             if (self->bwidth && self->size.bottom) {
+                 XMoveResizeWindow(obt_display, self->handlebottom,
+@@ -622,13 +611,9 @@ void frame_adjust_area(ObFrame *self, gb
+                                       self->size.top +
+                                       self->client->area.height +
+                                       self->size.bottom -
+-                                      (!self->max_horz ?
+-                                       ob_rr_theme->grip_width :
+-                                       self->size.bottom - self->cbwidth_b),
++                                      ob_rr_theme->grip_width,
+                                       self->bwidth,
+-                                      (!self->max_horz ?
+-                                       ob_rr_theme->grip_width :
+-                                       self->size.bottom - self->cbwidth_b));
++                                      ob_rr_theme->grip_width);
+                     XMoveResizeWindow(obt_display, self->rgripright,
+                                   self->size.left +
+                                       self->client->area.width +
+@@ -636,13 +621,9 @@ void frame_adjust_area(ObFrame *self, gb
+                                       self->size.top +
+                                       self->client->area.height +
+                                       self->size.bottom -
+-                                      (!self->max_horz ?
+-                                       ob_rr_theme->grip_width :
+-                                       self->size.bottom - self->cbwidth_b),
++                                      ob_rr_theme->grip_width,
+                                       self->bwidth,
+-                                      (!self->max_horz ?
+-                                       ob_rr_theme->grip_width :
+-                                       self->size.bottom - self->cbwidth_b));
++                                      ob_rr_theme->grip_width);
+ 
+                     XMapWindow(obt_display, self->lgripleft);
+                     XMapWindow(obt_display, self->rgripright);
+@@ -778,7 +759,7 @@ void frame_adjust_area(ObFrame *self, gb
+                 XUnmapWindow(obt_display, self->handle);
+             }
+ 
+-            if (self->bwidth && !self->max_horz &&
++            if (self->bwidth &&
+                 (self->client->area.height + self->size.top +
+                  self->size.bottom) > ob_rr_theme->grip_width * 2)
+             {
+@@ -794,7 +775,7 @@ void frame_adjust_area(ObFrame *self, gb
+             } else
+                 XUnmapWindow(obt_display, self->left);
+ 
+-            if (self->bwidth && !self->max_horz &&
++            if (self->bwidth &&
+                 (self->client->area.height + self->size.top +
+                  self->size.bottom) > ob_rr_theme->grip_width * 2)
+             {

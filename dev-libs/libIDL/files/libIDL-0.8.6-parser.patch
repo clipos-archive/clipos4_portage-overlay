@@ -1,0 +1,31 @@
+diff -Naur libIDL-0.8.6/parser.y libIDL-0.8.6-parser/parser.y
+--- libIDL-0.8.6/parser.y	2004-11-12 15:37:11.000000000 +0000
++++ libIDL-0.8.6-parser/parser.y	2012-10-05 08:25:22.616056018 +0000
+@@ -607,11 +607,11 @@
+ 			{ $<str>$ = "struct"; }
+ 			z_new_scope_catch '{'		{
+ 	g_hash_table_insert (__IDL_structunion_ht, $4, $4);
+-	$$ = IDL_type_struct_new ($4, NULL);
++	$<tree>$ = IDL_type_struct_new ($4, NULL);
+ }				member_list
+ 			'}' pop_scope			{
+ 	g_hash_table_remove (__IDL_structunion_ht, $4);
+-	$$ = $<tree>6;
++	$<tree>$ = $<tree>6;
+ 	__IDL_assign_up_node ($$, $7);
+ 	IDL_TYPE_STRUCT ($$).member_list = $7;
+ 	assign_props (IDL_TYPE_STRUCT ($$).ident, $1);
+@@ -624,11 +624,11 @@
+ 				switch_type_spec
+ 			')' '{'				{
+ 	g_hash_table_insert (__IDL_structunion_ht, $4, $4);
+-	$$ = IDL_type_union_new ($4, $7, NULL);
++	$<tree>$ = IDL_type_union_new ($4, $7, NULL);
+ }				switch_body
+ 			'}' pop_scope			{
+ 	g_hash_table_remove (__IDL_structunion_ht, $4);
+-	$$ = $<tree>10;
++	$<tree>$ = $<tree>10;
+ 	__IDL_assign_up_node ($$, $11);
+ 	IDL_TYPE_UNION ($$).switch_body = $11;
+ 	assign_props (IDL_TYPE_UNION ($$).ident, $1);

@@ -1,0 +1,24 @@
+
+*xfwm4-4.10.1 (13 Jan 2014)
+
+  13 Jan 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfwm4-4.10.1.ebuild, -xfwm4-4.10.0-r2.ebuild:
+  Bump to latest.
+
+*xfwm4-4.10.0-r2 (31 Dec 2012)
+
+  31 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfwm4-4.10.0-r2.ebuild, -xfwm4-4.10.0-r1.ebuild:
+  Bump EAPI.
+
+*xfwm4-4.10.0-r1 (22 May 2012)
+
+  22 May 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfwm4-4.10.0-r1.ebuild, -xfwm4-4.10.0.ebuild:
+	Use CPREFIX in docdir path.
+
+*xfwm4-4.8.3-r1 (27 Mar 2012)
+
+  27 Mar 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfwm4-4.8.3-r1.ebuild, -xfwm4-4.8.3.ebuild:
+	Use CPREFIX in docdir path.

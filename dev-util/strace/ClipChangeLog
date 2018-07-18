@@ -1,0 +1,27 @@
+# CLIP ChangeLog for dev-util/strace
+
+*strace-4.16-r1 (08 Feb 2018)
+
+  08 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +strace-4.16-r1.ebuild, -strace-4.16.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*strace-4.16 (29 May 2017)
+
+  29 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +strace-4.16.ebuild,-strace-4.6-r1.ebuild:
+  Update strace to latest version (this vresion contain the syscall fault
+  injection feature).
+
+*strace-4.6-r2 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +strace-4.6-r2.ebuild, -strace-4.6-r1.ebuild:
+  Update linux-headers dependency.
+
+*strace-4.6-r1 (22 Sep 2015)
+
+  22 Sep 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +strace-4.6-r1.ebuild, -strace-4.6.ebuild:
+  Update dependency to linux-headers when compiling for clip-devstation.
+

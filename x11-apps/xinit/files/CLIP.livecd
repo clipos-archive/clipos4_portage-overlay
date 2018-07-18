@@ -1,0 +1,33 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+export LC_ALL=fr_FR
+export LANG=fr_FR
+export HOME=/root
+. /etc/profile
+
+AUTOINST_DB=${AUTOINST_DB:-/mnt/cdrom/autoinst/autoinst.db}
+AUTOINST_SCRIPTS=${AUTOINST_SCRIPTS:-/mnt/cdrom/autoinst/scripts}
+
+/usr/bin/openbox &
+/usr/bin/feh --bg-scale --no-fehbg "/usr/share/wallpapers/clip-16x12.png" &
+if [ -f /usr/bin/clip-autoinst ] && grep -q autoinst /proc/cmdline; then
+	if [ -f "${AUTOINST_DB}" ]; then
+		if [ -d "${AUTOINST_SCRIPTS}" ]; then
+			EXTRA_SCRIPTS="-s ${AUTOINST_SCRIPTS}"
+		else
+			EXTRA_SCRIPTS=""
+		fi
+		CMDLINE="/usr/bin/clip-autoinst -d ${AUTOINST_DB} ${EXTRA_SCRIPTS} \
+			 			-s /usr/share/clip-autoinst"
+		/usr/bin/xterm -hold -geometry +50+50 -e "${CMDLINE}" &
+	else
+		/usr/bin/Xdialog --title "Impossible de démarrer clip-autoinst" \
+				 --msgbox "Base de données clip-autoinst non trouvée au chemin ${AUTOINST_DB}" 0 0 &
+	fi
+else
+	/usr/bin/clip-install-gui &
+fi
+exec /usr/bin/adeskbar livecd
+

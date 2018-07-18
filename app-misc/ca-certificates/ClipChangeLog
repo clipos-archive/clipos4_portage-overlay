@@ -1,0 +1,77 @@
+# CLIP Changelog for app-misc/ca-certificates
+
+*ca-certificates-20161130.3.30.2 (04 Sep 2017)
+
+  04 Sep 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +ca-certificates-20161130.3.30.2.ebuild, -ca-certificates-20160104.3.23-r2.ebuild:
+  Bump to latest stable.
+
+*ca-certificates-20160104.3.23-r2 (26 Sep 2016)
+
+  26 Sep 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ca-certificates-20160104.3.23-r2.ebuild, -ca-certificates-20160104.3.23-r1.ebuild:
+  remove dependency on c_rehash for clip-devstation and clip-livecd.
+
+*ca-certificates-20160104.3.23-r1 (27 Jul 2016)
+
+  27 Jul 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +ca-certificates-20160104.3.23-r1.ebuild, -ca-certificates-20130906-r1.ebuild:
+  Bump to latest stable.
+
+*ca-certificates-20130906 (23 Dec 2013)
+
+  23 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ca-certificates-20130906.ebuild, -ca-certificates-20120212.ebuild:
+  Bump to latest.
+
+*ca-certificates-20120212 (15 Jun 2012)
+
+  15 Jun 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +ca-certificates-20120212.ebuild, -ca-certificates-20111025.ebuild:
+  Add livecd compatibility.
+  Bump to latest.
+
+*ca-certificates-20111025 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ca-certificates-20111025.ebuild, -ca-certificates-20110502-r1.ebuild,
+  +files/ca-certificates-20110502-root.patch:
+  Bump to latest.
+
+*ca-certificates-20110502-r1 (01 Sep 2011)
+
+  01 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ca-certificates-20110502-r1.ebuild, -ca-certificates-20090709.ebuild:
+  Bump to latest.
+
+*ca-certificates-20090709 (22 Jul 2010)
+
+  22 Jul 2010; Olivier Levillain <clipos@ssi.gouv.fr>
+  +ca-certificates-20090709.ebuild, -ca-certificates-20080514-r1.ebuild:
+  Bump new version.
+
+*ca-certificates-20080514-r1 (17 Jul 2008)
+
+  17 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ca-certificates-20080514-r1.ebuild, -ca-certificates-20050804.ebuild:
+  Long past due update of the ca-certificates.
+  Same CPREFIX changes + run update-ca-certificates in postinst.
+  Remove some dependencies as well.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  -ca-certificates-20050804.ebuild:
+  Remove stale ebuild.
+
+*ca-certificates-20050804-r1 (17 Jul 2006)
+
+  17 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +ca-certificates-20050804-r1.ebuild:
+  Remove clip-usrsep support, switch to CPREFIX from modified 
+  portage-2.1.1, no more spurious QA warnings... Free at last <;)
+  
+*ca-certificates-20050804 (28 Apr 2006)
+
+  28 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  ca-certificates-20050804.ebuild:
+  Initial CLIP import, add support for clip-usrsep USE flag.
+

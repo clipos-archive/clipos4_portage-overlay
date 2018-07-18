@@ -1,0 +1,13 @@
+# CLIP ChangeLog for virtual/perl-MIME-Base64
+
+*perl-MIME-Base64-3.130.0-r2 (23 Dec 2013)
+
+  23 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +perl-MIME-Base64-3.130.0-r2.ebuild, -perl-MIME-Base64-3.08.ebuild:
+  Bump to latest.
+
+*perl-MIME-Base64-3.08 (31 May 2013)
+
+  31 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  perl-MIME-Base64-3.08.ebuild:
+  Initial overlay import - clip-deps fix.

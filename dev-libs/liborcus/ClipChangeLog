@@ -1,0 +1,6 @@
+
+*liborcus-0.7.1-r2 (19 Jul 2017)
+
+  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +liborcus-0.7.1-r1.ebuild, -liborcus-0.7.1.ebuild:
+  Add clip-deps to zlib

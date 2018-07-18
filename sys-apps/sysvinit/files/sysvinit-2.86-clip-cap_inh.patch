@@ -1,0 +1,65 @@
+--- src/init.c	2007-01-22 15:01:47.889066024 +0100
++++ src/init.c	2007-01-22 15:02:55.800741880 +0100
+@@ -21,6 +21,15 @@
+  */
+ 
+ #include <sys/types.h>
++
++#ifdef __linux__
++#include <linux/capability.h>
++#include <linux/unistd.h>
++#include <sys/syscall.h>
++#define capget(header, data) syscall(__NR_capget, header, data)
++#define capset(header, data) syscall(__NR_capset, header, data)
++#endif
++
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ #include <sys/wait.h>
+@@ -1126,6 +1135,12 @@
+   int		foundOne = 0;		/* No killing no sleep */
+   int		talk;			/* Talk to the user */
+   int		done = 0;		/* Ready yet? */
++#ifdef __linux__
++  cap_user_header_t cap_head;
++  cap_user_data_t cap_data;
++#endif
++
++
+ 
+ #if DEBUG
+   if (newFamily != NULL) {
+@@ -1312,6 +1327,33 @@
+    */
+   if (fp) fclose(fp);
+ 
++  /* Raise inheritable capability if rebooting / stopping */
++#ifdef __linux__
++  if (!(runlevel == '0' || runlevel == '6')) 
++	  goto cap_out;
++  cap_head = malloc(sizeof(*cap_head));
++  if (!cap_head) {
++    initlog(L_VB, "Out of memory ?");
++    goto cap_out;
++  }
++  cap_data = malloc(sizeof(*cap_data));
++  if (!cap_data) {
++    initlog(L_VB, "Out of memory ?");
++    goto cap_outfreehead;
++  }
++  cap_head->pid = 0;
++  cap_head->version = _LINUX_CAPABILITY_VERSION;
++  if (capget(cap_head, cap_data) == 0) {
++    cap_data->inheritable = 0xfffffeff; /* USE cap-bound ? */
++    capset(cap_head, cap_data);
++    initlog(L_VB, "Raising inheritable capability");
++  }
++  free(cap_data);
++cap_outfreehead:
++  free(cap_head);
++cap_out:
++#endif 
++
+   /*
+    *	Loop through the list of children, and see if they need to
+    *	be killed. 

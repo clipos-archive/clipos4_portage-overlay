@@ -1,0 +1,124 @@
+# CLIP ChangeLog for media-video/vlc
+
+*vlc-2.2.4-r3 (19 Jul 2017)
+
+  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +vlc-2.2.4-r3.ebuild, -vlc-2.2.4-r2.ebuild:
+  Add more clip-deps flags
+
+*vlc-2.2.4-r2 (05 Apr 2017)
+
+  05 Apr 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +vlc-2.2.4-r2.ebuild, -vlc-2.2.1-r1.ebuild:
+  update for chromium 57.0.2987.98
+
+*vlc-2.2.1-r1 (23 Feb 2016)
+  23 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +vlc-2.2.1-r1.ebuild, -vlc-2.1.4-r1.ebuild,
+  -files/vlc-2.1.0-libva-1.2.1-compat.patch,
+  -files/vlc-2.1.0-newer-rdp.patch,
+  +files/opencv-3.0.0.patch,
+  +files/qt4-select.patch,
+  +files/vlc-2.1.0-fix-libtremor-libs.patch,
+  +files/vlc-2.2.0-rdp-1.2.0.patch,
+  +files/vlc-2.2.0-xcb_vdpau.patch,
+  +files/vlc-2.2.1-CVE-2015-5949.patch,
+  +files/vlc-9999-libva-1.2.1-compat.patch:
+  Bump to latest.
+
+*vlc-2.1.4-r1 (02 Jul 2014)
+
+  27 Aug 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +files/vlc-revert-win32-yadif-changes.patch:
+  Revert WIN32 specific changes in yadif (deinterlacer) asm code, which don't
+  build on CLIP i386
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.1.4-r1.ebuild, -vlc-2.1.4.ebuild:
+  Force rebuild, newer ffmpeg.
+
+*vlc-2.1.4 (10 Mar 2014)
+
+  10 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.1.4.ebuild, -vlc-2.1.2.ebuild:
+  Bump to latest.
+
+*vlc-2.1.2 (29 Jan 2014)
+
+  29 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.1.2.ebuild, -vlc-2.1.0.ebuild,
+  -files/vlc-2.1.0-avcodec-check-update-buffered_time-earlier-so-we-sho.patch,
+  -files/vlc-2.1.0-transcode-don-t-check-drift-if-we-have-VLC_TS_INVALI.patch:
+  Bump to latest.
+
+  13 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  vlc-2.1.0.ebuild:
+  clip-deps fix for zlib, glib.
+
+*vlc-2.1.0 (08 Nov 2013)
+
+  08 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.1.0.ebuild, -vlc-2.0.7-r1.ebuild,
+  +files/vlc-2.1.0-TomWij-bisected-PA-broken-underflow.patch,
+  +files/vlc-2.1.0-avcodec-check-update-buffered_time-earlier-so-we-sho.patch,
+  +files/vlc-2.1.0-libva-1.2.1-compat.patch,
+  +files/vlc-2.1.0-newer-rdp.patch,
+  +files/vlc-2.1.0-transcode-don-t-check-drift-if-we-have-VLC_TS_INVALI.patch:
+  Bump to latest. Add dependency on automake-1.14, since autopoint fails
+  with earlier versions.
+
+*vlc-2.0.7-r1 (23 Jul 2013)
+
+  23 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.0.7-r1.ebuild, -vlc-2.0.7.ebuild:
+  Force rebuild against a newer ffmpeg.
+
+*vlc-2.0.7 (25 Jun 2013)
+
+  25 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.0.7.ebuild, -vlc-2.0.6.ebuild:
+  Bump to latest, fixes multiple vulns.
+
+*vlc-2.0.6 (07 May 2013)
+
+  07 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.0.6.ebuild, -vlc-2.0.5_p20130405.ebuild:
+  Bump to final 2.0.6 release.
+
+*vlc-2.0.5_p20130405 (05 Apr 2013)
+
+  05 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.0.5_p20130405.ebuild, -vlc-2.0.5.ebuild,
+  +files/vlc-2.0.5-xcb-more-depth.patch:
+  Bump to a recent snapshot.
+  Add a patch to test more display depths in xcb video backend,
+  needed to find a valid depth in tigervnc.
+
+*vlc-2.0.5 (28 Dec 2012)
+
+  28 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.0.5.ebuild, -vlc-2.0.4.ebuild:
+  Bump to latest to rebuild with pulseaudio support.
+  Add veriexec entry for network access.
+
+*vlc-2.0.4 (13 Nov 2012)
+
+  13 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +vlc-2.0.4.ebuild, -vlc-2.0.3-r1.ebuild:
+  Security update to latest.
+
+*vlc-2.0.3-r1 (08 Oct 2012)
+
+  12 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  vlc-2.0.3-r1.ebuild:
+  Remove multiple dependencies on zlib.
+
+  09 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  vlc-2.0.3-r1.ebuild:
+  Add DESCRIPTION_FR and CATEGORY_FR. clip-deps fixes.
+
+  08 Oct 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +vlc-2.0.3-r1.ebuild, -vlc-2.0.3.ebuild:
+  Don't enable macosx USE flags by default. 
+  Use CPREFIX in docdir.
+  Drop dependency on truetype fonts (no need for subtitles for now).

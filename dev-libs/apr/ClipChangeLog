@@ -1,0 +1,31 @@
+# CLIP ChangeLog for dev-libs/apr-1.2.11
+
+*apr-1.4.6 (26 Mar 2012)
+
+  26 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +apr-1.4.6.ebuild, -apr-1.4.5.ebuild:
+  Bump to latest.
+
+*apr-1.4.5 (05 Sep 2011)
+
+  05 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +apr-1.4.5.ebuild, -apr-1.3.8.ebuild:
+  Bump to latest.
+
+*apr-1.3.8 (17 Aug 2009)
+
+  17 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +apr-1.3.8.ebuild, -apr-1.3.5.ebuild:
+  Bump to latest, needed by subversion-1.6
+
+*apr-1.3.5 (23 Jun 2009)
+
+  23 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +apr-1.3.5.ebuild, -apr-1.2.11.ebuild,
+  Bump to latest, to follow apr-utils bump.
+
+*apr-1.2.11 (20 Jan 2009)
+
+  20 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  apr-1.2.11.ebuild:
+  Initial overlay import. CPREFIX / clip-deps fixes.

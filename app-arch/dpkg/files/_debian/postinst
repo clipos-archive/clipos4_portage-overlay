@@ -1,0 +1,3 @@
+#!/bin/sh
+
+test -e /var/pkg/lib/dpkg/status || touch /var/pkg/lib/dpkg/status

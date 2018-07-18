@@ -1,0 +1,260 @@
+--- ./Makefile.orig	2012-07-05 17:41:05.000000000 +0200
++++ ./Makefile	2012-07-05 17:41:13.000000000 +0200
+@@ -10,6 +10,11 @@ SVNURL= svn+ssh://svn.fedorahosted.org/s
+ SVNPUBURL = http://svn.fedorahosted.org/svn/logrotate
+ SVNTAG = r$(subst .,-,$(VERSION))
+ 
++ifeq ($(WITH_CLIP),yes)
++CFLAGS += -DWITH_CLIP
++LOADLIBES += -le2p
++endif
++
+ ifeq ($(WITH_SELINUX),yes)
+ CFLAGS += -DWITH_SELINUX
+ LOADLIBES += -lselinux
+--- ./logrotate.c.orig	2012-07-05 17:41:05.000000000 +0200
++++ ./logrotate.c	2012-07-05 17:52:09.000000000 +0200
+@@ -18,6 +18,11 @@
+ #include <sys/types.h>
+ #include <utime.h>
+ 
++#ifdef WITH_CLIP
++#include <ext2fs/ext2_fs.h>
++#include <e2p/e2p.h>
++#endif
++
+ #if defined(SunOS)
+ #include <limits.h>
+ #endif
+@@ -113,6 +118,62 @@ int switch_user_back() {
+ 	return switch_user(save_euid, save_egid);
+ }
+ 
++#ifdef WITH_CLIP
++static int
++add_remove_flags(int fd, unsigned long flag, int remove)
++{
++	unsigned long flags;
++
++	if (getflags(fd, &flags))
++		return -1;
++
++	if (remove) 
++		flags &= ~flag;
++	else
++		flags |= flag;
++	
++	if (setflags(fd, flags))
++		return -1;
++
++	return 0;
++}
++
++static int
++f_add_remove_flags(const char *fname, unsigned long flag, int remove)
++{
++	unsigned long flags;
++
++	if (fgetflags(fname, &flags))
++		return -1;
++
++	if (remove) 
++		flags &= ~flag;
++	else
++		flags |= flag;
++	
++	if (fsetflags(fname, flags))
++		return -1;
++
++	return 0;
++
++}
++
++#define set_append_only(fd) add_remove_flags(fd, EXT2_APPEND_FL, 0)
++#define set_immutable(fd) add_remove_flags(fd, EXT2_IMMUTABLE_FL, 0)
++#define unset_flags(fd) add_remove_flags(fd, (EXT2_IMMUTABLE_FL|EXT2_APPEND_FL), 1)
++#define funset_flags(fname) f_add_remove_flags(fname, (EXT2_IMMUTABLE_FL|EXT2_APPEND_FL), 1)
++#define fset_immutable(fname) f_add_remove_flags(fname, EXT2_IMMUTABLE_FL, 0)
++
++#else
++
++#define set_append_only(fd) 0
++#define set_immutable(fd) 0
++#define unset_flags(fd) 0
++#define funset_flags(fname) 0
++#define fset_immutable(fname) 0
++
++#endif
++
+ static void unescape(char *arg)
+ {
+ 	char *p = arg;
+@@ -263,17 +324,11 @@ static int runScript(char *logfn, char *
+ 
+ int createOutputFile(char *fileName, int flags, struct stat *sb)
+ {
+-    int fd;
++    	int fd;
+ 	char template[PATH_MAX + 1];
+-	char *fname;
+-	mode_t umask_value;
+ 	snprintf(template, PATH_MAX, "%s/logrotate_temp.XXXXXX", ourDirName(fileName));
+ 
+-	umask_value = umask(0000);
+-	fname = mktemp(template);
+-	fd = open(fname, (flags | O_EXCL | O_NOFOLLOW), (S_IRUSR | S_IWUSR) & sb->st_mode);
+-	umask(umask_value);
+-
++	fd = mkostemp(template, (flags | O_EXCL | O_NOFOLLOW));
+ 	if (fd < 0) {
+ 		message(MESS_ERROR, "error creating unique temp file: %s\n",
+ 				strerror(errno));
+@@ -308,6 +363,13 @@ int createOutputFile(char *fileName, int
+ 		return -1;
+ 	}
+ 
++	if (set_append_only(fd)) {
++		message(MESS_ERROR, "error setting %s append-only: %s\n",
++			fileName, strerror(errno));
++		close(fd);
++		return -1;
++	}
++
+     return fd;
+ }
+ 
+@@ -321,6 +383,11 @@ static int shred_file(int fd, char *file
+ 	int id = 0;
+ 	int status;
+ 
++	if (unset_flags(fd)) {
++		message(MESS_ERROR, "Failed to unset flags on %s for shredding: %s\n", 
++			filename, strerror(errno));
++		return -1;
++	}
+ 	if (!(log->flags & LOG_FLAG_SHRED)) {
+ 		return unlink(filename);
+ 	}
+@@ -369,6 +436,12 @@ static int removeLogFile(char *name, str
+ 	int fd;
+ 	message(MESS_DEBUG, "removing old log %s\n", name);
+ 
++	if (funset_flags(name)) {
++		message(MESS_ERROR, "error making %s writable: %s\n",
++			name, strerror(errno));
++		return 1;
++	}
++
+ 	if ((fd = open(name, O_RDWR)) < 0) {
+ 		message(MESS_ERROR, "error opening %s: %s\n",
+ 			name, strerror(errno));
+@@ -410,6 +483,10 @@ static int compressLogFile(char *name, s
+     compressedName = alloca(strlen(name) + strlen(log->compress_ext) + 2);
+     sprintf(compressedName, "%s%s", name, log->compress_ext);
+ 
++    if (funset_flags(name)) {
++	message(MESS_ERROR, "unable to remove flags on %s for compression\n", name);
++	return 1;
++    }
+     if ((inFile = open(name, O_RDWR)) < 0) {
+ 	message(MESS_ERROR, "unable to open %s for compression\n", name);
+ 	return 1;
+@@ -459,7 +536,6 @@ static int compressLogFile(char *name, s
+ 	exit(1);
+     }
+ 
+-    close(outFile);
+ 
+     wait(&status);
+ 
+@@ -468,6 +544,13 @@ static int compressLogFile(char *name, s
+ 	return 1;
+     }
+ 
++    if (set_immutable(outFile)) {
++    	message(MESS_ERROR, "failed to set compressed %s immutable: %s\n", 
++			name, strerror(errno));
++	return 1;
++    }
++    close(outFile);
++
+     utim.actime = sb->st_atime;
+     utim.modtime = sb->st_mtime;
+     utime(compressedName,&utim);
+@@ -581,6 +664,11 @@ static int copyTruncate(char *currLog, c
+     message(MESS_DEBUG, "copying %s to %s\n", currLog, saveLog);
+ 
+     if (!debug) {
++	if (funset_flags(currLog)) {
++	    message(MESS_ERROR, "error unsetting flags on %s: %s\n", currLog,
++		    strerror(errno));
++	    return 1;
++	}
+ 	if ((fdcurr = open(currLog, (flags & LOG_FLAG_COPY) ? O_RDONLY : O_RDWR)) < 0) {
+ 	    message(MESS_ERROR, "error opening %s: %s\n", currLog,
+ 		    strerror(errno));
+@@ -688,9 +776,18 @@ static int copyTruncate(char *currLog, c
+ 	message(MESS_DEBUG, "truncating %s\n", currLog);
+ 
+ 	if (!debug)
++	    if (unset_flags(fdcurr)) {
++		message(MESS_ERROR, "error unset flags (truncating) on %s: %s\n", 
++			currLog, strerror(errno));
++		close(fdcurr);
++		close(fdsave);
++		return 1;
++	    }
++
+ 	    if (ftruncate(fdcurr, 0)) {
+ 		message(MESS_ERROR, "error truncating %s: %s\n", currLog,
+ 			strerror(errno));
++		set_append_only(fdcurr);
+ 		close(fdcurr);
+ 		close(fdsave);
+ 		return 1;
+@@ -699,9 +796,34 @@ static int copyTruncate(char *currLog, c
+ 	message(MESS_DEBUG, "Not truncating %s\n", currLog);
+ 
+     if (fdcurr >= 0) {
++
++	if (fchmod(fdcurr, sb->st_mode)) {
++		message(MESS_ERROR, "error setting mode of %s: %s\n",
++				currLog, strerror(errno));
++		close(fdcurr);
++		close(fdsave);
++		return 1;
++	}
++
++
++    	if (set_append_only(fdcurr)) {
++		message(MESS_ERROR, "error setting %s append-only: %s\n", 
++			currLog, strerror(errno));
++		close(fdcurr);
++		close(fdsave);
++		return 1;
++	}
++
+ 	close(fdcurr);
+     }
++
+     if (fdsave >= 0) {
++	if (set_immutable(fdsave)) {
++		message(MESS_ERROR, "error setting %s immutable: %s\n", 
++			saveLog, strerror(errno));
++		close(fdsave);
++		return 1;
++	}
+ 	close(fdsave);
+     }
+     return 0;
+@@ -1309,7 +1431,9 @@ int rotateSingleLog(struct logInfo *log,
+ 		message(MESS_DEBUG, "renaming %s to %s\n", log->files[logNum],
+ 		    rotNames->finalName);
+ 	    if (!debug && !hasErrors &&
+-		rename(log->files[logNum], rotNames->finalName)) {
++		(funset_flags(log->files[logNum]) ||
++		rename(log->files[logNum], rotNames->finalName) 
++		|| fset_immutable(rotNames->finalName))) {
+ 		message(MESS_ERROR, "failed to rename %s to %s: %s\n",
+ 			log->files[logNum], rotNames->finalName,
+ 			strerror(errno));

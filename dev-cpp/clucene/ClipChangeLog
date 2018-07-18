@@ -1,0 +1,11 @@
+# CLIP ChangeLog for dev-cpp/clucene
+
+  02 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  clucene-2.3.3.4-r4.ebuild:
+  Add inherit base, as in upstream ebuild.
+
+*clucene-2.3.3.4-r4 (22 Oct 2012)
+
+  22 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  clucene-2.3.3.4-r4.ebuild: 
+  Initial import, CPREFIX fix.

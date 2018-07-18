@@ -1,0 +1,78 @@
+#!/bin/sh
+
+# ssh-update-known-hosts - re-create USER's /etc/known_hosts
+# by including all RSA and ECDSA public host keys defined in
+# /etc/jails/*/ssh.
+#
+# Copyright 2014 SGDSN/ANSSI
+# Author: Vincent Strubel <clipos@ssi.gouv.fr>
+# Distributed under the terms of the GNU General Public License v2
+
+log() {
+	local msg="ssh-update-known-hosts: ${1}"
+	echo "${msg}"
+	logger -p daemon.info "${msg}"
+}
+
+warn() {
+	local msg="ssh-update-known-hosts: ${1}"
+	echo "${msg}" >&2
+	logger -p daemon.warning "${msg}"
+}
+
+error() {
+	warn "${1}"
+	exit 1
+}
+
+add_jail_ssh() {
+	local jailpath="${1}"
+	local dest="${2}"
+	local jail="$(basename "${jailpath}")"
+
+	SSH_ADDR=""
+	SSH_HOST_KEY_PATH=""
+
+	source "${jailpath}/ssh"
+	if [[ -z "${SSH_ADDR}" ]]; then
+		warn "jail ${jail} has no SSH_ADDR, skipping it"
+		return 1
+	fi
+	if [[ -z "${SSH_HOST_KEY_PATH}" ]]; then
+		warn "jail ${jail} has no SSH_HOST_KEY_PATH, skipping it"
+		return 1
+	fi
+
+	local rsa="${SSH_HOST_KEY_PATH}/ssh_host_rsa_key.pub"
+	local ecdsa="${SSH_HOST_KEY_PATH}/ssh_host_ecdsa_key.pub"
+
+	for key in "${rsa}" "${ecdsa}"; do
+		[[ -f "${key}" ]] || continue
+
+		if ! echo -n "${SSH_ADDR} " >> "${dest}"; then
+			warn "failed to write to ${dest} for jail ${jail}"
+			continue # No harm, no foul
+		fi
+		if ! awk '{print $1" "$2}' "${key}" >> "${dest}"; then
+			warn "failed to write public key ${key} to ${dest}"
+			continue # Foul: we leave an incomplete line in $dest
+			         # but this should not happen anyway
+		fi
+	done
+}
+
+DEST="/mounts/user_root/etc/known_hosts"
+TEMP="$(mktemp /tmp/known_hosts.XXXXXXXX)"
+
+[[ -n "${TEMP}" ]] || error "failed to create temporary file"
+
+for JAILPATH in "/etc/jails/"*; do
+	[[ -e "${JAILPATH}/ssh" ]] || continue
+	add_jail_ssh "${JAILPATH}" "${TEMP}"
+done
+
+mv "${TEMP}" "${DEST}" || error "could not write to ${DEST}"
+chown root:root "${DEST}" || error "could not chown ${DEST}"
+chmod 644 "${DEST}" || error "could not chmod ${DEST}"
+
+log "${DEST} successfully updated"

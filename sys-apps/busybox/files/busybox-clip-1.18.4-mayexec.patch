@@ -1,0 +1,57 @@
+--- ./shell/Config.src.orig	2011-03-13 02:45:40.000000000 +0100
++++ ./shell/Config.src	2011-05-24 16:58:17.000000000 +0200
+@@ -135,4 +135,15 @@ config FEATURE_SH_NOFORK
+ 
+ 	  This feature is relatively new. Use with care.
+ 
++config ASH_EXEC_PERMS
++	bool "Check exec perms before sourcing a file"
++	default n
++	depends on ASH
++	help
++	  When this option is set, ash will check execution permissions on any
++	  file it sources or reads commands from. If execution is denied on 
++	  such a file, ash will not read any commands from it, and log the event
++	  through syslog.
++
++
+ endmenu
+--- ./shell/ash.c.orig	2011-05-24 16:47:17.000000000 +0200
++++ ./shell/ash.c	2011-05-24 16:57:34.000000000 +0200
+@@ -64,6 +64,21 @@
+ # define IF_NOT_FEATURE_SH_STANDALONE(...) __VA_ARGS__
+ #endif
+ 
++#if ENABLE_ASH_EXEC_PERMS
++#include <syslog.h>
++#ifndef O_MAYEXEC
++#define O_MAYEXEC 00000040
++#endif
++static inline void 
++handle_execperms_error(const char *fname)
++{
++	if (errno != EPERM && errno != EACCES)
++		return;
++	syslog(LOG_USER|LOG_ERR, "%s(%d): denied opening non-executable %s\n",
++			applet_name, getpid(), fname);
++}
++#endif
++
+ #ifndef PIPE_BUF
+ # define PIPE_BUF 4096           /* amount of buffering in a pipe */
+ #endif
+@@ -9889,8 +9904,14 @@ setinputfile(const char *fname, int flag
+ 	int fd2;
+ 
+ 	INT_OFF;
++#if ENABLE_ASH_EXEC_PERMS
++	fd = open(fname, O_RDONLY|O_MAYEXEC);
++	if (fd < 0) {
++		handle_execperms_error(fname);
++#else
+ 	fd = open(fname, O_RDONLY);
+ 	if (fd < 0) {
++#endif
+ 		if (flags & INPUT_NOFILE_OK)
+ 			goto out;
+ 		ash_msg_and_raise_error("can't open '%s'", fname);

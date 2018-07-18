@@ -1,0 +1,6 @@
+
+*gnome-pty-helper-0.28.2 (27 Mar 2012)
+
+  27 Mar 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +gnome-pty-helper-0.28.2.ebuild, -gnome-pty-helper-0.28.1.ebuild:
+  gnome-pty-helper uses vte from the same version, so bump it.

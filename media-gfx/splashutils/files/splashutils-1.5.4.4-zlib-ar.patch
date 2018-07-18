@@ -1,0 +1,11 @@
+--- libs/Makefile.am.orig	2013-01-04 14:28:05.109009737 +0100
++++ libs/Makefile.am	2013-01-04 14:28:19.722342122 +0100
+@@ -102,7 +102,7 @@ libz.a:
+ 	if ! $(MAKE) --question $(AM_MAKEFLAGS) CC="$(KLCC)" AR="$(AR) rc" RANLIB="$(RANLIB)" libz.a ; then \
+ 		$(call infmsg,MAKE,zlib.a) ; \
+ 	fi ; \
+-	$(MAKE) $(AM_MAKEFLAGS) CC="$(KLCC)" AR="$(AR) rc" RANLIB="$(RANLIB)" libz.a $(OUTPUT)
++	$(MAKE) $(AM_MAKEFLAGS) CC="$(KLCC)" AR="$(AR)" RANLIB="$(RANLIB)" libz.a $(OUTPUT)
+ 	$(Q)$(MKDIR_P) $(@D)
+ 	$(Q)cp -f  $(LIBZ_SOURCE)/libz.a $@
+ 

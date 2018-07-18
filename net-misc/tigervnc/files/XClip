@@ -1,0 +1,77 @@
+#!/bin/sh
+# Copyright 2018 ANSSI
+# Distributed under the terms of the GNU General Public License v2
+
+DISPLAYNUM=":1"
+FONTPATH="/usr/local/share/fonts/misc,/usr/local/share/fonts/75dpi,/usr/local/share/fonts/100dpi,/usr/local/share/fonts/ttf-bitstream-vera,/usr/local/share/fonts/corefonts,/usr/local/share/fonts/Type1,/usr/local/share/fonts/OTF"
+
+RFBWAIT=12000
+RFBAUTH="/var/run/vncpasswd"
+RFBSOCK="/var/run/vnc/vnc1"
+
+COOKIE=`dd if=/dev/urandom bs=16 count=1 2>/dev/null | hexdump -e \\"%08x\\"`
+HOST=`uname -n`
+
+XAUTHORITY=${HOME}/.xauthority
+
+export XAUTHORITY
+
+get_screen_geom() {
+	local gfile="/etc/core/screen.geom"
+	[[ -f "/etc/core/current.geom" ]] && gfile="/etc/core/current.geom" 
+	local geom="$(cat "${gfile}")"
+	[[ -n "${geom}" ]] || exit 1
+	local geomx="${geom%x*}"
+	local geomy="${geom#*x}"
+	geomy="${geomy%:*}"
+	
+	case "$(cat /var/run/viewmode)" in
+	fullscreen)
+		export SCREEN_X=${geomx}
+		export SCREEN_Y=$(expr ${geomy} - 3 )
+		;;
+	mix)
+		export SCREEN_X=$(expr ${geomx} - 32 )
+		export SCREEN_Y=${geomy}
+		;;
+	mixborder)
+		export SCREEN_X=$(expr ${geomx} - 38 )
+		export SCREEN_Y=$(expr ${geomy} - 6 )
+		;;
+	*)
+		export SCREEN_X=$(expr ${geomx} - 6 )
+		export SCREEN_Y=$(expr ${geomy} - 60 )
+		;;
+	esac
+}
+
+get_screen_geom
+
+mkdir -p /tmp/.X11-unix
+
+/usr/local/bin/xauth -f $XAUTHORITY add :1 . "$COOKIE"
+
+/usr/local/bin/xinit $SESSION -- /usr/local/bin/Xvnc $DISPLAYNUM -desktop 'X' \
+		-auth $XAUTHORITY \
+		-deferglyphs 16 -br -shmem -s 0 -dpi 96 -v \
+		-geometry ${SCREEN_X}x${SCREEN_Y} \
+		-rfbwait $RFBWAIT \
+		-rfbauth $RFBAUTH \
+		-MaxCutText=0 \
+		-SendCutText=0 -AcceptCutText=0 \
+		-DeferUpdate=10 \
+		-CompareFB=0 -ImprovedHextile=0 \
+		-nolisten tcp 1>/home/user/.xsession-log 2>/home/user/.xsession-errors &
+
+PID=$!
+
+wait $PID
+
+rm -f /tmp/.X1-lock
+rm -f /tmp/.X11-unix/X1
+rmdir /tmp/.X11-unix
+rm -f /var/run/vnc/vnc1
+
+kill -TERM -1
+sleep 1
+kill -KILL -1

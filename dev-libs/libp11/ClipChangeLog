@@ -1,0 +1,8 @@
+# CLIP ChangeLog for dev-libs/libp11
+
+*libp11-0.2.7.ebuild (12 Jul 2010)
+
+  12 Jul 2010; Benjamin Morin <clipos@ssi.gouv.fr>
+  +libp11-0.2.7.ebuild
+  Initial import.
+

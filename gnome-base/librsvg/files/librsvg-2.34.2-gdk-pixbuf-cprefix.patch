@@ -1,0 +1,47 @@
+--- configure.in.orig	2012-02-16 20:18:27.000000000 +0100
++++ configure.in	2012-02-16 20:25:42.000000000 +0100
+@@ -286,7 +286,12 @@
+   [],[enable_pixbuf_loader=yes])
+ AC_MSG_RESULT([$enable_pixbuf_loader])
+ 
+-gdk_pixbuf_moduledir=
++AC_ARG_WITH([pixbuf-dir],
++  [AS_HELP_STRING([--with-pixbuf-dir=path],[path to the gdk pixbuf binary dir])],
++  [], [with_pixbuf_dir=])
++AC_MSG_RESULT([$with_pixbuf_dir])
++gdk_pixbuf_binarydir=$with_pixbuf_dir
++
+ if test "$enable_pixbuf_loader" = "yes"; then
+   PKG_CHECK_MODULES([GDK_PIXBUF],[gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED])
+ 
+@@ -296,18 +301,25 @@
+     AC_MSG_ERROR([gdk-pixbuf-query-loaders not found in path])
+   fi
+ 
+-  # First try the standalone gdk-pixbuf
+   gdk_pixbuf_binary_version="`$PKG_CONFIG --variable=gdk_pixbuf_binary_version gdk-pixbuf-2.0`"
+-  gdk_pixbuf_binarydir="`$PKG_CONFIG --variable=gdk_pixbuf_binarydir gdk-pixbuf-2.0`"
+-  gdk_pixbuf_moduledir=`$PKG_CONFIG --variable gdk_pixbuf_moduledir gdk-pixbuf-2.0`
+-  gdk_pixbuf_cache_file=`$PKG_CONFIG --variable gdk_pixbuf_cache_file gdk-pixbuf-2.0`
++  if test "x$gdk_pixbuf_binarydir" != "x"; then
++      gdk_pixbuf_moduledir="$gdk_pixbuf_binarydir/loaders"
++      gdk_pixbuf_cache_file="$gdk_pixbuf_binarydir/loaders.cache"
++  else
++    # First try the standalone gdk-pixbuf
++    gdk_pixbuf_binarydir="`$PKG_CONFIG --variable=gdk_pixbuf_binarydir gdk-pixbuf-2.0`"
++    gdk_pixbuf_moduledir=`$PKG_CONFIG --variable gdk_pixbuf_moduledir gdk-pixbuf-2.0`
++    gdk_pixbuf_cache_file=`$PKG_CONFIG --variable gdk_pixbuf_cache_file gdk-pixbuf-2.0`
++  fi
+ 
+   # If that didn't work, fall back to the gtk+-2.0 one
+   if test "x$gdk_pixbuf_moduledir" = "x"; then
+     gtk_binary_version="`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`"
+     gdk_pixbuf_binarydir='${sysconfdir}/gtk-2.0'
+     gdk_pixbuf_moduledir='${libdir}/gtk-2.0/'
+-    gdk_pixbuf_moduledir="$gdk_pixbuf_moduledir/$gtk_binary_version/loaders"
++    if test "x$gdk_pixbuf_moduledir"="x"; then
++      gdk_pixbuf_moduledir="$gdk_pixbuf_moduledir/$gtk_binary_version/loaders"
++    fi
+     gdk_pixbuf_cache_file='${gdk_pixbuf_binarydir}/gdk-pixbuf.loaders'
+   fi
+ fi

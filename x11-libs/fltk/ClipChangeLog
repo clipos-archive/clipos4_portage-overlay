@@ -1,0 +1,34 @@
+# CLIP ChangeLog for x11-libs/fltk
+
+*fltk-1.3.3-r4 (20 Jun 2016)
+
+  20 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +fltk-1.3.3-r4.ebuild, -fltk-1.3.3-r3.ebuild:
+  Copy LDFLAGS to DSOFLAGS so the library gets the correct rpath.
+
+*fltk-1.3.2-r3 (18 Nov 2013)
+
+  18 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +fltk-1.3.2-r3.ebuild, -fltk-1.3.2-r2.ebuild:
+  Force rebuild (libpng revdep).
+
+*fltk-1.3.2-r2 (29 Oct 2013)
+
+  29 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +fltk-1.3.2-r2.ebuild, -fltk-1.3.2-r1.ebuild:
+  Force rebuild, bump x11-clipboard patch in patch bundle as
+  per tigervnc instructions.
+
+*fltk-1.3.2-r1 (22 Aug 2013)
+
+  22 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +fltk-1.3.2-r1.ebuild, -fltk-1.3.2.ebuild:
+  Add a patch bundle to apply all patches recommended in 
+  tigervnc's README.
+
+*fltk-1.3.2 (20 Aug 2013)
+
+  20 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  fltk-1.3.2.ebuild:
+  Initial overlay import. CPREFIX + clip-deps fixes.
+

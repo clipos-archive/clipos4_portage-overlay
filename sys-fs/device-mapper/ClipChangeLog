@@ -1,0 +1,31 @@
+# CLIP ChangeLog for sys-fs/device-mapper
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  device-mapper-1.02.24-r1.ebuild:
+  Switch to verictl2.eclass.
+
+*device-mapper-1.02.24-r1 (12 Jun 2008)
+
+  12 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +device-mapper-1.02.24-r1.ebuild, -device-mapper-1.02.07-r2.ebuild:
+  Bump to latest stable.
+
+*device-mapper-1.02.07-r3 (11 Jun 2008)
+
+  11 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +device-mapper-1.02.07-r3.ebuild, -device-mapper-1.02.07-r2.ebuild:
+  Switch to CCSD veriexec hashes.
+
+*device-mapper-1.02.07-r2 (28 Mar 2008)
+
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +device-mapper-1.02.07-r2.ebuild, -device-mapper-1.02.07-r1.ebuild:
+  Turn the forced veriexec capabilities into authorized ones, that 
+  need to be activated by those from hotplug / usbadmin / xdm.
+
+*device-mapper-1.02.07-r1 (21 Aug 2007) 
+  21 Aug 2007; EADS D&S <clipos@ssi.gouv.fr>
+  +device-mapper-1.02.07-r1.ebuild:
+  Add verictl support, grant dmsetup the following possible caps :
+   - CAP_SYS_ADMIN
+   - CAP_MKNOD

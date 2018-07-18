@@ -1,0 +1,209 @@
+--- ./server/fd.c.orig	2013-11-08 19:23:34.000000000 +0100
++++ ./server/fd.c	2013-11-22 16:32:43.000000000 +0100
+@@ -103,6 +103,12 @@
+ #include "winternl.h"
+ #include "winioctl.h"
+ 
++/* CLIP */
++#ifndef O_MAYEXEC
++#define O_MAYEXEC 00000040
++#endif
++/* /CLIP */
++
+ #if defined(HAVE_SYS_EPOLL_H) && defined(HAVE_EPOLL_CREATE)
+ # include <sys/epoll.h>
+ # define USE_EPOLL
+@@ -1736,6 +1742,9 @@ struct fd *open_fd( struct fd *root, con
+     const char *unlink_name = "";
+     int root_fd = -1;
+     int rw_mode;
++    /* CLIP */
++    int exec_mode = 0;
++    /* /CLIP */
+ 
+     if (((options & FILE_DELETE_ON_CLOSE) && !(access & DELETE)) ||
+         ((options & FILE_DIRECTORY_FILE) && (flags & O_TRUNC)))
+@@ -1785,10 +1794,18 @@ struct fd *open_fd( struct fd *root, con
+         else rw_mode = O_WRONLY;
+     }
+     else rw_mode = O_RDONLY;
++    /* CLIP */
++    if (access & GENERIC_EXECUTE) {
++    	exec_mode = O_MAYEXEC;
++    }
++    if (access & FILE_EXECUTE) {
++    	exec_mode = O_MAYEXEC;
++    }
++    /* /CLIP */
+ 
+     fd->unix_name = dup_fd_name( root, name );
+ 
+-    if ((fd->unix_fd = open( name, rw_mode | (flags & ~O_TRUNC), *mode )) == -1)
++    if ((fd->unix_fd = open( name, exec_mode | rw_mode | (flags & ~O_TRUNC), *mode )) == -1)
+     {
+         /* if we tried to open a directory for write access, retry read-only */
+         if (errno == EISDIR)
+--- ./loader/preloader.c.orig	2013-11-08 19:23:34.000000000 +0100
++++ ./loader/preloader.c	2013-11-22 16:32:43.000000000 +0100
+@@ -106,6 +106,12 @@
+ #define MAP_NORESERVE 0
+ #endif
+ 
++/* CLIP */
++#ifndef O_MAYEXEC
++#define O_MAYEXEC 00000040
++#endif
++/* /CLIP */
++
+ static struct wine_preload_info preload_info[] =
+ {
+ #ifdef __i386__
+@@ -688,7 +694,10 @@ static void map_so_lib( const char *name
+       } loadcmds[16], *c;
+     size_t nloadcmds = 0, maplength;
+ 
+-    fd = wld_open( name, O_RDONLY );
++    /* CLIP */
++    // fd = wld_open( name, O_RDONLY );
++    fd = wld_open( name, O_RDONLY|O_MAYEXEC );
++    /* /CLIP */
+     if (fd == -1) fatal_error("%s: could not open\n", name );
+ 
+     if (wld_read( fd, buf, sizeof(buf) ) != sizeof(buf))
+--- ./dlls/ntdll/loader.c.orig	2013-11-08 19:23:34.000000000 +0100
++++ ./dlls/ntdll/loader.c	2013-11-22 16:34:22.000000000 +0100
+@@ -1881,7 +1881,7 @@ static NTSTATUS find_dll_file( const WCH
+             attr.ObjectName = &nt_name;
+             attr.SecurityDescriptor = NULL;
+             attr.SecurityQualityOfService = NULL;
+-            if (NtOpenFile( handle, GENERIC_READ, &attr, &io, FILE_SHARE_READ|FILE_SHARE_DELETE, FILE_SYNCHRONOUS_IO_NONALERT|FILE_NON_DIRECTORY_FILE )) *handle = 0;
++            if (NtOpenFile( handle, GENERIC_READ|GENERIC_EXECUTE, &attr, &io, FILE_SHARE_READ|FILE_SHARE_DELETE, FILE_SYNCHRONOUS_IO_NONALERT|FILE_NON_DIRECTORY_FILE )) *handle = 0;
+             goto found;
+         }
+ 
+@@ -1916,7 +1916,7 @@ static NTSTATUS find_dll_file( const WCH
+         attr.ObjectName = &nt_name;
+         attr.SecurityDescriptor = NULL;
+         attr.SecurityQualityOfService = NULL;
+-        if (NtOpenFile( handle, GENERIC_READ, &attr, &io, FILE_SHARE_READ|FILE_SHARE_DELETE, FILE_SYNCHRONOUS_IO_NONALERT|FILE_NON_DIRECTORY_FILE )) *handle = 0;
++        if (NtOpenFile( handle, GENERIC_READ|GENERIC_EXECUTE, &attr, &io, FILE_SHARE_READ|FILE_SHARE_DELETE, FILE_SYNCHRONOUS_IO_NONALERT|FILE_NON_DIRECTORY_FILE )) *handle = 0;
+     }
+ found:
+     RtlFreeUnicodeString( &nt_name );
+--- ./dlls/kernel32/process.c.orig	2013-11-08 19:23:34.000000000 +0100
++++ ./dlls/kernel32/process.c	2013-11-22 16:32:43.000000000 +0100
+@@ -224,8 +224,11 @@ static HANDLE open_exe_file( const WCHAR
+ 
+     TRACE("looking for %s\n", debugstr_w(name) );
+ 
+-    if ((handle = CreateFileW( name, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_DELETE,
++    /* CLIP */
++    //if ((handle = CreateFileW( name, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_DELETE,
++    if ((handle = CreateFileW( name, GENERIC_READ|GENERIC_EXECUTE, FILE_SHARE_READ|FILE_SHARE_DELETE,
+                                NULL, OPEN_EXISTING, 0, 0 )) == INVALID_HANDLE_VALUE)
++    /* /CLIP */
+     {
+         WCHAR buffer[MAX_PATH];
+         /* file doesn't exist, check for builtin */
+@@ -254,8 +257,11 @@ static BOOL find_exe_file( const WCHAR *
+         !SearchPathW( NULL, name, NULL, buflen, buffer, NULL )) return FALSE;
+ 
+     TRACE( "Trying native exe %s\n", debugstr_w(buffer) );
+-    if ((*handle = CreateFileW( buffer, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_DELETE,
++    /* CLIP */
++    // if ((*handle = CreateFileW( buffer, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_DELETE,
++    if ((*handle = CreateFileW( buffer, GENERIC_READ|GENERIC_EXECUTE, FILE_SHARE_READ|FILE_SHARE_DELETE,
+                                 NULL, OPEN_EXISTING, 0, 0 )) != INVALID_HANDLE_VALUE)
++    /* /CLIP */
+     {
+         MODULE_get_binary_info( *handle, binary_info );
+         return TRUE;
+--- ./dlls/setupapi/fakedll.c.orig	2013-11-08 19:23:34.000000000 +0100
++++ ./dlls/setupapi/fakedll.c	2013-11-22 16:32:43.000000000 +0100
+@@ -50,6 +50,12 @@
+ #include "ole2.h"
+ #include "atliface.h"
+ 
++/* CLIP */
++#ifndef O_MAYEXEC
++#define O_MAYEXEC 00000040
++#endif
++/* /CLIP */
++
+ WINE_DEFAULT_DEBUG_CHANNEL(setupapi);
+ 
+ static const char fakedll_signature[] = "Wine placeholder DLL";
+@@ -192,7 +198,7 @@ failed:
+ 
+ /* read in the contents of a file into the global file buffer */
+ /* return 1 on success, 0 on nonexistent file, -1 on other error */
+-static int read_file( const char *name, void **data, SIZE_T *size )
++static int read_file( const char *name, void **data, SIZE_T *size, int exec )
+ {
+     struct stat st;
+     int fd, ret = -1;
+@@ -202,7 +208,15 @@ static int read_file( const char *name,
+     const size_t min_size = sizeof(*dos) + sizeof(fakedll_signature) +
+         FIELD_OFFSET( IMAGE_NT_HEADERS, OptionalHeader.MajorLinkerVersion );
+ 
+-    if ((fd = open( name, O_RDONLY | O_BINARY )) == -1) return 0;
++    /* CLIP */
++    if (exec)
++	    if ((fd = open( name, O_RDONLY | O_BINARY | O_MAYEXEC )) == -1) {
++            ERR( "%s: failed to open %s\n", __FUNCTION__, debugstr_w(name));
++	        return 0;
++        }
++    else
++    /* /CLIP */
++	    if ((fd = open( name, O_RDONLY | O_BINARY )) == -1) return 0;
+     if (fstat( fd, &st ) == -1) goto done;
+     *size = st.st_size;
+     if (!file_buffer || st.st_size > file_buffer_size)
+@@ -421,7 +435,10 @@ static void *load_fake_dll( const WCHAR
+         ptr = prepend( ptr, ptr, namelen );
+         ptr = prepend( ptr, "/dlls", sizeof("/dlls") - 1 );
+         ptr = prepend( ptr, build_dir, strlen(build_dir) );
+-        if ((res = read_file( ptr, &data, size ))) goto done;
++	/* CLIP */
++        // if ((res = read_file( ptr, &data, size ))) goto done;
++        if ((res = read_file( ptr, &data, size, 1 ))) goto done;
++	/* /CLIP */
+ 
+         /* now as a program */
+         ptr = file + pos;
+@@ -430,7 +447,10 @@ static void *load_fake_dll( const WCHAR
+         ptr = prepend( ptr, ptr, namelen );
+         ptr = prepend( ptr, "/programs", sizeof("/programs") - 1 );
+         ptr = prepend( ptr, build_dir, strlen(build_dir) );
+-        if ((res = read_file( ptr, &data, size ))) goto done;
++	/* CLIP */
++        // if ((res = read_file( ptr, &data, size ))) goto done;
++        if ((res = read_file( ptr, &data, size, 1 ))) goto done;
++	/* /CLIP */
+     }
+ 
+     file[pos + len + 1] = 0;
+@@ -438,7 +458,10 @@ static void *load_fake_dll( const WCHAR
+     {
+         ptr = prepend( file + pos, "/fakedlls", sizeof("/fakedlls") - 1 );
+         ptr = prepend( ptr, path, strlen(path) );
+-        if ((res = read_file( ptr, &data, size ))) break;
++	/* CLIP */
++        // if ((res = read_file( ptr, &data, size ))) break;
++        if ((res = read_file( ptr, &data, size, 1 ))) break;
++	/* /CLIP */
+     }
+ 
+ done:
+@@ -830,7 +853,10 @@ static void install_fake_dll( WCHAR *des
+     char *end = name + strlen(name);
+ 
+     if (ext) strcpy( end, ext );
+-    if (!(ret = read_file( file, &data, &size ))) return;
++    /* CLIP */
++    // if (!(ret = read_file( file, &data, &size ))) return;
++    if (!(ret = read_file( file, &data, &size, 1 ))) return;
++    /* /CLIP */
+ 
+     if (end > name + 2 && !strncmp( end - 2, "16", 2 )) end -= 2;  /* remove "16" suffix */
+     dll_name_AtoW( destname, name, end - name );

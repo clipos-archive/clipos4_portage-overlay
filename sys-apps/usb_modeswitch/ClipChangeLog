@@ -1,0 +1,31 @@
+# CLIP ChangeLog for sys-apps/usb_modeswitch
+
+*usb_modeswitch-2.2.0_p20140529-r3 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +usb_modeswitch-2.2.0_p20140529-r3.ebuild, -usb_modeswitch-2.2.0_p20140529-r2.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*usb_modeswitch-2.2.0_p20140529-r2 (04 Dec 2015)
+
+  04 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +usb_modeswitch-2.2.0_p20140529-r2.ebuild, -usb_modeswitch-2.2.0_p20140529-r1.ebuild:
+  Add clip to IUSE since it's used later.
+  Sync gcc command line with upstream, fix FTBFS on amd64.
+
+  12 Oct 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  usb_modeswitch-2.2.0_p20140529-r1.ebuild:
+  Use linux-headers for clip-devstation only.
+
+*usb_modeswitch-2.2.0_p20140529-r1 (12 Oct 2015)
+
+  12 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +usb_modeswitch-2.2.0_p20140529-r1.ebuild, -usb_modeswitch-2.2.0_p20140529.ebuild:
+  Adjust the emake call paramaters in the ebuild.
+
+*usb_modeswitch-1.2.3_p20120531-r2 (22 Nov 2012)
+
+  22 Nov 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +usb_modeswitch-1.2.3_p20120531-r2.ebuild, -usb_modeswitch-1.2.3_p20120531-r1.ebuild:
+  Remove udev-specific files and drop tcl dependency needed for the udev
+  dispatcher.

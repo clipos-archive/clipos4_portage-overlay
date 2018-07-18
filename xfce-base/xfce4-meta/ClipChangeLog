@@ -1,0 +1,32 @@
+
+*xfce4-meta-4.10-r5 (04 Feb 2013)
+
+  04 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfce4-meta-4.10-r5.ebuild, -xfce4-meta-4.10-r4.ebuild:
+  Add xfce4-mixer on clip.
+
+*xfce4-meta-4.10-r4 (03 Jan 2013)
+
+  03 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfce4-meta-4.10-r4.ebuild, -xfce4-meta-4.10-r3.ebuild:
+  Add conflict against x11-terms/terminal.
+
+*xfce4-meta-4.10-r3 (31 Dec 2012)
+
+  31 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-meta-4.10-r3.ebuild, -xfce4-meta-4.10-r2.ebuild:
+  Rename terminal to xfce4-terminal.
+
+*xfce4-meta-4.10-r2 (29 May 2012)
+
+  29 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xfce4-meta-4.10-r2.ebuild, -xfce4-meta-4.10-r1.ebuild:
+  Add tango-icon-theme and terminal to 
+  RDEPENDs on clip.
+  
+*xfce4-meta-4.10-r1 (22 May 2012)
+
+  22 May 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xfce4-meta-4.10-r1.ebuild, -xfce4-meta-4.10.ebuild:
+  ajout DESCRIPTION_FR et CATEGORY_FR
+ 

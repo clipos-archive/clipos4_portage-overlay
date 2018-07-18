@@ -1,0 +1,91 @@
+# CLIP ChangeLog for kde-base/kopete
+
+*kopete-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.12.5.ebuild, -kopete-4.12.3-r1.ebuild:
+  Bump to latest.
+
+*kopete-4.12.3-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.12.3-r1.ebuild, -kopete-4.12.3.ebuild:
+  Force rebuild - generate doc.
+
+*kopete-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.12.3.ebuild, -kopete-4.9.5.ebuild:
+  Bump to latest.
+
+*kopete-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.9.5.ebuild, -kopete-4.9.4.ebuild:
+  Bump to latest.
+
+*kopete-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.9.4.ebuild, -kopete-4.7.3-r1.ebuild:
+  Bump to latest.
+
+*kopete-4.7.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.7.3-r1.ebuild, -kopete-4.7.3.ebuild:
+  Force rebuild.
+
+*kopete-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.7.3.ebuild, -kopete-4.7.1.ebuild:
+  Bump to latest.
+
+  10 Nov 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  kopete-4.7.1.ebuild:
+  Set encoding to UTF-8.
+
+*kopete-4.7.1 (12 Sep 2011)
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.7.1.ebuild, -kopete-4.5.5.ebuild:
+  Bump to latest.
+
+*kopete-4.5.5 (10 Jan 2011)
+
+  10 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.5.5.ebuild, -kopete-4.5.4.ebuild:
+  Bump to latest.
+
+*kopete-4.5.4 (20 Dec 2010)
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.5.4.ebuild, -kopete-4.4.4-r2.ebuild:
+  Bump to latest.
+
+*kopete-4.4.4 (04 Feb 2010)
+
+  04 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.4.4.ebuild, 
+  +files/kopete-4.4.2-yahoo-stealth-fix.patch:
+  Add latest (~x86).
+
+*kopete-4.3.5 (04 Feb 2010)
+
+  04 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.3.5.ebuild, -kopete-4.3.4-r1.ebuild:
+  Bump to latest.
+
+*kopete-4.3.4-r1 (29 Dec 2009)
+
+  29 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kopete-4.3.4-r1.ebuild, -kopete-4.3.4.ebuild:
+  Bump to force rebuild with proper LDFLAGS for qca.
+
+*kopete-4.3.4 (21 Dec 2009)
+
+  21 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  kopete-4.3.4.ebuild:
+  Initial import. Add verictl entry for net privs, and DESCRIPTION_FR.
+

@@ -1,0 +1,55 @@
+# CLIP ChangeLog for media-libs/libvpx
+
+*libvpx-1.5.0-r1 (14 Dec 2016)
+
+  14 Dec 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libvpx-1.5.0-r1.ebuild, -libvpx-1.4.0.ebuild:
+  Update to latest for firefox 45.5.0.
+
+*libvpx-1.4.0 (03 May 2016)
+
+  03 May 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libvpx-1.4.0.ebuild, -libvpx-1.3.0.ebuild:
+  Update.
+
+  13 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  libvpx-1.3.0.ebuild, +files/libvpx-1.3.0-sparc-configure.patch,
+  files/libvpx-gcc-5.diff:
+  Update to latest.
+  Add Ubuntu patch to fix build with gcc-5.
+
+*libvpx-1.3.0 (25 Feb 2014)
+
+  25 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libvpx-1.3.0.ebuild, -libvpx-1.1.0.ebuild,
+  -files/libvpx-1.1.0-arm.patch,
+  -files/libvpx-1.1.0-chost.patch,
+  -files/libvpx-1.1.0-generic-gnu-shared.patch,
+  -files/libvpx-1.1.0-x32.patch,
+  +files/libvpx-1.3.0-dash.patch:
+  Bump to latest.
+
+*libvpx-1.1.0 (18 Mar 2013)
+
+  18 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libvpx-1.1.0.ebuild, -libvpx-1.0.0.ebuild,
+  +files/libvpx-1.1.0-arm.patch,
+  +files/libvpx-1.1.0-chost.patch,
+  +files/libvpx-1.1.0-generic-gnu-shared.patch,
+  +files/libvpx-1.1.0-x32.patch,
+  -files/libvpx-1.0.0-support-arm.patch:
+  Bump to latest.
+
+*libvpx-1.0.0 (27 Mar 2012)
+
+  27 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libvpx-1.0.0.ebuild, -libvpx-0.9.7-r1.ebuild,
+  +files/libvpx-1.0.0-support-arm.patch,
+  -files/libvpx-0.9.5-enable-shared.patch:
+  Bump to latest.
+
+*libvpx-0.9.7-r1 (29 Dec 2011)
+
+  29 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  libvpx-0.9.7-r1.ebuild:
+  Initial import - CPREFIX fix.

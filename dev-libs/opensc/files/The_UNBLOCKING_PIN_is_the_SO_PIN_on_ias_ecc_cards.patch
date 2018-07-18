@@ -1,0 +1,35 @@
+commit f6e1ca82f054ae511561cda3a26ac217019502a5
+Author: ANSSI
+Date:   Thu Jun 15 14:42:03 2017 +0200
+
+    pkcs15: The UNBLOCKING_PIN is the SO_PIN on IAS/ECC ecc cards
+
+diff --git a/src/libopensc/pkcs15.c b/src/libopensc/pkcs15.c
+index f3b671c..d4065db 100644
+--- a/src/libopensc/pkcs15.c
++++ b/src/libopensc/pkcs15.c
+@@ -1693,13 +1693,22 @@ int
+ sc_pkcs15_find_so_pin(struct sc_pkcs15_card *p15card, struct sc_pkcs15_object **out)
+ {
+ 	struct sc_pkcs15_search_key sk;
++	int rc;
+ 
+ 	memset(&sk, 0, sizeof(sk));
+ 	sk.flags_mask = sk.flags_value = SC_PKCS15_PIN_FLAG_SO_PIN;
+ 
+-	return find_by_key(p15card, SC_PKCS15_TYPE_AUTH_PIN, &sk, out);
+-}
++	rc = find_by_key(p15card, SC_PKCS15_TYPE_AUTH_PIN, &sk, out);
++
++	if(rc == SC_ERROR_OBJECT_NOT_FOUND) {
++		memset(&sk, 0, sizeof(sk));
++		sk.flags_mask = sk.flags_value = SC_PKCS15_PIN_FLAG_UNBLOCKING_PIN;
+ 
++		rc = find_by_key(p15card, SC_PKCS15_TYPE_AUTH_PIN, &sk, out);
++	}
++
++	return rc;
++}
+ 
+ int
+ sc_pkcs15_find_pin_by_flags(struct sc_pkcs15_card *p15card,

@@ -1,0 +1,285 @@
+# CLIP Changelog for x11-libs/gtk+
+
+  20 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +gtk+-2.24.25.ebuild, -gtk+-2.24.22-r1.ebuild,
+  -files/gtk+-2.24.24-out-of-source.patch:
+  Bump gtk2 to latest.
+
+*gtk+-3.12.2 (31 May 2014)
+*gtk+-2.24.25 (14 Oct 2014)
+
+*gtk+-3.10.7 (17 Mar 2014)
+*gtk+-2.24.22-r1 (17 Mar 2014)
+
+  17 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-3.10.7.ebuild, -gtk+-3.8.7.ebuild,
+  +gtk+-2.24.22-r1.ebuild, -gtk+-2.24.22.ebuild,
+  -files/gtk+-3.8.6-skip-filechooser-test.patch:
+  Bump gtk3 to latest, rbump gtk2 (introspection rebuild).
+
+*gtk+-3.8.7 (15 Jan 2014)
+
+  15 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-3.8.7.ebuild, -gtk+-3.4.4.ebuild,
+  -files/gtk+-3.3.18-fallback-theme.patch,
+  -files/gtk+-3.3.20-wayland-xkbcommon-headers.patch,
+  -files/gtk+-3.4.4-isnan.patch,
+  +files/gtk+-3.8.6-skip-filechooser-test.patch:
+  Bump to latest stable.
+
+*gtk+-2.24.22 (15 Jan 2014)
+
+  15 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.22.ebuild, -gtk+-2.24.20.ebuild,
+  -files/gtk+-2.14.3-limit-gtksignal-includes.patch,
+  -files/gtk+-2.21.3-multilib.patch:
+  Bump to latest.
+
+*gtk+-2.24.20 (13 Aug 2013)
+
+  13 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.20.ebuild, -gtk+-2.24.17.ebuild,
+  +files/gtk+-2.24.20-darwin-quartz-pasteboard.patch,
+  -files/gtk+-2.24.7-darwin-quartz-introspection.patch:
+  Bump to latest.
+
+*gtk+-2.24.17 (19 Mar 2013)
+
+  19 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.17.ebuild, -gtk+-2.24.14.ebuild,
+  -files/gtk+-2.24.13-gold.patch:
+  Bugfix release.
+
+*gtk+-2.24.14 (13 Dec 2012)
+
+  13 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.14.ebuild, -gtk+-2.24.11-r1.ebuild,
+  +files/gtk+-2.24.13-gold.patch, -files/gtk+-2.24.10-gold.patch,
+  -files/gtk+-2.24.11-stuck-grab.patch:
+  Bump to latest gtk2.
+
+  11 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-3.4.4.ebuild, +files/settings.ini.clip:
+  Add a settings file for CLIP.
+
+*gtk+-3.4.4 (11 Dec 2012)
+
+  11 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-3.4.4.ebuild, +files/settings.ini,
+  +files/gtk+-3.4.4-isnan.patch,
+  +files/gtk+-3.3.20-wayland-xkbcommon-headers.patch,
+  +files/gtk+-3.3.18-fallback-theme.patch:
+  Initial import of gtk-3.
+
+*gtk+-2.24.11-r1 (23 Jul 2012)
+
+  23 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.11-r1.ebuild, -gtk+-2.24.10-r2.ebuild,
+  +files/gtk+-2.24.11-stuck-grab.patch,
+  +files/gtk+-2.24.10-gold.patch:
+  Bump to latest.
+
+*gtk+-2.24.10-r2 (20 Feb 2012)
+
+  20 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.10-r2.ebuild, -gtk+-2.24.10-r1.ebuild:
+  Fix gtkrc path.
+
+*gtk+-2.24.10-r1 (16 Feb 2012)
+
+  16 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.10-r1.ebuild, -gtk+-2.24.5-r1.ebuild,
+  +files/gtk+-2.24.7-darwin-quartz-introspection.patch,
+  -files/gtk+-2.24.5-background-repaint.patch,
+  -files/gtk+-2.24.4-old-icons.patch,
+  -files/gtk+-2.24.5-darwin-quartz-introspection.patch:
+  Bump to latest.
+
+*gtk+-2.24.5-r1 (07 Jul 2011)
+
+  07 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.24.5-r1.ebuild, -gtk+-2.22.1-r2.ebuild,
+  -files/gtk+-2.22.1-old-icons.patch,
+  -files/gtk+-2.22.1-print-settings.patch,
+  +files/gtk+-2.24.4-old-icons.patch,
+  +files/gtk+-2.24.5-background-repaint.patch,
+  +files/gtk+-2.24.5-darwin-quartz-introspection.patch:
+  Bump to latest.
+
+  07 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.22.1-r2.ebuild:
+  Add missing x86-interix to IUSE.
+
+*gtk+-2.22.1-r2 (13 Apr 2011)
+
+  13 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.22.1-r2.ebuild, -gtk+-2.22.1-r1.ebuild:
+  Fix GTK2_CONFDIR for CPREFIX, and re-add symlink for 
+  ${CPREFIX}/etc/gtk-2.0/gtkrc
+
+*gtk+-2.22.1-r1 (12 Apr 2011)
+
+  12 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.22.1-r1.ebuild, -gtk+-2.20.1-r1.ebuild,
+  +files/gtk+-2.22.1-old-icons.patch,
+  +files/gtk+-2.22.1-print-settings.patch,
+  +files/gtk+-2.21.3-multilib.patch,
+  -files/gtk+-2.8.0-multilib.patch,
+  -files/gtk+-2.20.1-GtkOffscreenWindow.patch,
+  -files/gtk+-2.20.1-darwin8.patch,
+  -files/gtk+-2.20.1-gail_cell_type.patch,
+  -files/gtk+-2.20.1-libpixbufloader-warning.patch,
+  -files/gtk+-2.20.1-libpng-fix.patch,
+  -files/gtk+-2.20.1-gtkrange.patch:
+  Bump to latest.
+
+*gtk+-2.20.1-r1 (09 Dec 2010)
+
+  09 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.20.1-r1.ebuild, -gtk+-2.18.9-r1.ebuild,
+  +files/gtk+-2.20.1-GtkOffscreenWindow.patch,
+  +files/gtk+-2.20.1-darwin8.patch,
+  +files/gtk+-2.20.1-gail_cell_type.patch,
+  +files/gtk+-2.20.1-libpixbufloader-warning.patch,
+  +files/gtk+-2.20.1-libpng-fix.patch,
+  +files/gtk+-2.20.1-gtkrange.patch,
+  -files/gtk+-2.18.5-macosx-aqua.patch,
+  -files/gtk+-2.18.9-notifications-gtkentry.patch:
+  Bump to latest.
+
+  30 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.18.9-r1.ebuild, +files/gtkrc.qt.livecd:
+  Add clip-livecd support. 
+
+*gtk+-2.18.9-r1 (27 May 2010)
+
+  27 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.18.9-r1.ebuild, -gtk+-2.18.9.ebuild,
+  files/gtkrc.qt:
+  Use the same QtCurve gtkrc in CLIP and RM jails.
+
+*gtk+-2.18.9 (22 Apr 2010)
+
+  22 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.18.9.ebuild, -gtk+-2.16.6-r1.ebuild,
+  -files/gtk+-2.12.0-flash-workaround.patch,
+  -files/gtk+-2.14.7-filechooser.patch,
+  -files/gtk+-2.14.7-ignore-gtkcurve.patch,
+  -files/gtk+-2.14.7-uncertain-mime.patch,
+  -files/gtk+-2.16.5-jpeg-backward-compatibility.patch,
+  -files/gtk+-2.16.6-fix-pltcheck-test.patch,
+  +files/gtk+-2.18.5-macosx-aqua.patch,
+  +files/gtk+-2.18.9-notifications-gtkentry.patch:
+  Bump to latest stable.
+
+*gtk+-2.16.6-r1 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.16.6-r1.ebuild, -gtk+-2.16.6.ebuild:
+  Bump to force recompile against newer libxcb.
+
+*gtk+-2.14.7-r3 (16 Sep 2009)
+
+  03 Dec 2009; Benjamin Morin <clipos@ssi.gouv.fr>
+  +gtk+-2.16.6.ebuild
+  Bump to latest version
+
+*gtk+-2.14.7-r3 (16 Sep 2009)
+
+  16 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.14.7-r3.ebuild, -gtk+-2.14.7-r2.ebuild,
+  +files/gtkrc.qt:
+  Add a QT enginge gtkrc for USE clip-rm.
+
+*gtk+-2.14.7-r2 (19 Jun 2009)
+
+  19 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.14.7-r2.ebuild, -gtk+-2.12.10-r1.ebuild,
+  -files/digest-gtk+-2.12.10-r1,
+  -files/gtk+-2.12.0-openoffice-freeze-workaround.patch,
+  -files/gtk+-2.12.1-cupsutils.patch,
+  -files/gtk+-2.12.1-firefox-print-preview.patch,
+  -files/gtk+-2.12.10-fix-get_frame_extents.patch,
+  -files/gtk+-2.12.10-fix-nocxx.patch,
+  -files/gtk+-2.12.10-fix-treeview_sort_indicators.patch,
+  -files/gtk+-2.12.10-no-libintl.patch,
+  -files/gtk+-2.12.9-filechooser-fix-icon-size.patch,
+  -files/gtk+-2.12.9-gtk-filesystem-backend-tilde-fix.patch,
+  -files/gtk+-2.12.9-libtool-2.patch,
+  -files/gtk+-2.12.9-print-backend-64bit.patch,
+  -files/gtk+-2.12.9-treeview-search-window-type.patch,
+  +files/gtk+-2.14.3-limit-gtksignal-includes.patch,
+  +files/gtk+-2.14.7-filechooser.patch,
+  +files/gtk+-2.14.7-ignore-gtkcurve.patch,
+  +files/gtk+-2.14.7-uncertain-mime.patch:
+  Bump to latest stable, same changeset.
+
+* gtk+-2.12.10-r1 (20 Aug 2008) 
+ 
+  20 Aug 2008; Olivier Levillain <clipos@ssi.gouv.fr>
+  +gtk+-2.12.10-r1.ebuild, -gtk+-2.10.9-r4.ebuild
+  Bump from upstream
+
+* gtk+-2.10.9-r4 (28 Mar 2008) 
+ 
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.10.9-r4.ebuild, -gtk+-2.10.9-r3.ebuild:
+  Add IUSE core-deps to remove dependency on jpeg and png. 
+
+* gtk+-2.10.9-r3 (16 Jan 2008) 
+ 
+  16 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.10.9-r3.ebuild, -gtk+-2.10.9-r2.ebuild:
+  Change core-deps to clip-deps : glib is now in the core everywhere.
+
+* gtk+-2.10.9-r2 (12 Nov 2007) 
+ 
+  12 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.10.9-r2.ebuild, -gtk+-2.10.9-r1.ebuild:
+  Use Clearlooks as the default theme when IUSE clip is set.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove stale ebuilds before 2.10.9-r1.
+
+* gtk+-2.10.9-r1 (11 Jul 2007) 
+ 
+  11 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +gtk+-2.10.9-r1.ebuild:
+  Add IUSE core-deps to remove dependency on glib.
+
+* gtk+-2.10.9 (26 Mar 2007) 
+ 
+  26 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.10.9.ebuild:
+  Bump from upstream.
+  
+  24 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.8.19.ebuild, -files/config*:
+  Switch to pkg_predeb() hook and postinst script to generate those
+  config files on install.
+
+  21 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.8.19.ebuild, +files/config_usr{_local,}/gtk.immodules,
+  +files/config_usr{_local,}/gdk-pixbuf.loaders:
+  Added clip to IUSE, to force the install of default configuration
+  files for gtk... Note that this depends on the CPREFIX we may have
+  passed...
+  
+* gtk+-2.8.19 (21 Jul 2006) 
+ 
+  21 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.8.19.ebuild:
+  Bump from upstream, adapted for CPREFIX support.
+
+* gtk+-2.8.12-r1 (18 Jul 2006)
+
+  18 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.8.12-r1.ebuild:
+  Move from clip-usrsep to CPREFIX, and there was much rejoicing.
+
+* gtk+-2.8.12 (28 Apr 2006)
+
+  28 Apr 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  gtk+-2.8.12.ebuild:
+  Initial CLIP import. Add support for clip-usrsep USE flag.
+

@@ -1,0 +1,14 @@
+# CLIP ChangeLog for app-arch/zip
+
+*zip-3.0-r2 (24 Oct 2014)
+
+  24 Oct 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +zip-3.0-r2.ebuild, -zip-3.0-r1.ebuild:
+  Force rebuild - enable libnatspec support.
+
+
+*zip-3.0-r1 (16 Feb 2012)
+
+  16 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  zip-3.0-r1.ebuild:
+  Initial import - clip-deps fix.

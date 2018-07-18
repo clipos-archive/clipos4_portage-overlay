@@ -1,0 +1,61 @@
+# CLIP ChangeLog for app-text/xournal
+
+*xournal-0.4.8-r1 (30 Dec 2015)
+
+  30 Dec 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xournal-0.4.8-r1.ebuild, -xournal-0.4.8.ebuild:
+  Force rebuild (poppler revdep).
+
+*xournal-0.4.8 (02 Jan 2015)
+
+  02 Jan 2015; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xournal-0.4.8.ebuild, -xournal-0.4.7-r2.ebuild:
+  -files/xournal-0.4.7-am113-2.patch,
+  -files/xournal-0.4.7-am113.patch,
+  -files/xournal-0.4.7-ar.patch,
+  Bump to latest.
+
+*xournal-0.4.7-r2 (06 Jan 2014)
+
+  06 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xournal-0.4.7-r2.ebuild, -xournal-0.4.7-r1.ebuild:
+  Force rebuild (poppler revdep).
+
+*xournal-0.4.7-r1 (30 Oct 2013)
+
+  30 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xournal-0.4.7-r1.ebuild, -xournal-0.4.7.ebuild,
+  +files/xournal-0.4.7-am113-2.patch,
+  +files/xournal-0.4.7-am113.patch,
+  +files/xournal-0.4.7-ar.patch:
+  Force rebuild, with a few build fixes from upstream.
+
+*xournal-0.4.7 (19 Dec 2012)
+
+  19 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xournal-0.4.7.ebuild, -xournal-0.4.5_p20111022-r1.ebuild,
+  -files/xournal-0.4.5_p20111022-underlinking.patch,
+  -files/xournal-0.4.5_p20111022-aspectratio.patch,
+  -files/xournal-0.4.5_p20111022-gtk-recent.patch:
+  Bump to latest.
+
+*xournal-0.4.5_p20111022-r1 (20 Mar 2012)
+
+  20 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xournal-0.4.5_p20111022-r1.ebuild, -xournal-0.4.5-r1.ebuild,
+  +files/xournal-0.4.5_p20111022-gtk-recent.patch,
+  +files/xournal-0.4.5_p20111022-underlinking.patch,
+  +files/xournal-0.4.5_p20111022-aspectratio.patch,
+  -files/xournal-0.4.5-xoprint-len.patch:
+  Bump to latest from gentoo.
+
+  13 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  xournal-0.4.5-r1.ebuild:
+  Smallish cosmetic change to DESCRIPTION_FR.
+
+*xournal-0.4.5-r1 (08 Apr 2011)
+
+  08 Apr 2011; Arnauld Michelizza <clipos@ssi.gouv.fr>
+  xournal-0.4.5-r1.ebuild:
+  Initial overlay import, from gentoo's xournal-0.4.5-r1. Add patch
+  to move some files from /usr to /usr/local.

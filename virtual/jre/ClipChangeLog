@@ -1,0 +1,8 @@
+# CLIP ChangeLog for virtual/jre
+
+*jre-1.6.0-r1 (04 Jan 2011)
+
+  04 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +jre-1.6.0-r1.ebuild, -jre-1.6.0.ebuild:
+  Initial overlay import - add support for icedtea.
+

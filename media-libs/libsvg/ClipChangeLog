@@ -1,0 +1,9 @@
+# CLIP ChangeLog for media-libs/libsvg
+
+*libsvg-0.1.4 (15 Apr 2008)
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libsvg-0.1.4.ebuild:
+  Initial import. Fix for core-deps.
+
+

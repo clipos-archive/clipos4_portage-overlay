@@ -1,0 +1,8 @@
+# CLIP ChangeLog for dev-libs/libuv
+
+*libuv-1.10.2-r1 (04 Oct 2017)
+
+  04 Oct 2017; Alain Ozanne <clipos@ssi.gouv.fr>
+  +libuv-1.10.2-r1.ebuild:
+  Added for chromium 61.0.3163.79 (nodejs dependency).
+

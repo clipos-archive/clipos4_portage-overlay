@@ -1,0 +1,4 @@
+#! CLIP access.conf
+
+# Disallow non-root console logins
+@clip_bare_protect@-:ALL :LOCAL

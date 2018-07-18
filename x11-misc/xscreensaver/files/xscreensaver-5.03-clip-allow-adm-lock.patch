@@ -1,0 +1,14 @@
+--- driver/setuid.c.bkp	2008-02-14 18:23:52.000000000 +0100
++++ driver/setuid.c	2008-02-14 18:24:33.000000000 +0100
+@@ -342,11 +342,7 @@
+ 	!strcmp (p->pw_name, "root") ||
+ 	!strcmp (p->pw_name, "nobody") ||
+ 	!strcmp (p->pw_name, "noaccess") ||
+-	!strcmp (p->pw_name, "operator") ||
+ 	!strcmp (p->pw_name, "daemon") ||
+-	!strcmp (p->pw_name, "bin") ||
+-	!strcmp (p->pw_name, "adm") ||
+-	!strcmp (p->pw_name, "sys") ||
+ 	!strcmp (p->pw_name, "games"))
+       {
+ 	static char buf [1024];

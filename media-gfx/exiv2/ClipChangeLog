@@ -1,0 +1,37 @@
+# CLIP ChangeLog for media-gfx/exiv2
+
+*exiv2-0.24-r1 (20 Jan 2015)
+
+  28 Jan 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +exiv2-0.24-r1.ebuild, -exiv2-0.23-r2.ebuild,
+  -files/exiv2-0.23-boost-fs-contrib.patch,
+  +files/exiv2-0.24-CVE-2014-9449.patch,
+  +files/exiv2-0.24-python3.patch:
+  Bump to latest stable.
+
+*exiv2-0.23-r2 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +exiv2-0.23-r2.ebuild, -exiv2-0.21.1-r3.ebuild,
+  -files/exiv2-0.21.1-time-fix.patch,
+  +files/exiv2-0.23-boost-fs-contrib.patch:
+  Bump to latest.
+
+*exiv2-0.21.1-r3 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +exiv2-0.21.1-r3.ebuild, -exiv2-0.21.1-r2.ebuild:
+  Force rebuild
+
+*exiv2-0.21.1-r2 (13 Sep 2011)
+
+  13 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +exiv2-0.21.1-r2.ebuild, -exiv2-0.18.1.ebuild,
+  files/exiv2-0.21.1-time-fix.patch:
+  Bump to latest.
+
+*exiv2-0.18.1 (25 May 2009)
+
+  25 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  exiv2-0.18.1.ebuild:
+  Initial import. clip-deps fixes.

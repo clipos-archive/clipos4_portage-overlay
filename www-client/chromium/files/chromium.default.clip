@@ -1,0 +1,5 @@
+# Default settings for chromium. This file is sourced by /bin/bash from
+# the chromium launcher.
+
+# Options to pass to chromium.
+CHROMIUM_FLAGS="--enable-seccomp-sandbox --blacklist-webgl --blacklist-accelerated-compositing --disable-3d-apis --disable-nacl --ssl-version-min=tls1 --cipher-suite-blacklist=0xcc13,0xcc14,0xcc15 --site-per-process"

@@ -1,0 +1,120 @@
+# CLIP openbox theme, base on Clearlooks, by 
+# John McKnight <jmcknight@gmail.com>
+
+# Window settings (RM_H)
+window.active.title.bg.high: Flat Gradient Vertical
+window.active.title.bg.high.color: #ee2828
+window.active.title.bg.high.colorTo: #c93939
+window.active.border.color.high: #c93939
+window.inactive.title.bg.high: Flat Solid
+window.inactive.title.bg.high.color: #9a3232
+window.inactive.border.color.high: #9a3232
+
+# Window settings (RM_B)
+window.active.title.bg.low: Flat Gradient Vertical
+window.active.title.bg.low.color: #53e310
+window.active.title.bg.low.colorTo: #3e9a00
+window.active.border.color.low: #3e9a00
+window.inactive.title.bg.low: Flat Solid
+window.inactive.title.bg.low.color: #465c19
+window.inactive.border.color.low: #465c19
+
+# Window settings (other)
+window.active.title.bg.other: Flat Gradient Vertical
+window.active.title.bg.other.color: #f5eb0c
+window.active.title.bg.other.colorTo: #dfdf2d
+window.active.border.color.other #dfdf2d
+window.inactive.title.bg.other: Flat Solid
+window.inactive.title.bg.other.color: #9f9f20
+window.inactive.border.color.other: #9f9f20
+
+# Window settings (default - CLIP)
+window.active.title.bg: Flat Gradient Vertical
+window.active.title.bg.color: #658fb5
+window.active.title.bg.colorTo: #4d6982
+window.active.border.color: #658fb5
+
+window.active.label.bg: Parentrelative
+window.active.label.text.color: #ffffff
+
+window.active.handle.bg: Raised Gradient Vertical
+window.active.handle.bg.color: #658fb5
+window.active.handle.bg.colorTo: #4d6982
+
+window.active.grip.bg: Raised Gradient Vertical
+window.active.grip.bg.color: #658fb5
+window.active.grip.bg.colorTo: #4d6982
+
+window.active.button.unpressed.bg: Raised Solid Border
+window.active.button.unpressed.bg.color: #c0c0c0
+window.active.button.unpressed.image.color: #ffffff
+
+window.active.button.pressed.bg: Raised Solid Border
+window.active.button.pressed.bg.color: #f0f0f0
+window.active.button.pressed.image.color: #ffffff
+
+window.active.button.disabled.bg: Raised Solid Border
+window.active.button.disabled.bg.color: #a0a0a0
+window.active.button.disabled.image.color: #3d4c5a
+
+window.active.button.toggled.bg: Raised Solid Border
+window.active.button.toggled.bg.color: #d0d0d0
+window.active.button.toggled.image.color: #cccccc
+
+window.active.button.hover.bg: Raised Solid Border
+window.active.button.hover.bg.color: #d0d0d0
+window.active.button.hover.image.color: #ffffff
+
+
+# Window settings (unfocused)
+window.inactive.title.bg: Raised Gradient Vertical
+window.inactive.title.bg.color: #f1eeea
+window.inactive.title.bg.colorTo: #d8cfc7
+window.inactive.border.color: #f1eeea
+
+window.inactive.label.bg: Parentrelative
+window.inactive.label.text.color: #000000
+
+window.inactive.handle.bg: Raised Gradient Vertical
+window.inactive.handle.bg.color: #f1eeea
+window.inactive.handle.bg.colorTo: #d8cfc7
+
+window.inactive.grip.bg: Raised Gradient Vertical
+window.inactive.grip.bg.color: #f1eeea
+window.inactive.grip.bg.colorTo: #d8cfc7
+
+window.inactive.button.unpressed.bg: Flat Solid
+window.inactive.button.unpressed.bg.color: #a0a0a0
+window.inactive.button.unpressed.image.color: #000000
+
+window.inactive.button.pressed.bg: Flat Solid
+window.inactive.button.pressed.bg.color: #c0c0c0
+window.inactive.button.pressed.image.color: #000000
+
+window.inactive.button.disabled.bg: Flat Solid
+window.inactive.button.disabled.bg.color: #000000
+window.inactive.button.disabled.image.color: #8f8173
+
+window.inactive.button.toggled.bg: Flat Solid
+window.inactive.button.toggled.bg.color: #b0b0b0
+window.inactive.button.toggled.image.color: #000000
+
+window.inactive.button.hover.bg: Flat Solid
+window.inactive.button.hover.bg.color: #b0b0b0
+window.inactive.button.hover.image.color: #000000
+
+
+### Everything else
+border.width: 2
+padding.width: 2
+window.handle.width: 0
+window.client.padding.width: 0
+window.client.padding.height: 0
+border.color: #000000
+menu.overlap: 0
+
+### Fonts
+window.active.label.text.font:shadow=y:shadowtint=70:shadowoffset=1
+window.inactive.label.text.font:shadow=y:shadowtint=20:shadowoffset=1
+menu.items.font:
+menu.title.text.font:shadow=y:shadowtint=70

@@ -1,0 +1,178 @@
+--- ./sh/init.sh.Linux.in.orig	2013-10-30 21:00:40.000000000 +0100
++++ ./sh/init.sh.Linux.in	2014-01-08 18:54:48.000000000 +0100
+@@ -57,7 +57,7 @@ elif ! mountinfo -q /run; then
+ 	ebegin "Mounting /run"
+ 	rc=0
+ 	if ! fstabinfo --mount /run; then
+-		mount -t tmpfs -o mode=0755,nosuid,nodev,size=10% tmpfs /run
++		mount -n -t tmpfs -o mode=0755,nosuid,nodev,size=10% tmpfs /run
+ 		rc=$?
+ 	fi
+ 	if [ $rc != 0 ]; then
+@@ -68,7 +68,7 @@ elif ! mountinfo -q /run; then
+ fi
+ 
+ checkpath -d $RC_SVCDIR
+-checkpath -d -m 0775 -o root:uucp /run/lock
++checkpath -d -m 0775 -o 0:14 /run/lock
+ 
+ # Try to mount xenfs as early as possible, otherwise rc_sys() will always
+ # return RC_SYS_XENU and will think that we are in a domU while it's not.
+--- ./src/rc/checkpath.c.orig	2013-10-30 21:00:40.000000000 +0100
++++ ./src/rc/checkpath.c	2014-01-08 18:54:00.000000000 +0100
+@@ -152,6 +152,9 @@ do_check(char *path, uid_t uid, gid_t gi
+ 	return 0;
+ }
+ 
++static struct passwd fake_pw;
++static struct group fake_gr;
++
+ static int
+ parse_owner(struct passwd **user, struct group **group, const char *owner)
+ {
+@@ -163,19 +166,35 @@ parse_owner(struct passwd **user, struct
+ 	if (g)
+ 		*g++ = '\0';
+ 
++	memset(&fake_gr, 0, sizeof(fake_gr));
++
+ 	if (user && *u) {
+-		if (sscanf(u, "%d", &id) == 1)
++		if (sscanf(u, "%d", &id) == 1) {
+ 			*user = getpwuid((uid_t) id);
+-		else
++			/* CLIP : when we don't have a valid /etc/passwd
++			 * (because /etc/core is not mounted yet), simply
++			 * trust the requested id...
++			 */
++			if (*user == NULL) {
++				memset(&fake_pw, 0, sizeof(fake_pw));
++				fake_pw.pw_uid = id;
++				*user = &fake_pw;
++			}
++		} else
+ 			*user = getpwnam(u);
+ 		if (*user == NULL)
+ 			retval = -1;
+ 	}
+ 
+ 	if (group && g && *g) {
+-		if (sscanf(g, "%d", &id) == 1)
++		if (sscanf(g, "%d", &id) == 1) {
+ 			*group = getgrgid((gid_t) id);
+-		else
++			if (*group == NULL) {
++				memset(&fake_gr, 0, sizeof(fake_gr));
++				fake_gr.gr_gid = id;
++				*group = &fake_gr;
++			}
++		} else
+ 			*group = getgrnam(g);
+ 		if (*group == NULL)
+ 			retval = -1;
+--- ./src/rc/fstabinfo.c.orig	2013-10-30 21:00:40.000000000 +0100
++++ ./src/rc/fstabinfo.c	2014-01-08 18:54:00.000000000 +0100
+@@ -95,7 +95,7 @@ extern const char *applet;
+ static int
+ do_mount(struct ENT *ent, bool remount)
+ {
+-	char *argv[10];
++	char *argv[11];
+ 	pid_t pid;
+ 	int status;
+ 
+@@ -104,22 +104,23 @@ do_mount(struct ENT *ent, bool remount)
+ 	argv[2] = ENT_OPTS(*ent);
+ 	argv[3] = UNCONST("-t");
+ 	argv[4] = ENT_TYPE(*ent);
++	argv[5] = UNCONST("-n");
+ 	if (!remount) {
+-		argv[5] = ENT_BLOCKDEVICE(*ent);
+-		argv[6] = ENT_FILE(*ent);
+-		argv[7] = NULL;
++		argv[6] = ENT_BLOCKDEVICE(*ent);
++		argv[7] = ENT_FILE(*ent);
++		argv[8] = NULL;
+ 	} else {
+ #ifdef __linux__
+-		argv[5] = UNCONST("-o");
+-		argv[6] = UNCONST("remount");
++		argv[6] = UNCONST("-o");
++		argv[7] = UNCONST("remount");
++		argv[8] = ENT_BLOCKDEVICE(*ent);
++		argv[9] = ENT_FILE(*ent);
++		argv[10] = NULL;
++#else
++		argv[6] = UNCONST("-u");
+ 		argv[7] = ENT_BLOCKDEVICE(*ent);
+ 		argv[8] = ENT_FILE(*ent);
+ 		argv[9] = NULL;
+-#else
+-		argv[5] = UNCONST("-u");
+-		argv[6] = ENT_BLOCKDEVICE(*ent);
+-		argv[7] = ENT_FILE(*ent);
+-		argv[8] = NULL;
+ #endif
+ 	}
+ 	switch (pid = vfork()) {
+--- ./src/rc/rc-update.c.orig	2013-10-30 21:00:40.000000000 +0100
++++ ./src/rc/rc-update.c	2014-01-08 18:55:26.000000000 +0100
+@@ -199,10 +199,12 @@ show(RC_STRINGLIST *runlevels, bool verb
+ 	"Usage: rc-update [options] add <service> [<runlevel>...]\n"	\
+ 	"   or: rc-update [options] del <service> [<runlevel>...]\n"	\
+ 	"   or: rc-update [options] [show [<runlevel>...]]"
+-#define getoptstring "su" getoptstring_COMMON
++#define getoptstring "suad" getoptstring_COMMON
+ static const struct option longopts[] = {
+ 	{ "stack",           0, NULL, 's' },
+ 	{ "update",          0, NULL, 'u' },
++	{ "add",             0, NULL, 'a' },
++	{ "delete",          0, NULL, 'd' },
+ 	longopts_COMMON
+ };
+ static const char * const longopts_help[] = {
+@@ -237,6 +239,13 @@ rc_update(int argc, char **argv)
+ 		switch (opt) {
+ 		case 's':
+ 		    stack = true;
++		    break;
++		case 'a':
++		    action = DOADD;
++		    break;
++		case 'd':
++		    action = DODELETE;
++		    break;
+ 		break;
+ 		case 'u':
+ 			deptree = _rc_deptree_load(-1, &ret);
+@@ -254,7 +263,7 @@ rc_update(int argc, char **argv)
+ 		eerrorx("%s: cannot mix commands", applet);
+ 
+ 	/* We need to be backwards compatible */
+-	if (optind < argc) {
++	if (!action && optind < argc) {
+ 		if (strcmp(argv[optind], "add") == 0)
+ 			action = DOADD;
+ 		else if (strcmp(argv[optind], "delete") == 0 ||
+@@ -318,6 +327,9 @@ rc_update(int argc, char **argv)
+ 				p = rc_runlevel_get();
+ 				rc_stringlist_add(runlevels, p);
+ 				free(p);
++				p = strdup("default");
++				rc_stringlist_add(runlevels, p);
++				free(p);
+ 			}
+ 
+ 			if (!TAILQ_FIRST(runlevels)) {
+@@ -343,6 +355,11 @@ rc_update(int argc, char **argv)
+ 				ewarnx("%s: service `%s' not found in any"
+ 				    " of the specified runlevels",
+ 				    applet, service);
++
++			/* Return a success when we removed the script 
++			 * from at least one runlevel */
++			if ((action & DODELETE) && num_updated != 0)
++				retval = EXIT_SUCCESS;
+ 		}
+ 	}
+ 

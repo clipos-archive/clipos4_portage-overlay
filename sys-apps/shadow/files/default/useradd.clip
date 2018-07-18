@@ -1,0 +1,7 @@
+# useradd defaults file for CLIP
+GROUP=2000
+HOME=/home/user
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/sh
+SKEL=/etc/skel

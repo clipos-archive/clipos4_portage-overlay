@@ -1,0 +1,14 @@
+--- libs/Makefile.am.orig	2013-01-04 14:55:38.228910329 +0100
++++ libs/Makefile.am	2013-01-04 14:55:47.442246049 +0100
+@@ -80,6 +80,11 @@ libpng.a: libz.a
+ 	if test ! -e ./Makefile ; then \
+ 		$(call infmsg,CONF,libpng.a) ; \
+ 		cp scripts/makefile.linux Makefile $(OUTPUT); \
++		$(SED) -i \
++			-e 's/#define PNG_FLOATING_POINT_SUPPORTED/#undef PNG_FLOATING_POINT_SUPPORTED/' \
++			-e 's/#define PNG_FLOATING_ARITHMETIC_SUPPORTED/#undef PNG_FLOATING_ARITHMETIC_SUPPORTED/' \
++			-e 's/#define PNG_CONVERT_tIME_SUPPORTED/#undef PNG_CONVERT_tIME_SUPPORTED/' \
++			scripts/pnglibconf.h.prebuilt ; \
+ 		$(SED) -i -e '/^CFLAGS/ { N ; s#^CFLAGS=.*#CFLAGS=$(K_CFLAGS) $(PNGDEFS)# ; P ; D }' \
+ 		       -e 's#^ZLIBINC=.*#ZLIBINC=$(LIBZ_SOURCE)#' \
+ 		       -e 's#^ZLIBLIB=.*#ZLIBLIB=$(LIBZ_SOURCE)#' Makefile ; \

@@ -1,0 +1,5 @@
+# CLIP ChangeLog for dev-libs/rlog
+
+  20 Jan 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  rlog-1.4.ebuild:
+  Initial import - fix CPREFIX.

@@ -1,0 +1,315 @@
+Index: thunderbird-52.3.0/mozilla/old-configure.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/old-configure.in
++++ thunderbird-52.3.0/mozilla/old-configure.in
+@@ -5521,14 +5521,14 @@ AC_SUBST(MOZ_SOURCE_REPO)
+ AC_SUBST(MOZ_SOURCE_CHANGESET)
+ AC_SUBST(MOZ_INCLUDE_SOURCE_INFO)
+ 
+-if test "$MOZ_TELEMETRY_REPORTING"; then
+-    AC_DEFINE(MOZ_TELEMETRY_REPORTING)
+-
+-    # Enable Telemetry by default for nightly and aurora channels
+-    if test -z "$RELEASE_OR_BETA"; then
+-      AC_DEFINE(MOZ_TELEMETRY_ON_BY_DEFAULT)
+-    fi
+-fi
++dnl if test "$MOZ_TELEMETRY_REPORTING"; then
++dnl     AC_DEFINE(MOZ_TELEMETRY_REPORTING)
++dnl
++dnl     # Enable Telemetry by default for nightly and aurora channels
++dnl     if test -z "$RELEASE_OR_BETA"; then
++dnl       AC_DEFINE(MOZ_TELEMETRY_ON_BY_DEFAULT)
++dnl     fi
++dnl fi
+ 
+ dnl If we have any service that uploads data (and requires data submission
+ dnl policy alert), set MOZ_DATA_REPORTING.
+Index: thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/python/mozbuild/mozbuild/mozinfo.py
++++ thunderbird-52.3.0/mozilla/python/mozbuild/mozbuild/mozinfo.py
+@@ -89,7 +89,8 @@ def build_dict(config, env=os.environ):
+     d['sync'] = substs.get('MOZ_SERVICES_SYNC') == '1'
+     d['asan'] = substs.get('MOZ_ASAN') == '1'
+     d['tsan'] = substs.get('MOZ_TSAN') == '1'
+-    d['telemetry'] = substs.get('MOZ_TELEMETRY_REPORTING') == '1'
++    # d['telemetry'] = substs.get('MOZ_TELEMETRY_REPORTING') == '1'
++    d['telemetry'] = False
+     d['tests_enabled'] = substs.get('ENABLE_TESTS') == "1"
+     d['bin_suffix'] = substs.get('BIN_SUFFIX', '')
+     d['addon_signing'] = substs.get('MOZ_ADDON_SIGNING') == '1'
+Index: thunderbird-52.3.0/mozilla/mobile/android/base/AppConstants.java.in
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/mobile/android/base/AppConstants.java.in
++++ thunderbird-52.3.0/mozilla/mobile/android/base/AppConstants.java.in
+@@ -179,7 +179,7 @@ public class AppConstants {
+ 
+     public static final boolean MOZ_TELEMETRY_ON_BY_DEFAULT =
+ //#ifdef MOZ_TELEMETRY_ON_BY_DEFAULT
+-    true;
++    false;
+ //#else
+     false;
+ //#endif
+@@ -189,7 +189,7 @@ public class AppConstants {
+ 
+     public static final boolean MOZ_TELEMETRY_REPORTING =
+ //#ifdef MOZ_TELEMETRY_REPORTING
+-    true;
++    false;
+ //#else
+     false;
+ //#endif
+Index: thunderbird-52.3.0/mozilla/modules/libpref/Preferences.cpp
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/modules/libpref/Preferences.cpp
++++ thunderbird-52.3.0/mozilla/modules/libpref/Preferences.cpp
+@@ -1353,7 +1353,7 @@ static nsresult pref_InitInitialObjects(
+   // defaults.
+   if (Preferences::GetDefaultType(kTelemetryPref) == nsIPrefBranch::PREF_INVALID) {
+     bool prerelease = false;
+-#ifdef MOZ_TELEMETRY_ON_BY_DEFAULT
++#if 0
+     prerelease = true;
+ #else
+     if (Preferences::GetDefaultCString(kChannelPref).EqualsLiteral("beta")) {
+Index: thunderbird-52.3.0/mozilla/browser/components/preferences/in-content/advanced.js
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/components/preferences/in-content/advanced.js
++++ thunderbird-52.3.0/mozilla/browser/components/preferences/in-content/advanced.js
+@@ -43,10 +43,10 @@ var gAdvancedPane = {
+     if (AppConstants.MOZ_CRASHREPORTER) {
+       this.initSubmitCrashes();
+     }
+-    this.initTelemetry();
+-    if (AppConstants.MOZ_TELEMETRY_REPORTING) {
+-      this.initSubmitHealthReport();
+-    }
++    // this.initTelemetry();
++    // if (AppConstants.MOZ_TELEMETRY_REPORTING) {
++    //   this.initSubmitHealthReport();
++    // }
+     this.updateOnScreenKeyboardVisibility();
+     this.updateCacheSizeInputField();
+     this.updateActualCacheSize();
+@@ -56,10 +56,10 @@ var gAdvancedPane = {
+                      gAdvancedPane.updateHardwareAcceleration);
+     setEventListener("advancedPrefs", "select",
+                      gAdvancedPane.tabSelectionChanged);
+-    if (AppConstants.MOZ_TELEMETRY_REPORTING) {
+-      setEventListener("submitHealthReportBox", "command",
+-                       gAdvancedPane.updateSubmitHealthReport);
+-    }
++    // if (AppConstants.MOZ_TELEMETRY_REPORTING) {
++    //   setEventListener("submitHealthReportBox", "command",
++    //                    gAdvancedPane.updateSubmitHealthReport);
++    // }
+ 
+     setEventListener("connectionSettings", "command",
+                      gAdvancedPane.showConnections);
+@@ -258,10 +258,11 @@ var gAdvancedPane = {
+    * In all cases, set up the Learn More link sanely.
+    */
+   initTelemetry: function ()
+-  {
++  {/*
+     if (AppConstants.MOZ_TELEMETRY_REPORTING) {
+       this._setupLearnMoreLink("toolkit.telemetry.infoURL", "telemetryLearnMore");
+     }
++    */
+   },
+ 
+   /**
+@@ -269,7 +270,7 @@ var gAdvancedPane = {
+    * @param {Boolean} aEnabled False disables the controls, true enables them.
+    */
+   setTelemetrySectionEnabled: function (aEnabled)
+-  {
++  {/*
+     if (AppConstants.MOZ_TELEMETRY_REPORTING) {
+       // If FHR is disabled, additional data sharing should be disabled as well.
+       let disabled = !aEnabled;
+@@ -280,12 +281,14 @@ var gAdvancedPane = {
+       }
+       document.getElementById("telemetryDataDesc").disabled = disabled;
+     }
++    */
+   },
+ 
+   /**
+    * Initialize the health report service reference and checkbox.
+    */
+   initSubmitHealthReport: function () {
++  /*
+     if (AppConstants.MOZ_TELEMETRY_REPORTING) {
+       this._setupLearnMoreLink("datareporting.healthreport.infoURL", "FHRLearnMore");
+ 
+@@ -299,17 +302,20 @@ var gAdvancedPane = {
+       checkbox.checked = Services.prefs.getBoolPref(PREF_UPLOAD_ENABLED);
+       this.setTelemetrySectionEnabled(checkbox.checked);
+     }
++    */
+   },
+ 
+   /**
+    * Update the health report preference with state from checkbox.
+    */
+   updateSubmitHealthReport: function () {
++  /*
+     if (AppConstants.MOZ_TELEMETRY_REPORTING) {
+       let checkbox = document.getElementById("submitHealthReportBox");
+       Services.prefs.setBoolPref(PREF_UPLOAD_ENABLED, checkbox.checked);
+       this.setTelemetrySectionEnabled(checkbox.checked);
+     }
++    */
+   },
+ 
+   updateOnScreenKeyboardVisibility() {
+Index: thunderbird-52.3.0/mozilla/browser/config/mozconfigs/whitelist
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/browser/config/mozconfigs/whitelist
++++ thunderbird-52.3.0/mozilla/browser/config/mozconfigs/whitelist
+@@ -28,14 +28,12 @@ whitelist['nightly']['linux32'] += [
+     'ac_add_options --with-ccache=/usr/bin/ccache',
+     '. "$topsrcdir/build/mozconfig.cache"',
+     'export MOZILLA_OFFICIAL=1',
+-    'export MOZ_TELEMETRY_REPORTING=1',
+     "mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'",
+     'STRIP_FLAGS="--strip-debug"',
+ ]
+ 
+ whitelist['nightly']['linux64'] += [
+     'export MOZILLA_OFFICIAL=1',
+-    'export MOZ_TELEMETRY_REPORTING=1',
+     "mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'",
+     'STRIP_FLAGS="--strip-debug"',
+     'ac_add_options --with-ccache=/usr/bin/ccache',
+@@ -84,13 +82,11 @@ whitelist['release']['win64'] += ['mk_ad
+ 
+ whitelist['release']['linux32'] += [
+     'export MOZILLA_OFFICIAL=1',
+-    'export MOZ_TELEMETRY_REPORTING=1',
+     'mk_add_options MOZ_PGO=1',
+     "mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'",
+ ]
+ whitelist['release']['linux64'] += [
+     'export MOZILLA_OFFICIAL=1',
+-    'export MOZ_TELEMETRY_REPORTING=1',
+     'mk_add_options MOZ_PGO=1',
+     "mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'",
+ ]
+Index: thunderbird-52.3.0/mozilla/toolkit/components/telemetry/Telemetry.cpp
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/toolkit/components/telemetry/Telemetry.cpp
++++ thunderbird-52.3.0/mozilla/toolkit/components/telemetry/Telemetry.cpp
+@@ -1855,15 +1855,16 @@ TelemetryImpl::GetKeyedHistogramById(con
+  */
+ NS_IMETHODIMP
+ TelemetryImpl::GetCanRecordBase(bool *ret) {
+-  *ret = TelemetryHistogram::CanRecordBase();
++  // *ret = TelemetryHistogram::CanRecordBase();
++  *ret = false;
+   return NS_OK;
+ }
+ 
+ NS_IMETHODIMP
+ TelemetryImpl::SetCanRecordBase(bool canRecord) {
+-  TelemetryHistogram::SetCanRecordBase(canRecord);
+-  TelemetryScalar::SetCanRecordBase(canRecord);
+-  TelemetryEvent::SetCanRecordBase(canRecord);
++  TelemetryHistogram::SetCanRecordBase(false);
++  TelemetryScalar::SetCanRecordBase(false);
++  TelemetryEvent::SetCanRecordBase(false);
+   return NS_OK;
+ }
+ 
+@@ -1876,15 +1877,16 @@ TelemetryImpl::SetCanRecordBase(bool can
+  */
+ NS_IMETHODIMP
+ TelemetryImpl::GetCanRecordExtended(bool *ret) {
+-  *ret = TelemetryHistogram::CanRecordExtended();
++  // *ret = TelemetryHistogram::CanRecordExtended();
++  *ret = false;
+   return NS_OK;
+ }
+ 
+ NS_IMETHODIMP
+ TelemetryImpl::SetCanRecordExtended(bool canRecord) {
+-  TelemetryHistogram::SetCanRecordExtended(canRecord);
+-  TelemetryScalar::SetCanRecordExtended(canRecord);
+-  TelemetryEvent::SetCanRecordExtended(canRecord);
++  TelemetryHistogram::SetCanRecordExtended(false);
++  TelemetryScalar::SetCanRecordExtended(false);
++  TelemetryEvent::SetCanRecordExtended(false);
+   return NS_OK;
+ }
+ 
+@@ -2878,13 +2880,15 @@ GetHistogramName(ID id)
+ bool
+ CanRecordBase()
+ {
+-  return TelemetryHistogram::CanRecordBase();
++  // return TelemetryHistogram::CanRecordBase();
++  return false;
+ }
+ 
+ bool
+ CanRecordExtended()
+ {
+-  return TelemetryHistogram::CanRecordExtended();
++  // return TelemetryHistogram::CanRecordExtended();
++  return false;
+ }
+ 
+ void
+Index: thunderbird-52.3.0/mozilla/old-configure
+===================================================================
+--- thunderbird-52.3.0.orig/mozilla/old-configure
++++ thunderbird-52.3.0/mozilla/old-configure
+@@ -18853,26 +18853,26 @@ fi
+ 
+ 
+ 
+-if test "$MOZ_TELEMETRY_REPORTING"; then
+-    cat >> confdefs.pytmp <<\EOF
+-    (''' MOZ_TELEMETRY_REPORTING ''', ' 1 ')
+-EOF
+-cat >> confdefs.h <<\EOF
+-#define MOZ_TELEMETRY_REPORTING 1
+-EOF
+-
+-
+-    # Enable Telemetry by default for nightly and aurora channels
+-    if test -z "$RELEASE_OR_BETA"; then
+-      cat >> confdefs.pytmp <<\EOF
+-    (''' MOZ_TELEMETRY_ON_BY_DEFAULT ''', ' 1 ')
+-EOF
+-cat >> confdefs.h <<\EOF
+-#define MOZ_TELEMETRY_ON_BY_DEFAULT 1
+-EOF
++# if test "$MOZ_TELEMETRY_REPORTING"; then
++#     cat >> confdefs.pytmp <<\EOF
++#     (''' MOZ_TELEMETRY_REPORTING ''', ' 1 ')
++# EOF
++# cat >> confdefs.h <<\EOF
++# #define MOZ_TELEMETRY_REPORTING 1
++# EOF
++
++
++#     # Enable Telemetry by default for nightly and aurora channels
++#     if test -z "$RELEASE_OR_BETA"; then
++#       cat >> confdefs.pytmp <<\EOF
++#     (''' MOZ_TELEMETRY_ON_BY_DEFAULT ''', ' 1 ')
++# EOF
++# cat >> confdefs.h <<\EOF
++# #define MOZ_TELEMETRY_ON_BY_DEFAULT 1
++# EOF
+ 
+-    fi
+-fi
++#     fi
++# fi
+ 
+ # if test -n "$MOZ_TELEMETRY_REPORTING" || test -n "$MOZ_SERVICES_HEALTHREPORT" || test -n "$MOZ_CRASHREPORTER"; then
+ #   MOZ_DATA_REPORTING=1

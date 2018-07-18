@@ -1,0 +1,27 @@
+#!/bin/bash
+# Copyright 1999-2006 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License, v2
+# Author: Martin Schlemmer <azarah@gentoo.org>
+# Modified for CLIP: Vincent Strubel <clipos@ssi.gouv.fr>
+
+source /lib/rc/sh/functions.sh
+
+# We need to source /etc/profile for stuff like $LANG to work
+# bug #10190.
+source /etc/profile
+
+export GDK_USE_XFT=1
+
+retval=0
+
+EXE=/usr/local/bin/slim
+/sbin/start-stop-daemon --start --quiet --exec ${EXE}
+retval=$?
+# Fix bug #26125 for slower systems
+wait; sleep 2
+if [[ -e "/sys/class/backlight/acpi_video0/max_brightness" && -e "/sys/class/backlight/acpi_video0/brightness" ]]; then
+		cat "/sys/class/backlight/acpi_video0/max_brightness" \
+			> "/sys/class/backlight/acpi_video0/brightness" 2>/dev/null
+fi
+
+# vim:ts=4

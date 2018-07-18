@@ -1,0 +1,738 @@
+# CLIP ChangeLog for x11-base/xorg-server
+
+*xorg-server-1.19.3-r1 (30 Oct 2017)
+
+  30 Oct 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +xorg-server-1.19.3-r1.ebuild, -xorg-server-1.19.3.ebuild,
+  +files/xorg-server-conf-ugrade.sh:
+  Extract xorg configuration update logic in a standalone script
+  (that can be called from clip-hardware)
+
+*xorg-server-1.19.3 (11 Oct 2017)
+
+  11 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +xorg-server-1.19.3.ebuild, -xorg-server-1.17.4-r3.ebuild:
+  Bump to latest stable with help from Philippe Trébuchet for CLIP adaptations
+  and debug.
+
+*xorg-server-1.17.4-r3 (28 Oct 2016)
+
+  28 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +xorg-server-1.17.4-r3.ebuild, -xorg-server-1.17.4-r2.ebuild:
+  Conflict with external modesetting driver as it is now included.
+
+*xorg-server-1.17.4-r2 (05 Oct 2016)
+
+  05 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +xorg-server-1.17.4-r2.ebuild, -xorg-server-1.17.4-r1.ebuild:
+  Revert: Add CAP_SYS_RAWIO to capability set allowed by verictl.
+
+*xorg-server-1.17.4-r1 (04 Oct 2016)
+
+  04 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +xorg-server-1.17.4-r1.ebuild, -xorg-server-1.17.4.ebuild:
+  Add CAP_SYS_RAWIO to capability set allowed by verictl.
+  Required by clip-kernel 4.4.
+
+*xorg-server-1.17.4 (08 Jan 2016)
+  08 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  -xorg-server-1.15.2-r4.ebuild,
+  +xorg-server-1.17.4.ebuild,
+  -files/xorg-server-1.12-ia64-fix_inx_outx.patch,
+  -files/xorg-server-1.12.3-clip-noprivs.patch,
+  -files/xorg-server-1.15.1-clip-input.patch,
+  -files/xorg-server-1.15.2-clip-domains.patch,
+  -files/xorg-server-1.16-fix-qemu-graphic-corruption.patch,
+  +files/xorg-server-1.17-support-multiple-Files-sections.patch,
+  +files/xorg-server-1.17.4-clip-domains.patch,
+  +files/xorg-server-1.17.4-clip-input.patch,
+  files/xorg-server-1.17.4-clip-noprivs.patch:
+  Bump to latest stable.
+  Drop patches included upstream.
+  Rebase CLIP-specific patches to new upstream.
+
+  07 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  xorg-server-1.15.2-r4.ebuild:
+  Use get_libdir instead of lib to fix FTBFS on amd64.
+
+*xorg-server-1.15.2-r4 (09 Sep 2015)
+
+  09 Sep 2015; Timothée Ravier <clipos@ssi.gouv.fr>
+  +xorg-server-1.15.2-r4.ebuild, -xorg-server-1.15.2-r3.ebuild:
+  Add patch to fix display corruption in Qemu with the cirrus driver.
+
+*xorg-server-1.15.2-r3 (14 Aug 2015)
+
+  14 Aug 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xorg-server-1.15.2-r3.ebuild, -xorg-server-1.15.2-r2.ebuild,
+  +files/xorg.conf.intel-noaccel:
+  Add new intel DDX config file with acceleration disabled.
+
+*xorg-server-1.15.2-r2 (17 Apr 2015)
+
+  17 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xorg-server-1.15.2-r2.ebuild, -xorg-server-1.15.2-r1.ebuild,
+  +files/xorg.conf.modesetting:
+  Add support for modesetting DDX.
+
+  11 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +xorg-server-1.15.2-r1.ebuild, -xorg-server-1.15.1.ebuild,
+  -files/xorg-server-1.15.1-clip-domains.patch,
+  +files/xorg-server-1.15.2-clip-domains.patch:
+  Bump to latest stable, include fixes for CVE-2014-{8091..8103}.
+
+*xorg-server-1.15.2-r1 (08 Jan 2015)
+
+*xorg-server-1.15.1 (21 May 2014)
+
+  21 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.15.1.ebuild, -xorg-server-1.14.5-r1.ebuild,
+  -files/exa-only-draw-valid-trapezoids.patch,
+  -files/servermd_h_defined_linux.patch,
+  -files/xorg-server-1.12-disable-acpi.patch,
+  -files/xorg-server-1.14.5-clip-domains.patch,
+  -files/xorg-server-1.14.2-clip-input.patch,
+  -files/xdm.initd-10, +files/xdm.initd-11,
+  +files/xorg-server-1.15.1-clip-input.patch,
+  +files/xorg-server-1.15.1-clip-domains.patch:
+  Bump to latest.
+
+*xorg-server-1.14.5-r1 (20 Feb 2014)
+
+  10 Feb 2014; ANSSI <clipos@ssi.gouv.fr>
+  +xorg-server-1.14.5-r1.ebuild, -xorg-server-1.14.5.ebuild,
+  +files/servermd_h_defined_linux.patch:
+  Fix bad servermd.h for mesa compilation on ARM.
+
+  09 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/startx.initd:
+  Remove /dev/pts mount, no longer needed with latest openrc.
+
+*xorg-server-1.14.5 (18 Dec 2013)
+
+  18 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.14.5.ebuild, -xorg-server-1.14.3-r2.ebuild,
+  -files/xorg-server-1.12-cve-2013-4396.patch,
+  -files/xorg-server-1.14.3-fix-defined-arm32.patch,
+  -files/xorg-server-1.14.3-clip-domains.patch,
+  +files/xorg-server-1.14.5-clip-domains.patch,
+  +files/exa-only-draw-valid-trapezoids.patch:
+  Bump to latest + add fix for CVE-2013-6424 (exa-only-draw...
+  patch).
+
+  24 Oct 2013; ANSSI <clipos@ssi.gouv.fr>
+  +files/xorg-server-1.14.3-fix-defined-arm32.patch:
+  Fix bad use of __arm32__ to detect build on arm,
+  correct variable is __arm__.
+
+  21 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/startx.initd: 
+  Mount /dev/pts before starting X on the livecd - seems to 
+  be needed with openRC (/dev gets remounted above /dev/pts).
+
+  21 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.14.3-r2.ebuild:
+  Remove version requirements for udev dependency, as we're
+  not ready yet for udev > 150.
+
+*xorg-server-1.14.3-r2 (17 Oct 2013)
+
+  17 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.14.3-r2.ebuild, -xorg-server-1.14.2-r2.ebuild,
+  -files/xdm.initd-9, +files/xdm.initd-10,
+  -files/xorg-server-1.14.2-clip-domains.patch,
+  +files/xorg-server-1.14.3-clip-domains.patch,
+  +files/xorg-server-1.12-cve-2013-4396.patch,
+  +files/xorg-server-1.12-ia64-fix_inx_outx.patch,
+  +files/xorg-server-1.12-unloadsubmodule.patch:
+  Bump to latest, security fix for CVE-2013-4396.
+
+*xorg-server-1.14.2-r2 (28 Aug 2013)
+
+  28 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.14.2-r2.ebuild, -xorg-server-1.14.2-r1.ebuild,
+  files/xorg.conf.nouveau:
+  Fix nouveau config file - actually use the nouveau driver.
+
+*xorg-server-1.14.2-r1 (26 Aug 2013)
+
+  26 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.14.2-r1.ebuild, -xorg-server-1.14.2.ebuild,
+  files/xorg-server-1.14.2-clip-domains.patch:
+  clip-domains patch: allow access to XKEYBOARD extension to 
+  untrusted clients, this seems to be needed now to receive
+  proper modifier-key info. Add better checks on device usage,
+  and enforce read-only Xace access on all devices. This should
+  prevent usage of any of the XkbSet* functions by Untrusted
+  clients, since all such calls go through a Xace DixSet* callback.
+
+*xorg-server-1.14.2 (20 Aug 2013)
+
+  20 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.14.2.ebuild, -xorg-server-1.12.3-r4.ebuild,
+  +files/xdm.initd-9, +files/05-base.conf,
+  +files/xorg-server-1.14.2-clip-domains.patch,
+  +files/xorg-server-1.14.2-clip-input.patch,
+  -files/xorg-server-1.12.3-clip-input.patch,
+  -files/xdm.initd-8,
+  -files/xorg-server-1.12-composite-fallback-regions.patch,
+  -files/xorg-server-1.12.3-clip-domains.patch,
+  files/xorg.conf.fbdev, files/xorg.conf.intel, 
+  files/xorg.conf.nouveau, files/xorg.conf.radeon:
+  Bump to latest. Move the common parts of xorg.conf.* into
+  a single file, 05-base.conf. Revert to default 
+  sigio behaviour.
+
+*xorg-server-1.12.3-r4 (11 Dec 2012)
+
+  11 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.12.3-r4.ebuild, -xorg-server-1.12.3-r3.ebuild,
+  files/xorg-server-1.12-composite-fallback-regions.patch:
+  Fix for #47266 @ bugs.freedesktop.org : avoid composite corruption
+  with e.g. cairo >= 1.12
+
+*xorg-server-1.12.3-r3 (11 Dec 2012)
+
+  11 Dec 2012; ANSSI <clipos@ssi.gouv.fr>
+  +xorg-server-1.12.3-r3.ebuild, -xorg-server-1.12.3-r2.ebuild,
+  files/startx.initd:
+  Replaced "cp -r" by "rsync -ar" to avoid spinning problem on
+  DVD media.
+
+*xorg-server-1.12.3-r2 (05 Oct 2012)
+
+  05 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.12.3-r2.ebuild, -xorg-server-1.12.3-r1.ebuild,
+  files/xorg-server-1.12.3-clip-domains.patch:
+  Simplify the unstruted domains separation logic in 
+  SecurityDevice().
+
+*xorg-server-1.12.3-r1 (24 Sep 2012)
+
+  24 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.12.3-r1.ebuild, -xorg-server-1.12.3.ebuild,
+  files/xorg.conf.{fbdev,intel,nouveau,radeon}, 
+  +files/10-input.conf:
+  Move input device config out of the various xorg.conf files
+  and into xorg.conf.d.
+  Disable PalmDetect on synaptics touchpads, since this seems
+  to break tap to click.
+
+*xorg-server-1.12.3 (31 Jul 2012)
+
+  31 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.12.3.ebuild, -xorg-server-1.10.6-r1.ebuild,
+  +files/xorg-server-1.12.3-clip-domains.patch,
+  +files/xorg-server-1.12.3-clip-input.patch,
+  +files/xorg-server-1.12.3-clip-noprivs.patch,
+  +files/xorg-server-1.12-disable-acpi.patch,
+  +files/xdm.initd-8, +files/xdm.confd-4,
+  -files/xdm.initd, -files/xdm.confd-3,
+  -files/x11-noroot.patch,
+  -files/xorg-server-1.10.6-clip-domains.patch,
+  -files/xorg-server-1.10.6-clip-input.patch,
+  -files/xorg-server-1.11-log-format-fix.patch,
+  -files/xorg-server-1.9-nouveau-default.patch,
+  files/xdm.initd-3:
+  Bump to latest.
+
+*xorg-server-1.10.6-r1 (30 May 2012)
+
+  30 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.10.6-r1.ebuild, -xorg-server-1.10.4-r3.ebuild,
+  +files/xorg-server-1.11-log-format-fix.patch,
+  +files/xorg-server-1.10.6-clip-input.patch,
+  +files/xorg-server-1.10.6-clip-domains.patch,
+  -files/xorg-server-1.10.4-clip-domains.patch,
+  -files/xorg-server-1.10.2-clip-input.patch,
+  -files/xorg-cve-2011-4028+4029.patch:
+  Bump to latest. Fix CVE-2012-2118.
+
+*xorg-server-1.10.4-r3 (31 Jan 2012)
+
+  31 Jan 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +xorg-server-1.10.4-r3.ebuild, -xorg-server-1.10.4-r2.ebuild,
+  files/xorg.conf.livecd:
+  Fix keyboard configuration for livecd.
+
+*xorg-server-1.10.4-r2 (09 Nov 2011)
+
+  09 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.10.4-r2.ebuild, -xorg-server-1.10.4-r1.ebuild,
+  files/xorg-server-1.10.2-clip-input.patch:
+  Fixes to the CLIP input patch + add support for touchscreen
+  and tablet. Among the fixes is proper auto-activation of new
+  devices reported through clip backend, so we don't need to 
+  chvt out and back to activate them. Sorry.
+
+*xorg-server-1.10.4-r1 (19 Oct 2011)
+
+  19 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.10.4-r1.ebuild, -xorg-server-1.10.2.ebuild,
+  +files/xorg-cve-2011-4028+4029.patch,
+  +files/xorg-server-1.10.4-clip-domains.patch,
+  -files/xorg-server-1.10.2-clip-domains.patch:
+  Bump to latest, add patch for two minor CVEs.
+
+*xorg-server-1.10.2 (06 Jul 2011)
+
+  06 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.10.2.ebuild, -xorg-server-1.8.2-r8.ebuild,
+  +files/xorg-sets.conf, +files/xdm.initd-3,
+  +files/xorg-server-1.9-nouveau-default.patch,
+  +files/xorg-server-1.10.2-clip-input.patch,
+  +files/xorg-server-1.10.2-clip-domains.patch,
+  -files/xorg-server-1.8.2-clip-domains.patch,
+  -files/xorg-server-1.8.2-clip-input.patch:
+  Bump to latest.
+
+  07 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.8.2-r8.ebuild:
+  Add missing sdl IUSE.
+
+  26 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/startx.initd:
+  Make a R/W volatile copy of /mnt/cdrom/config when booting off
+  read-only install media.
+
+*xorg-server-1.8.2-r8 (11 Apr 2011)
+
+  11 Apr 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r8.ebuild, -xorg-server-1.8.2-r7.ebuild,
+  xorg.conf.nouveau, xorg.conf.fbdev, xorg.conf.radeon, xorg.conf.intel:
+  Fix touchpad tapping, add circular scroll.
+
+*xorg-server-1.8.2-r7 (06 Apr 2011)
+
+  06 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r7.ebuild, -xorg-server-1.8.2-r6.ebuild,
+  files/xorg-server-1.8.2-clip-input.patch:
+  Oops, C strings are supposed to end with '\0', not '0', fix 
+  memset to reflect that. Film at 11.
+
+*xorg-server-1.8.2-r6 (28 Mar 2011)
+
+  28 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r6.ebuild, -xorg-server-1.8.2-r5.ebuild,
+  files/xorg-server-1.8.2-clip-input.patch:
+  Try to add proper names for the input devices.
+
+*xorg-server-1.8.2-r5 (18 Mar 2011)
+
+  18 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r5.ebuild, -xorg-server-1.8.2-r4.ebuild,
+  files/xorg.conf.{fbdev,intel,nouveau,radeon}:
+  Switch mouse config to evdev as well, and use a separate config
+  for touchpads with xf86-input-synaptics - needs hotplug-clip-2.0.
+
+*xorg-server-1.8.2-r4 (13 Jan 2011)
+
+  13 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r4.ebuild, -xorg-server-1.8.2-r3.ebuild,
+  files/xorg.conf.{fbdev,intel,nouveau,radeon}:
+  Deactivate MIT-SHM extension, as it cannot work properly with
+  vserver isolation.
+  Properly install nouveau xorg.conf.
+
+*xorg-server-1.8.2-r3 (26 Oct 2010)
+
+  26 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r3.ebuild, -xorg-server-1.8.2-r2.ebuild,
+  +files/xorg.conf.radeon, +files/xorg.conf.nouveau, 
+  files/_debian/postinst:
+  Add radeon / nvidia video support.
+  Add CLSM_PRIV_DRM.
+
+  08 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.8.2-r2.ebuild, +files/xorg.conf.livecd, 
+  +files/xorg.conf.livecd:
+  Remove hardcoded resolution from livecd conf.
+
+  30 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.8.2-r2.ebuild, +files/xorg.conf.livecd, 
+  +files/startx.initd:
+  Add clip-livecd USE flag to install clip-livecd config.
+  
+*xorg-server-1.8.2-r2 (20 Jul 2010)
+
+  20 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r2.ebuild, -xorg-server-1.8.2-r1.ebuild,
+  files/xorg-server-1.8.2-clip-input.patch:
+  Smallish cleanup + attribute packed. Fix stupid accept() 
+  EINVAL...
+
+*xorg-server-1.8.2-r1 (19 Jul 2010)
+
+  19 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2-r1.ebuild, -xorg-server-1.8.2.ebuild,
+  +files/xorg-server-1.8.2-clip-input.patch,
+  files/xorg.conf.fbdev, files/xorg.conf.intel:
+  Switch to the 'evdev' driver for keyboard management, instead
+  of the old 'kbd', which still seems to lose keyboard events.
+  This uses a static xorg.conf configuration for the first keyboard
+  only, then dynamic notification for others, through a new, 
+  CLIP-specific, device configuration backend (inspired by the
+  udev backend). This requires hotplug-clip >= 1.4.0.
+
+*xorg-server-1.8.2 (08 Jul 2010)
+
+  08 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.2.ebuild, -xorg-server-1.8.1.902.ebuild,
+  files/xorg.conf.intel, files/xorg.conf.fbdev:
+  Bump to final release, which should not have any changes over rc2.
+  Disable (both statically and in the runtime conf) the use of SIGIO 
+  for input event signalization, since it is very racy and results 
+  in lost events in CLIP.
+
+*xorg-server-1.8.1.902 (07 Jul 2010)
+
+  07 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.8.1.902.ebuild, -xorg-server-1.7.5-r3.ebuild:
+  -files/xorg-server-1.7.5-clip-domains.patch,
+  +files/xorg-server-1.8.1.902-clip-domains.patch,
+  files/x11-noroot.patch,
+  +files/xdm.confd-3, +files/xdm-setup.initd-1,
+  +files/xorg-server-disable-acpi.patch,
+  +files/xdm.initd, files/_debian/postinst:
+  Bump to latest.
+  Add a non-machine-specific way of specifying video drivers, through
+  /etc/shared/video (new install param).
+
+*xorg-server-1.7.5-r3 (09 Jun 2010)
+
+  09 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.7.5-r3.ebuild, -xorg-server-1.7.5-r2.ebuild,
+  files/_debian/postinst:
+  Add Lenovo R500 to kms list.
+
+*xorg-server-1.7.5-r2 (21 May 2010)
+
+  21 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.7.5-r2.ebuild, -xorg-server-1.7.5-r1.ebuild,
+  files/_debian/postinst:
+  Add Lenovo X60 to kms list.
+
+*xorg-server-1.7.5-r1 (23 Mar 2010)
+
+  23 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.7.5-r1.ebuild, -xorg-server-1.7.5.ebuild,
+  files/_debian/postinst:
+  Switch to KMS intel on Thinkpad and Latitude laptops.
+
+*xorg-server-1.7.5 (18 Mar 2010)
+
+  18 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.7.5.ebuild, -xorg-server-1.6.5-r1.ebuild,
+  +files/1.7.3.901-0001-dix-if-owner-events-is-true-for-passive-grabs-add-th.patch,
+  +files/xorg-server-1.7.5-clip-domains.patch,
+  -files/xorg-server-1.6.5-clip-domains.patch,
+  files/_debian/postinst, files/x11-noroot.patch, files/xorg.conf.intel:
+  Bump to 1.7.5. 
+
+*xorg-server-1.6.5-r1 (10 Mar 2010)
+
+  10 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.6.5-r1.ebuild, -xorg-server-1.5.3-r10.ebuild,
+  -files/1.4-fix-kdrive-automake.patch, -files/1.4-fpic-libxf86config.patch,
+  -files/xorg-server-1.3.0.0-clip-aclocal.patch,
+  +files/xorg-server-1.6.5-clip-domains.patch,
+  -files/xorg-server-1.5.3-clip-domains.patch,
+  -files/xorg.conf, +files/xorg.conf.fbdev, +files/xorg.conf.intel,
+  +files/_debian/postinst:
+  Bump to latest. Create proper symlinks for dri/dri2/glx extensions.
+  Add intel KMS xorg.conf, not used for now.
+
+*xorg-server-1.5.3-r10 (30 Oct 2009)
+
+  30 Oct 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.5.3-r10.ebuild, -xorg-server-1.5.3-r9.ebuild:
+  -files/xorg-server-1.5.3-clip-hwaccess.patch, 
+  +files/x11-noroot.patch, files/xorg.conf.
+  Remove clip hwaccess patch, which is in fact no longer needed
+  with fbdev, replace it with a more generic and simpler noroot
+  patch from upstream.
+  Remove DPMS from now.
+
+*xorg-server-1.5.3-r9 (28 Sep 2009)
+
+  28 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.5.3-r9.ebuild, -xorg-server-1.5.3-r8.ebuild,
+  files/xorg.conf:
+  Switch to fr(oss) XkbVariant.
+
+*xorg-server-1.5.3-r8 (07 Sep 2009)
+
+  07 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.5.3-r8.ebuild, -xorg-server-1.5.3-r7.ebuild:
+  files/xorg-server-1.5.3-clip-domains.patch:
+  More fixes to clip-domains patch. Our old SecurityDeviceAccess()
+  approach was actually stricter to some extent than the old one...
+  Also add DixBellAccess to the list of authorized device accesses, 
+  otherwise thunderbird will crash its associated VNC viewer when
+  receiving a email while the viewer does not have focus (access
+  gets denied, don't ask me why the viewer then goes down in flames...).
+
+*xorg-server-1.5.3-r7 (04 Sep 2009)
+
+  04 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.5.3-r7.ebuild, -xorg-server-1.5.3-r6.ebuild:
+  files/xorg-server-1.5.3-clip-domains.patch:
+  Revert to old SecurityDeviceAccess() control strategy, to 
+  avoid VNC client crashes.
+
+*xorg-server-1.5.3-r6 (02 Sep 2009)
+
+  02 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.5.3-r6.ebuild, -xorg-server-1.3.0.0-r11.ebuild,
+  -files/1.2.0-fix-amd-cpu-detection.patch,
+  -files/1.2.0-properly-free-device-devprivates-memory-leak-fix.patch,
+  -files/1.2.0-typo-fix.patch,
+  -files/1.2.0-zero-out-client-devprivates-on-allocation.patch,
+  -files/1.3-0003-Fix-for-CVE-2007-6427-Xinput-extension-memory-corr.patch,
+  -files/1.3-0006-Fix-for-CVE-2007-5958-File-existence-disclosure.patch,
+  -files/1.3-alpha-build-fix.patch,
+  -files/1.3.0.0-fix-dual-head-screen-resolutions.patch,
+  -files/1.3.0.0-fix-fbdev-mode-changed.patch,
+  -files/1.3.0.0-fix-randr-resizing.patch,
+  -files/1.3.0.0-fix-xephyr-amd64-segfault.patch,
+  -files/1.3.0.0-fix-xkb-openoffice-hangs.patch,
+  -files/1.3.0.0-ramdac.patch,
+  -files/1.3.0.0-use-proc-instead-of-sys.patch,
+  -files/1.3.0.0-xephyr_crash_at_exit.patch,
+  -files/1.4-0001-Fix-for-CVE-2007-5760-XFree86-Misc-extension-out-o.patch,
+  -files/1.4-0002-Fix-for-CVE-2007-6428-TOG-cup-extension-memory-cor.patch,
+  -files/1.4-0003-Fix-for-CVE-2007-6427-Xinput-extension-memory-corr.patch,
+  -files/1.4-0004-Fix-for-CVE-2007-6429-MIT-SHM-and-EVI-extensions-i.patch,
+  -files/1.4-0005-Fix-for-CVE-2008-0006-PCF-Font-parser-buffer-overf.patch,
+  -files/1.4-0006-Fix-for-CVE-2007-5958-File-existence-disclosure.patch,
+  -files/1.4-0007-CVE-2007-6429-Don-t-spuriously-reject-8bpp-shm-pix.patch,
+  -files/1.4-0008-CVE-2007-6429-Always-test-for-size-offset-wrapping.patch,
+  -files/1.4-0009-Don-t-break-grab-and-focus-state-for-a-window-when-r.patch,
+  -files/1.4-document-new-font-catalogs.patch,
+  -files/1.4-dont-hang-openoffice.patch,
+  -files/1.4-fix-dmx-build.patch,
+  -files/1.4-fix-dmx-link.patch,
+  -files/1.4-fix-kdrive-automake.patch,
+  -files/1.4-fix-xephyr-link.patch,
+  -files/1.4-fix-xprint-build.patch,
+  -files/1.4-fix-xprint-link.patch,
+  -files/1.4-fpic-libxf86config.patch,
+  -files/1.4-ia64.patch,
+  -files/1.4.0.90-clean-generated-files.patch,
+  -files/avoid-crash-on-minimized-xv-window.patch,
+  -files/use-composite-for-unequal-depths.patch,
+  -files/xorg-server-sam225bw-quirks.patch,
+  -files/xorg-x11-server-1.0.1-fpic-libxf86config.patch,
+  -files/xorg-xserver-1.4-cve-2008-1377.diff,
+  -files/xorg-xserver-1.4-cve-2008-1379.diff,
+  -files/xorg-xserver-1.4-cve-2008-2360.diff,
+  -files/xorg-xserver-1.4-cve-2008-2361.diff,
+  -files/xorg-xserver-1.4-cve-2008-2362.diff,
+  -files/xprint.init,
+  -files/xorg-server-1.3.0.0-clip-domains.patch,
+  -files/xorg-server-1.3.0.0-clip-hwaccess.patch,
+  +files/xorg-server-1.5.3-clip-domains.patch,
+  +files/xorg-server-1.5.3-clip-hwaccess.patch:
+  Bump to 1.5. Port patches. Cleanup old patch mess.
+  Add explicit --enable-xcsecurity to make sure we enable the
+  security extension.
+
+*xorg-server-1.3.0.0-r11 (27 Aug 2009)
+
+  27 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0.0-r11.ebuild, -xorg-server-1.3.0.0-r10.ebuild,
+  +files/1.3.0.0-fix-fbdev-mode-changed.patch, files/xorg.conf:
+  Add a patch to fix fbdev init on some configs.
+  Remove most of the display settings from xorg.conf, let the server
+  pick the framebuffer mode instead - removes the need for screen
+  geom stuff altogether.
+
+*xorg-server-1.3.0.0-r10 (05 Aug 2009)
+
+  05 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0.0-r10.ebuild, -xorg-server-1.3.0.0-r9.ebuild,
+  files/xorg.conf:
+  Add 1280x800 resolution.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.3.0.0-r9.ebuild, +files/xorg-server-1.3.0.0-clip-aclocal.patch:
+  Switch to verictl2.eclass. Fix aclocal run.
+
+*xorg-server-1.3.0.0-r9 (13 Jun 2008)
+
+  13 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0.0-r9.ebuild, -xorg-server-1.3.0.0-r8.ebuild:
+  +files/xorg-xserver-1.4-cve-2008-1377.diff,
+  +files/xorg-xserver-1.4-cve-2008-1379.diff,
+  +files/xorg-xserver-1.4-cve-2008-2360.diff,
+  +files/xorg-xserver-1.4-cve-2008-2362.diff,
+  +files/xorg-xserver-1.4-cve-2008-2361.diff:
+  Fixes for CVEs published on 11 June.
+
+*xorg-server-1.3.0.0-r8 (10 Jun 2008)
+
+  10 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0.0-r8.ebuild, -xorg-server-1.3.0.0-r7.ebuild:
+  Switch to CCSD veriexec hashes.
+
+*xorg-server-1.3.0.0-r7 (15 Apr 2008)
+
+  15 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0.0-r7.ebuild, -xorg-server-1.3.0.0-r6.ebuild:
+  Use screen-geom.eclass to set the default Xorg depth : 24 bits or
+  16 bits.
+
+* xorg-server-1.3.0-r6 (28 Mar 2008)
+
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0-r6.ebuild, -xorg-server-1.3.0-r5.ebuild:
+  Add IUSE core-deps to remove dependency on freetype. 
+
+* xorg-server-1.3.0-r5 (21 Mar 2008)
+
+  21 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0-r5.ebuild, -xorg-server-1.3.0-r4.ebuild,
+  +files/1.4-0008-CVE-2007-6429-Always-test-for-size-offset-wrapping.patch,
+  +files/1.4-0009-Don-t-break-grab-and-focus-state-for-a-window-when-r.patch:
+  Bump from Gentoo, fixes two CVE vulns. Same CLIP ChangeSet.
+
+* xorg-server-1.3.0-r4 (24 Jan 2008)
+
+  24 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.3.0-r4.ebuild, -xorg-server-1.1.1-r6.ebuild,
+  -files/03-tfp-damage.patch, -files/1.1.1-fix_acpi_tokenize.patch,
+  -files/1.1.1-fix_big_endian_glx.patch, -files/xorg-conf-example.patch,
+  -files/xorg-server-1.1.1-clip-domains.patch, -files/06-aiglx-happy-vt-switch.patch,
+  -files/xorg-server-1.1.1-clip-hwaccess.patch,
+  -files/xorg-server-1.1.1-install-libxf86config-headers.patch,
+  -files/1.1.1-sparc64-ati-lockups.patch, -files/1.1.1-sparc-includes.patch,
+  -files/1.1.1-fix-xrandr-zoom-keys.patch, -files/01-no-move-damage.patch,
+  -files/1.1.1-fixdualhead.patch, -files/02-dont-backfill-bg-none.patch,
+  -files/05-offscreen-pixmaps.patch, -files/1.1.1-dbe-render.diff,
+  -files/04-mesa-copy-sub-buffer.patch, -files/xorg-x11-server-1.1.1-mesa-6.5.1.patch,
+  +files/1.3-0006-Fix-for-CVE-2007-5958-File-existence-disclosure.patch,
+  +files/1.2.0-fix-amd-cpu-detection.patch, +files/1.4-fpic-libxf86config.patch,
+  +files/1.4-dont-hang-openoffice.patch, +files/1.3.0.0-use-proc-instead-of-sys.patch,
+  +files/avoid-crash-on-minimized-xv-window.patch, +files/xorg-server-sam225bw-quirks.patch,
+  +files/1.4.0.90-clean-generated-files.patch, +files/1.4-document-new-font-catalogs.patch, 
+  +files/1.3-alpha-build-fix.patch, +files/1.3.0.0-xephyr_crash_at_exit.patch,
+  +files/1.4-0002-Fix-for-CVE-2007-6428-TOG-cup-extension-memory-cor.patch,
+  +files/1.4-0007-CVE-2007-6429-Don-t-spuriously-reject-8bpp-shm-pix.patch,
+  +files/1.3.0.0-fix-xkb-openoffice-hangs.patch, +files/use-composite-for-unequal-depths.patch,
+  +files/1.3.0.0-fix-xephyr-amd64-segfault.patch,
+  +files/1.4-0001-Fix-for-CVE-2007-5760-XFree86-Misc-extension-out-o.patch,
+  +files/1.2.0-properly-free-device-devprivates-memory-leak-fix.patch,
+  +files/1.3.0.0-ramdac.patch,
+  +files/1.4-0006-Fix-for-CVE-2007-5958-File-existence-disclosure.patch,
+  +files/1.2.0-zero-out-client-devprivates-on-allocation.patch,
+  +files/1.4-fix-xephyr-link.patch,
+  +files/1.3-0003-Fix-for-CVE-2007-6427-Xinput-extension-memory-corr.patch,
+  +files/1.4-ia64.patch, +files/1.4-fix-xprint-link.patch,
+  +files/1.4-0003-Fix-for-CVE-2007-6427-Xinput-extension-memory-corr.patch,
+  +files/1.3.0.0-fix-dual-head-screen-resolutions.patch,
+  +files/1.4-fix-xprint-build.patch,
+  +files/1.4-fix-dmx-link.patch, +files/1.4-fix-dmx-build.patch,
+  +files/xorg-x11-server-1.0.1-fpic-libxf86config.patch,
+  +files/1.2.0-typo-fix.patch,
+  +files/1.4-0005-Fix-for-CVE-2008-0006-PCF-Font-parser-buffer-overf.patch,
+  +files/1.4-fix-kdrive-automake.patch, +files/1.3.0.0-fix-randr-resizing.patch,
+  +files/1.4-0004-Fix-for-CVE-2007-6429-MIT-SHM-and-EVI-extensions-i.patch,
+  +files/xorg-server-1.3.0.0-clip-domains.patch,
+  +files/xorg-server-1.3.0.0-clip-hwaccess.patch:
+  *Big* Bump to 7.3, fixes GLSAs 200801-09 and 200710-16. CLIP patches do the same
+  as before, with clip-domains patch ported to new Xace/Xsecurity and a clean-up 
+  of clip-hwaccess patch.
+
+* xorg-server-1.1.1-r6 (05 Dec 2007)
+
+  05 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.1.1-r6.ebuild, files/xorg.conf:
+  -xorg-server-1.1.1-r5.ebuild:
+  Remove 800x600 and 640x480 modelines from xorg.conf : only 1280x1024 
+  and 1024x768 are supported anyway.
+
+* xorg-server-1.1.1-r5 (13 Nov 2007)
+
+  13 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.1.1-r5.ebuild, files/xorg.conf:
+  -xorg-server-1.1.1-r4.ebuild:
+  Use a depth of 24 by default.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  -xorg-server-1.0.2-r7.ebuild:
+  Remove stale ebuild.
+
+  05 Sep 2007; EADS D&S <clipos@ssi.gouv.fr>
+  ! use clip instead of !usr clip
+
+  21 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.1.1-r4.ebuild:
+  Remove useless RDEPEND on eselect-opengl.
+
+  14 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.1.1-r4.ebuild:
+  Finally removed Xorg's suid bit when USE clip is set.
+
+  10 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.1.1-r4.ebuild:
+  Fix stray share/X11/xkb/compiled : how come it wasn't detected
+  until then ?
+
+  10 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.1.1-r4.ebuild:
+  Add support for running Xorg in a non-admin context. All that is
+  needed is to give it forced POSIX caps instead of authorized ones 
+  (since it cannot inherit those of XDM in that case), and to grant
+  it an additionnal CLSM privilege, allowing it to send SIGUSR back 
+  to XDM.
+  Old behaviour is kept whenever VERIEXEC_CTX=0 or VERIEXEC_CTX is 
+  undefined.
+  
+* xorg-server-1.1.1-r4 (21 Mar 2007)
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +xorg-server-1.1.1-r4.ebuild:
+  Bump to Xorg-7.1, fixes GLSA 200701-25.
+
+  12 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.0.2-r7.ebuild:
+  Inherit verictl, create verictl.d entry to raise Xorg's potential
+  caps to CAP_SYS_TTY_CONFIG.
+
+  26 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/xorg.conf:
+  Ah well, set default keyboard layout to ugly french azerty, 
+  instead of dvorak...
+
+  15 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/xorg.conf:
+  Switch to default /usr/local font directory.
+
+  12 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.0.2-r7.ebuild:
+  Remove xkb/compiled directory that conflicts with a symlink from xkeyboard-config.
+
+  01 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/xorg.conf:
+  Add Option "DPMS" "false" to Monitor section, to further reduce 
+  HW interaction.
+
+  01 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.0.2-r7.ebuild, +files/xorg-server-1.0.2-clip-hwaccess.patch:
+  Add patch to remove priviledged I/O from xorg: no calls to iopl()/ioperm(),
+  no PCI bus scanning. Based on work by Cyrille Kergoat, ported to X11R7.
+  This allows us to set GRKERNSEC_IO=y in kernel and remove sys_iopl and 
+  sys_ioperm entirely from the kernel. See ChangeLog for sys-kernel/clip-kernel.
+  Note: since this is hardcoded in the kernel, we do not create a specific USE 
+  flag for it, but apply it as long as USE clip is set.
+
+  21 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.0.2-r7.ebuild, +files/xorg.conf:
+  Add clip-x11 to IUSE, to install a default xorg.conf.
+
+* xorg-server-1.0.2-r7 (20 Jul 2006)
+
+  20 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  xorg-server-1.0.2-r7.ebuild, 
+  +files/xorg-server-1.0.2-clip-domains.panch: 
+  Initial clip import. Added clip-domains support.

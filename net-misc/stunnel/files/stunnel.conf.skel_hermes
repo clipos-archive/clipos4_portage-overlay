@@ -1,0 +1,26 @@
+cat >"${output_file}" <<-EOF
+socket = l:TCP_NODELAY=1
+socket = r:TCP_NODELAY=1
+${exit_method}
+
+ciphers = AES
+SSLVersion = TLSv1
+verify = 2
+client = yes
+
+CApath = /etc/admin/tls/cacerts
+cert = /dev/fd/3
+key = /dev/fd/4
+
+EOF
+
+# The basic regexp will filter out comments and blank lines, and
+# normalize the EOF (no \n at the end would otherwise be a problem with read).
+grep -E '^[^#,]+,[0-9]+,[^,]+,[0-9]+$' ${conf_file} | while IFS=, read tun_name tun_src tun_ip tun_dst; do
+	cat >>"${output_file}" <<-EOF
+		[${tun_name}]
+		accept = ${local_addr}:${tun_src}
+		connect = ${tun_ip}:${tun_dst}
+
+EOF
+done

@@ -1,0 +1,16 @@
+--- a/src/core/ngx_log.c
++++ b/src/core/ngx_log.c
+@@ -96,12 +96,7 @@ ngx_log_error_core(ngx_uint_t level, ngx
+ 
+     last = errstr + NGX_MAX_ERROR_STR;
+ 
+-    ngx_memcpy(errstr, ngx_cached_err_log_time.data,
+-               ngx_cached_err_log_time.len);
+-
+-    p = errstr + ngx_cached_err_log_time.len;
+-
+-    p = ngx_slprintf(p, last, " [%V] ", &err_levels[level]);
++    p = ngx_slprintf(errstr, last, "[%V] ", &err_levels[level]);
+ 
+     /* pid#tid */
+     p = ngx_slprintf(p, last, "%P#" NGX_TID_T_FMT ": ",

@@ -1,0 +1,3 @@
+Protocol 2
+AddressFamily inet
+XauthLocation /usr/local/bin/xauth

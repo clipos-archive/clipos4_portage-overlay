@@ -1,0 +1,125 @@
+# CLIP ChangeLog for kde-base/kmix
+
+*kmix-4.12.5-r1 (10 Oct 2014)
+
+  10 Oct 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +kmix-4.12.5-r1.ebuild, -kmix-4.12.5.ebuild,
+  -files/kmix.desktop:
+  Disable custom autostart file: there is a second autostart (installed by
+  default) that does the work just fine. However, if we leave this extra
+  autostart file, it causes the kmix to display its mixer configuration window
+  when new KDE sessions open.
+
+*kmix-4.12.5 (05 May 2014)
+
+  05 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.12.5.ebuild, -kmix-4.12.3-r1.ebuild:
+  Bump to latest.
+
+*kmix-4.12.3-r1 (11 Apr 2014)
+
+  11 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.12.3-r1.ebuild, -kmix-4.12.3.ebuild:
+  Force rebuild - generate doc.
+
+*kmix-4.12.3 (12 Mar 2014)
+
+  12 Mar 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.12.3.ebuild, -kmix-4.9.5.ebuild:
+  Bump to latest.
+
+*kmix-4.9.5 (05 Feb 2013)
+
+  05 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.9.5.ebuild, -kmix-4.9.4.ebuild:
+  Bump to latest.
+
+*kmix-4.9.4 (26 Dec 2012)
+
+  26 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.9.4.ebuild, -kmix-4.7.3-r1.ebuild:
+  Bump to latest.
+
+*kmix-4.7.3-r1 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.7.3-r1.ebuild, -kmix-4.7.3.ebuild:
+  Force rebuild.
+
+*kmix-4.7.3 (15 Nov 2011)
+
+  15 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.7.3.ebuild, -kmix-4.7.1.ebuild:
+  Bump to latest.
+
+*kmix-4.7.1 (12 Sep 2011)
+
+  12 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.7.1.ebuild, -kmix-4.5.5.ebuild:
+  Bump to latest.
+
+*kmix-4.5.5 (10 Jan 2011)
+
+  10 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.5.5.ebuild, -kmix-4.5.4.ebuild:
+  Bump to latest.
+
+*kmix-4.5.4 (20 Dec 2010)
+
+  20 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.5.4.ebuild, -kmix-4.4.4.ebuild:
+  Bump to latest.
+
+*kmix-4.4.4 (30 Jun 2010)
+
+  30 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.4.4.ebuild:
+  Add latest (~x86).
+
+*kmix-4.3.5 (04 Feb 2010)
+
+  04 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.3.5.ebuild, -kmix-4.3.4-r1.ebuild,
+  +files/kmix-4.3.2-solaris.patch:
+  Bump to latest.
+
+*kmix-4.3.4-r1 (12 Jan 2010)
+
+  12 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.3.4-r1.ebuild, -kmix-4.3.4.ebuild,
+  files/kmix.desktop:
+  Add --keepvisibility to autostarted kmix so the mixer window
+  doesn't show by default.
+
+*kmix-4.3.4 (15 Dec 2009)
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.3.4.ebuild, -kmix-4.3.3.ebuild:
+  Bump.
+
+*kmix-4.4.3 (13 Nov 2009)
+
+  13 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-4.4.3.ebuild:
+  Initial overlay import of 4.4 (in ~x86). Same changeset.
+
+*kmix-3.5.10-r1 (22 Sep 2009)
+
+  22 Sep 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +kmix-3.5.10-r1.ebuild, -kmix-3.5.10.ebuild:
+  Silent bump to force rebuild.
+
+  20 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  kmix-3.5.10.ebuild:
+  Added DESCRIPTION_FR.
+  
+  10 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  kmix-3.5.10.ebuild:
+  Make alsa-lib dependency conditioned by !clip-core, since alsa
+  lib will be in clip-core.
+
+*kmix-3.5.10 (09 Mar 2009)
+
+  09 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  kmix-3.5.10.ebuild, +files/kmix.desktop:
+  Initial CLIP import. Add autostart file.

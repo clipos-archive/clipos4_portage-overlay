@@ -1,0 +1,276 @@
+--- ./ipv4.c.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./ipv4.c	2014-10-31 17:38:26.000000000 +0100
+@@ -562,6 +562,13 @@ ipv4_buildroutes(struct dhcpcd_ctx *ctx)
+ 	struct interface *ifp;
+ 	const struct dhcp_state *state;
+ 
++	/* CLIP */
++	if (ctx->options & DHCPCD_DAEMONISED) {
++		syslog(LOG_INFO, "%s: not building routes", __func__);
++		return;
++	}
++	/* /CLIP */
++
+ 	nrs = malloc(sizeof(*nrs));
+ 	if (nrs == NULL) {
+ 		syslog(LOG_ERR, "%s: %m", __func__);
+@@ -661,6 +668,14 @@ delete_address(struct interface *ifp)
+ 	struct if_options *ifo;
+ 	struct dhcp_state *state;
+ 
++	/* CLIP */
++	if (ifp->ctx->options & DHCPCD_DAEMONISED) {
++		syslog(LOG_INFO, "%s: %s: not deleting address", 
++				ifp->name, __func__);
++		return 0;
++	}
++	/* /CLIP */
++
+ 	state = D_STATE(ifp);
+ 	ifo = ifp->options;
+ 	if (ifo->options & DHCPCD_INFORM ||
+@@ -734,6 +749,16 @@ ipv4_applyaddr(void *arg)
+ 		    ifp->name, inet_ntoa(lease->addr),
+ 		    inet_ntocidr(lease->net));
+ 	else {
++		/* CLIP */
++		if (ifp->ctx->options & DHCPCD_DAEMONISED) {
++			syslog(LOG_INFO, "%s: %s: cannot change address to "
++				"%s/%d", ifp->name, __func__, 
++				inet_ntoa(lease->addr), 
++				inet_ntocidr(lease->net));
++			exit(clip_restart_dhcp());
++		}
++		/* /CLIP */
++
+ 		syslog(LOG_DEBUG, "%s: adding IP address %s/%d",
+ 		    ifp->name, inet_ntoa(lease->addr),
+ 		    inet_ntocidr(lease->net));
+--- ./dhcpcd.c.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./dhcpcd.c	2014-10-31 17:19:05.000000000 +0100
+@@ -243,6 +243,31 @@ dhcpcd_ipwaited(struct dhcpcd_ctx *ctx)
+ 	return 1;
+ }
+ 
++/* CLIP */
++#include <linux/capability.h>
++#include <sys/wait.h>
++#include <clip/clip.h>
++#define CLIP_USER	321
++#define CLIP_GROUP	321
++#define CLIP_CHROOT	"/var/empty/dhcpcd"
++#define CLIP_CAPS	(1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_RAW)
++
++static int 
++waiter_revokeprivs(void) 
++{
++	if (clip_chroot(CLIP_CHROOT)) {
++		syslog(LOG_ERR, "clip_chroot to "CLIP_CHROOT" failed");
++		return -1;
++	}
++
++	if (clip_revokeprivs(CLIP_USER, CLIP_GROUP, NULL, 0, CLIP_CAPS)) {
++		syslog(LOG_ERR, "privilege revocation failed");
++		return -1;
++	}
++	return 0;
++}
++/* /CLIP */
++
+ /* Returns the pid of the child, otherwise 0. */
+ pid_t
+ dhcpcd_daemonise(struct dhcpcd_ctx *ctx)
+@@ -309,6 +334,12 @@ dhcpcd_daemonise(struct dhcpcd_ctx *ctx)
+ 		eloop_exit(ctx->eloop, EXIT_SUCCESS);
+ 		return pid;
+ 	}
++	/* CLIP */
++	if (waiter_revokeprivs())
++		exit(-1);
++	syslog(LOG_INFO, "privileges successfully revoked");
++	/* /CLIP */
++
+ 	ctx->options |= DHCPCD_DAEMONISED;
+ 	return pid;
+ #endif
+@@ -1739,3 +1770,58 @@ exit1:
+ 	closelog();
+ 	return i;
+ }
++
++
++/* CLIP */
++
++#define CLIP_NET_RESTART_SOCK	"/netd" /* Note: relative to chroot */
++
++int
++clip_restart_dhcp(void)
++{
++	int s;
++	char c;
++	struct sockaddr_un sau;
++
++	syslog(LOG_NOTICE, "trying to restart network configuration");
++
++	sau.sun_family = AF_UNIX;
++	snprintf(sau.sun_path, sizeof(sau.sun_path), 
++				"%s", CLIP_NET_RESTART_SOCK);
++
++	s = socket(PF_UNIX, SOCK_STREAM, 0);
++	if (s < 0) {
++		syslog(LOG_ERR, "socket() error: %s", strerror(errno));
++		return EXIT_FAILURE;
++	}
++	
++	if (connect(s, (struct sockaddr *)&sau, 
++					sizeof(struct sockaddr_un)) < 0) {
++		syslog(LOG_ERR, "connect() error: %s", strerror(errno));
++		close(s);
++		return EXIT_FAILURE;
++	}
++
++	if (write(s, "R", 1) != 1) {
++		syslog(LOG_ERR, "write() error: %s", strerror(errno));
++		close(s);
++		return EXIT_FAILURE;
++	}
++	if (read(s, &c, 1) != 1) {
++		/* No error msg, expected (somewhat) as we get killed 
++		 * by netd restart. */
++		close(s);
++		return EXIT_FAILURE;
++	}
++	close(s);
++	if (c == 'Y') {
++		syslog(LOG_NOTICE, "network restart apparently successful, "
++				"though I did not expect to live to see it...");
++		return EXIT_SUCCESS;
++	} else {
++		syslog(LOG_ERR, "network restart failed");
++		return EXIT_FAILURE;
++	}
++}
++
++/* /CLIP */
+--- ./dhcp.c.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./dhcp.c	2014-10-31 17:37:41.000000000 +0100
+@@ -3047,6 +3047,17 @@ dhcp_handleifa(int type, struct interfac
+ 		return;
+ 
+ 	if (type == RTM_DELADDR) {
++ 		/* CLIP */
++ 		if (ifp->ctx->options & DHCPCD_DAEMONISED) {
++			syslog(LOG_INFO, "%s: *not* removing IP address %s/%d",
++			    ifp->name, inet_ntoa(state->lease.addr),
++			    inet_ntocidr(state->lease.net));
++			// No restart here, or we loop when stopping
++ 			//exit(clip_restart_dhcp());
++			return;
++ 		}
++ 		/* /CLIP */
++ 	
+ 		if (state->new &&
+ 		    (state->new->yiaddr == addr->s_addr ||
+ 		    (state->new->yiaddr == INADDR_ANY &&
+@@ -3075,6 +3086,14 @@ dhcp_handleifa(int type, struct interfac
+ 	if (ifo->req_addr.s_addr != INADDR_ANY)
+ 		return;
+ 
++	/* CLIP */
++	if (ifp->ctx->options & DHCPCD_DAEMONISED) {
++		syslog(LOG_ERR, "%s: ignoring RTM_NEWADDR", ifp->name);
++		return;
++		//exit(clip_restart_dhcp());
++	}
++	/* /CLIP */
++
+ 	free(state->old);
+ 	state->old = state->new;
+ 	state->new = dhcp_message_new(addr, net);
+--- ./Makefile.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./Makefile	2014-10-31 17:18:11.000000000 +0100
+@@ -96,7 +96,7 @@ if-options.c: dhcpcd-embedded.h
+ depend: .depend
+ 
+ ${PROG}: ${DEPEND} ${OBJS}
+-	${CC} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
++	${CC} ${LDFLAGS} -o $@ ${OBJS} ${LDADD} -lclip
+ 
+ test:
+ 	cd $@; ${MAKE} $@; ./$@
+--- ./ipv6.c.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./ipv6.c	2014-10-31 17:41:35.000000000 +0100
+@@ -593,6 +593,12 @@ ipv6_checkaddrflags(void *arg)
+ int
+ ipv6_addaddr(struct ipv6_addr *ap)
+ {
++	/* CLIP */
++	if (ap->iface->ctx->options & DHCPCD_DAEMONISED) {
++		syslog(LOG_INFO, "%s: not adding address" , __func__);
++		return 0;
++	}
++	/* /CLIP */
+ 
+ 	syslog(ap->flags & IPV6_AF_NEW ? LOG_INFO : LOG_DEBUG,
+ 	    "%s: adding address %s", ap->iface->name, ap->saddr);
+@@ -700,7 +706,16 @@ ipv6_freedrop_addrs(struct ipv6_addrhead
+ 		    (ap->iface->options->options &
+ 		    (DHCPCD_EXITING | DHCPCD_PERSISTENT)) !=
+ 		    (DHCPCD_EXITING | DHCPCD_PERSISTENT))
+-		{
++		{	
++			/* CLIP */
++			if (ap->iface->ctx->options & DHCPCD_DAEMONISED) {
++				syslog(LOG_INFO, "%s: not deleting address %s "
++					"on %s", __func__, ap->iface->name,
++					ap->saddr);
++				continue;
++			}
++			/* /CLIP */
++
+ 			syslog(LOG_INFO, "%s: deleting address %s",
+ 			    ap->iface->name, ap->saddr);
+ 			if (if_deladdress6(ap) == -1 &&
+@@ -1352,6 +1367,13 @@ ipv6_buildroutes(struct dhcpcd_ctx *ctx)
+ 	uint8_t have_default;
+ 	unsigned long long o;
+ 
++	/* CLIP */
++	if (ctx->options & DHCPCD_DAEMONISED) {
++		syslog(LOG_INFO, "%s: not building routes", __func__);
++		return;
++	}
++	/* /CLIP */
++
+ 	TAILQ_INIT(&dnr);
+ 
+ 	/* First add reachable routers and their prefixes */
+--- ./dhcpcd.h.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./dhcpcd.h	2014-10-31 17:18:11.000000000 +0100
+@@ -157,4 +157,8 @@ int dhcpcd_selectprofile(struct interfac
+ void dhcpcd_startinterface(void *);
+ void dhcpcd_initstate(struct interface *);
+ 
++/* CLIP */
++int clip_restart_dhcp(void);
++/* /CLIP */
++
+ #endif
+--- ./script.c.orig	2014-09-27 09:43:12.000000000 +0200
++++ ./script.c	2014-10-31 17:34:28.000000000 +0100
+@@ -626,6 +626,15 @@ script_runreason(const struct interface
+ 	    strcmp(ifp->options->script, "/dev/null") == 0))
+ 		return 0;
+ 
++	/* CLIP */
++	if (ifp->ctx->options & DHCPCD_DAEMONISED) {
++		syslog(LOG_INFO, "%s: not executing `%s' %s, "
++			"since we're daemonized", __func__,
++			argv[0], reason);
++		return 0;
++	}
++	/* /CLIP */
++
+ 	argv[0] = ifp->options->script ? ifp->options->script : UNCONST(SCRIPT);
+ 	argv[1] = NULL;
+ 	syslog(LOG_DEBUG, "%s: executing `%s' %s",

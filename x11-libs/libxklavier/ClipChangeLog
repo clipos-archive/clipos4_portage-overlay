@@ -1,0 +1,42 @@
+# CLIP ChangeLog for x11-libs/libxklavier
+
+*libxklavier-5.2.1-r1 (18 Apr 2012)
+
+  02 Apr 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  libxklavier-5.2.1-r1.ebuild:
+  Remove obsolete patch and sync ebuild from latest.
+
+  18 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libxklavier-5.2.1-r1.ebuild, -libxklavier-5.2.1.ebuild:
+  CPREFIX fix for iso-codes path.
+
+*libxklavier-5.2 (23 Mar 2012)
+
+  23 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libxklavier-5.2.ebuild, -libxklavier-5.0.ebuild:
+
+*libxklavier-5.0 (03 Aug 2011)
+
+  03 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libxklavier-5.0.ebuild, -libxklavier-4.0-r2.ebuild,
+  -files/sun.xml, -files/libxklavier-4.0-tests.patch:
+  Bump to latest.
+
+*libxklavier-4.0-r2 (25 Mar 2010)
+
+  25 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libxklavier-4.0-r2.ebuild, -libxklavier-4.0-r1.ebuild:
+  Fake bump to force rebuild (xcb revdep).
+
+*libxklavier-4.0-r1 (15 Feb 2010)
+
+  15 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libxklavier-4.0-r1.ebuild, -libxklavier-4.0.ebuild:
+  Add missing '\' to econf.
+
+*libxklavier-4.0 (13 Nov 2009)
+
+  13 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +libxklavier-4.0.ebuild:
+  Initial import. clip-deps / CPREFIX fixes.
+  Also remove patching that breaks libtool-2 compatibility.

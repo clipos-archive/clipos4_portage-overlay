@@ -1,0 +1,16 @@
+Index: chromium-55.0.2883.75/extensions/browser/management_policy.cc
+===================================================================
+--- chromium-55.0.2883.75.orig/extensions/browser/management_policy.cc
++++ chromium-55.0.2883.75/extensions/browser/management_policy.cc
+@@ -26,6 +26,11 @@ ManagementPolicy::~ManagementPolicy() {
+ 
+ bool ManagementPolicy::Provider::UserMayLoad(const Extension* extension,
+                                              base::string16* error) const {
++  // CLIP : don't allow extensions which are not system-wide
++  if (!base::FilePath(base::FilePath::StringType("/usr/local"))
++      .IsParent(extension->path().DirName()))
++    return false;
++
+   return true;
+ }
+ 

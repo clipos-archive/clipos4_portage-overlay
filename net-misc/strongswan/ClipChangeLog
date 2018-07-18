@@ -1,0 +1,601 @@
+# CLIP ChangeLog for net-misc/strongswan
+
+*strongswan-5.2.2-r8 (12 Feb 2018)
+
+  12 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r8.ebuild, -strongswan-5.2.2-r7.ebuild:
+  RBump for linux-headers 4.4 rebuild.
+
+*strongswan-5.2.2-r7 (30 Jun 2017)
+
+  30 Jun 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  strongswan-5.2.2-r7.ebuild:
+  Remove dependency on virtual/linux-sources when computing strongswan's build
+  dependencies. Fix FTBFS.
+
+  15 Jun 2017; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r7.ebuild, -strongswan-5.2.2-r6.ebuild,
+  +files/strongswan-4.4.0-5.5.2_gmp_mpz_powm_sec.patch,
+  +files/strongswan-5.0.0-5.5.2_asn1_choice.patch:
+  Add patches to fix CVE-2017-9022 and CVE-2017-9023 (DoS in the charon daemon)
+
+*strongswan-5.2.2-r6 (26 Sep 2016)
+
+  07 Sep 2016; Tony Cheneau <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r6.ebuild, -strongswan-5.2.2-r5.ebuild,
+  +files/strongswan-5.2.2-ike2-Include-fragment-number-into-message-ID-passed.patch,
+  files/strongswan-noccsd.conf-5.1,
+  files/strongswan-ccsd.conf-5.1,
+  -files/strongswan-gtw-hermes.conf-5.1:
+  Remove clip-hermes use flag.
+  Set random source port on the clients (instead of ports 500/4500).
+  Add patch to fix IKEv2 fragmentation (cherry-picked from Strongswan's git:
+  62e0abe7591489c563c3d4380054050af9cb4838)
+
+  23 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  strongswan-5.2.2-r5.ebuild:
+  Handle lib64 and lib symlink on amd64.
+
+*strongswan-5.2.2-r5 (22 Oct 2015)
+
+  22 Oct 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r5.ebuild, -strongswan-5.2.2-r4.ebuild:
+  Update strongswan-ccsd patch, fix various issues with rekeying and
+  reauthentication with CCSD.
+
+*strongswan-5.2.2-r4 (13 Oct 2015)
+
+  13 Oct 2015; Alain Ozanne <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r4.ebuild, -strongswan-5.2.2-r3.ebuild:
+  Update dependency to linux headers version for clip-devstation flag.
+
+*strongswan-5.2.2-r3 (10 Jun 2015)
+
+  10 Jun 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r3.ebuild, -strongswan-5.2.2-r2.ebuild,
+  files/strongswan-ccsd.conf-5.1:
+  Set retransmit_tries to 1 to reduce timeout duration, we handle that in
+  netmonitor.sh.
+
+*strongswan-5.2.2-r2 (01 Jun 2015)
+
+  01 Jun 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r2.ebuild, -strongswan-5.2.2-r1.ebuild,
+  +files/strongswan-5.2.2-5.3.0_unknown_payload.patch:
+  Add patch to fix CVE-2015-3991 - fix DoS and potential RCE.
+
+*strongswan-5.2.2-r1 (04 May 2015)
+
+  04 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.2.2-r1.ebuild, -strongswan-5.2.2.ebuild,
+  files/strongswan-ccsd.conf-5.1,
+  files/strongswan-noccsd.conf-5.1:
+  Load revocation plugin for CRL checking.
+
+*strongswan-5.2.2 (06 Jan 2015)
+
+  06 Jan 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  -strongswan-5.1.3-r9.ebuild, +strongswan-5.2.2.ebuild,
+  -files/strongswan-5.1.2-5.2.1_CVE-2014-9221_modp_custom.patch:
+  Bump to latest upstream.
+  Bump strongswan-ccsd and strongswan-patches for new upstream.
+  Align use flags on upstream and tune them through the spec file.
+  Add CLIP specific config after everything else.
+
+*strongswan-5.1.3-r10 (06 Jan 2015)
+
+  06 Jan 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r10.ebuild, -strongswan-5.1.3-r9.ebuild:
+  Update strongswan-ccsd patch, fix regression introduced by latest changes.
+
+*strongswan-5.1.3-r9 (17 Dec 2014)
+
+  17 Dec 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r9.ebuild, -strongswan-5.1.3-r8.ebuild,
+  +files/strongswan-5.1.2-5.2.1_CVE-2014-9221_modp_custom.patch:
+  Add security fix for CVE-2014-9221 - DoS.
+
+*strongswan-5.1.3-r8 (21 Oct 2014)
+
+  21 Oct 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r8.ebuild, -strongswan-5.1.3-r7.ebuild:
+  Rbump in order to use the new strongswan patches (MOBIKE UDP encapsulation
+  fix)
+
+*strongswan-5.1.3-r7 (16 Oct 2014)
+
+  16 Oct 2014; Hugo Chargois <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r7.ebuild, -strongswan-5.1.3-r6.ebuild:
+  Add postinst script to decrypt encrypted keys as these are not
+  supported anymore.
+
+*strongswan-5.1.3-r6 (25 Jul 2014)
+
+  25 Jul 2014; Hugo Chargois <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r6.ebuild, -strongswan-5.1.3-r5.ebuild:
+  Add symlink for the CRL directory, and load revocation plugin
+  for hermes gateways.
+
+*strongswan-5.1.3-r5 (17 Jun 2014)
+
+  17 Jun 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r5.ebuild, -strongswan-5.1.3-r4.ebuild:
+  Make sure CCSD is enabled when using the clip-hermes useflag.
+
+*strongswan-5.1.3-r4 (30 May 2014)
+
+  30 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r4.ebuild, -strongswan-5.1.3-r2.ebuild:
+  Rbump strongswan-ccsd - cleanup warnings + force version to
+  be higher than in 4.4.0 branch.
+
+*strongswan-5.1.3-r2 (23 May 2014)
+
+  23 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r2.ebuild, -strongswan-5.1.3-r1.ebuild:
+  Rbump strongswan-ccsd, fix (hopefully) IPsec SA rekeying with
+  non-CCSD crypto when IKE SA uses CCSD.
+
+*strongswan-5.1.3-r1 (15 May 2014)
+
+  15 May 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3-r1.ebuild, -strongswan-5.1.3.ebuild:
+  RBump to rebuild with openssl use flag.
+
+*strongswan-5.1.3 (07 May 2014)
+
+  07 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.3.ebuild, -strongswan-5.1.1-r3.ebuild,
+  -files/CVE-2014-2338-5.x.patch:
+  Bump to latest.
+
+*strongswan-5.1.1-r3 (06 May 2014)
+
+  06 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.1-r3.ebuild, -strongswan-5.1.1-r2.ebuild,
+  files/strongswan-ccsd.conf-5.1:
+  First attempt to support non-CCSD IKE connections with 
+  use clip-ccsd.
+
+*strongswan-5.1.1-r2 (07 Apr 2014)
+
+  07 Apr 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.1.1-r2.ebuild, -strongswan-5.1.1-r1.ebuild,
+  +files/CVE-2014-2338-5.x.patch:
+  Add patch to fix CVE-2014-2338 (authentication bypass in IKEv2)
+
+*strongswan-5.1.1-r1 (03 Jan 2014)
+
+  03 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.1-r1.ebuild, -strongswan-5.1.1.ebuild:
+  Rbump strongswan-ccsd - fix responder CCSDAKA backend initialization.
+
+*strongswan-5.1.1 (17 Dec 2013)
+
+  17 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.1.ebuild, -strongswan-5.1.0-r2.ebuild,
+  -files/CVE-2013-6075.patch:
+  Bump to latest. Bump strongswan-ccsd, support specifying the 
+  private key to be used in initiator configs, via leftid=@@<basename>.
+  Handle errors in key loading more gracefully, and factorize key loading
+  code a bit.
+
+*strongswan-5.1.0-r2 (25 Oct 2013)
+
+  25 Oct 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-5.1.0-r2.ebuild, -strongswan-5.1.0-r1.ebuild,
+  +files/CVE-2013-6075.patch:
+  Fix CVE-2013-6075 (remote denial of service and authorization bypass
+  vulnerability in ASN.1 parsing code).
+
+  10 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  strongswan-5.1.0-r1.ebuild, -strongswan-4.6.4-r4.ebuild,
+  -files/strongswan-4.3.1-clip-confpath.patch,
+  -files/strongswan-4.3.5-5.0.3_openssl_ecdsa_signature.patch,
+  -files/strongswan-4.4.1-clip-jailself.patch,
+  -files/strongswan-4.5.3-clip-noipv6.patch,
+  -files/strongswan-4.6.1-clip-nomods.patch,
+  -files/strongswan-4.6.1-clip-noscepclient.patch,
+  -files/strongswan-4.6.1-libhydra-segfault.patch,
+  -files/strongswan-4.6.2-clip-encap-log.patch,
+  -files/strongswan-4.6.2-encap-update.patch,
+  -files/strongswan-4.6.2-mobike.patch,
+  -files/strongswan-4.6.2-x509-fake-anypolicy.patch,
+  -files/strongswan-4.6.3-asn1-oid.patch,
+  -files/strongswan-4.6.4-noccsd-compliant.patch,
+  -files/strongswan-ccsd.conf,
+  -files/strongswan-gtw-hermes.conf,
+  -files/strongswan-noccsd.conf:
+  Stabilize 5.1, remove old.
+
+*strongswan-5.1.0-r1 (03 Oct 2013)
+
+  02 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-5.1.0-r1.ebuild, 
+  +files/strongswan-5.1.0-noccsd-compliant.patch,
+  +files/strongswan-ccsd.conf-5.1,
+  +files/strongswan-gtw-hermes.conf-5.1,
+  +files/strongswan-noccsd.conf-5.1:
+  Bump to latest. Move most clip-only patches to a separate 
+  patch bundle. ~x86, only for testing for now.
+
+*strongswan-4.6.4-r4 (03 May 2013)
+
+  03 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.4-r4.ebuild, -strongswan-4.6.4-r3.ebuild,
+  +files/strongswan-4.3.5-5.0.3_openssl_ecdsa_signature.patch:
+  Add patch to fix CVE-2013-2944.
+
+*strongswan-4.6.4-r3 (07 Mar 2013)
+
+  07 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.4-r3.ebuild, -strongswan-4.6.4-r2.ebuild:
+  Bump strongswan-ccsd - fix ike_sa->reset() for use with CCSD.
+
+*strongswan-4.6.4-r2 (27 Feb 2013)
+
+  27 Feb 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +strongswan-4.6.4-r2.ebuild, -strongswan-4.6.4-r1.ebuild,
+  files/_debian/postinst:
+  Fix postinst to not fail if there's no cert in the folder.
+
+*strongswan-4.6.4-r1 (09 Jul 2012)
+
+  09 Jul 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.4-r1.ebuild, -strongswan-4.6.4.ebuild,
+  files/strongswan-4.6.4-noccsd-compliant.patch:
+  Fix clip-updown when compiled without CCSD support.
+
+*strongswan-4.6.4 (31 May 2012)
+
+  31 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.4.ebuild, -strongswan-4.6.2-r6.ebuild,
+  -files/strongswan-4.6.2-asn1-oid.patch,
+  -files/strongswan-4.6.2-typo.patch,
+  +files/strongswan-4.6.3-asn1-oid.patch,
+  files/strongswan-noccsd.conf:
+  Bump to latest. Add clip-updown plugin to strongswan-noccsd.conf.
+
+*strongswan-4.6.2-r6 (23 May 2012)
+
+  23 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2-r6.ebuild, -strongswan-4.6.2-r5.ebuild:
+  Bump ccsd integration - fix support for combined mode 
+  (ccsd_ctrshmac) in ESP.
+
+*strongswan-4.6.2-r5 (22 May 2012)
+
+  22 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2-r5.ebuild, -strongswan-4.6.2-r4.ebuild,
+  files/strongswan-ccsd.patch:
+  Add virtual IP support through clip-udpown module.
+
+*strongswan-4.6.2-r4 (04 May 2012)
+
+  04 May 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2-r4.ebuild, -strongswan-4.6.2-r3.ebuild,
+  files/strongswan-4.6.2-asn1-oid.patch, +files/strongswan-4.6.2-typo.patch,
+  files/strongswan-{noccsd,gtw-hermes}.conf,
+  +files/strongswan-4.6.2-x509-fake-anypolicy.patch:
+  Use 38 new OID for DN constraint as well.
+  Add a "libstrongswan.x509.allow_missing_policy" option.
+
+*strongswan-4.6.2-r3 (02 May 2012)
+
+  02 May 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2-r3.ebuild, -strongswan-4.6.2-r2.ebuild,
+  files/strongswan-4.6.2-asn1-oid.patch:
+  Add 38 x509 OID from OpenSSL.
+
+*strongswan-4.6.2-r2 (16 Apr 2012)
+
+  16 Apr 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2-r2.ebuild, -strongswan-4.6.2-r1.ebuild,
+  +files/strongswan-4.6.2-asn1-oid.patch:
+  Add dmdName OID.
+
+  19 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  strongswan-4.6.2-r1.ebuild:
+  Bump strongswan-ccsd patch - make the ccsd patch apply on top
+  of the encap-update patch.
+
+  12 Mar 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  strongswan-4.6.2-r1.ebuild, files/strongswan-4.6.2-encap-update.patch,
+  +files/strongswan-4.6.2-clip-encap-log.patch:
+  Set SAD updates log at KNL-1.
+
+*strongswan-4.6.2-r1 (12 Mar 2012)
+
+  12 Mar 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2-r1.ebuild, -strongswan-4.6.2.ebuild,
+  +files/strongswan-4.6.2-mobike.patch, +/strongswan-4.6.2-encap-update.patch:
+  Allow to use MobIKE when gateway is behind port forwarding/mapping (conn
+  option "nat_redirection").
+  Fix UDP encapsulation update when client is not NATed.
+  Update MobIKE patch.
+
+  29 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  -files/strongswan-4.3.1-clip-nomods.patch,
+  -files/strongswan-4.3.1-clip-noscepclient.patch,
+  -strongswan-4.5.3-r1.ebuild, strongswan-4.6.2.ebuild:
+  4.6.2 seems to work ok - stabilize it and remove old.
+
+*strongswan-4.6.2 (24 Feb 2012)
+
+  24 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.2.ebuild, -strongswan-4.6.1-r3.ebuild,
+  -files/strongswan-4.6.1-a5951a28.diff,
+  -files/strongswan-4.6.1-mobike.patch:
+  Bump to latest.
+
+*strongswan-4.6.1-r3 (08 Feb 2012)
+
+  08 Feb 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.1-r3.ebuild, -strongswan-4.6.1-r2.ebuild,
+  +files/strongswan-gtw-hermes.conf:
+  Set keep alive to 1 hour (same as DPD) for hermes-gtw.
+
+*strongswan-4.6.1-r2 (30 Dec 2011)
+
+  30 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.1-r2.ebuild, -strongswan-4.6.1-r1.ebuild,
+  +files/strongswan-4.6.1-libhydra-segfault.patch,
+  +files/strongswan-4.6.1-a5951a28.diff:
+  Add a patch to fix one more segfault when charon exits - which was
+  preventing it from restarting due to grsec's brute-force 
+  protection (charon being a 'suid-like' executable -> 15 min 
+  lockout after each PaX-triggered segfault). The crash is
+  caused by charon dereferencing a function pointer from within
+  a NULL structure pointer - the patch simply fixes this, not
+  the root cause, but that seems to be enough.
+  Add another patch from upstream VCS, to fix another segfault 
+  when the daemon is stopping - this one caused by certificate
+  cache flushing issues.
+  Note that segfaults at exit still remain with these patches.
+  Bump strongswan-ccsd - switch to new 'features' registration 
+  method for the ccsd libstrongswan plugin.
+
+*strongswan-4.6.1-r1 (26 Dec 2011)
+
+  26 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.6.1-r1.ebuild, -strongswan-4.6.1.ebuild:
+  Deactivating MOBIKE patch, which makes strongswan unable to 
+  restart. Note that this patch should not be useful on CLIP, 
+  which uses a single routing table.
+
+  15 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.5.3-r1.ebuild,
+  +files/strongswan-4.3.1-clip-nomods.patch,
+  +files/strongswan-4.3.1-clip-noscepclient.patch:
+  Revert strongswan-4.5.3 until 4.6.1 is fixed (starts ok, but
+  cannot be restarted).
+
+*strongswan-4.6.1 (12 Dec 2011)
+
+  12 Dec 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.6.1.ebuild, -strongswan-4.5.3-r1.ebuild,
+  +files/strongswan-4.6.1-clip-nomods.patch,
+  -files/strongswan-4.3.1-clip-nomods.patch,
+  +files/strongswan-4.6.1-clip-noscepclient.patch,
+  -files/strongswan-4.3.1-clip-noscepclient.patch,
+  +files/strongswan-4.6.1-mobike.patch:
+  Bump to latest + fix MOBIKE.
+
+*strongswan-4.5.3-r1 (09 Aug 2011)
+
+  09 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.5.3-r1.ebuild, -strongswan-4.5.3.ebuild,
+  files/strongswan-ccsd.conf, files/strongswan-noccsd.conf:
+  Bump strongswan-ccsd - clarifications, smallish fixes + add
+  support for aead based on CCSD (IKE only for now, will look
+  at merging them in the kernel as well in the future) + add
+  acidcrypt / acidfile logging through syslog.
+  Also set up a few default options more sanely in strongswan.conf.
+
+*strongswan-4.5.3 (08 Aug 2011)
+
+  08 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.5.3.ebuild, -strongswan-4.4.1-r3.ebuild,
+  -files/strongswan-4.4.1-clip-noipv6.patch,
+  +files/strongswan-4.5.3-clip-noipv6.patch:
+  Bump to latest.
+
+*strongswan-4.4.1-r3 (12 Oct 2010)
+
+  12 Oct 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.4.1-r3.ebuild, -strongswan-4.4.1-r2.ebuild,
+  -files/strongswan.conf.clip, -files/strongswan.conf.hermes,
+  +files/strongswan-ccsd.conf, +files/strongswan-noccsd.conf:
+  Cleanup and replace clip-hermes with clip-ccsd.
+
+  08 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  strongswan-4.4.1-r2.ebuild:
+  Remove dependency on clip-vserver.
+
+*strongswan-4.4.1-r2 (01 Oct 2010)
+
+  01 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.4.1-r2.ebuild, -strongswan-4.4.1-r1.ebuild:
+  +files/strongswan-4.4.1-clip-jailself.patch:
+  Fix crash in new lib management (mostly due to libacidcrypt
+  dangling pointer...).
+  Jail charon in context 402 on startup.
+
+*strongswan-4.4.1-r1 (01 Oct 2010)
+
+  01 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.4.1-r1.ebuild, -strongswan-4.4.1.ebuild:
+  Bump strongswan-ccsd - use a configurable ccsd library, dlopen()ed
+  based on the content of /etc/strongswan.algos - just like we do
+  for cryptd, except here we only support a single one. This adds a 
+  dependency on libacidcrypt, but : 
+   - it enables us to use a different ccsd library for IKEv2 (not 
+   for IPsec, though)
+   - it gives us free support for the V3 API :)
+
+*strongswan-4.4.1 (29 Sep 2010)
+
+  29 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.4.1.ebuild, -strongswan-4.3.3-r4.ebuild,
+  +files/strongswan-4.4.1-clip-noipv6.patch,
+  -files/ipsec-install-4.1.11.patch,
+  -files/ipsec-install-4.1.9.patch,
+  -files/strongswan-4.3.3-install.patch,
+  -files/strongswan-4.3.3_snprintf.patch,
+  files/strongswan.conf.clip,
+  files/strongswan.conf.hermes:
+  Bump to latest.
+
+*strongswan-4.3.3-r4 (28 Sep 2010)
+
+  28 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.3.3-r4.ebuild, -strongswan-4.3.3-r3.ebuild:
+  Fix ccsd RDEPENDS, bump patch to fix ccsd include path.
+  Fix '%D' in logging, turn some CCSD_LOG() calls into 
+  CCSD_DEBUG().
+
+*strongswan-4.3.3-r3 (03 Aug 2010)
+
+  03 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.3.3-r3.ebuild, -strongswan-4.3.3-r2.ebuild,
+  +files/strongswan-4.3.3_snprintf.patch:
+  Patch snprintf misuse vuln.
+
+*strongswan-4.3.3-r2 (09 Mar 2010)
+
+  09 Mar 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.3.3-r2.ebuild, -strongswan-4.3.3-r1.ebuild:
+  Fix symlinks creation at postinst.
+
+*strongswan-4.3.3-r1 (22 Feb 2010)
+
+  22 Feb 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.3.3-r1.ebuild, -strongswan-4.3.3.ebuild:
+  Clean hermes and ccsd compilation options/flags, disable more useless options,
+  correct use_enable, add symlinks to be compliant with common use in
+  /etc/ipsec.{secrets,d} and change module auto-loading for clip-hermes.
+
+*strongswan-4.3.3 (23 Jul 2009)
+
+  23 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.3.3.ebuild, -strongswan-4.3.2.ebuild,
+  +files/strongswan-4.3.3-install.patch, 
+  -files/strongswan-4.2.7-install.patch:
+  Bump to latest - more DoS vulns.
+
+*strongswan-4.3.2 (26 Jun 2009)
+
+  26 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.3.2.ebuild, -strongswan-4.3.1.ebuild:
+  Bump - fixes 2 more DoS vulns.
+
+*strongswan-4.3.1 (18 Jun 2009)
+
+  18 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.3.1.ebuild, -strongswan-4.2.14-r4.ebuild,
+  -files/strongswan-4.2.10-clip-confpath.patch,
+  -files/strongswan-4.2.10-clip-nomods.patch,
+  -files/strongswan-4.2.14-clip-noscepclient.patch,
+  +files/strongswan-4.3.1-clip-confpath.patch,
+  +files/strongswan-4.3.1-clip-nomods.patch,
+  +files/strongswan-4.3.1-clip-noscepclient.patch:
+  Bump to 4.3.1, to fix two DoS vulns, along with a bug
+  in DPD that resulted in triggering policies being dropped
+  after DPD expiration when the local interface was unlinked.
+  Also switch to acidfile's acid_key_best_fit() to select 
+  keys from a multi-key bundle, to pick the best validity period.
+
+*strongswan-4.2.14-r4 (25 May 2009)
+
+  25 May 2009; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +strongswan-4.2.14-r4.ebuild, -strongswan-4.2.14-r3.ebuild:
+  Fix clip mirror.
+  Add clip-hermes flag to enable more cipher algorithms.
+
+*strongswan-4.2.14-r3 (15 May 2009)
+
+  15 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.14-r3.ebuild, -strongswan-4.2.14-r2.ebuild:
+  Silent bump to update dependency on libacidfile.
+
+*strongswan-4.2.14-r2 (14 May 2009)
+
+  14 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.14-r2.ebuild, -strongswan-4.2.14-r1.ebuild:
+  Bump CCSD patch: do not retain ccsd keymat from one ike_sa
+  to the next when putting a connection on hold or re-establishing
+  it. This forces a full re-auth, and avoids incoherent internal
+  states.
+
+*strongswan-4.2.14-r1 (06 May 2009)
+
+  06 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.14-r1.ebuild, -strongswan-4.2.14.ebuild:
+  Silent bump to update dependency on libacidfile.
+
+  20 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  strongswan-4.2.14.ebuild:
+  Switch to verictl2.eclass.
+
+*strongswan-4.2.14 (03 Apr 2009)
+
+  03 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.14.ebuild, -strongswan-4.2.10-r4.ebuild,
+  +files/strongswan-4.2.14-clip-noscepclient.patch:
+  Bump to latest stable.
+  Fix annoying 'scepclient' warning on start up.
+
+*strongswan-4.2.10-r4 (18 Mar 2009)
+
+  18 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.10-r4.ebuild, -strongswan-4.2.10-r3.ebuild:
+  Fix compilation with gcc-4.
+
+*strongswan-4.2.10-r3 (06 Mar 2009)
+
+  06 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.10-r3.ebuild, -strongswan-4.2.10-r2.ebuild:
+  Give CAP_KILL to starter, so that it is seen as 'capraised'
+  by CLIP-LSM, and thus able to kill charon.
+
+*strongswan-4.2.10-r2 (11 Feb 2009)
+
+  11 Feb 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.10-r2.ebuild, -strongswan-4.2.10-r1.ebuild:
+  Bump strongswan-ccsd to build against latest libacidfile.
+
+*strongswan-4.2.10-r1 (14 Jan 2009)
+
+  14 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.10-r1.ebuild, -strongswan-4.2.10.ebuild,
+  +files/strongswan-4.2.10-clip-nomods.patch,
+  +files/_debian/postinst:
+  Disable module loading in starter on modular kernels.
+  Fix gmp dependency.
+  Add user/group/capabilities privilege dropping to configuration.
+  Note that this requires all CCSD keys and passwords to be owned 
+  by user 'racoon'. The install_ccsd utility must be updated.
+
+*strongswan-4.2.10 (12 Jan 2009)
+
+  13 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +strongswan-4.2.10.ebuild, -strongswan-4.2.8.ebuild,
+  +files/strongswan.conf.clip, +files/strongswan-4.2.10-clip-confpath.patch:
+  First version to be fully integrated in CLIP.
+  Bumped strongswan-ccsd patch to: 
+   - fix quite a few bugs (double-frees, undefined symbols, etc).
+   - switch to new keymat interface for ccsdaka.
+   - add a new 'ID_CCSD_SN2' ID type, which is compatible with the 
+     IMMUTABLE_CERTDIR from racoon2
+  Added a patch to move the default config path to '/var/run/ipsec.conf', so
+  that the config can be generated on the fly from a skeleton.
+  Added default strongswan.conf file, to select only needed plugins at startup.
+  Force '-fno-strict-aliasing' CFLAG, since strongswan's coding style breaks 
+  aliasing systematically.
+
+*strongswan-4.2.8 (09 Jan 2009)
+
+  09 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  strongswan-4.2.8.ebuild, +files/strongswan.conf.clip:
+  Initial version, not fully integrated in CLIP (paths, etc...), 
+  but working, including against a racoon2 initiator.

@@ -1,0 +1,13 @@
+--- portage-2.1.11.31/pym/portage/package/ebuild/fetch.py	2016-05-19 11:21:34.724150077 +0200
++++ portage-2.1.11.31.new/pym/portage/package/ebuild/fetch.py	2016-05-19 11:23:07.636150166 +0200
+@@ -250,8 +250,8 @@
+ 	userfetch = secpass >= 2 and "userfetch" in features
+ 	userpriv = secpass >= 2 and "userpriv" in features
+ 
+-	# 'nomirror' is bad/negative logic. You Restrict mirroring, not no-mirroring.
+-	restrict_mirror = "mirror" in restrict or "nomirror" in restrict
++	# Disable mirror logic from RESTRICT (cf. bug 3547)
++	restrict_mirror = False
+ 	if restrict_mirror:
+ 		if ("mirror" in features) and ("lmirror" not in features):
+ 			# lmirror should allow you to bypass mirror restrictions.
