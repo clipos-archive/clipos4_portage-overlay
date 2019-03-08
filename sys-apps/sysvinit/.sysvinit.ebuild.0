@@ -51,6 +51,7 @@ src_prepare() {
 		epatch "${FILESDIR}/${PN}-2.86-clip-cap_inh.patch"
 		epatch "${FILESDIR}/${PN}-2.88-clip-wide-output.patch"
 	fi
+	epatch "${FILESDIR}"/${PN}-2.88-r12-fix-missing-header.patch
 
 	# Mung inittab for specific architectures
 	cd "${WORKDIR}"

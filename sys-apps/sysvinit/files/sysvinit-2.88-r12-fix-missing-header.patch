@@ -1,0 +1,10 @@
+--- a/src/bootlogd.c
++++ b/src/bootlogd.c
+@@ -37,6 +37,7 @@
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ #include <sys/utsname.h>
++#include <sys/sysmacros.h>
+ #include <time.h>
+ #include <stdio.h>
+ #include <errno.h>
