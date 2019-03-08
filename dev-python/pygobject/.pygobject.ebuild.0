@@ -7,6 +7,8 @@ GCONF_DEBUG="no"
 GNOME2_LA_PUNT="yes"
 PYTHON_COMPAT=( python{2_7,3_2,3_3} )
 
+GNOME_TARBALL_SUFFIX="xz"
+
 inherit gnome2 python-r1 virtualx
 
 DESCRIPTION="GLib's GObject library bindings for Python"
