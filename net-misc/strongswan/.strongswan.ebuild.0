@@ -19,8 +19,7 @@ SRC_URI="http://download.strongswan.org/${P}.tar.bz2
 		)
 		clip-devstation? (
 			mirror://clip/${PN}-patches-${PATCHES_PVR}.tar.xz
-		)
-		clip-ccsd? ( mirror://clip/${PN}-ccsd-${CCSD_PVR}.tar.xz )"
+		)"
 
 LICENSE="GPL-2 RSA DES"
 SLOT="0"
