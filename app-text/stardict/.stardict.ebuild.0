@@ -19,9 +19,7 @@ DESCRIPTION="A international dictionary supporting fuzzy and glob style matching
 DESCRIPTION_FR="Dictionnaire Français et international"
 CATEGORY_FR="Utilitaires"
 HOMEPAGE="http://code.google.com/p/stardict-3/"
-CLIP_DICTS="stardict-clip-dicts-1.0"
 SRC_URI="http://${PN}-3.googlecode.com/files/${P}.tar.bz2
-	clip? ( mirror://clip/${CLIP_DICTS}.tar.bz2 )
 	pronounce? ( http://${PN}-3.googlecode.com/files/WyabdcRealPeopleTTS.tar.bz2 )
 	qqwry? ( mirror://gentoo/QQWry.Dat.bz2 )"
 
@@ -104,11 +102,6 @@ src_install() {
 
 	dodoc dict/doc/{Documentation,FAQ,HACKING,HowToCreateDictionary,Skins,StarDictFileFormat,Translation}
 
-	if use clip; then
-		mv "${WORKDIR}/${CLIP_DICTS}"/* \
-				"${D}${CPREFIX:-/usr}/share/stardict/dic/" \
-			|| die "failed to move CLIP dictionaries"
-	fi
 	if use qqwry; then
 		insinto /usr/share/stardict/data
 		doins ../QQWry.Dat
