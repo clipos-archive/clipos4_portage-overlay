@@ -247,7 +247,7 @@ src_configure() {
 	# Are we on a architecture with a HotSpot port?
 	# In-tree JIT ports are available for amd64, arm64, ppc64 (be&le), SPARC and x86.
 	# arm is broken as of 7.2.6.6.
-	if { use amd64 || use arm64 || use ppc64 || use sparc || use x86; }; then
+	if { use arm64 || use ppc64 || use sparc || use x86; }; then
 		hotspot_port="yes"
 	fi
 
