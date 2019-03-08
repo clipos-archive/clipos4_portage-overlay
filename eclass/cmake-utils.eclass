@@ -17,6 +17,8 @@
 # builds (default), in-source builds and an implementation of the well-known use_enable
 # and use_with functions for CMake.
 
+IUSE="$IUSE userland_GNU"
+
 if [[ ${___ECLASS_ONCE_CMAKE_UTILS} != "recur -_+^+_- spank" ]] ; then
 ___ECLASS_ONCE_CMAKE_UTILS="recur -_+^+_- spank"
 
