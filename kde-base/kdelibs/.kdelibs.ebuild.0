@@ -16,10 +16,10 @@ DESCRIPTION="KDE libraries needed by all KDE programs"
 
 KEYWORDS="amd64 ~arm ppc ppc64 x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
 LICENSE="LGPL-2.1"
-IUSE="cpu_flags_x86_3dnow acl alsa altivec +bzip2 +crypt debug doc fam jpeg2k
+IUSE="kernel_SunOS cpu_flags_x86_3dnow acl alsa altivec +bzip2 +crypt debug doc fam jpeg2k
 kerberos lzma cpu_flags_x86_mmx nls openexr +policykit spell cpu_flags_x86_sse
 cpu_flags_x86_sse2 ssl +udev +udisks +upower zeroconf"
-IUSE="${IUSE} clip clip-deps clip-devstation"
+IUSE="${IUSE} userland_GNU clip clip-deps clip-devstation"
 
 REQUIRED_USE="
 	udisks? ( udev )
