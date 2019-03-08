@@ -45,6 +45,7 @@ S="${WORKDIR}/${MY_P}"
 DISTUTILS_IN_SOURCE_BUILD=1
 
 python_prepare_all() {
+	addwrite "/run"
 	# Disable all the stuff we don't want.
 	local f
 	for f in jpeg lcms tiff tk webp zlib; do
