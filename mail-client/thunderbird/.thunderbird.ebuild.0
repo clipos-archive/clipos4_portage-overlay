@@ -110,6 +110,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	addwrite '/run'
 	# Apply our Thunderbird patchset
 	epatch "${FILESDIR}"/1000_fix_gentoo_preferences.patch
 
@@ -413,8 +414,6 @@ src_install() {
 	fi
 
 	if use clip; then 
-		exeinto /usr/bin/clip-user-data-update-scripts
-		doexe "${FILESDIR}"/clip/thunderbird
 		insinto "${MOZILLA_FIVE_HOME}/defaults/profile"
 		doins "${S}/mimeTypes.rdf"
 
