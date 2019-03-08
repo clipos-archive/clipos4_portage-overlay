@@ -23,6 +23,7 @@ DEPEND="${RDEPEND}
 DOCS=(CHANGES NOTICE README)
 
 src_prepare() {
+	addwrite "/run"
 	epatch "${FILESDIR}"/${PN}-1.4.6-mint.patch
 
 	# Ensure that system libtool is used.
