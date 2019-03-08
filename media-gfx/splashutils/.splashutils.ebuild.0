@@ -8,7 +8,7 @@ inherit autotools eutils multilib toolchain-funcs verictl2
 MISCSPLASH="miscsplashutils-0.1.8"
 GENTOOSPLASH="splashutils-gentoo-1.0.17"
 V_JPEG="8d"
-V_PNG="1.6.16"
+V_PNG="1.6.29"
 V_ZLIB="1.2.8"
 V_FT="2.5.5"
 
