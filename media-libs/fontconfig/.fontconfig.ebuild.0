@@ -175,6 +175,6 @@ pkg_predeb() {
 	init_maintainer "postinst"
 	cat >> "${D}/DEBIAN/postinst" <<EOF
 echo " * Creating global font cache... *"
-${CPREFIX}/bin/fc-cache -srf || echo " ! fc-cache failed ! " >&2
+${CPREFIX}/bin/fc-cache -sf || echo " ! fc-cache failed ! " >&2
 EOF
 }
