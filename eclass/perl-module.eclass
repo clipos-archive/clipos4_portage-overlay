@@ -15,6 +15,9 @@
 inherit eutils base multiprocessing
 [[ ${CATEGORY} == "perl-core" ]] && inherit alternatives
 
+addwrite '/usr/local/bin'
+addwrite '/usr/local/man/'
+addwrite '/usr/local/lib64/perl5/5.16.3/'
 IUSE+=" clip clip-deps"
 PERL_EXPF="src_unpack src_compile src_test src_install"
 
