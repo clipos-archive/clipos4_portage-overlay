@@ -1,0 +1,75 @@
+--- a/gcc/cp/cfns.h
++++ b/gcc/cp/cfns.h
+@@ -124,9 +124,6 @@ hash (register const char *str, register
+ 
+ #ifdef __GNUC__
+ __inline
+-#ifdef __GNUC_STDC_INLINE__
+-__attribute__ ((__gnu_inline__))
+-#endif
+ #endif
+ const char *
+ libc_name_p (register const char *str, register unsigned int len)
+--- a/libgcc/config/i386/linux-unwind.h
++++ b/libgcc/config/i386/linux-unwind.h
+@@ -58,7 +58,7 @@ x86_64_fallback_frame_state (struct _Unw
+   if (*(unsigned char *)(pc+0) == 0x48
+       && *(unsigned long long *)(pc+1) == RT_SIGRETURN_SYSCALL)
+     {
+-      struct ucontext *uc_ = context->cfa;
++      struct ucontext_t *uc_ = context->cfa;
+       /* The void * cast is necessary to avoid an aliasing warning.
+          The aliasing warning is correct, but should not be a problem
+          because it does not alias anything.  */
+--- a/libsanitizer/asan/asan_linux.cc
++++ b/libsanitizer/asan/asan_linux.cc
+@@ -21,6 +21,7 @@
+ #include "sanitizer_common/sanitizer_libc.h"
+ #include "sanitizer_common/sanitizer_procmaps.h"
+ 
++#include <signal.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
+ #include <sys/mman.h>
+--- a/libsanitizer/sanitizer_common/sanitizer_stoptheworld_linux_libcdep.cc
++++ b/libsanitizer/sanitizer_common/sanitizer_stoptheworld_linux_libcdep.cc
+@@ -17,6 +17,7 @@
+ #include "sanitizer_stoptheworld.h"
+ 
+ #include "sanitizer_platform_limits_posix.h"
++#include <linux/types.h>
+ 
+ #include <errno.h>
+ #include <sched.h> // for CLONE_* definitions
+@@ -31,6 +32,12 @@
+ #endif
+ #include <sys/wait.h> // for signal-related stuff
+ 
++struct sigaltstack {
++        void *ss_sp;
++        int ss_flags;
++        size_t ss_size;
++};
++
+ #ifdef sa_handler
+ # undef sa_handler
+ #endif
+--- a/libsanitizer/tsan/tsan_platform_linux.cc
++++ b/libsanitizer/tsan/tsan_platform_linux.cc
+@@ -43,6 +43,7 @@
+ #include <dlfcn.h>
+ #if SANITIZER_LINUX
+ #define __need_res_state
++#include <bits/types/res_state.h>
+ #include <resolv.h>
+ #endif
+ 
+@@ -377,7 +378,7 @@ bool IsGlobalVar(uptr addr) {
+ int ExtractResolvFDs(void *state, int *fds, int nfd) {
+ #if SANITIZER_LINUX
+   int cnt = 0;
+-  __res_state *statp = (__res_state*)state;
++  struct __res_state *statp = (struct __res_state*)state;
+   for (int i = 0; i < MAXNS && cnt < nfd; i++) {
+     if (statp->_u._ext.nsaddrs[i] && statp->_u._ext.nssocks[i] != -1)
+       fds[cnt++] = statp->_u._ext.nssocks[i];
