@@ -1,0 +1,69 @@
+--- a/c++/cursesf.h
++++ b/c++/cursesf.h
+@@ -381,6 +381,12 @@ protected:
+     uptr->m_user = user;
+   }
+ 
++  inline const void *get_user() const {
++    const UserHook* uptr = reinterpret_cast<const UserHook*>(::form_userptr (form));
++    assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==form);
++    return uptr->m_user;
++  }
++
+   inline void *get_user() {
+     UserHook* uptr = reinterpret_cast<UserHook*>(::form_userptr (form));
+     assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==form);
+--- a/c++/cursesm.h
++++ b/c++/cursesm.h
+@@ -242,6 +242,11 @@ protected:
+     uptr->m_user = user;
+   }
+ 
++  inline const void *get_user() const {
++    const UserHook* uptr = STATIC_CAST(const UserHook*)(::menu_userptr (menu));
++    assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==menu);
++    return uptr->m_user;
++  }
+   inline void *get_user() {
+     UserHook* uptr = STATIC_CAST(UserHook*)(::menu_userptr (menu));
+     assert (uptr != 0 && uptr->m_back==this && uptr->m_owner==menu);
+--- a/c++/cursesp.h
++++ b/c++/cursesp.h
+@@ -58,6 +58,12 @@ private:
+     const PANEL*        m_owner;     // the panel itself
+   } UserHook;
+ 
++  inline const UserHook *constUserPointer() const 
++  {
++    const UserHook* uptr = reinterpret_cast<const UserHook*>(
++                           const_cast<void *>(::panel_userptr (p)));
++    return uptr;
++  }
+   inline UserHook *UserPointer()
+   {
+     UserHook* uptr = reinterpret_cast<UserHook*>(
+@@ -77,6 +83,14 @@ protected:
+   }
+   // Set the user pointer of the panel.
+ 
++  void *get_user() const
++  {
++    const UserHook* uptr = constUserPointer();
++    void *result = 0;
++    if (uptr != 0 && uptr->m_back==this && uptr->m_owner==p)
++      result = uptr->m_user;
++    return result;
++  }
+   void *get_user()
+   {
+     UserHook* uptr = UserPointer();
+@@ -253,7 +267,8 @@ public:
+ 
+   T* UserData (void) const
+   {
+-    return reinterpret_cast<T*>(get_user ());
++    void * tmp=get_user();
++    return reinterpret_cast<T*>(tmp);
+   };
+   // Retrieve the user data associated with the panel.
+ 
