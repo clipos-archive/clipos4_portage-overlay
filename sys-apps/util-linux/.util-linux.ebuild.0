@@ -79,6 +79,10 @@ src_prepare() {
 	fi
 	epatch "${FILESDIR}"/${PN}-2.24-skip-last-tests.patch #491742
 	epatch "${FILESDIR}"/${PN}-2.24-last-tests.patch #501408
+
+	# CLIP
+	epatch "${FILESDIR}"/${PN}-2.24.1-r5-fix-missing-header.patch
+
 	find tests/ -name bigyear -delete #489794
 	use clip && epatch "${FILESDIR}"/${PN}-2.24.1-clip-mountopts.patch
 	elibtoolize

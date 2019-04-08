@@ -1,0 +1,200 @@
+--- a/disk-utils/fsck.c
++++ b/disk-utils/fsck.c
+@@ -43,6 +43,7 @@
+ #include <errno.h>
+ #include <signal.h>
+ #include <dirent.h>
++#include <sys/sysmacros.h>
+ #include <sys/resource.h>
+ #include <sys/time.h>
+ #include <blkid.h>
+--- a/disk-utils/partx.c
++++ b/disk-utils/partx.c
+@@ -19,6 +19,7 @@
+ #include <unistd.h>
+ #include <assert.h>
+ #include <dirent.h>
++#include <sys/sysmacros.h>
+ 
+ #include <blkid.h>
+ 
+--- a/lib/ismounted.c
++++ b/lib/ismounted.c
+@@ -16,6 +16,7 @@
+ #endif
+ #include <string.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <ctype.h>
+ #include <sys/param.h>
+ #ifdef __APPLE__
+--- a/lib/sysfs.c
++++ b/lib/sysfs.c
+@@ -4,6 +4,7 @@
+  *
+  * Written by Karel Zak <kzak@redhat.com>
+  */
++#include<sys/sysmacros.h>
+ #include <ctype.h>
+ 
+ #include "c.h"
+--- a/libblkid/src/devname.c
++++ b/libblkid/src/devname.c
+@@ -35,6 +35,7 @@
+ #include <time.h>
+ 
+ #include "blkidP.h"
++#include <sys/sysmacros.h>
+ 
+ #include "canonicalize.h"		/* $(top_srcdir)/include */
+ #include "pathnames.h"
+--- a/libblkid/src/evaluate.c
++++ b/libblkid/src/evaluate.c
+@@ -13,6 +13,7 @@
+ #include <fcntl.h>
+ #include <ctype.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
+ #endif
+--- a/libblkid/src/partitions/partitions.c
++++ b/libblkid/src/partitions/partitions.c
+@@ -14,6 +14,7 @@
+ #include <fcntl.h>
+ #include <ctype.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #include <sys/stat.h>
+ #include <errno.h>
+ #include <stdint.h>
+--- a/libblkid/src/topology/dm.c
++++ b/libblkid/src/topology/dm.c
+@@ -17,6 +17,7 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #include <unistd.h>
+ 
+ #include "topology.h"
+--- a/libblkid/src/topology/evms.c
++++ b/libblkid/src/topology/evms.c
+@@ -17,6 +17,7 @@
+ #include <string.h>
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ 
+--- a/libblkid/src/topology/lvm.c
++++ b/libblkid/src/topology/lvm.c
+@@ -17,6 +17,7 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #include <unistd.h>
+ 
+ #include "topology.h"
+--- a/libblkid/src/topology/md.c
++++ b/libblkid/src/topology/md.c
+@@ -18,6 +18,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #include <unistd.h>
+ 
+ #include "topology.h"
+--- a/libmount/src/fs.c
++++ b/libmount/src/fs.c
+@@ -15,6 +15,7 @@
+ #include <blkid.h>
+ #include <stddef.h>
+ 
++#include<sys/sysmacros.h>
+ #include "mountP.h"
+ #include "strutils.h"
+ 
+--- a/libmount/src/tab_parse.c
++++ b/libmount/src/tab_parse.c
+@@ -15,6 +15,7 @@
+ #include <limits.h>
+ #include <dirent.h>
+ #include <fcntl.h>
++#include <sys/sysmacros.h>
+ 
+ #include "at.h"
+ #include "mangle.h"
+--- a/login-utils/sulogin-consoles.c
++++ b/login-utils/sulogin-consoles.c
+@@ -30,6 +30,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#include <sys/sysmacros.h>
+ #ifdef __linux__
+ # include <sys/vt.h>
+ # include <sys/kd.h>
+--- a/misc-utils/findmnt.c
++++ b/misc-utils/findmnt.c
+@@ -32,6 +32,7 @@
+ #include <poll.h>
+ #include <sys/statvfs.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #ifdef HAVE_LIBUDEV
+ # include <libudev.h>
+ #endif
+--- a/misc-utils/lsblk.c
++++ b/misc-utils/lsblk.c
+@@ -32,6 +32,7 @@
+ #include <fcntl.h>
+ #include <string.h>
+ #include <sys/ioctl.h>
++#include <sys/sysmacros.h>
+ #include <inttypes.h>
+ #include <stdarg.h>
+ #include <locale.h>
+--- a/misc-utils/lslocks.c
++++ b/misc-utils/lslocks.c
+@@ -31,6 +31,7 @@
+ #include <unistd.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ 
+ #include <libmount.h>
+ 
+--- a/sys-utils/losetup.c
++++ b/sys-utils/losetup.c
+@@ -12,6 +12,7 @@
+ #include <unistd.h>
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <inttypes.h>
+ #include <getopt.h>
+ 
+--- a/sys-utils/mountpoint.c
++++ b/sys-utils/mountpoint.c
+@@ -31,6 +31,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ 
+ #include <libmount.h>
+ 
+--- a/sys-utils/switch_root.c
++++ b/sys-utils/switch_root.c
+@@ -23,6 +23,7 @@
+ #include <sys/mount.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <sys/param.h>
+ #include <fcntl.h>
+ #include <stdio.h>
