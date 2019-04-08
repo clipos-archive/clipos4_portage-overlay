@@ -122,7 +122,7 @@
 +// clip.h is not C++-safe
 +extern int clip_daemonize(void);
 +#include <clip/clip-vserver.h>
-+#include <linux/vserver/context.h>
++#include <uapi/vserver/context.h>
 +#include <sys/mount.h>
 +}
 +
@@ -618,7 +618,7 @@
 +extern "C" {
 +#include <linux/capability.h>
 +#include <clip/clip-vserver.h>
-+#include <linux/vserver/context.h>
++#include <uapi/vserver/context.h>
 +#include <errno.h>
 +}
 +
