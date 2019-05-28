@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-libs/liborcus
-
-*blt-2.4z-r12 (29 Jul 2013)
-
-  29 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  blt-2.4z-r12.ebuild:
-  Initial import - CPREFIX fix.
-

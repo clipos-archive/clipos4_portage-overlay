@@ -1,6 +1,0 @@
-
-*libsdl2-2.0.4-r1 (05 Apr 2017)
-
-  05 Apr 2017; Alain Ozanne <clipos@ssi.gouv.fr>
-    +libsdl2-2.0.4-r1.ebuild, -libsdl2-2.0.4.ebuild:
-  add core-deps flag.

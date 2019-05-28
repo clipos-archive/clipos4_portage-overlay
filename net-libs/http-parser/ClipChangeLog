@@ -1,7 +1,0 @@
-# CLIP ChangeLog for net-libs/http-parser
-
-*http-parser-2.6.2-r1 (04 Oct 2017)
-
-  04 Oct 2017; Alain Ozanne <clipos@ssi.gouv.fr>
-  +http-parser-2.6.2-r1.ebuild, -http-parser-2.6.2.ebuild:
-  Modification for CLIP.

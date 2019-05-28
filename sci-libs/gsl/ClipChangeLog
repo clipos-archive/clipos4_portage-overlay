@@ -1,7 +1,0 @@
-# CLIP ChangeLog for sci-libs/gsl 
-
-*gsl-1.13-r1 (09 Jun 2011)
-
-  09 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
-  gsl-1.13-r1.ebuild:
-  Initial overlay import - remove useless /etc/env.d files.

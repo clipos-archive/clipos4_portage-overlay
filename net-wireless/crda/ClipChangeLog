@@ -1,8 +1,0 @@
-# CLIP ChangeLog for net-wireless/crda
-
-*crda-1.1.2-r3 (16 May 2014)
-
-  16 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
-  crda-1.1.2-r3.ebuild:
-  Initial import - remove udev support / dependency on CLIP.
-

@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-libs/libunique
-
-*libunique-1.1.6-r1 (04 Feb 2013)
-
-  04 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  +libunique-1.1.6-r1.ebuild:
-  Initial overlay import. clip-deps fix.
-

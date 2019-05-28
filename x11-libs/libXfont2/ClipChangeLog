@@ -1,7 +1,0 @@
-# CLIP ChangeLog for x11-libs/libXfont2
-
-*libXfont2-2.0.1 (11 Oct 2017)
-
-  11 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
-  +libXfont2-2.0.1.ebuild:
-  Initial import. clip-deps in USE flags.

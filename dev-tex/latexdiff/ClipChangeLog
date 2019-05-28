@@ -1,7 +1,0 @@
-
-*latexdiff-0.5-r1 (19 Jul 2017)
-
-  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
-  +latexdiff-0.5-r1.ebuild, -latexdiff-0.5.ebuild:
-  Add clip-deps for relevant deps
-

@@ -1,7 +1,0 @@
-# CLIP ChangeLog for sys-apps/groff
-
-*groff-1.22.2 (11 Dec 2013)
-
-  11 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  groff-1.22.2.ebuild:
-  Initial import - CPREFIX fix.

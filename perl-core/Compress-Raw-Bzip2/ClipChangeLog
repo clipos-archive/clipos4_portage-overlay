@@ -1,7 +1,0 @@
-# CLIP ChangeLog for perl-core/Compress-Raw-Bzip2
-
-*Compress-Raw-Bzip2-2.60.0 (23 Dec 2013)
-
-  23 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  Compress-Raw-Bzip2-2.60.0.ebuild:
-  Initial overlay import - clip-deps fix.

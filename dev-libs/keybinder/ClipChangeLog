@@ -1,9 +1,0 @@
-  12 Jul 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
-  keybinder-0.3.0-r201.ebuild:
-  Revert CPREFIX/EPREFIX order.
-
-*keybinder-0.3.0-r201 (08 Jan 2013)
-
-  08 Jan 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
-  +keybinder-0.3.0-r201.ebuild, -keybinder-0.3.0-r200.ebuild:
-  Correctly handle CPREFIX/EPREFIX when installing docs. 

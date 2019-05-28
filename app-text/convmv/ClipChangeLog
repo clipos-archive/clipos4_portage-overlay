@@ -1,7 +1,0 @@
-# CLIP ChangeLog for app-text/convmv
-
-*convmv-1.14 (17 Jan 2011)
-
-  17 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
-  convmv-1.14.ebuild: 
-  Initial import. CPREFIX fixes.

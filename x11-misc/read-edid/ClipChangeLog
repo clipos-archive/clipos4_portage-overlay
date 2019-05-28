@@ -1,7 +1,0 @@
-# CLIP ChangeLog for x11-misc/read-edid
-
-*read-edid-2.0.0-r1 (03 Apr 2012)
-
-  03 Apr 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
-  +read-edid-2.0.0-r1:
-  Initial import, add pax mark and vm86 dependency.

@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-cpp/libmcpp
-
-*libmcpp-2.7.2-r1 (05 Jul 2012)
-
-  05 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
-  libmcpp-2.7.2-r1.ebuild:
-  Initial import - CPREFIX fix + add 'cpp' symlink to mcpp.
-

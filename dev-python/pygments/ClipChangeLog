@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-python/pygments
-
-*pygments-1.6 (24 Jul 2013)
-
-  24 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  pygments-1.6.ebuild:
-  Initial import - move setuptools to DEPEND.
-

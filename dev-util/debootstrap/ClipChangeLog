@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-util/debootstrap
-
-*debootstrap-1.0.67-r1 (02 Dec 2015)
-
-  02 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
-  +debootstrap-1.0.67-r1.ebuild, -debootstrap-1.0.67.ebuild,
-  files/clip-extract_dpkg_deb_data-follow-symlinks.patch:
-  Add patch to use tar -h and follow symlinks on debootstrap early stage.

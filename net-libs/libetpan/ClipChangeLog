@@ -1,6 +1,0 @@
-*libetpan-1.0 (04 jan 2014)
-
-  04 Jan 2014; Benjamin Morin <clipos@ssi.gouv.fr>
-  libetpan-1.0.ebuild, +files/libetpan-1.0-clip-ciphersuite.patch
-  Initial CLIP import. Patch on ssl ciphersuites.
-

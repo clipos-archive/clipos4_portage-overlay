@@ -1,7 +1,0 @@
-# CLIP ChangeLog for dev-python/cffi
-
-*cffi-1.2.1 (25 Feb 2016)
-
-    25 Feb 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
-    +cffi-1.2.1.ebuild :
-    Adapt cffi to CLIP.

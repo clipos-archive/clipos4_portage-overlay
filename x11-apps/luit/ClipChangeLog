@@ -1,8 +1,0 @@
-# CLIP Changelog for x11-apps/luit
-
-*luit-1.1.1-r1 (30 Apr 2015)
-
-  30 Apr 2015; Vincent Strubel <clipos@ssi.gouv.fr>
-  +luit-1.1.1-r1.ebuild, -luit-1.1.1.ebuild:
-  clip-deps fix.
-

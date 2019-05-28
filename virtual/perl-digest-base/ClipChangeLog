@@ -1,7 +1,0 @@
-# CLIP ChangeLog for virtual/perl-digest-base
-
-*perl-digest-base-1.170.0-r1 (23 Dec 2013)
-
-  23 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  +perl-digest-base-1.170.0-r1.ebuild:
-  Initial overlay import - clip-deps fix.

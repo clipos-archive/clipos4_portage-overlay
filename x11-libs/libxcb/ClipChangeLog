@@ -1,7 +1,0 @@
-# CLIP ChangeLog for x11-libs/libxcb
-
-* libxcb-1.12-r2 (12 Oct 2017)
-
-  12 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
-  libxcb-1.12-r2.ebuild:
-  Initial CLIP import. Fix PYTHON_COMPAT for CLIP.

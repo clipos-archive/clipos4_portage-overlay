@@ -1,9 +1,0 @@
-# CLIP ChangeLog for gnome-base/libglade
-
-*libglade-2.6.4-r1 (11 Apr 2012)
-
-  11 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
-  +libglade-2.6.4-r1.ebuild, -libglade-2.6.4.ebuild:
-  Initial overlay import - clip-deps / CPREFIX fixes + catalog updating maintainer
-  scripts.
-

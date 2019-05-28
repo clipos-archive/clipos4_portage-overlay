@@ -1,7 +1,0 @@
-# CLIP ChangeLog for app-dicts/myspell-de
-
-* myspell-de-2012.06.17-r1 (15 May 2015)
-
-  15 May 2015; Tony Cheneau <clipos@ssi.gouv.fr>
-  +myspell-de-2012.06.17-r1.ebuild:
-  Initial import - add DESCRIPTION_FR.

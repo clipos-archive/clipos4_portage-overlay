@@ -1,7 +1,0 @@
-
-*systemsettings-4.11.19-r1 (19 Jul 2017)
-
-  19 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
-  +systemsettings-4.11.19-r1.ebuild, -systemsettings-4.11.19.ebuild:
-  Add clip-deps
-

@@ -1,7 +1,0 @@
-# CLIP ChangeLog for media-libs/openh264
-
-*openh264-1.7.0-r1 (04 Oct 2017)
-
-  04 Oct 2017; Alain Ozanne <clipos@ssi.gouv.fr>
-  +openh264-1.7.0-r1.ebuild, -openh264-1.7.0.ebuild:
-  Added and updated for chromium update in 61.0.3163.79.

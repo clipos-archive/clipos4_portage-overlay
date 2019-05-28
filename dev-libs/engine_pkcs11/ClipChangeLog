@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-libs/engine_pkcs11
-
-*engine_pkcs11-0.1.8 (12 Jul 2010)
-
-  12 Jul 2010; Benjamin Morin <clipos@ssi.gouv.fr>
-  +engine_pkcs11-0.1.8.ebuild
-  Initial import.
-

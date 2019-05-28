@@ -1,8 +1,0 @@
-# CLIP ChangeLog for x11-libs/libXdmcp
-
-*libXdmcp-1.1.2-r1 (13 Oct 2017)
-
-  13 Oct 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
-  +libXdmcp-1.1.2-r1.ebuild, -libXdmcp-1.1.1.ebuild:
-  x11-proto/xproto removed from RDEPEND since we do not want this package in the
-  target.

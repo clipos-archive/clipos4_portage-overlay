@@ -1,8 +1,0 @@
-# CLIP ChangeLog for app-admin/axtest
-
-
-*paxtest-0.9.6 (21 Jen 2007)
-
-  21 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
-  paxtest-0.9.6.ebuild:
-  Initial CLIP import, fixes for RDEPENDS and paxtest.log path.

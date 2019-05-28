@@ -1,6 +1,0 @@
-*libassuan-2.2.1-r1 (10 Jul 2017)
-
-  10 Jul 2017; Tony Cheneau <clipos@ssi.gouv.fr>
-  +libassuan-2.2.1-r1.ebuild, -libassuan-2.2.1.ebuild:
-  Remove dependencies on gpg-error (clip-core package).
-

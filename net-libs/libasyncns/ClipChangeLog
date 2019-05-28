@@ -1,7 +1,0 @@
-# CLIP ChangeLog for net-libs/libasyncns
-
-* libasyncns-0.8-r3 (20 Jun 2014)
-
-  20 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
-  libasyncns-0.8-r3.ebuild: 
-  Initial overlay import - CPREFIX fix.

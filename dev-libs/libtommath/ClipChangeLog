@@ -1,8 +1,0 @@
-# CLIP ChangeLog for dev-libs/libtommath
-
-*libtommath-0.42-r1 (11 Apr 2012)
-
-  11 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
-  +libtommath-0.42-r1.ebuild:
-  Initial import - CPREFIX fix.
-

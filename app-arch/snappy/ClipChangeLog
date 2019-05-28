@@ -1,8 +1,0 @@
-# CLIP ChangeLog for app-arch/snappy
-
-*snappy-1.1.0 (12 Jul 2013)
-
-  12 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
-  snappy-1.1.0.ebuild:
-  Initial import - CPREFIX fix.
-

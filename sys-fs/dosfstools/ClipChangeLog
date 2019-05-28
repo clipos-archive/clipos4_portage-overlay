@@ -1,7 +1,0 @@
-# CLIP ChangeLog for sys-fs/dosfstools
-
-*dosfstools-2.11-r3 (20 Aug 2007) 
-
-  20 Aug 2007; EADS D&S <clipos@ssi.gouv.fr>
-  +dosfstools-2.11-r3.ebuild:
-  Install in /sbin
