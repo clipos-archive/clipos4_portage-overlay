@@ -1,0 +1,84 @@
+# Copyright 1999-2007 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/x11-misc/fbpanel/fbpanel-4.12.ebuild,v 1.1 2007/08/25 03:05:49 omp Exp $
+
+EAPI="2"
+
+inherit toolchain-funcs eutils qt3 eutils-cpp
+
+DESCRIPTION="fbpanel is a light-weight X11 desktop panel"
+HOMEPAGE="http://fbpanel.sourceforge.net/"
+CLIP_PVR="6.0-r36"
+SRC_URI="mirror://sourceforge/${PN}/${P}.tbz2
+		 clip-livecd? ( mirror://clip/${PN}-clip-${CLIP_PVR}.tar.xz )"
+
+LICENSE="GPL-2"
+SLOT="0"
+KEYWORDS="~alpha ~amd64 ~ppc ~ppc64 x86"
+IUSE="clip-livecd"
+
+DEPEND_ALL="
+	>=x11-libs/gtk+-2
+	clip-livecd? ( 
+		clip-dev/clip-install-gui
+		clip-dev/clip-install-config
+		app-clip/clip-config
+		sys-apps/lshw
+		x11-terms/xterm
+	)"
+RDEPEND="${DEPEND_ALL}"
+DEPEND="${DEPEND_ALL}
+	dev-util/pkgconfig"
+
+CLIP_SRC="${WORKDIR}/${PN}-clip-${CLIP_PVR}"
+
+src_prepare() {
+	epatch "${FILESDIR}"/${P}-configure-LANG.patch
+	epatch "${FILESDIR}"/${P}-fix-link-X11.patch
+	if use clip-livecd; then	
+		einfo "Copying CLIP files"
+		cp -a "${CLIP_SRC}"/{plugins,config} "${S}" \
+			|| die "failed to copy CLIP files"
+		cp -a "${CLIP_SRC}"/po/* "${S}/panel" \
+			|| die "failed to copy localization"
+		cd "${S}"
+		epatch "${CLIP_SRC}"/clip.patch
+		local cppargs="-DPREFIX=${CPREFIX:-/usr}"
+		for f in "${CLIP_SRC}/config/livecd" ; do
+			einfo "Preprocessing ${f}"
+			cpp -P ${cppargs} -DFILE_NAME="$(basename "$f")" "${f}" > "${f}.tmp" \
+				|| die "cpp failed for ${f}"
+			mv "${f}.tmp" "${f}" \
+				|| die "mv failed for ${f}"
+		done
+	fi
+}
+
+src_compile() {
+	# econf does not work.
+	local myconf=""
+	./configure \
+		--prefix="${CPREFIX:-/usr}" \
+		|| die "configure failed"
+	emake CC=$(tc-getCC) || die "emake failed"
+}
+
+src_install () {
+	emake DESTDIR="${D}" install || die "emake install failed"
+	dodoc CHANGELOG CREDITS README
+
+	if use clip-livecd; then
+		exeinto /usr/bin
+		for f in reboot.sh; do
+			doexe "${CLIP_SRC}/scripts/${f}"
+		done
+
+		insinto /usr/share/fbpanel
+		newins "${CLIP_SRC}/config/livecd" "default"
+
+		insinto /usr/share/fbpanel/images
+		for f in "${CLIP_SRC}/config/images/"*; do
+			doins "${f}"
+		done
+	fi
+}
