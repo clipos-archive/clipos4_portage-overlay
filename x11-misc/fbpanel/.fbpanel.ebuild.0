@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/x11-misc/fbpanel/fbpanel-4.12.ebuild,v 1.1 2007/08/25 03:05:49 omp Exp $
 
-EAPI="2"
+EAPI=5
 
 inherit toolchain-funcs eutils qt3 eutils-cpp
 
