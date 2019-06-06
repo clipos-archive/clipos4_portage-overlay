@@ -1,1 +1,0 @@
-.libreoffice.ebuild.1
